@@ -1,9 +1,17 @@
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useEffect,
+} from "react";
 import { ThemeProvider, CssBaseline, PaletteMode } from "@mui/material";
 import getTheme from "../theme/theme";
+import { lightTheme } from "../theme/liteTheme";
+import { darkTheme } from "../theme/darkTheme";
 
 interface ThemeContextType {
-  mode: PaletteMode;
+  mode: string;
   toggleTheme: () => void;
 }
 
@@ -26,17 +34,22 @@ interface ThemeProviderProps {
 export const ThemeContextProvider: React.FC<ThemeProviderProps> = ({
   children,
 }) => {
-  const [mode, setMode] = useState<PaletteMode>("light");
+  const [mode, setMode] = useState(localStorage.getItem("theme") || "light");
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme") || "light";
 
+    if (savedTheme) {
+      setMode(savedTheme);
+    }
+  }, []);
   const toggleTheme = () => {
-    setMode((prevMode) => (prevMode === "light" ? "dark" : "light"));
+    setMode(mode === "light" ? "dark" : "light");
+    localStorage.setItem("theme", mode);
   };
-
-  const theme = getTheme(mode);
 
   return (
     <ThemeContext.Provider value={{ mode, toggleTheme }}>
-      <ThemeProvider theme={theme}>
+      <ThemeProvider theme={mode === "light" ? lightTheme : darkTheme}>
         <CssBaseline />
         {children}
       </ThemeProvider>
