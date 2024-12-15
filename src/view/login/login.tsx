@@ -154,7 +154,7 @@ export default function Login() {
           }}
           onClick={handleSingin}
         >
-          Continue
+          Login
         </Button>
       </Box>
     </Box>
