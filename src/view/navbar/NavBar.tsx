@@ -2,10 +2,6 @@ import * as React from "react";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import PhoneIcon from "@mui/icons-material/Phone";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import PersonPinIcon from "@mui/icons-material/PersonPin";
 // Import images for icons
 import AccountIcon from "../../assets/icons/navbar/Account.png";
 import ChanneltIcon from "../../assets/icons/navbar/Channel.png";
@@ -16,9 +12,7 @@ import ReportsIcon from "../../assets/icons/navbar/Reports.png";
 import StockIcon from "../../assets/icons/navbar/Stock.png";
 import TransationIcon from "../../assets/icons/navbar/Transation.png";
 import UserIcon from "../../assets/icons/navbar/User.png";
-import { useAuthContext } from "../../context/AuthContext";
-import ThemeSwitch from "../../components/ThemeSwitch";
-import { colors } from "@mui/material";
+import ThemeSwitch from "../../theme/ThemeSwitch";
 import RefractionNav from "../refraction/RefractionNav";
 
 // TabPanel Component

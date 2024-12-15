@@ -1,13 +1,19 @@
-import { useState } from "react";
-import NavBar from "./view/navbar/NavBar";
-import Login from "./view/login/login";
+import { ThemeContextProvider } from "./context/ThemeContext";
+import { AuthContext } from "./context/AuthContext";
+import { RouterProvider } from "react-router";
+import { router } from "./routes/router";
+import { darkTheme } from "./theme/darkTheme";
+import { lightTheme } from "./theme/liteTheme";
 
 function App() {
-  const [count, setCount] = useState(0);
-
+  const savedTheme = localStorage.getItem("theme");
   return (
     <>
-      <Login />
+      <ThemeContextProvider>
+        <AuthContext>
+          <RouterProvider router={router} />
+        </AuthContext>
+      </ThemeContextProvider>
     </>
   );
 }

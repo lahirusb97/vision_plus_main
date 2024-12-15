@@ -1,8 +1,7 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Navigate, Outlet } from "react-router";
 import NavBar from "../view/navbar/NavBar";
 import { useAuthContext } from "../context/AuthContext";
-import { getCookie } from "typescript-cookie";
 
 const LoginProtectedRoute: React.FC = () => {
   const { token } = useAuthContext();
