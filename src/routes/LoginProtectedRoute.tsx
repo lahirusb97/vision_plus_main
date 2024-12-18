@@ -6,7 +6,7 @@ import { useAuthContext } from "../context/AuthContext";
 const LoginProtectedRoute: React.FC = () => {
   const { token } = useAuthContext();
 
-  return token ? ( // Check if token exists
+  return !token || token ? ( // Check if token exists
     <div>
       <NavBar />
       <Outlet />
