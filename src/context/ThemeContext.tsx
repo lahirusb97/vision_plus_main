@@ -5,10 +5,9 @@ import React, {
   ReactNode,
   useEffect,
 } from "react";
-import { ThemeProvider, CssBaseline, PaletteMode } from "@mui/material";
-import getTheme from "../theme/theme";
-import { lightTheme } from "../theme/liteTheme";
-import { darkTheme } from "../theme/darkTheme";
+import { ThemeProvider, CssBaseline } from "@mui/material";
+import lightTheme from "../theme/liteTheme";
+import darkTheme from "../theme/darkTheme";
 
 interface ThemeContextType {
   mode: string;

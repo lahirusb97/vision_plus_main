@@ -1,5 +1,5 @@
 import React from "react";
-import { Switch, IconButton, Typography } from "@mui/material";
+import { Switch, IconButton } from "@mui/material";
 import { useThemeContext } from "../context/ThemeContext";
 
 const ThemeSwitch: React.FC = () => {

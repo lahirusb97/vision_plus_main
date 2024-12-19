@@ -46,7 +46,10 @@ export default function NavBar() {
   const [value, setValue] = React.useState(0);
 
   // Handle Tab Change
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleChange = (
+    _event: React.SyntheticEvent<Element, Event>,
+    newValue: number
+  ) => {
     setValue(newValue);
   };
 

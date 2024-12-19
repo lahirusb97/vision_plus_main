@@ -1,6 +1,8 @@
-import React, { lazy, Suspense } from "react";
+/* eslint-disable react-refresh/only-export-components */
+import { lazy, Suspense } from "react";
 import { createBrowserRouter } from "react-router";
 import { refractionRoutes } from "./routelist/refraction.route";
+import Register from "../view/register/Register";
 
 // Lazy load components
 const Login = lazy(() => import("../view/login/login"));
@@ -42,6 +44,15 @@ export const router = createBrowserRouter([
         element: (
           <Suspense fallback={<div>Loading...</div>}>
             <Login />
+          </Suspense>
+        ),
+      },
+      {
+        path: "register",
+        index: true,
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <Register />
           </Suspense>
         ),
       },
