@@ -14,8 +14,6 @@ export default function RefractionNumber() {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        minHeight: "100vh",
-        backgroundColor: "#f9f9f9",
       }}
     >
       <Paper

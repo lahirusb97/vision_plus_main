@@ -1,4 +1,4 @@
-import React, {
+import {
   createContext,
   useContext,
   useState,
@@ -8,18 +8,31 @@ import React, {
   useCallback,
   useEffect,
 } from "react";
-import Cookies, { getCookie, removeCookie, setCookie } from "typescript-cookie";
-type AuthContextType = {
-  user: LoginResponse | null;
-  token: string | null;
-  setUser: Dispatch<SetStateAction<Record<string, any> | null>>;
-  setToken: Dispatch<SetStateAction<string | null>>;
+import { getCookie, removeCookie, setCookie } from "typescript-cookie";
+
+// Define the LoginResponse type
+type LoginResponse = {
+  message: string;
+  token: string;
+  username: string;
+  is_staff: boolean;
+  is_superuser: boolean;
 };
 
+// Define the AuthContextType interface
+interface AuthContextType {
+  user: LoginResponse | null;
+  token: string | null;
+  setUser: Dispatch<SetStateAction<LoginResponse | null>>;
+  setToken: Dispatch<SetStateAction<string | null>>;
+}
+
+// Define props for AuthContext
 type AuthContextProps = {
   children: ReactNode;
 };
 
+// Create the AuthContext with default values
 const StateContext = createContext<AuthContextType>({
   user: null,
   token: null,
@@ -27,44 +40,51 @@ const StateContext = createContext<AuthContextType>({
   setToken: () => {},
 });
 
+// AuthContext provider component
 export const AuthContext = ({ children }: AuthContextProps) => {
-  const bc = new BroadcastChannel("test_channel");
-  const [user, setUser] = useState<Record<string, any> | null>(null);
+  const broadcastChannel = new BroadcastChannel("test_channel");
+  const [user, setUser] = useState<LoginResponse | null>(null);
   const [token, _setToken] = useState<string | null>(() => {
     // Retrieve token from cookies
     return getCookie("VISION_ACCESS_TOKEN") || null;
   });
 
-  const setToken = useCallback((token: string | null) => {
-    _setToken(token);
-    if (token) {
-      // Set the token as an HTTP cookie
-      setCookie("VISION_ACCESS_TOKEN", token, {
-        secure: true, // Ensures it’s only sent over HTTPS
-        sameSite: "Strict", // Prevents sending the cookie cross-origin
-        expires: 7, // Optionally set expiry (7 days here)
-      });
-    } else {
-      // Remove the token cookie
-      removeCookie("VISION_ACCESS_TOKEN");
-    }
-  }, []);
+  // Enhanced setToken to handle SetStateAction
+  const setToken: Dispatch<SetStateAction<string | null>> = useCallback(
+    (value) => {
+      const resolvedValue = typeof value === "function" ? value(token) : value;
 
-  const handleSetUser = useCallback((userData: Record<string, any> | null) => {
-    setUser(userData);
-  }, []);
+      _setToken(resolvedValue);
+      if (resolvedValue) {
+        setCookie("VISION_ACCESS_TOKEN", resolvedValue, {
+          secure: true, // Ensures it’s only sent over HTTPS
+          sameSite: "Strict", // Prevents sending the cookie cross-origin
+          expires: 7, // Token expires in 7 days
+        });
+      } else {
+        removeCookie("VISION_ACCESS_TOKEN");
+      }
+    },
+    [token]
+  );
+
   useEffect(() => {
-    bc.onmessage = (event) => {
-      console.log("Event data:", event.data);
+    broadcastChannel.onmessage = (event) => {
+      console.log("BroadcastChannel event data:", event.data);
     };
-  }, [user]);
+
+    // Cleanup function to close the BroadcastChannel
+    return () => {
+      broadcastChannel.close();
+    };
+  }, []);
 
   return (
     <StateContext.Provider
       value={{
         user,
         token,
-        setUser: handleSetUser,
+        setUser,
         setToken,
       }}
     >
@@ -73,11 +93,5 @@ export const AuthContext = ({ children }: AuthContextProps) => {
   );
 };
 
+// Custom hook to use the AuthContext
 export const useAuthContext = () => useContext(StateContext);
-type LoginResponse = {
-  message: string;
-  token: string;
-  username: string;
-  is_staff: boolean;
-  is_superuser: boolean;
-};
