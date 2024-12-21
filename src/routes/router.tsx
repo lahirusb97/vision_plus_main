@@ -5,7 +5,7 @@ import { refractionRoutes } from "./routelist/refraction.route";
 import Register from "../view/register/Register";
 
 // Lazy load components
-const Login = lazy(() => import("../view/login/login"));
+const Login = lazy(() => import("../view/auth/login"));
 const LoginProtectedRoute = lazy(() => import("./LoginProtectedRoute"));
 const ProtectedChildRoute = lazy(() => import("./ProtectedChildRoute"));
 const PublicRoute = lazy(() => import("./PublicRoute"));
