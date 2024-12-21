@@ -7,7 +7,7 @@ import { Paper, Box } from "@mui/material";
 const LoginProtectedRoute: React.FC = () => {
   const { token } = useAuthContext();
 
-  return token ? ( // Check if token exists
+  return token || !token ? ( // Check if token exists
     <Paper
       sx={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
     >
