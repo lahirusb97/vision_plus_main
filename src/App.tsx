@@ -1,13 +1,19 @@
-import { useState } from "react";
-import NavBar from "./view/navbar/NavBar";
-import Login from "./view/login/login";
+import { AuthContext } from "./context/AuthContext";
+import { RouterProvider } from "react-router";
+import { router } from "./routes/router";
+import { ThemeProvider } from "@mui/material";
+import theme from "./theme/theme";
+import ThemeSwitch from "./theme/ThemeSwitch";
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
     <>
-      <Login />
+      <ThemeProvider theme={theme}>
+        <AuthContext>
+          <RouterProvider router={router} />
+          <ThemeSwitch />
+        </AuthContext>
+      </ThemeProvider>
     </>
   );
 }
