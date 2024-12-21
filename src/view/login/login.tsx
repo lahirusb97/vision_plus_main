@@ -35,7 +35,6 @@ export default function Login() {
       setToken(data.data.token);
       // localStorage.setItem("authToken", JSON.stringify(data.data.token));
       navigation("/");
-      console.log(data);
     } catch (error) {
       console.log(error);
     }
