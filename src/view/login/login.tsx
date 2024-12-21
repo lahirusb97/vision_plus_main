@@ -69,7 +69,7 @@ export default function Login() {
         }}
       >
         <Typography fontWeight={"bold"} variant="h6">
-          Vision Plus Management System
+          Vision Plus Management System2
         </Typography>
       </Box>
 
