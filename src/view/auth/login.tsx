@@ -11,8 +11,6 @@ import {
   useTheme,
 } from "@mui/material";
 import logo from "../../assets/defalt/logo.png";
-import hi_hand from "../../assets/defalt/hi_hand.png";
-import { yellow } from "@mui/material/colors";
 import axiosClient from "../../axiosClient";
 import { useNavigate } from "react-router";
 import { useAuthContext } from "../../context/AuthContext";
