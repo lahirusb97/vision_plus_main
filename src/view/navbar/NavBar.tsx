@@ -1,7 +1,6 @@
 import * as React from "react";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import Box from "@mui/material/Box";
 // Import images for icons
 import AccountIcon from "../../assets/icons/navbar/Account.png";
 import ChanneltIcon from "../../assets/icons/navbar/Channel.png";

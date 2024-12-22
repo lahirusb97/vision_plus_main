@@ -1,5 +1,3 @@
-import { Paper } from "@mui/material";
-
 import NavButton from "../../components/NavButton";
 
 export default function RefractionNav() {

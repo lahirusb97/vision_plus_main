@@ -2,7 +2,7 @@
 import { lazy, Suspense } from "react";
 import { createBrowserRouter } from "react-router";
 import { refractionRoutes } from "./routelist/refraction.route";
-import Register from "../view/register/Register";
+import RegisterUser from "../view/auth/RegisterUser";
 
 // Lazy load components
 const Login = lazy(() => import("../view/auth/login"));
@@ -52,7 +52,7 @@ export const router = createBrowserRouter([
         index: true,
         element: (
           <Suspense fallback={<div>Loading...</div>}>
-            <Register />
+            <RegisterUser />
           </Suspense>
         ),
       },

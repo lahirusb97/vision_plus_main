@@ -54,10 +54,6 @@ export default function RefractionNumber() {
             variant="contained"
             sx={{
               marginTop: 2,
-              backgroundColor: "#6200ea",
-              "&:hover": {
-                backgroundColor: "#3700b3",
-              },
             }}
           >
             OK
