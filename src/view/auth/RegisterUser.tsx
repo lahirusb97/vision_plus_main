@@ -6,47 +6,43 @@ import {
   InputLabel,
   TextField,
   Paper,
-  Avatar,
   CircularProgress,
+  Avatar,
   useTheme,
 } from "@mui/material";
-import logo from "../../assets/defalt/logo.png";
-import axiosClient from "../../axiosClient";
+import logo from "../../assets/defalt/logo.png"; // Adjust path to your logo
+import axiosClient from "../../axiosClient"; // Axios client to handle API requests
 import { useNavigate } from "react-router";
-import { useAuthContext } from "../../context/AuthContext";
 
-interface LoginInput {
+interface RegisterInput {
   username: string;
   password: string;
+  email: string;
 }
 
-export default function Login() {
-  const { setUser, setToken } = useAuthContext();
-  const [loginInput, setLoginInput] = useState<LoginInput>({
-    username: "admin",
-    password: "admin",
+export default function RegisterUser() {
+  const [registerInput, setRegisterInput] = useState<RegisterInput>({
+    username: "",
+    password: "",
+    email: "",
   });
   const [loading, setLoading] = useState(false); // Loading state
   const navigate = useNavigate();
-  const theme = useTheme(); // Use MUI theme hook
+  const theme = useTheme(); // MUI theme hook for dynamic styling
 
-  const handleSignIn = async () => {
+  const handleRegister = async () => {
     setLoading(true);
     try {
-      const data = await axiosClient.post("/login/", loginInput);
-
-      const userData: LoginResponse = {
-        username: data.data.username,
-        is_staff: data.data.is_staff,
-        is_superuser: data.data.is_superuser,
-        token: data.data.token,
-        message: data.data.message,
-      };
-      setUser(userData);
-      setToken(data.data.token);
-      navigate("/");
+      const data = await axiosClient.post(
+        "/api/register/admin/",
+        registerInput
+      );
+      // Handle the response (e.g., success message, navigate to login page, etc.)
+      alert("Admin registered successfully!");
+      navigate("/login"); // Redirect to login page after successful registration
     } catch (error) {
       console.error(error);
+      alert("Registration failed, please try again.");
     } finally {
       setLoading(false);
     }
@@ -54,7 +50,7 @@ export default function Login() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setLoginInput((prev) => ({
+    setRegisterInput((prev) => ({
       ...prev,
       [name]: value,
     }));
@@ -91,25 +87,14 @@ export default function Login() {
         variant="h5"
         fontWeight="bold"
         sx={{
-          color: theme.palette.text.primary, // Adjust text color based on theme
+          color: theme.palette.text.primary,
           textAlign: "center",
         }}
       >
-        Welcome to Vision Plus
-      </Typography>
-      <Typography
-        variant="body1"
-        sx={{
-          color: "white", // Adjust text color for secondary text
-          textAlign: "center",
-          marginTop: 1,
-          marginBottom: 3,
-        }}
-      >
-        Please log in to continue
+        Admin Registration
       </Typography>
 
-      {/* Login Form */}
+      {/* Registration Form */}
       <Paper
         elevation={3}
         sx={{
@@ -120,16 +105,17 @@ export default function Login() {
           boxShadow:
             theme.palette.mode === "dark"
               ? "0px 8px 15px rgba(255, 255, 255, 0.3)"
-              : "0px 8px 15px rgba(0, 0, 0, 0.1)", // Adjust box shadow for dark theme
+              : "0px 8px 15px rgba(0, 0, 0, 0.1)",
           animation: "fadeIn 0.8s ease",
-          bgcolor: theme.palette.background.paper, // Background for Paper component
-          color: theme.palette.text.primary, // Ensure good contrast with text
+          bgcolor: theme.palette.background.paper,
+          color: theme.palette.text.primary,
           "@keyframes fadeIn": {
             "0%": { opacity: 0, transform: "translateY(20px)" },
             "100%": { opacity: 1, transform: "translateY(0)" },
           },
         }}
       >
+        {/* Username Input */}
         <Box mb={2}>
           <InputLabel htmlFor="username" sx={{ color: "white" }}>
             Username
@@ -139,25 +125,57 @@ export default function Login() {
             id="username"
             variant="outlined"
             type="text"
-            value={loginInput.username}
+            value={registerInput.username}
             fullWidth
             placeholder="Enter your username"
             onChange={handleInputChange}
             sx={{
               "& .MuiOutlinedInput-root": {
                 "& fieldset": {
-                  borderColor: theme.palette.primary.main, // Dynamic border color
+                  borderColor: theme.palette.primary.main,
                 },
                 "&:hover fieldset": {
-                  borderColor: theme.palette.primary.dark, // Dynamic hover color
+                  borderColor: theme.palette.primary.dark,
                 },
                 "&.Mui-focused fieldset": {
-                  borderColor: theme.palette.primary.light, // Dynamic focused color
+                  borderColor: theme.palette.primary.light,
                 },
               },
             }}
           />
         </Box>
+
+        {/* Email Input */}
+        <Box mb={2}>
+          <InputLabel htmlFor="email" sx={{ color: "white" }}>
+            Email
+          </InputLabel>
+          <TextField
+            name="email"
+            id="email"
+            variant="outlined"
+            type="email"
+            value={registerInput.email}
+            fullWidth
+            placeholder="Enter your email"
+            onChange={handleInputChange}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": {
+                  borderColor: theme.palette.primary.main,
+                },
+                "&:hover fieldset": {
+                  borderColor: theme.palette.primary.dark,
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: theme.palette.primary.light,
+                },
+              },
+            }}
+          />
+        </Box>
+
+        {/* Password Input */}
         <Box mb={3}>
           <InputLabel htmlFor="password" sx={{ color: "white" }}>
             Password
@@ -167,7 +185,7 @@ export default function Login() {
             id="password"
             variant="outlined"
             type="password"
-            value={loginInput.password}
+            value={registerInput.password}
             fullWidth
             placeholder="Enter your password"
             onChange={handleInputChange}
@@ -186,6 +204,8 @@ export default function Login() {
             }}
           />
         </Box>
+
+        {/* Submit Button */}
         <Button
           variant="contained"
           fullWidth
@@ -201,27 +221,23 @@ export default function Login() {
               transform: "scale(1.02)",
             },
           }}
-          onClick={handleSignIn}
+          onClick={handleRegister}
           disabled={loading}
         >
-          {loading ? <CircularProgress size={24} color="inherit" /> : "Login"}
+          {loading ? (
+            <CircularProgress size={24} color="inherit" />
+          ) : (
+            "Register"
+          )}
         </Button>
         <Typography
           sx={{ padding: 1, cursor: "pointer", textAlign: "center" }}
-          onClick={() => navigate("/login/register")}
+          onClick={() => navigate("/login/")}
           variant="body2"
         >
-          Register Now ?
+          User Login
         </Typography>
       </Paper>
     </Box>
   );
 }
-
-type LoginResponse = {
-  message: string;
-  token: string;
-  username: string;
-  is_staff: boolean;
-  is_superuser: boolean;
-};
