@@ -1,115 +1,96 @@
-import { Padding } from '@mui/icons-material';
-import React from 'react';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
 
-const TableComponent = () => {
+
+
+function createData(
+  name: string,
+  calories: number,
+  fat: number,
+  
+) {
+  return { name, calories, fat };
+
+
+  
+}
+
+
+const rows   = [
+  createData('Frozen yoghurt', 159, 6.0 ),
+  createData('Ice cream sandwich', 237, 9.0),
+  createData('Eclair', 262, 16.0),
+  createData('Cupcake', 305, 3.7),
+  createData('Gingerbread', 356, 16.0),
+];
+
+export default function BasicTable() {
   return (
-    <div className="table-container" style={{ margin: '20px',}}>
-      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
- <thead>
-          <tr style={{ backgroundColor: '#cce7ff', textAlign: 'center' }}>
-            <th style={styles.headerCell}>Name</th>
-            <th style={styles.headerCell}>Phone Number</th>
-            <th style={styles.headerCell}>Refraction Number</th>
-          </tr>
-        </thead>
-        <tbody>
-          {[...Array(12)].map((_, index) => (
-            <tr
-              key={index}
-              style={index % 2 === 0 ? styles.rowEven : styles.rowOdd}
-            >
-              <td style={styles.cell}></td>
-              <td style={styles.cell}></td>
-              <td style={styles.cell}></td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-       
+    <><div style={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      position: 'relative',
+      marginRight: '210px',
+      marginLeft: '210px',
+    }}
+    >
+      <TableContainer component={Paper}>
+        <Table sx={{ minWidth: 300, border: '2px solid black', position: 'absolute', backgroundColor: 'lightblue' }} aria-label="simple table">
+          <TableHead sx={{ minWidth: 300, border: '2px solid black', alignItems: 'center' }}>
+            <TableRow sx={{ border: '2px solid black', textAlign: 'center' }}>
+              <TableCell sx={{ minWidth: 300, border: '2px solid black' }} align="center">Name</TableCell>
+              <TableCell sx={{ minWidth: 300, border: '2px solid black' }} align="center">Phone Number</TableCell>
+              <TableCell align="center">Refraction number</TableCell>
 
-       <div style={styles.loginContainer}>
-         <p style={styles.loginText}>Testing user login</p>
-         <input
-           type="password"
-           placeholder="*******"
-           style={styles.inputBox}
-         />
-        
-       </div>
-  <button style={styles.button}>Select</button>
-    </div>
+            </TableRow>
+          </TableHead>
+          <TableBody sx={{ minWidth: 300, border: '2px solid black', alignItems: 'center' }}>
+            {rows.map((row) => (
+              <TableRow
+                key={row.name}
+                sx={{ '&:last-child td, &:last-child th': { border: '2px solid black' } }}
+              >
+                <TableCell sx={{ minWidth: 300, border: '2px solid black' }} component="th" scope="row">
+                  {row.name}
+                </TableCell>
+                <TableCell sx={{ minWidth: 300, border: '2px solid black' }}>{row.calories}</TableCell>
+                <TableCell sx={{ minWidth: 300, border: '2px solid black' }}>{row.fat}</TableCell>
+
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+
+
+      </TableContainer>
+
+
+    </div><div >
+        <TextField sx={{ marginBottom:'30px' }}
+          label="Testing User Login"
+          type="password"
+          variant="outlined"
+          style={{ marginTop:'400px', width: '945px', marginLeft:'210px'}} />
+        <Button sx={{ marginTop:'10px', marginLeft:'210px', marginRight:'120px', width:'950px', backgroundColor:'gray', padding:'10px' }} variant="contained" color="primary">
+          Select
+        </Button>
+      </div></>
+
   );
-};
+}
 
-const styles = {
-  textAlign: 'center',
-  headerCell: {
-    padding: '10px',
-    fontWeight: 'bold',
-    border: '2px solid black',
-    justifyContent:'center',
-
-  },
-  rowEven: {
-    backgroundColor: '#cce7ff',
-    border: '2px solid black',
-  },
-  rowOdd: {
-    backgroundColor: '#cce7ff',
-    border: '2px solid black',
-  },
-  cell: {
-    padding: '10px',
-    borderBottom: '2px solidrgb(210, 224, 236)',
-    border: '2px solid black',
-  },
-   loginContainer: {
-    marginTop: '30px',
-    textAlign: 'center',
-    backgroundColor:'#cce7ff',
-    border:'2px solid black',
-    padding:'20px',
-   },
-
- loginText: {
-    fontSize: '16px',
-    fontWeight: 'bold',
-    marginBottom: '10px',
-    
-  },
-  inputBox: {
-    padding: '10px',
-    width: '1000px',
-    height:'10px',
-    marginBottom: '10px',
-    border: '2px solid black',
-    borderRadius: '2px',
-    PaddingLeft:'50px',
-    paddingRight: '50px',
-    
-
-  },
-
-  button: {
-    padding: '20px 20px ',
-    backgroundColor: 'gray',
-    color: 'white',
-    fontSize: '16px',
-    border: 'none',
-    borderRadius: '2px',
-    cursor: 'pointer',
-    paddingTop:'1px',
-    paddingBottom:'1px',
-    marginTop:'30px',
-    width:'1300px',
-    height:'25px',
-    textAlign:'center',
-
-  },
-};
-
-
-export default TableComponent;
       
 
   
