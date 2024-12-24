@@ -9,7 +9,13 @@ const LoginProtectedRoute: React.FC = () => {
 
   return token || !token ? ( // Check if token exists
     <Paper
-      sx={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
+      sx={{
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
     >
       <NavBar />
       <Box
@@ -18,7 +24,7 @@ const LoginProtectedRoute: React.FC = () => {
           display: "flex",
           justifyContent: "center", // Horizontally center
           alignItems: "center", // Vertically center
-          padding: 2, // Optional: Add some padding
+          width: "1200px",
         }}
       >
         <Outlet />
