@@ -78,7 +78,8 @@ export default function BasicTable() {
 
 
     </div><div >
-        <TextField sx={{ marginBottom:'30px' }}
+        <div style={{ alignItems:'center', justifyContent:'center', paddingTop:'500px' }}>{"Testing user Login"}</div>
+        <TextField sx={{ marginBottom:'30px',marginRight:'100px', marginTop:'200px'  }}
           label="Testing User Login"
           type="password"
           variant="outlined"
