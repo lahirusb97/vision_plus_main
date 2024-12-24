@@ -14,8 +14,6 @@ export default function RefractionNumber() {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        minHeight: "100vh",
-        backgroundColor: "#f9f9f9",
       }}
     >
       <Paper
@@ -56,10 +54,6 @@ export default function RefractionNumber() {
             variant="contained"
             sx={{
               marginTop: 2,
-              backgroundColor: "#6200ea",
-              "&:hover": {
-                backgroundColor: "#3700b3",
-              },
             }}
           >
             OK

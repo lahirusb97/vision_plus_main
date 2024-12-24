@@ -1,7 +1,6 @@
 import * as React from "react";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import Box from "@mui/material/Box";
 // Import images for icons
 import AccountIcon from "../../assets/icons/navbar/Account.png";
 import ChanneltIcon from "../../assets/icons/navbar/Channel.png";
@@ -12,8 +11,8 @@ import ReportsIcon from "../../assets/icons/navbar/Reports.png";
 import StockIcon from "../../assets/icons/navbar/Stock.png";
 import TransationIcon from "../../assets/icons/navbar/Transation.png";
 import UserIcon from "../../assets/icons/navbar/User.png";
-import ThemeSwitch from "../../theme/ThemeSwitch";
 import RefractionNav from "../refraction/RefractionNav";
+import { Paper } from "@mui/material";
 
 // TabPanel Component
 
@@ -25,20 +24,22 @@ function TabPanel(props: {
   const { children, value, index, ...other } = props;
 
   return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`tabpanel-${index}`}
-      aria-labelledby={`tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          {/* Remove Typography or change its component */}
-          {children}
-        </Box>
-      )}
-    </div>
+    <Paper>
+      <div
+        role="tabpanel"
+        hidden={value !== index}
+        id={`tabpanel-${index}`}
+        aria-labelledby={`tab-${index}`}
+        {...other}
+      >
+        {value === index && (
+          <>
+            {/* Remove Typography or change its component */}
+            {children}
+          </>
+        )}
+      </div>
+    </Paper>
   );
 }
 
@@ -46,7 +47,10 @@ export default function NavBar() {
   const [value, setValue] = React.useState(0);
 
   // Handle Tab Change
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleChange = (
+    _event: React.SyntheticEvent<Element, Event>,
+    newValue: number
+  ) => {
     setValue(newValue);
   };
 
@@ -64,12 +68,12 @@ export default function NavBar() {
   ];
 
   return (
-    <Box sx={{ width: "100%" }}>
+    <Paper sx={{ width: "100%" }}>
       <Tabs
         value={value}
         onChange={handleChange}
         aria-label="icon label tabs example"
-        variant="fullWidth"
+        variant="scrollable"
       >
         {tabs.map((tab, index) => (
           <Tab
@@ -87,15 +91,19 @@ export default function NavBar() {
             }}
           />
         ))}
-        <ThemeSwitch />
       </Tabs>
 
       {/* Tab Panels */}
       {tabs.map((tab, index) => (
         <TabPanel key={index} value={value} index={index}>
-          {tab.nav && <tab.nav />}
+          <Paper
+            elevation={4}
+            sx={{ display: "flex", flexWrap: "wrap", gap: 1, py: 2 }}
+          >
+            {tab.nav && <tab.nav />}
+          </Paper>
         </TabPanel>
       ))}
-    </Box>
+    </Paper>
   );
 }
