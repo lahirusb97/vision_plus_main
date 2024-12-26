@@ -1,7 +1,7 @@
 import { useForm, Controller } from "react-hook-form";
 import CustomInputWithLabel from "../../components/CustomInputWithLabel";
 import CustomInput from "../../components/CustomInput";
-import { Grid, Box, Button } from "@mui/material";
+import { Grid, Box, Button, Typography, Input, Paper } from "@mui/material";
 
 export default function RefractionEdit() {
   const {
@@ -33,7 +33,7 @@ export default function RefractionEdit() {
             )}
           />
           <Controller
-            name="mobileName"
+            name="auto_ref"
             control={control}
             defaultValue=""
             render={({ field }) => (
@@ -51,7 +51,7 @@ export default function RefractionEdit() {
         <div style={styleForGrid}>
           <div>
             <Controller
-              name="hbRx"
+              name="hb_rx_right"
               control={control}
               defaultValue=""
               render={({ field }) => (
@@ -65,7 +65,7 @@ export default function RefractionEdit() {
               )}
             />
             <Controller
-              name="customInput1"
+              name="hb_rx_left"
               control={control}
               defaultValue=""
               render={({ field }) => (
@@ -95,7 +95,7 @@ export default function RefractionEdit() {
 
         <div style={styleForGridChilds}>
           <Controller
-            name="autoRef"
+            name="auto_ref"
             control={control}
             defaultValue=""
             render={({ field }) => (
@@ -145,7 +145,7 @@ export default function RefractionEdit() {
 
         <div style={styleForGridChilds}>
           <Controller
-            name="vaWithoutGlass"
+            name="va_without_glass"
             control={control}
             defaultValue=""
             render={({ field }) => (
@@ -170,7 +170,7 @@ export default function RefractionEdit() {
 
         <div style={styleForGridChilds}>
           <Controller
-            name="vaWithoutPH"
+            name="va_without_ph"
             control={control}
             defaultValue=""
             render={({ field }) => (
@@ -195,7 +195,7 @@ export default function RefractionEdit() {
 
         <div style={styleForGridChilds}>
           <Controller
-            name="vaWithGlass"
+            name="va_with_glass"
             control={control}
             defaultValue=""
             render={({ field }) => (
@@ -217,8 +217,71 @@ export default function RefractionEdit() {
             )}
           />
         </div>
+        <Paper elevation={3} sx={{ padding: "10px" }}>
+          <Grid
+            container
+            spacing={2}
+            sx={{
+              display: "grid",
+              gridTemplateColumns: "repeat(7, 1fr)",
+              gap: 2,
+            }}
+          >
+            <Grid sx={{ gridRow: "span 2" }} item></Grid>
+            <Grid item sx={{ gridColumn: "span 3" }}>
+              <Typography sx={{ bgcolor: "#D7D4E1" }}> Right Eye</Typography>
+            </Grid>
+            <Grid
+              item
+              sx={{
+                gridColumn: "span 3",
+                padding: "10px",
+              }}
+            >
+              <Typography sx={{ bgcolor: "#DBD4B5", textAlign: "center" }}>
+                Left Eye
+              </Typography>
+            </Grid>
+            {/* Right Eye */}
+            <Typography>SPH</Typography>
+            <Typography>Cyl</Typography>
+            <Typography>AXIS</Typography>
+            {/* Right Eye */}
+            {/* Left Eye */}
+            <Typography>SPH</Typography>
+            <Typography>Cyl</Typography>
+            <Typography>AXIS</Typography>
+            <Typography textAlign="center">Dist</Typography>
+            {/* Left Eye */}
+            {/* Right Eye */}
+            <Input />
+            <Input />
+            <Input />
+            {/* Right Eye */}
 
-        <Button variant="contained" type="submit">
+            {/* Left Eye */}
+            <Input />
+            <Input />
+            <Input />
+            {/* Left Eye */}
+
+            <Typography textAlign="center">Near</Typography>
+            {/* Right Eye */}
+
+            <Input />
+            <Input />
+            <Input />
+            {/* Right Eye */}
+            {/* Left Eye */}
+
+            <Input />
+            <Input />
+            <Input />
+            {/* Left Eye */}
+          </Grid>
+        </Paper>
+
+        <Button fullWidth variant="contained" type="submit">
           Submit
         </Button>
       </form>
@@ -230,7 +293,6 @@ const styleForGrid = {
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
-  gap: "60px",
   marginBottom: "20px",
 };
 
@@ -238,5 +300,4 @@ const styleForGridChilds = {
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
-  gap: "60px",
 };
