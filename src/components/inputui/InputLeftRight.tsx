@@ -6,14 +6,16 @@ import CustomInput from "./CustomInput";
 interface InputLeftRightProps {
   register: any;
   errors: Record<string, any>;
-  inputName: string;
+  inputOneName: string;
+  inputTwoName: string;
   labelName: string;
 }
 
 export default function InputLeftRight({
   register,
   errors,
-  inputName,
+  inputOneName,
+  inputTwoName,
   labelName,
 }: InputLeftRightProps) {
   return (
@@ -21,19 +23,19 @@ export default function InputLeftRight({
       {/* Row 1: Inputs 1 and 2 */}
       <Grid item xs={12} md={6}>
         <CustomInputWithLabel
-          {...register(inputName)}
+          {...register(inputOneName)}
           label={labelName}
-          placeholder="Enter value1"
+          placeholder={`Enter ${labelName} Right value`}
           type="number"
-          error={errors?.[inputName]?.message}
+          error={errors?.[inputOneName]?.message}
         />
       </Grid>
       <Grid item xs={12} md={6}>
         <CustomInput
-          {...register(inputName)}
-          placeholder="Enter value2"
+          {...register(inputTwoName)}
+          placeholder={`Enter ${labelName} Left value`}
           type="number"
-          error={errors?.[inputName]?.message}
+          error={errors?.[inputTwoName]?.message}
         />
       </Grid>
     </Grid>

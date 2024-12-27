@@ -10,7 +10,7 @@ interface HbRxInputProps {
 
 export default function HbRxInput({ register, errors }: HbRxInputProps) {
   return (
-    <Grid container spacing={3}>
+    <Grid container spacing={2}>
       {/* Row 1: Inputs 1 and 2 */}
       <Grid item xs={12} md={6}>
         <CustomInputWithLabel
