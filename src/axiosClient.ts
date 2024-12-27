@@ -9,6 +9,7 @@ import { getCookie } from "typescript-cookie";
 // Create an Axios instance with a base URL
 const axiosClient: AxiosInstance = axios.create({
   baseURL: "https://193.203.161.90:8001/api",
+  // baseURL: "http://127.0.0.1:8000/api",
   withCredentials: true,
 });
 
