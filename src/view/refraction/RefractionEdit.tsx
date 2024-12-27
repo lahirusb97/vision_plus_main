@@ -1,242 +1,49 @@
-import { useForm, Controller } from "react-hook-form";
-import CustomInputWithLabel from "../../components/CustomInputWithLabel";
-import CustomInput from "../../components/CustomInput";
-import { Grid, Box, Button } from "@mui/material";
+import React from "react";
+import { useForm } from "react-hook-form";
+import CustomInput from "../../components/inputui/CustomInput";
+import CustomInputWithLabel from "../../components/inputui/CustomInputWithLabel";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as Yup from "yup";
+import { Box, Button } from "@mui/material";
+import HbRxInput from "../../components/inputui/HbRxInput";
+import InputLeftRight from "../../components/inputui/InputLeftRight";
+
+// Validation Schema
+const validationSchema = Yup.object().shape({
+  hb_rx_right_dist: Yup.string().required("HB Rx Right Dist is required"),
+  hb_rx_left_dist: Yup.string().required("HB Rx Left Dist is required"),
+  hb_rx_left_near: Yup.string().required("HB Rx Left Near is required"),
+  hb_rx_right_near: Yup.string().required("HB Rx Right Near is required"),
+});
 
 export default function RefractionEdit() {
   const {
-    control,
+    register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    resolver: yupResolver(validationSchema),
+  });
 
   const onSubmit = (data) => {
-    console.log(data); // Handle form submission
+    console.log("Form Data: ", data);
   };
 
   return (
-    <Box sx={{ minWidth: "1000px" }}>
+    <Box sx={{ minWidth: "1000px", padding: "20px" }}>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div style={styleForGrid}>
-          <Controller
-            name="customerName"
-            control={control}
-            defaultValue=""
-            render={({ field }) => (
-              <CustomInputWithLabel
-                {...field}
-                label="Customer Name"
-                placeholder=""
-                fullWidth
-                type="text"
-              />
-            )}
-          />
-          <Controller
-            name="mobileName"
-            control={control}
-            defaultValue=""
-            render={({ field }) => (
-              <CustomInputWithLabel
-                {...field}
-                label="Mobile Name"
-                placeholder=""
-                fullWidth
-                type="text"
-              />
-            )}
-          />
-        </div>
+        <HbRxInput register={register} errors={errors} />
+        <InputLeftRight
+          register={register}
+          errors={errors}
+          inputName="ntc"
+          labelName="NTC"
+        />
 
-        <div style={styleForGrid}>
-          <div>
-            <Controller
-              name="hbRx"
-              control={control}
-              defaultValue=""
-              render={({ field }) => (
-                <CustomInputWithLabel
-                  {...field}
-                  label="HB Rx"
-                  placeholder=""
-                  fullWidth
-                  type="text"
-                />
-              )}
-            />
-            <Controller
-              name="customInput1"
-              control={control}
-              defaultValue=""
-              render={({ field }) => (
-                <CustomInput {...field} placeholder="" fullWidth type="text" />
-              )}
-            />
-          </div>
-          <div>
-            <Controller
-              name="customInput2"
-              control={control}
-              defaultValue=""
-              render={({ field }) => (
-                <CustomInput {...field} placeholder="" fullWidth type="text" />
-              )}
-            />
-            <Controller
-              name="customInput3"
-              control={control}
-              defaultValue=""
-              render={({ field }) => (
-                <CustomInput {...field} placeholder="" fullWidth type="text" />
-              )}
-            />
-          </div>
-        </div>
-
-        <div style={styleForGridChilds}>
-          <Controller
-            name="autoRef"
-            control={control}
-            defaultValue=""
-            render={({ field }) => (
-              <CustomInputWithLabel
-                {...field}
-                label="Auto Ref"
-                placeholder=""
-                fullWidth
-                type="text"
-              />
-            )}
-          />
-          <Controller
-            name="customInput4"
-            control={control}
-            defaultValue=""
-            render={({ field }) => (
-              <CustomInput {...field} placeholder="" fullWidth type="text" />
-            )}
-          />
-        </div>
-
-        <div style={styleForGridChilds}>
-          <Controller
-            name="ntc"
-            control={control}
-            defaultValue=""
-            render={({ field }) => (
-              <CustomInputWithLabel
-                {...field}
-                label="NTC"
-                placeholder=""
-                fullWidth
-                type="text"
-              />
-            )}
-          />
-          <Controller
-            name="customInput5"
-            control={control}
-            defaultValue=""
-            render={({ field }) => (
-              <CustomInput {...field} placeholder="" fullWidth type="text" />
-            )}
-          />
-        </div>
-
-        <div style={styleForGridChilds}>
-          <Controller
-            name="vaWithoutGlass"
-            control={control}
-            defaultValue=""
-            render={({ field }) => (
-              <CustomInputWithLabel
-                {...field}
-                label="VA Without Glass"
-                placeholder=""
-                fullWidth
-                type="text"
-              />
-            )}
-          />
-          <Controller
-            name="customInput6"
-            control={control}
-            defaultValue=""
-            render={({ field }) => (
-              <CustomInput {...field} placeholder="" fullWidth type="text" />
-            )}
-          />
-        </div>
-
-        <div style={styleForGridChilds}>
-          <Controller
-            name="vaWithoutPH"
-            control={control}
-            defaultValue=""
-            render={({ field }) => (
-              <CustomInputWithLabel
-                {...field}
-                label="VA Without P/H"
-                placeholder=""
-                fullWidth
-                type="text"
-              />
-            )}
-          />
-          <Controller
-            name="customInput7"
-            control={control}
-            defaultValue=""
-            render={({ field }) => (
-              <CustomInput {...field} placeholder="" fullWidth type="text" />
-            )}
-          />
-        </div>
-
-        <div style={styleForGridChilds}>
-          <Controller
-            name="vaWithGlass"
-            control={control}
-            defaultValue=""
-            render={({ field }) => (
-              <CustomInputWithLabel
-                {...field}
-                label="VA Wit Glass"
-                placeholder=""
-                fullWidth
-                type="text"
-              />
-            )}
-          />
-          <Controller
-            name="customInput8"
-            control={control}
-            defaultValue=""
-            render={({ field }) => (
-              <CustomInput {...field} placeholder="" fullWidth type="text" />
-            )}
-          />
-        </div>
-
-        <Button variant="contained" type="submit">
+        <Button type="submit" variant="contained" color="primary">
           Submit
         </Button>
       </form>
     </Box>
   );
 }
-
-const styleForGrid = {
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between",
-  gap: "60px",
-  marginBottom: "20px",
-};
-
-const styleForGridChilds = {
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between",
-  gap: "60px",
-};

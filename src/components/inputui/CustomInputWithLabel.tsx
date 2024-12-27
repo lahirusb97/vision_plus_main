@@ -38,7 +38,6 @@ interface CustomInputProps {
   label: string;
   placeholder: string;
   fullWidth?: boolean;
-  value: string | number;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   type: string;
 }
