@@ -1,5 +1,10 @@
+<<<<<<< HEAD
+=======
+import React, { useState } from "react";
+>>>>>>> main
 import {
   Box,
+  CircularProgress,
   Paper,
   Table,
   TableBody,
@@ -7,9 +12,20 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+<<<<<<< HEAD
   TextField,
+=======
+  TableFooter,
+  TablePagination,
+  TextField,
+  Typography,
+>>>>>>> main
   useTheme,
+  IconButton,
 } from "@mui/material";
+import useData from "../../hooks/useData";
+import { useNavigate } from "react-router";
+import { Forward, NavigateBefore, NavigateNext } from "@mui/icons-material";
 
 // Customer Name Field Component
 const CustomerNameField = () => {
@@ -68,10 +84,12 @@ const CustomerNameField = () => {
 
 // Interface for Refraction Data
 interface RefractionData {
-  name: string;
-  mobileNumber: string;
-  refractionNumber: string;
+  id: number;
+  customer_full_name: string;
+  customer_mobile: string;
+  refraction_number: string;
 }
+<<<<<<< HEAD
 // Sample Data
 const data: RefractionData[] = [
   { name: "John Doe", mobileNumber: "123-456-7890", refractionNumber: "RF1234" },
@@ -92,6 +110,60 @@ export default function RefractionDetails() {
   return (
     <Box sx={{ padding: 2 }}>
      
+=======
+
+export default function RefractionDetails() {
+  const theme = useTheme();
+  const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const {
+    data: refractionList,
+    loading: refractionListLoading,
+    error: refractionListError,
+    nextPage,
+    prevPage,
+    refresh,
+  } = useData<RefractionData>("refractions/");
+
+  // Safely access data and meta-information
+  const results = refractionList?.results || [];
+  const count = refractionList?.count || 0;
+
+  // Filtered rows based on the search query
+  const filteredRows = results.filter(
+    (row) =>
+      row.customer_full_name
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase()) ||
+      row.customer_mobile.includes(searchQuery) ||
+      row.refraction_number.includes(searchQuery)
+  );
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const handleNextPage = () => {
+    if (nextPage) nextPage();
+  };
+
+  const handlePrevPage = () => {
+    if (prevPage) prevPage();
+  };
+
+  return (
+    <Box sx={{ padding: 2 }}>
+      {/* Search Bar */}
+      <TextField
+        label="Search"
+        variant="outlined"
+        fullWidth
+        margin="normal"
+        value={searchQuery}
+        onChange={handleSearchChange}
+      />
+>>>>>>> main
 
       {/* Table Container */}
       <TableContainer
@@ -99,11 +171,12 @@ export default function RefractionDetails() {
         sx={{
           boxShadow: 3,
           borderRadius: 2,
-          overflowX: "auto", // Ensures responsiveness on smaller screens
+          overflowX: "auto",
         }}
       >
 <Table sx={{ minWidth: 650 }} aria-label="Refraction Details Table">
           <TableHead>
+<<<<<<< HEAD
             <TableRow sx={{ backgroundColor: headerBgColor }}>
               <TableCell sx={{ fontWeight: "bold", color: theme.palette.text.primary }}>
                 Name
@@ -112,23 +185,81 @@ export default function RefractionDetails() {
                 Mobile Number
               </TableCell>
               <TableCell sx={{ fontWeight: "bold", color: theme.palette.text.primary }}>
+=======
+            <TableRow sx={{ backgroundColor: theme.palette.grey[200] }}>
+              <TableCell sx={{ fontWeight: "bold" }}>Name</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Mobile Number</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>
+>>>>>>> main
                 Refraction Number
               </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {data.map((row, index) => (
-              <TableRow key={index}>
-                <TableCell>{row.name}</TableCell>
-                <TableCell>{row.mobileNumber}</TableCell>
-                <TableCell>{row.refractionNumber}</TableCell>
+            {refractionListLoading ? (
+              <TableRow>
+                <TableCell colSpan={3} align="center">
+                  <CircularProgress />
+                </TableCell>
               </TableRow>
-            ))}
+            ) : filteredRows.length > 0 ? (
+              filteredRows.map((row) => (
+                <TableRow
+                  onClick={() =>
+                    navigate(`/refraction/${row.refraction_number}`)
+                  }
+                  sx={{
+                    cursor: "pointer",
+                    "&:hover": { backgroundColor: theme.palette.grey[600] },
+                  }}
+                  key={row.id}
+                >
+                  <TableCell>{row.customer_full_name}</TableCell>
+                  <TableCell>{row.customer_mobile}</TableCell>
+                  <TableCell>{row.refraction_number}</TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={3} align="center">
+                  No matching records found
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </TableContainer>
+<<<<<<< HEAD
        {/* Customer Name Field */}
        <CustomerNameField />
+=======
+
+      {/* Pagination */}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginTop: 2,
+        }}
+      >
+        <IconButton
+          onClick={handlePrevPage}
+          disabled={!refractionList?.previous || refractionListLoading}
+        >
+          <NavigateBefore />
+        </IconButton>
+        <Typography>
+          Showing {results.length} of {count} Pations
+        </Typography>
+        <IconButton
+          onClick={handleNextPage}
+          disabled={!refractionList?.next || refractionListLoading}
+        >
+          <NavigateNext />
+        </IconButton>
+      </Box>
+>>>>>>> main
     </Box>
   );
 }
