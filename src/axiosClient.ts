@@ -4,6 +4,7 @@ import axios, {
   AxiosError,
   InternalAxiosRequestConfig,
 } from "axios";
+import { getCookie } from "typescript-cookie";
 
 // Create an Axios instance with a base URL
 const axiosClient: AxiosInstance = axios.create({
@@ -13,9 +14,9 @@ const axiosClient: AxiosInstance = axios.create({
 
 // Request interceptor to add Authorization header
 axiosClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-  const token = localStorage.getItem("ACCESS_TOKEN");
+  const token = getCookie("VISION_ACCESS_TOKEN");
   if (token && config.headers) {
-    config.headers.Authorization = `Bearer ${token}`;
+    config.headers.Authorization = `token ${token}`;
   }
   return config;
 });
@@ -27,12 +28,10 @@ axiosClient.interceptors.response.use(
     if (error.response) {
       const { status } = error.response;
       if (status === 401) {
-        localStorage.removeItem("ACCESS_TOKEN");
+        // Don't remove from localStorage since we're using cookies
       }
-    } else {
-      console.error("Network error or no response:", error);
     }
-    throw error;
+    return Promise.reject(error);
   }
 );
 

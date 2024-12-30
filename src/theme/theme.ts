@@ -9,6 +9,9 @@ const theme = createTheme({
         primary: {
           main: yellow[900],
         },
+        secondary: {
+          main: yellow[600],
+        },
       },
     },
     dark: {
