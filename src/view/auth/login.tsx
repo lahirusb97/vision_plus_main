@@ -60,7 +60,10 @@ export default function Login() {
       [name]: value,
     }));
   };
-
+  const deleteCookie = (cookieName: string) => {
+    document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+    alert(`Cookie ${cookieName} deleted!`);
+  };
   return (
     <Box
       sx={{
@@ -215,6 +218,9 @@ export default function Login() {
           Register Now ?
         </Typography>
       </Paper>
+      <Button onClick={() => deleteCookie("VISION_ACCESS_TOKEN")}>
+        Delete
+      </Button>
     </Box>
   );
 }
