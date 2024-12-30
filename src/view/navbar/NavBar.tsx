@@ -11,6 +11,7 @@ import ReportsIcon from "../../assets/icons/navbar/Reports.png";
 import StockIcon from "../../assets/icons/navbar/Stock.png";
 import TransationIcon from "../../assets/icons/navbar/Transation.png";
 import UserIcon from "../../assets/icons/navbar/User.png";
+import TransactionNav from "../transaction/TransactionNav";
 import RefractionNav from "../refraction/RefractionNav";
 import { Paper } from "@mui/material";
 
@@ -57,7 +58,7 @@ export default function NavBar() {
   // Array of Icons and Labels (dynamically derived)
   const tabs = [
     { icon: RefractionIcon, label: "Refraction", nav: RefractionNav },
-    { icon: TransationIcon, label: "Transaction", nav: RefractionNav },
+    { icon: TransationIcon, label: "Transaction", nav: TransactionNav },
     { icon: MasterIcon, label: "Master", nav: RefractionNav },
     { icon: AccountIcon, label: "Account", nav: RefractionNav },
     { icon: StockIcon, label: "Stock", nav: RefractionNav },

@@ -1,8 +1,11 @@
-import RefractionDetails from '../../view/refraction/RefractionDetails'
+import RefractionDetails from "../../view/refraction/RefractionDetails";
 import { RouteObject } from "react-router";
 import RefractionNumber from "../../view/refraction/RefractionNumber";
-import RefractionEdit from "../../view/refraction/RefractionEdit";
 
+import { lazy, Suspense } from "react";
+const RefractionEdit = lazy(
+  () => import("../../view/refraction/RefractionEdit")
+);
 export const refractionRoutes: RouteObject[] = [
   {
     path: "",
@@ -10,10 +13,14 @@ export const refractionRoutes: RouteObject[] = [
   },
   {
     path: "refraction/details",
-    element: <RefractionDetails/>,
+    element: <RefractionDetails />,
   },
   {
     path: "refraction/:id",
-    element: <RefractionEdit />,
+    element: (
+      <Suspense fallback={<div>Loading...</div>}>
+        <RefractionEdit />
+      </Suspense>
+    ),
   },
 ];
