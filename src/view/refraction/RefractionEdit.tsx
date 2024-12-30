@@ -57,14 +57,16 @@ export default function RefractionEdit() {
         ...data,
         refraction: id,
       });
-      console.log({
-        ...data,
-        refraction: parseInt(id),
-      });
 
-      console.log(responseData);
+      console.log((await responseData).status);
     } catch (error) {
-      console.log(error);
+      if (error.response) {
+        // Extract and log backend error details
+        console.error("Backend Error:", error.response.data.refraction[0]); // Full error details
+      } else {
+        // Handle network or unexpected errors
+        console.error("Request Error:", error.message);
+      }
     }
   };
 
