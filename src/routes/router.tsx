@@ -29,18 +29,6 @@ export const router = createBrowserRouter([
         ),
         children: refractionRoutes,
       },
-    ],
-  },
-
-
-  {
-    path: "/",
-    element: (
-      <Suspense fallback={<div>Loading...</div>}>
-        <LoginProtectedRoute />
-      </Suspense>
-    ),
-    children: [
       {
         path: "transaction",
         element: (
@@ -52,6 +40,7 @@ export const router = createBrowserRouter([
       },
     ],
   },
+
   {
     path: "login",
     element: (

@@ -1,35 +1,29 @@
-import FactoryInvoice from "../../view/transaction/factoryInvoice";
+import Factoryinvoice from "../../view/transaction/FactoryInvoice";
 import { RouteObject } from "react-router";
-import NormalInvoice from "../../view/transaction/normalInvoice";
+import NormalInvoice from "../../view/transaction/NormalInvoice";
 import EditInvoice from "../../view/transaction/EditInvoice";
 import DeleteInvoice from "../../view/transaction/DeleteInvoice";
 
 import { lazy, Suspense } from "react";
-const TransactionEdit = lazy(() => import("../../view/transaction/TransactionEdit"));
+const TransactionEdit = lazy(
+  () => import("../../view/transaction/TransactionEdit")
+);
 
 export const transactionRoutes: RouteObject[] = [
   {
-    path: "",
-    element: <FactoryInvoice />,
+    path: "factory_invoice",
+    element: <Factoryinvoice />,
   },
   {
-    path: "",
+    path: "normal_invoice",
     element: <NormalInvoice />,
   },
   {
-    path: "",
+    path: "edit_invoice",
     element: <EditInvoice />,
   },
   {
-    path: "",
+    path: "delete_invoice",
     element: <DeleteInvoice />,
-  },
-  {
-    path: "transaction/",
-    element: (
-      <Suspense fallback={<div>Loading...</div>}>
-        <TransactionEdit />
-      </Suspense>
-    ),
   },
 ];
