@@ -1,7 +1,18 @@
-import { useForm, Controller } from "react-hook-form";
-import CustomInputWithLabel from "../../components/CustomInputWithLabel";
-import CustomInput from "../../components/CustomInput";
-import { Grid, Box, Button } from "@mui/material";
+import React from "react";
+import { useForm } from "react-hook-form";
+import CustomInput from "../../components/inputui/CustomInput";
+import CustomInputWithLabel from "../../components/inputui/CustomInputWithLabel";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as Yup from "yup";
+import { Box, Button } from "@mui/material";
+import HbRxInput from "../../components/inputui/HbRxInput";
+import InputLeftRight from "../../components/inputui/InputLeftRight";
+import { useParams } from "react-router";
+import EyeTestTable from "../../components/EyeTestTable";
+import { usePostApiCall } from "../../hooks/usePostApiCall";
+import axiosClient from "../../axiosClient";
+
+// Validation Schema
 
 export default function RefractionEdit() {
   const { id } = useParams();
@@ -36,10 +47,27 @@ export default function RefractionEdit() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    resolver: yupResolver(validationSchema),
+  });
 
-  const onSubmit = (data) => {
-    console.log(data); // Handle form submission
+  const onSubmit = async (data) => {
+    try {
+      const responseData = axiosClient.post(`/refraction-details/create/`, {
+        ...data,
+        refraction: id,
+      });
+
+      console.log((await responseData).status);
+    } catch (error) {
+      if (error.response) {
+        // Extract and log backend error details
+        console.error("Backend Error:", error.response.data.refraction[0]); // Full error details
+      } else {
+        // Handle network or unexpected errors
+        console.error("Request Error:", error.message);
+      }
+    }
   };
 
   return (
