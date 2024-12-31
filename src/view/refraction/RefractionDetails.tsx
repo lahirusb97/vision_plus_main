@@ -20,6 +20,57 @@ import useData from "../../hooks/useData";
 import { useNavigate } from "react-router";
 import { Forward, NavigateBefore, NavigateNext } from "@mui/icons-material";
 
+// Customer Name Field Component
+const CustomerNameField = () => {
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        textAlign: "right",
+        marginTop: 4,
+        gap: 0,
+      }}
+    >
+      {/* Label */}
+      <Box
+        component="span"
+        sx={{
+          fontWeight: "bold",
+          fontSize: "1rem",
+          color: "white",
+          padding: "17px 20px",
+          backgroundColor: "gray",
+          borderRadius: 1,
+          display: "inline-block",
+          textAlign: "right",
+          minWidth: "200px",
+          fontFamily: "Arial",
+        }}
+      >
+        Customer Name
+      </Box>
+      {/* Input Field */}
+      <TextField
+        defaultValue="Mr. Nimal Silva"
+        variant="outlined"
+        fullWidth
+        InputProps={{
+          readOnly: false,
+        }}
+        sx={{
+          "& .MuiOutlinedInput-root": {
+            backgroundColor: "#f5f5f5",
+            borderRadius: 1,
+            minwidth: "200px",
+          },
+        }}
+      />
+    </Box>
+  );
+};
+
+// Interface for Refraction Data
 interface RefractionData {
   id: number;
   customer_full_name: string;
@@ -88,7 +139,7 @@ export default function RefractionDetails() {
           overflowX: "auto",
         }}
       >
-        <Table sx={{ minWidth: 650 }} aria-label="refraction details table">
+        <Table sx={{ minWidth: 650 }} aria-label="Refraction Details Table">
           <TableHead>
             <TableRow sx={{ backgroundColor: theme.palette.grey[200] }}>
               <TableCell sx={{ fontWeight: "bold" }}>Name</TableCell>
