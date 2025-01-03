@@ -121,6 +121,7 @@ export default function RefractionDetails() {
   return (
     <Box sx={{ padding: 2 }}>
       {/* Search Bar */}
+
       <TextField
         label="Search"
         variant="outlined"
