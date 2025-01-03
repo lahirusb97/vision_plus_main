@@ -13,6 +13,7 @@ import TransationIcon from "../../assets/icons/navbar/Transation.png";
 import UserIcon from "../../assets/icons/navbar/User.png";
 import RefractionNav from "../refraction/RefractionNav";
 import { Paper } from "@mui/material";
+import ChannelNav from "../channel/ChannelNav";
 
 // TabPanel Component
 
@@ -61,7 +62,7 @@ export default function NavBar() {
     { icon: MasterIcon, label: "Master", nav: RefractionNav },
     { icon: AccountIcon, label: "Account", nav: RefractionNav },
     { icon: StockIcon, label: "Stock", nav: RefractionNav },
-    { icon: ChanneltIcon, label: "Channel", nav: RefractionNav },
+    { icon: ChanneltIcon, label: "Channel", nav: ChannelNav },
     { icon: ReportsIcon, label: "Reports", nav: RefractionNav },
     { icon: MessangerIcon, label: "Messenger", nav: RefractionNav },
     { icon: UserIcon, label: "User", nav: RefractionNav },
