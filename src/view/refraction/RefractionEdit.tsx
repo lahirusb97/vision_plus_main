@@ -18,28 +18,50 @@ export default function RefractionEdit() {
   const { id } = useParams();
 
   const validationSchema = Yup.object().shape({
-    hb_rx_right_dist: Yup.string(),
-    hb_rx_left_dist: Yup.string(),
-    hb_rx_right_near: Yup.string(),
-    hb_rx_left_near: Yup.string(),
-    auto_ref_right: Yup.string(),
-    auto_ref_left: Yup.string(),
-    ntc_right: Yup.string(),
-    ntc_left: Yup.string(),
-    va_without_glass_right: Yup.string(),
-    va_without_glass_left: Yup.string(),
-    va_without_ph_right: Yup.string(),
-    va_without_ph_left: Yup.string(),
-    va_with_glass_right: Yup.string(),
-    va_with_glass_left: Yup.string(),
-    right_eye_dist_sph: Yup.string(),
-    right_eye_dist_cyl: Yup.string(),
-    right_eye_dist_axis: Yup.string(),
-    right_eye_near_sph: Yup.string(),
-    left_eye_dist_sph: Yup.string(),
-    left_eye_dist_cyl: Yup.string(),
-    left_eye_dist_axis: Yup.string(),
-    left_eye_near_sph: Yup.string(),
+    hb_rx_right_dist: Yup.string().required("Right Distance is required"),
+    hb_rx_left_dist: Yup.string().required("Left Distance is required"),
+    hb_rx_right_near: Yup.string().required("Right Near is required"),
+    hb_rx_left_near: Yup.string().required("Left Near is required"),
+    auto_ref_right: Yup.string().required("Auto Ref Right is required"),
+    auto_ref_left: Yup.string().required("Auto Ref Left is required"),
+    ntc_right: Yup.string().required("NTC Right is required"),
+    ntc_left: Yup.string().required("NTC Left is required"),
+    va_without_glass_right: Yup.string().required(
+      "VA Without Glass Right is required"
+    ),
+    va_without_glass_left: Yup.string().required(
+      "VA Without Glass Left is required"
+    ),
+    va_without_ph_right: Yup.string().required(
+      "VA Without P/H Right is required"
+    ),
+    va_without_ph_left: Yup.string().required(
+      "VA Without P/H Left is required"
+    ),
+    va_with_glass_right: Yup.string().required(
+      "VA With Glass Right is required"
+    ),
+    va_with_glass_left: Yup.string().required("VA With Glass Left is required"),
+    right_eye_dist_sph: Yup.string().required(
+      "Right Eye Distance Sph is required"
+    ),
+    right_eye_dist_cyl: Yup.string().required(
+      "Right Eye Distance Cyl is required"
+    ),
+    right_eye_dist_axis: Yup.string().required(
+      "Right Eye Distance Axis is required"
+    ),
+    right_eye_near_sph: Yup.string().required("Right Eye Near Sph is required"),
+    left_eye_dist_sph: Yup.string().required(
+      "Left Eye Distance Sph is required"
+    ),
+    left_eye_dist_cyl: Yup.string().required(
+      "Left Eye Distance Cyl is required"
+    ),
+    left_eye_dist_axis: Yup.string().required(
+      "Left Eye Distance Axis is required"
+    ),
+    left_eye_near_sph: Yup.string().required("Left Eye Near Sph is required"),
     remark: Yup.string(),
   });
 
@@ -52,13 +74,17 @@ export default function RefractionEdit() {
   });
 
   const onSubmit = async (data) => {
-    try {
-      const responseData = axiosClient.post(`/refraction-details/create/`, {
-        ...data,
-        refraction: id,
-      });
+    console.log(data);
 
-      console.log((await responseData).status);
+    try {
+      const responseData = await axiosClient.post(
+        `/refraction-details/create/`,
+        {
+          ...data,
+          refraction: parseInt(id),
+        }
+      );
+      console.log(responseData.status);
     } catch (error) {
       if (error.response) {
         // Extract and log backend error details
@@ -73,6 +99,13 @@ export default function RefractionEdit() {
   return (
     <Box sx={{ minWidth: "1000px", padding: "20px" }}>
       <form onSubmit={handleSubmit(onSubmit)}>
+        {errors && Object.keys(errors).length > 0 && (
+          <div>
+            {Object.keys(errors).map((key) => (
+              <p key={key}>{errors[key].message}</p>
+            ))}
+          </div>
+        )}
         <HbRxInput register={register} errors={errors} />
 
         <InputLeftRight

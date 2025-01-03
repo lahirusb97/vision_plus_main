@@ -61,9 +61,9 @@ export default function EyeTestTable({ register }) {
           {/* Right Eye */}
           {/* Left Eye */}
 
-          <Input type="number" {...register("right_eye_near_sph")} />
-          <Input type="number" {...register("right_eye_near_cyl")} />
-          <Input type="number" {...register("right_eye_near_axis")} />
+          <Input type="number" {...register("left_eye_near_sph")} />
+          <Input type="number" {...register("left_eye_near_cyl")} />
+          <Input type="number" {...register("left_eye_near_axis")} />
           {/* Left Eye */}
         </Grid>
       </Paper>
