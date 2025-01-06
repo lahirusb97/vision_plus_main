@@ -17,7 +17,6 @@ import ChannelNav from "../channel/ChannelNav";
 
 import TransactionNav from "../transaction/TransactionNav";
 
-
 // TabPanel Component
 
 function TabPanel(props: {
