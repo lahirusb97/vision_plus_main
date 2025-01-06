@@ -1,55 +1,78 @@
-
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Box,
   Button,
   TextField,
+  MenuItem,
   Paper,
   Typography,
-  List,
-  ListItem,
-  ListItemText,
+  IconButton,
+  Modal,
+  Card,
+  CardContent,
+  Divider,
+  Grid,
 } from "@mui/material";
+import { DeleteForever, Edit, Info } from "@mui/icons-material";
+import axiosClient from "../../axiosClient";
+import useGetDoctors from "../../hooks/useGetDoctors";
 
-export default function Doctor() {
-  const [doctorName, setDoctorName] = useState("");
-  const [doctorList, setDoctorList] = useState([]);
+interface Doctor {
+  id: number;
+  name: string;
+  specialization: string;
+  contact_info: string;
+  status: string;
+}
 
-// Load data from localStorage on component mount
-useEffect(() => {
-  const storedDoctors = JSON.parse(localStorage.getItem("doctorList") || "[]");
-  setDoctorList(storedDoctors);
-}, []);
+const Doctor = () => {
+  const [doctorName, setDoctorName] = useState("Dr. Smith");
+  const [specialization, setSpecialization] = useState("Cardiologist");
+  const [contactInfo, setContactInfo] = useState("dr.smith@hospital.com");
+  const [status, setStatus] = useState("available");
 
+  const {
+    data: doctorList,
+    loading: loadingDoctors,
+    error: errorDoctors,
+    refresh: refreshDoctors,
+  } = useGetDoctors();
 
-  // Function to add a doctor
-const handleAddDoctor = () => {
-  if (doctorName.trim()) {
-    const updatedList = [...doctorList, doctorName];
-    setDoctorList(updatedList);
-    setDoctorName(""); // Clear the input field
-    localStorage.setItem("doctorList", JSON.stringify(updatedList)); // Save to localStorage
-  }
-};
-
+  const handleAddDoctor = async () => {
+    if (doctorName.trim() && specialization.trim() && contactInfo.trim()) {
+      const newDoctor = {
+        name: doctorName,
+        specialization,
+        contact_info: contactInfo,
+        status,
+      };
+      try {
+        await axiosClient.post("/doctors/", newDoctor);
+        refreshDoctors();
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
+  const handleDeleteDoctor = async (doctorId: number) => {
+    try {
+      await axiosClient.delete(`/doctors/${doctorId}`);
+      refreshDoctors();
+    } catch (error) {
+      console.error(error);
+    }
+  };
   return (
     <Box
       sx={{
-        padding: 1,
-        maxWidth: 600,
+        padding: 3,
+        maxWidth: 1000,
         margin: "auto",
         textAlign: "center",
-        
       }}
     >
-      {/* Buttons */}
-      <Box sx={{ display: "flex", gap: 2, justifyContent: "center", mb: 3,  }}>
-        
-      </Box>
-
-      {/* Input Field and Add Button */}
-      <Box sx={{ display: "flex", gap: 2, mb: 3,width: "500px", margin:2 }}>
-      
+      {/* Input Fields */}
+      <Box sx={{ mb: 4, display: "flex", flexWrap: "wrap", gap: 2 }}>
         <TextField
           fullWidth
           label="Doctor Name"
@@ -57,35 +80,100 @@ const handleAddDoctor = () => {
           value={doctorName}
           onChange={(e) => setDoctorName(e.target.value)}
         />
+        <TextField
+          fullWidth
+          label="Specialization"
+          variant="outlined"
+          value={specialization}
+          onChange={(e) => setSpecialization(e.target.value)}
+        />
+        <TextField
+          fullWidth
+          label="Contact Info"
+          variant="outlined"
+          value={contactInfo}
+          onChange={(e) => setContactInfo(e.target.value)}
+        />
+        <TextField
+          fullWidth
+          select
+          label="Status"
+          variant="outlined"
+          value={status}
+          onChange={(e) => setStatus(e.target.value)}
+        >
+          <MenuItem value="available">Available</MenuItem>
+          <MenuItem value="unavailable">Unavailable</MenuItem>
+        </TextField>
         <Button
-        fullWidth
+          fullWidth
           variant="contained"
           sx={{
             textTransform: "capitalize",
-            background: "linear-gradient(to right, #f093fb, #f5576c)",
-            width: "500px",
-            
+            background: "linear-gradient(to right, #E8C2F3 70%, #D4F492)",
           }}
           onClick={handleAddDoctor}
         >
-          ADD
+          Add Doctor
         </Button>
       </Box>
 
       {/* Doctor List */}
-      <Paper sx={{ margin:2,  padding: 1, textAlign: "left",background: "linear-gradient(to right,rgb(61, 123, 165),rgb(255, 247, 248))",  }}>
-        
-        <List>
-          {doctorList.map((name, index) => (
-            <ListItem key={index}>
-              <ListItemText primary={name} />
-            </ListItem>
+      <Typography variant="h5" sx={{ mb: 2 }}>
+        Doctor List
+      </Typography>
+      <Box
+        sx={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: 2,
+          justifyContent: "center",
+        }}
+      >
+        {doctorList &&
+          doctorList.map((doctor) => (
+            <Paper
+              key={doctor.id}
+              sx={{
+                width: 600,
+                padding: 2,
+                textAlign: "left",
+                background:
+                  "linear-gradient(to right, rgb(185, 203, 227), rgb(226, 226, 226))",
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+                gap: 1,
+              }}
+            >
+              <Typography variant="h6">{doctor.name}</Typography>
+              <Typography variant="body2">
+                <strong>Specialization:</strong> {doctor.specialization}
+              </Typography>
+              <Typography variant="body2">
+                <strong>Status:</strong> {doctor.status}
+              </Typography>
+              <Box
+                sx={{ display: "flex", justifyContent: "space-between", mt: 1 }}
+              >
+                <IconButton color="secondary">
+                  <Edit />
+                </IconButton>
+                <IconButton
+                  onClick={() => {
+                    handleDeleteDoctor(doctor.id);
+                  }}
+                  color="error"
+                >
+                  <DeleteForever />
+                </IconButton>
+              </Box>
+            </Paper>
           ))}
-        </List>
-      </Paper>
+      </Box>
     </Box>
   );
-}
-  
-  
-  
+};
+
+export default Doctor;
