@@ -38,6 +38,15 @@ export const router = createBrowserRouter([
         ),
         children: channelRoutes,
       },
+      {
+        path: "channel_invoice",
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <ProtectedChildRoute />
+          </Suspense>
+        ),
+        children: channelRoutes,
+      },
     ],
   },
   {

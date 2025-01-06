@@ -5,6 +5,7 @@ export default function ChannelNav() {
     <>
       <NavButton name="Doctor" path="/channel/doctor" />
       <NavButton name="Channel" path="/channel" />
+      <NavButton name="Channel_Invoice" path="/channel/channel_invoice" />
     </>
   );
 }
