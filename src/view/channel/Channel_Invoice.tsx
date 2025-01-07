@@ -1,137 +1,141 @@
-import React from "react";
+import React from 'react';
 import {
-  Box,
   Typography,
-  Paper,
-  Grid,
   Table,
   TableBody,
   TableCell,
   TableContainer,
+  TableHead,
   TableRow,
-  Button,
-  TextField,
-  
-} from "@mui/material";
+  Paper,
+  Box,
+} from '@mui/material';
 
-function Channel_Invoice() {
+const Channel_Invoice = () => {
   return (
     <Box
       sx={{
-        padding: 4,
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        
-        
+        padding: '20px',
+        maxWidth: '800px',
+        margin: 'auto',
+        border: '1px solid black',
+        borderRadius: '8px',
+        marginTop:'20px',
       }}
     >
-      <Paper elevation={3} sx={{ width: "600px", padding: 3, border:"1px solid black", }}>
-        <Typography variant="h6" align="center">
-          VISION PLUS OPTICIANS (PVT) LTD
-        </Typography>
-        <Typography variant="subtitle2" align="center">
-          34, Aluthgama Road, Mathugama
-        </Typography>
-        <Typography variant="subtitle2" align="center">
-          November 6, 2024 | Tel: 034-2234569 / 071-7353639
-        </Typography>
+      
+      <TableContainer>
+      <Typography variant="h6" align="center" gutterBottom sx={{ fontWeight: "bold" }}>
+        VISION PLUS OPTICLANS (PVT) LTD
+      </Typography>
+      <Typography align="center">Tel: 034 2247354 / 077 7854695</Typography>
 
-        <Box mt={2} display="flex" pl={2} gap={2}>
-        <Typography variant="body2">
-                Channel No: <strong>12345</strong>
-              </Typography>
-
-              <Typography variant="body2" paddingLeft={20}>
-                Channel Date: <strong>2024-11-06</strong>
-              </Typography>
-
-        </Box>
-
-        <Box mt={2}>
-        <TableContainer>
-            <Table size="small">
-              <TableBody>
-                <TableRow>
-                  <TableCell>Name of Doctor</TableCell>
-                  <TableCell>
-                    <TextField
-                      variant="outlined"
-                      size="small"
-                      fullWidth
-                      name="doctorName"
-
-                    />
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>Consultant Fee</TableCell>
-                  <TableCell>
-                    <TextField
-                      variant="outlined"
-                      size="small"
-                      fullWidth
-                      name="consultantFee"
-                      type="number"
-                      
-                    />
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>Establishment Fee</TableCell>
-                  <TableCell>
-                    <TextField
-                      variant="outlined"
-                      size="small"
-                      fullWidth
-                      name="establishmentFee"
-                      type="number"
-                     
-                    />
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>Total</TableCell>
-                  <TableCell>
-                    <TextField
-                      variant="outlined"
-                      size="small"
-                      fullWidth
-                      name="total"
-                      type="number"
-                     
-                      InputProps={{ readOnly: true }}
-                    />
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>Paid</TableCell>
-                  <TableCell>
-                    <TextField
-                      variant="outlined"
-                      size="small"
-                      fullWidth
-                      name="paid"
-                      type="number"
-                      
-                    />
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Box>
+      <Table>
+        <TableBody>
           
-        
+          <TableRow sx={{ gap:'2' }}>
+            <TableCell align="left" sx={{ border: "none", padding: "5px 10px " }}>
+              <Typography>
+                <strong>Invoice No:</strong> 584644
+              </Typography>
+            </TableCell>
+            <TableCell align="left" sx={{ border: "none", padding: "5px 10px" }}>
+              <Typography>No: 34, Aluthgama Road,</Typography>
+            </TableCell>
+          </TableRow>
 
-        <Box mt={3} display="flex" justifyContent="center">
-          <Button variant="contained" color="primary">
-            Print Invoice
-          </Button>
-        </Box>
-      </Paper>
+          <TableRow>
+            <TableCell align="left" sx={{ border: "none", padding: "5px 10px" }}>
+              <Typography>
+                <strong>Customer Name:</strong> Dinuka Sadaruwan
+              </Typography>
+            </TableCell>
+            <TableCell align="left" sx={{ border: "none", padding: "5px 10px" }}>
+              <Typography>Mathugama,</Typography>
+            </TableCell>
+          </TableRow>
+
+          <TableRow>
+            <TableCell align="left" sx={{ border: "none", padding: "5px 10px" }}>
+              <Typography>
+                <strong>Address:</strong> No: 25/A Agalawatte Road, Yatiyana
+              </Typography>
+            </TableCell>
+            <TableCell align="left" sx={{ border: "none", padding: "5px 10px" }}>
+              <Typography>Sri Lanka</Typography>
+            </TableCell>
+          </TableRow>
+
+          <TableRow>
+            <TableCell align="left" sx={{ border: "none", padding: "5px 10px " }}>
+              <Typography>
+                <strong>Phone Number:</strong> +9477152625
+              </Typography>
+            </TableCell>
+            <TableCell align="left" sx={{ border: "none", padding: "5px 10px" }}>
+              <Typography>November 05th, 2024</Typography>
+            </TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
+    </TableContainer>
+      
+
+      
+      <TableContainer sx={{ marginTop:'30px', }} component={Paper}>
+        <Table sx={{ border:'1px solid black'}}>
+          <TableHead >
+            <TableRow sx={{ borderBottom:"1px solid black" }} >
+              <TableCell sx={{ borderBottom:"1px solid black" }}><strong>Items Name</strong></TableCell>
+              <TableCell sx={{ borderBottom:"1px solid black" }}align="center"><strong>Quantity</strong></TableCell>
+              <TableCell sx={{ borderBottom:"1px solid black" }}align="right"><strong>Price</strong></TableCell>
+              <TableCell sx={{ borderBottom:"1px solid black" }}align="right"><strong>Last Price</strong></TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            <TableRow sx={{ borderBottom:'1px solid black' }}>
+              <TableCell sx={{ borderBottom:"1px solid black" }}><strong>Blucut Photocromic</strong></TableCell>
+              <TableCell sx={{ borderBottom:"1px solid black" }}align="center"><strong>1</strong></TableCell>
+              <TableCell sx={{ borderBottom:"1px solid black" }}align="right"><strong>5000.00</strong></TableCell>
+              <TableCell sx={{ borderBottom:"1px solid black" }}align="right"><strong>5000.00</strong></TableCell>
+            </TableRow>
+            <TableRow sx={{ border:'1px solid black' }}>
+              <TableCell sx={{ borderBottom:"1px solid black" }}><strong>Rover</strong></TableCell>
+              <TableCell sx={{ borderBottom:"1px solid black" }} align="center"><strong>1</strong></TableCell>
+              <TableCell sx={{ borderBottom:"1px solid black" }} align="right"><strong>5000.00</strong></TableCell>
+              <TableCell sx={{ borderBottom:"1px solid black" }} align="right"><strong>5000.00</strong></TableCell>
+            </TableRow>
+            <TableRow sx={{ border:'1px solid black' }}>
+            <TableCell sx={{ borderBottom:"1px solid black" }} colSpan={3}><strong>Full Amount</strong></TableCell>
+              
+              <TableCell sx={{ borderBottom:"1px solid black" }} align="right"><strong>10000.00</strong></TableCell>
+            </TableRow>
+            <TableRow>
+            <TableCell sx={{ borderBottom:"1px solid black" }} colSpan={3}><strong>Discount</strong></TableCell>
+              
+              <TableCell sx={{ borderBottom:"1px solid black" }} align="right"><strong>1000.00</strong></TableCell>
+            </TableRow>
+            <TableRow sx={{ border:'1px solid black' }}>
+            <TableCell sx={{ borderBottom:"1px solid black" }} colSpan={3}><strong>Cash / Card</strong></TableCell>
+              
+              <TableCell sx={{ borderBottom:"1px solid black" }} align="right"><strong>10000.00</strong></TableCell>
+            </TableRow>
+            <TableRow sx={{ border:'1px solid black' }}>
+            <TableCell sx={{ borderBottom:"1px solid black" }} colSpan={3}><strong>Balance</strong></TableCell>
+              
+              <TableCell sx={{ borderBottom:"1px solid black" }} align="right"><strong>9000.00</strong></TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </TableContainer>
+
+      
+      <Typography variant="body2" align="center" sx={{ marginTop: '20px' }}>
+       <strong> Each of these brands has strengths that cater to specific user needs, so consider what aligns best with your
+        priorities—whether that’s speed, endurance, affordability, or brand support.</strong>
+      </Typography>
     </Box>
   );
-}
+};
 
 export default Channel_Invoice;

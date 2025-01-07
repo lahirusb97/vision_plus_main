@@ -10,10 +10,7 @@ import {
   TableRow,
   TextField,
   useTheme,
-<<<<<<< HEAD
-=======
   IconButton,
->>>>>>> 5a985de6ae60e609ff6af70d1297abdc8c114578
 } from "@mui/material";
 import useData from "../../hooks/useData";
 import { useNavigate } from "react-router";
@@ -76,7 +73,6 @@ interface RefractionData {
   customer_mobile: string;
   refraction_number: string;
 }
-<<<<<<< HEAD
 // Sample Data
 const data: RefractionData[] = [
   {
@@ -97,9 +93,7 @@ const data: RefractionData[] = [
 ];
 
 // Main Component
-=======
 
->>>>>>> 5a985de6ae60e609ff6af70d1297abdc8c114578
 export default function RefractionDetails() {
   const theme = useTheme(); // Accessing MUI theme for dynamic styling
 
@@ -111,9 +105,7 @@ export default function RefractionDetails() {
 
   return (
     <Box sx={{ padding: 2 }}>
-<<<<<<< HEAD
      
-=======
       {/* Search Bar */}
 
       <TextField
@@ -124,7 +116,6 @@ export default function RefractionDetails() {
         value={searchQuery}
         onChange={handleSearchChange}
       />
->>>>>>> 5a985de6ae60e609ff6af70d1297abdc8c114578
 
       {/* Table Container */}
       <TableContainer
