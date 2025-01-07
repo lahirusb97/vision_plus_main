@@ -18,7 +18,7 @@ export const refractionRoutes: RouteObject[] = [
   {
     path: "refraction/:id",
     element: (
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={<div>Loading..</div>}>
         <RefractionEdit />
       </Suspense>
     ),
