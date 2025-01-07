@@ -10,6 +10,10 @@ import {
   TableRow,
   TextField,
   useTheme,
+<<<<<<< HEAD
+=======
+  IconButton,
+>>>>>>> 5a985de6ae60e609ff6af70d1297abdc8c114578
 } from "@mui/material";
 import useData from "../../hooks/useData";
 import { useNavigate } from "react-router";
@@ -24,8 +28,7 @@ const CustomerNameField = () => {
         alignItems: "center",
         textAlign: "right",
         marginTop: 4,
-        gap: 0, 
-        
+        gap: 0,
       }}
     >
       {/* Label */}
@@ -34,15 +37,14 @@ const CustomerNameField = () => {
         sx={{
           fontWeight: "bold",
           fontSize: "1rem",
-          color:"white",
+          color: "white",
           padding: "17px 20px",
           backgroundColor: "gray",
           borderRadius: 1,
           display: "inline-block",
           textAlign: "right",
-          minWidth: "200px", 
-          fontFamily:"Arial"
-        
+          minWidth: "200px",
+          fontFamily: "Arial",
         }}
       >
         Customer Name
@@ -53,22 +55,19 @@ const CustomerNameField = () => {
         variant="outlined"
         fullWidth
         InputProps={{
-          readOnly: false, 
-          
-          
+          readOnly: false,
         }}
         sx={{
           "& .MuiOutlinedInput-root": {
-            backgroundColor: "#f5f5f5", 
+            backgroundColor: "#f5f5f5",
             borderRadius: 1,
-            minwidth:"200px",
+            minwidth: "200px",
           },
         }}
       />
     </Box>
   );
 };
-
 
 // Interface for Refraction Data
 interface RefractionData {
@@ -77,6 +76,7 @@ interface RefractionData {
   customer_mobile: string;
   refraction_number: string;
 }
+<<<<<<< HEAD
 // Sample Data
 const data: RefractionData[] = [
   {
@@ -97,6 +97,9 @@ const data: RefractionData[] = [
 ];
 
 // Main Component
+=======
+
+>>>>>>> 5a985de6ae60e609ff6af70d1297abdc8c114578
 export default function RefractionDetails() {
   const theme = useTheme(); // Accessing MUI theme for dynamic styling
 
@@ -108,7 +111,20 @@ export default function RefractionDetails() {
 
   return (
     <Box sx={{ padding: 2 }}>
+<<<<<<< HEAD
      
+=======
+      {/* Search Bar */}
+
+      <TextField
+        label="Search"
+        variant="outlined"
+        fullWidth
+        margin="normal"
+        value={searchQuery}
+        onChange={handleSearchChange}
+      />
+>>>>>>> 5a985de6ae60e609ff6af70d1297abdc8c114578
 
       {/* Table Container */}
       <TableContainer
@@ -119,7 +135,7 @@ export default function RefractionDetails() {
           overflowX: "auto",
         }}
       >
-<Table sx={{ minWidth: 650 }} aria-label="Refraction Details Table">
+        <Table sx={{ minWidth: 650 }} aria-label="Refraction Details Table">
           <TableHead>
 
             <TableRow sx={{ backgroundColor: headerBgColor }}>
@@ -177,7 +193,3 @@ export default function RefractionDetails() {
     </Box>
   );
 }
-
-
-
-

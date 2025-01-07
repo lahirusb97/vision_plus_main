@@ -13,11 +13,23 @@
     "deploy": "npm run build && firebase deploy"
   },
   "dependencies": {
+<<<<<<< HEAD
     "@emotion/react": "^11.13.5",
     "@emotion/styled": "^11.13.5",
     "@mui/icons-material": "^6.1.9",
     "@mui/material": "^6.1.9",
+=======
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@hookform/resolvers": "^3.9.1",
+    "@mui/icons-material": "^6.1.9",
+    "@mui/material": "^6.3.1",
+    "@mui/styles": "^6.3.1",
+    "@mui/x-data-grid": "^7.23.3",
+    "@mui/x-date-pickers": "^7.23.3",
+>>>>>>> 5a985de6ae60e609ff6af70d1297abdc8c114578
     "axios": "^1.7.9",
+    "dayjs": "^1.11.13",
     "firebase": "^10.8.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -37,5 +49,6 @@
     "typescript": "~5.6.2",
     "typescript-eslint": "^8.15.0",
     "vite": "^6.0.1"
-  }
+  },
+  "proxy": "http://193.203.161.90:8000"
 }

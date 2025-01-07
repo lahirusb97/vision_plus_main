@@ -2,7 +2,11 @@
 import { lazy, Suspense } from "react";
 import { createBrowserRouter } from "react-router";
 import { refractionRoutes } from "./routelist/refraction.route";
+
+import { channelRoutes } from "./routelist/channel.route";
+
 import { transactionRoutes } from "./routelist/transaction.route";
+
 import RegisterUser from "../view/auth/RegisterUser";
 
 // Lazy load components
@@ -30,13 +34,26 @@ export const router = createBrowserRouter([
         children: refractionRoutes,
       },
       {
-        path: "transaction",
+
+        path: "channel",
+
         element: (
           <Suspense fallback={<div>Loading...</div>}>
             <ProtectedChildRoute />
           </Suspense>
         ),
-        children: transactionRoutes,
+
+        children: channelRoutes,
+      },
+      {
+        path: "channel_invoice",
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <ProtectedChildRoute />
+          </Suspense>
+        ),
+        children: channelRoutes,
+
       },
     ],
   },

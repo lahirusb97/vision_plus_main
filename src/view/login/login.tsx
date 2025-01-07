@@ -106,7 +106,7 @@ export default function Login() {
         <Typography variant="h6" sx={{ marginBottom: "24px" }}>
           Hi{" "}
           <img style={{ margin: "-10px", padding: "0 .5em" }} src={hi_hand} />
-          Vision Plus
+          Vision Plus.
         </Typography>
 
         {/* User name Input */}
