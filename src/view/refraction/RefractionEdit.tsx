@@ -1,6 +1,5 @@
 import React from "react";
 import { useForm } from "react-hook-form";
-import CustomInput from "../../components/inputui/CustomInput";
 import CustomInputWithLabel from "../../components/inputui/CustomInputWithLabel";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
@@ -9,7 +8,6 @@ import HbRxInput from "../../components/inputui/HbRxInput";
 import InputLeftRight from "../../components/inputui/InputLeftRight";
 import { useParams } from "react-router";
 import EyeTestTable from "../../components/EyeTestTable";
-import { usePostApiCall } from "../../hooks/usePostApiCall";
 import axiosClient from "../../axiosClient";
 
 // Validation Schema

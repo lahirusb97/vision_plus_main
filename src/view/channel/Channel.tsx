@@ -9,21 +9,85 @@ import {
   InputLabel,
   Typography,
   Grid,
+  IconButton,
+  Input,
+  Paper,
+  InputAdornment,
+  CircularProgress,
 } from "@mui/material";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { StaticDatePicker } from "@mui/x-date-pickers/StaticDatePicker";
-import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
-import { StaticTimePicker } from "@mui/x-date-pickers/StaticTimePicker";
-
+import { TimePicker } from "@mui/x-date-pickers/TimePicker";
+import { DatePicker } from "@mui/x-date-pickers";
 import { useForm, Controller } from "react-hook-form";
 
+import PaymentsIcon from "@mui/icons-material/Payments";
+import CreditCardIcon from "@mui/icons-material/CreditCard";
+import * as Yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { usePostApiCall } from "../../hooks/usePostApiCall";
+import useGetDoctors from "../../hooks/useGetDoctors";
+import AutocompleteInputField from "../../components/inputui/DropdownInput";
+interface PostData {
+  id: number;
+  title: string;
+  body: string;
+}
 const Channel = () => {
-  const { control, handleSubmit, register } = useForm();
+  const { error, loading, postApi } = usePostApiCall<PostData>();
+  const { data: doctorList, loading: loadingDoctors } = useGetDoctors();
 
+  const validationSchema = Yup.object().shape({
+    doctor_id: Yup.number().required("Doctor ID is required"),
+    name: Yup.string().required("Patient Name is required"),
+    address: Yup.string().required("Patient Address is required"),
+    contact_number: Yup.string().required("Patient Contact is required"),
+    channel_date: Yup.date().required("Channel Date is required"),
+    time: Yup.date().required("Time is required"),
+    channeling_fee: Yup.number().required("Channeling Fee is required"),
+    cash_amount: Yup.number().required("Cash Amount is required"),
+    card_amount: Yup.number().required("Card Amount is required"),
+  });
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(validationSchema),
+  });
   const onSubmit = async (data) => {
-    // Handle form submission here
-    console.log(data);
+    const payload = {
+      doctor_id: data.doctor_id,
+      name: data.name,
+      address: data.address,
+      contact_number: data.contact_number,
+      channel_date: data.channel_date,
+      time: data.time,
+      channeling_fee: data.channeling_fee,
+      payments: [
+        {
+          amount: data.cash_amount,
+          payment_method: "Cash",
+        },
+        {
+          amount: data.card_amount,
+          payment_method: "Card",
+        },
+      ],
+    };
+    console.log(payload);
+
+    try {
+      const response = await postApi("/channel/", payload);
+      // Send the form data to the backend
+      // const response = await axios.post(endpointUrl, data);
+      // Handle success (e.g., show a success message or redirect)
+      // console.log("Appointment saved:", response.data);
+    } catch (error) {
+      // Handle error (e.g., show an error message)
+      // console.error("Error submitting the form:", error);
+    }
   };
 
   return (
@@ -45,93 +109,142 @@ const Channel = () => {
 
       {/* Doctor and Patient Information Group */}
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={6}>
-            <FormControl fullWidth sx={{ mb: 2 }}>
-              <InputLabel>Doctor Name</InputLabel>
-              <Select label="Doctor Name" {...register("doctorName")}>
-                <MenuItem value="Doctor 1">Doctor 1</MenuItem>
-                <MenuItem value="Doctor 2">Doctor 2</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              variant="outlined"
-              fullWidth
-              label="Patient Name"
-              {...register("patientName")}
-              sx={{ mb: 2 }}
-            />
-          </Grid>
-        </Grid>
+        {/* Doctor Name */}
 
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              variant="outlined"
-              fullWidth
-              label="Patient Contact"
-              {...register("patientContact")}
-              sx={{ mb: 2 }}
+        <Controller
+          name="doctor_id" // Field name in the form
+          control={control} // Pass the control from useForm
+          render={({ field }) => (
+            <AutocompleteInputField
+              {...field} // Spread the field props (value and onChange)
+              options={doctorList} // Pass the options array
+              loading={loading} // Pass the loading state
+              labelName="Choose a Doctor" // Label for the input field
+              defaultId={undefined} // Optionally pass a default selected ID
             />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              variant="outlined"
-              fullWidth
-              label="Patient Email"
-              {...register("patientEmail")}
-              sx={{ mb: 2 }}
-            />
-          </Grid>
-        </Grid>
+          )}
+        />
 
-        {/* Date and Time Picker Group */}
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={6}>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <Controller
-                name="appointmentDate"
-                control={control}
-                render={({ field }) => (
-                  <StaticDatePicker
-                    {...field}
-                    orientation="landscape"
-                    sx={{ mb: 2 }}
-                  />
-                )}
-              />
-            </LocalizationProvider>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DemoContainer components={["TimePicker"]}>
-                <Controller
-                  name="appointmentTime"
-                  control={control}
-                  render={({ field }) => (
-                    <StaticTimePicker {...field} sx={{ width: "100%" }} />
-                  )}
+        {/* Patient Name */}
+        <TextField
+          variant="outlined"
+          fullWidth
+          label="Patient Name"
+          {...register("name")}
+          sx={{ mb: 1 }}
+        />
+
+        {/* Patient Address */}
+        <TextField
+          variant="outlined"
+          fullWidth
+          label="Patient Address"
+          {...register("address")}
+          sx={{ mb: 1 }}
+        />
+
+        {/* Patient Contact */}
+        <TextField
+          variant="outlined"
+          fullWidth
+          label="Patient Contact"
+          {...register("contact_number")}
+          sx={{ mb: 1 }}
+        />
+
+        {/* Date and Time Pickers (flex row) */}
+
+        <Paper sx={flexBoxStyle}>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <Controller
+              name="channel_date"
+              control={control}
+              render={({ field }) => (
+                <DatePicker
+                  {...register("channel_date")}
+                  {...field}
+                  label="Channel Date"
                 />
-              </DemoContainer>
-            </LocalizationProvider>
-          </Grid>
-        </Grid>
+              )}
+            />
+          </LocalizationProvider>
+
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <Controller
+              name="time"
+              control={control}
+              render={({ field }) => (
+                <TimePicker
+                  {...register("time")}
+                  {...field}
+                  label="Time"
+                  inputFormat="HH:mm"
+                />
+              )}
+            />
+          </LocalizationProvider>
+        </Paper>
+
+        <Paper sx={flexBoxStyle}>
+          <Typography variant="h6" sx={{ mt: 2 }}>
+            Channeling Fee
+          </Typography>
+
+          <Input type="number" {...register("channeling_fee")} />
+        </Paper>
+
+        {/* First Payment */}
+
+        <Paper sx={flexBoxStyle}>
+          <Typography variant="h6">First Payment</Typography>
+          <Typography variant="h6">5000</Typography>
+        </Paper>
+        {/* Balance */}
+
+        <Paper sx={flexBoxStyle}>
+          <Typography variant="h6">Balance</Typography>
+
+          <Typography variant="h6">6000</Typography>
+        </Paper>
+
+        {/* Payment Method */}
+
+        <Paper sx={flexBoxStyle}>
+          <FormControl variant="standard">
+            <InputLabel htmlFor="input-with-icon-adornment">Cash</InputLabel>
+            <Input
+              {...register("cash_amount")}
+              id="input-with-icon-adornment"
+              startAdornment={
+                <InputAdornment position="start">
+                  <PaymentsIcon />
+                </InputAdornment>
+              }
+            />
+          </FormControl>
+          <FormControl variant="standard">
+            <InputLabel htmlFor="input-with-icon-adornment">Cash</InputLabel>
+            <Input
+              {...register("card_amount")}
+              id="input-with-icon-adornment"
+              startAdornment={
+                <InputAdornment position="start">
+                  <CreditCardIcon />
+                </InputAdornment>
+              }
+            />
+          </FormControl>
+        </Paper>
 
         {/* Submit Button */}
         <Button
+          disabled={loading}
           variant="contained"
           fullWidth
           type="submit"
-          sx={{
-            textTransform: "none",
-            height: 48,
-            backgroundColor: "blue",
-            color: "white",
-          }}
+          sx={{ mt: 3 }}
         >
-          OK
+          {loading ? <CircularProgress size={24} /> : "OK"}
         </Button>
       </form>
     </Box>
@@ -139,3 +252,11 @@ const Channel = () => {
 };
 
 export default Channel;
+const flexBoxStyle = {
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  my: 2,
+  py: 1,
+  px: 2,
+};

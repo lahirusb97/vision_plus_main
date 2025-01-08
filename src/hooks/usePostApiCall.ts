@@ -26,6 +26,8 @@ export const usePostApiCall = <T>() => {
         error: err.response?.data?.message || "Something went wrong",
         loading: false,
       });
+      console.log(err);
+
       throw err; // Throw error to be handled by caller
     }
   };
