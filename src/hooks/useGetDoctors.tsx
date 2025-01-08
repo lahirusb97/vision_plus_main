@@ -10,7 +10,7 @@ interface Doctor {
 }
 
 interface UseGetDoctorsReturn {
-  data: Doctor[] | null;
+  data: Doctor[];
   loading: boolean;
   error: string | null;
   refresh: () => void;
