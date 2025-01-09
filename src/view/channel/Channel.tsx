@@ -35,7 +35,12 @@ interface PostData {
 }
 const Channel = () => {
   const { error, loading, postApi } = usePostApiCall<PostData>();
-  const { data: doctorList, loading: loadingDoctors } = useGetDoctors();
+  const {
+    data: doctorList,
+    loading: loadingDoctors,
+    error: doctorError,
+  } = useGetDoctors();
+  console.log(doctorList);
 
   const validationSchema = Yup.object().shape({
     doctor_id: Yup.number().required("Doctor ID is required"),
