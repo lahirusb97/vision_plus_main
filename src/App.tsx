@@ -11,7 +11,7 @@ function App() {
       <ThemeProvider theme={theme}>
         <AuthContext>
           <RouterProvider router={router} />
-          <ThemeSwitch />
+          {/* <ThemeSwitch /> */}
         </AuthContext>
       </ThemeProvider>
     </>
