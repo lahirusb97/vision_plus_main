@@ -13,10 +13,10 @@ export const channelRoutes: RouteObject[] = [
     path: "doctor",
     element: <Doctor />,
   },
-  {
-    path: "channel_invoice",
-    element: <Channel_Invoice />,
-  },
+  // {
+  //   path: "channel_invoice",
+  //   element: <Channel_Invoice />,
+  // },
   {
     path: "channel_details",
     element: <ChannelDetails />,

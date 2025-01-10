@@ -16,7 +16,7 @@ const axiosClient: AxiosInstance = axios.create({
 // Request interceptor to add Authorization header
 axiosClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   const token = getCookie("VISION_ACCESS_TOKEN");
-  if (token && config.headers) {
+  if (token && config.headers && config.url !== "/login/") {
     config.headers.Authorization = `token ${token}`;
   }
   return config;
