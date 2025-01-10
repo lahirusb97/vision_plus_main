@@ -97,13 +97,6 @@ export default function RefractionEdit() {
   return (
     <Box sx={{ minWidth: "1000px", padding: "20px" }}>
       <form onSubmit={handleSubmit(onSubmit)}>
-        {errors && Object.keys(errors).length > 0 && (
-          <div>
-            {Object.keys(errors).map((key) => (
-              <p key={key}>{errors[key].message}</p>
-            ))}
-          </div>
-        )}
         <HbRxInput register={register} errors={errors} />
 
         <InputLeftRight
@@ -141,7 +134,7 @@ export default function RefractionEdit() {
           inputTwoName="va_with_glass_left"
           labelName="VA With Glass"
         />
-        <EyeTestTable register={register} />
+        <EyeTestTable errors={errors} register={register} />
 
         <CustomInputWithLabel
           {...register("remark")}
