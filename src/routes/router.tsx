@@ -34,6 +34,7 @@ export const router = createBrowserRouter([
         ),
         children: refractionRoutes,
       },
+      
       {
         path: "channel",
 
@@ -62,6 +63,16 @@ export const router = createBrowserRouter([
           </Suspense>
         ),
         children: stockRoutes,
+      },
+      {
+        path: "transaction",
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <ProtectedChildRoute />
+          </Suspense>
+        ),
+        children: transactionRoutes,
+
       },
     ],
   },

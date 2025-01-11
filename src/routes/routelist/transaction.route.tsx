@@ -1,9 +1,8 @@
 import Factoryinvoice from "../../view/transaction/FactoryInvoice";
 import { RouteObject } from "react-router";
-import NormalInvoice from "../../view/transaction/NormalInvoice";
 import EditInvoice from "../../view/transaction/EditInvoice";
 import DeleteInvoice from "../../view/transaction/DeleteInvoice";
-
+import NormalInvoice from "../../view/transaction/NormalInvoice";
 export const transactionRoutes: RouteObject[] = [
   {
     path: "factory_invoice",
