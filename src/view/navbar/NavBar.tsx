@@ -16,6 +16,7 @@ import { Paper } from "@mui/material";
 import ChannelNav from "../channel/ChannelNav";
 
 import TransactionNav from "../transaction/TransactionNav";
+import StockNav from "../stock/StockNav";
 
 // TabPanel Component
 
@@ -63,7 +64,7 @@ export default function NavBar() {
     { icon: TransationIcon, label: "Transaction", nav: TransactionNav },
     { icon: MasterIcon, label: "Master", nav: RefractionNav },
     { icon: AccountIcon, label: "Account", nav: RefractionNav },
-    { icon: StockIcon, label: "Stock", nav: RefractionNav },
+    { icon: StockIcon, label: "Stock", nav: StockNav },
     { icon: ChanneltIcon, label: "Channel", nav: ChannelNav },
     { icon: ReportsIcon, label: "Reports", nav: RefractionNav },
     { icon: MessangerIcon, label: "Messenger", nav: RefractionNav },

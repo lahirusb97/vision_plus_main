@@ -3,7 +3,6 @@ import { RouteObject } from "react-router";
 import EditInvoice from "../../view/transaction/EditInvoice";
 import DeleteInvoice from "../../view/transaction/DeleteInvoice";
 import NormalInvoice from "../../view/transaction/NormalInvoice";
-
 export const transactionRoutes: RouteObject[] = [
   {
     path: "factory_invoice",
@@ -11,7 +10,7 @@ export const transactionRoutes: RouteObject[] = [
   },
   {
     path: "normal_invoice",
-    element: <NormalInvoice/>,
+    element: <NormalInvoice />,
   },
   {
     path: "edit_invoice",

@@ -1,4 +1,3 @@
 export default function DeleteInvoice() {
-    return <div>DeleteInvoice</div>;
-  }
-  
+  return <div>DeleteInvoice</div>;
+}

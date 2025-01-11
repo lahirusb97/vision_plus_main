@@ -28,6 +28,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { usePostApiCall } from "../../hooks/usePostApiCall";
 import useGetDoctors from "../../hooks/useGetDoctors";
 import AutocompleteInputField from "../../components/inputui/DropdownInput";
+import axiosClient from "../../axiosClient";
 interface PostData {
   id: number;
   title: string;
@@ -56,19 +57,25 @@ const Channel = () => {
   const {
     register,
     handleSubmit,
+    watch,
     control,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(validationSchema),
   });
+  const channelingFee = Number(watch("channeling_fee"));
+  const cashAmount = Number(watch("cash_amount"));
+  const cardAmount = Number(watch("card_amount"));
   const onSubmit = async (data) => {
+    const channelDate = new Date(data.channel_date);
+    const time = new Date(data.time);
     const payload = {
       doctor_id: data.doctor_id,
       name: data.name,
       address: data.address,
       contact_number: data.contact_number,
-      channel_date: data.channel_date,
-      time: data.time,
+      channel_date: channelDate.toISOString().split("T")[0],
+      time: time.toLocaleTimeString("en-GB", { hour12: false }),
       channeling_fee: data.channeling_fee,
       payments: [
         {
@@ -85,13 +92,10 @@ const Channel = () => {
 
     try {
       const response = await postApi("/channel/", payload);
-      // Send the form data to the backend
-      // const response = await axios.post(endpointUrl, data);
-      // Handle success (e.g., show a success message or redirect)
-      // console.log("Appointment saved:", response.data);
+
+      console.log("Appointment saved:", response);
     } catch (error) {
-      // Handle error (e.g., show an error message)
-      // console.error("Error submitting the form:", error);
+      console.error("Error submitting the form:", error);
     }
   };
 
@@ -169,6 +173,7 @@ const Channel = () => {
                   {...register("channel_date")}
                   {...field}
                   label="Channel Date"
+                  format="YYYY-MM-DD"
                 />
               )}
             />
@@ -183,7 +188,7 @@ const Channel = () => {
                   {...register("time")}
                   {...field}
                   label="Time"
-                  inputFormat="HH:mm"
+                  format="HH:MM:ss"
                 />
               )}
             />
@@ -202,14 +207,16 @@ const Channel = () => {
 
         <Paper sx={flexBoxStyle}>
           <Typography variant="h6">First Payment</Typography>
-          <Typography variant="h6">5000</Typography>
+          <Typography variant="h6">{cashAmount + cardAmount}</Typography>
         </Paper>
         {/* Balance */}
 
         <Paper sx={flexBoxStyle}>
           <Typography variant="h6">Balance</Typography>
 
-          <Typography variant="h6">6000</Typography>
+          <Typography variant="h6">
+            {channelingFee - (cashAmount + cardAmount)}
+          </Typography>
         </Paper>
 
         {/* Payment Method */}

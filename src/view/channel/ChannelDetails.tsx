@@ -12,6 +12,7 @@ import {
   TableRow,
   Paper,
   IconButton,
+  Typography,
 } from "@mui/material";
 import { Delete, Edit, Receipt, Search } from "@mui/icons-material";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -19,34 +20,30 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { Controller, useForm } from "react-hook-form";
 import AutocompleteInputField from "../../components/inputui/DropdownInput";
+import useData from "../../hooks/useData";
 
-const sampleData = [
-  {
-    chanalId: "4555",
-    address: "mathugama",
-    doctorName: "Danuka",
-    contactNo: "076 4584757",
-    patientName: "Amal",
-    chanalNo: 5,
-    firstPayment: 1000.0,
-  },
-  {
-    chanalId: "4555",
-    address: "kaluthra",
-    doctorName: "Danuka",
-    contactNo: "076 4584757",
-    patientName: "Amal",
-    chanalNo: 2,
-    firstPayment: 1500.0,
-  },
-];
+interface ChannelData {
+  id: number;
+  address: string;
+  doctor_name: string;
+  contact_number: string;
+  patient_name: string;
+  channel_no: number;
+  first_payment: number;
+  date: string;
+}
 
 function ChannelDetails() {
   const { control } = useForm();
+  const {
+    data: channelList,
+    loading: loadingchannelList,
+    error: errorchannelList,
+  } = useData<ChannelData[] | any>("channels/");
+  console.log(channelList);
 
   return (
     <Box sx={{ padding: 3 }}>
-     
       <Box
         sx={{
           display: "flex",
@@ -65,7 +62,6 @@ function ChannelDetails() {
             paddingLeft: 1,
           }}
         >
-         
           <IconButton sx={{ padding: 1, marginLeft: 1 }}>
             <Search />
           </IconButton>
@@ -87,7 +83,6 @@ function ChannelDetails() {
         </Box>
       </Box>
 
-      
       <Box
         sx={{
           display: "flex",
@@ -99,21 +94,21 @@ function ChannelDetails() {
       >
         {/* Doctor dropdown */}
         <Controller
-  name="doctor_id" 
-  control={control} 
-  render={({ field }) => (
-    <div style={{ width: 150 }}> 
-      <AutocompleteInputField
-        options={[]} 
-        loading={false} 
-        {...field} 
-        labelName="Doctor name " 
-        defaultId={undefined} 
-        sx={{ width: '100%' }} 
-      />
-    </div>
-  )}
-/>
+          name="doctor_id"
+          control={control}
+          render={({ field }) => (
+            <div style={{ width: 150 }}>
+              <AutocompleteInputField
+                options={[]}
+                loading={false}
+                {...field}
+                labelName="Doctor name "
+                defaultId={undefined}
+                sx={{ width: "100%" }}
+              />
+            </div>
+          )}
+        />
 
         {/* Date Picker */}
         <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -126,7 +121,11 @@ function ChannelDetails() {
                 label="Date"
                 onChange={(date) => field.onChange(date)}
                 renderInput={(params) => (
-                  <TextField {...params} size="small" sx={{ width: "150px", padding:"10px" }} />
+                  <TextField
+                    {...params}
+                    size="small"
+                    sx={{ width: "150px", padding: "10px" }}
+                  />
                 )}
               />
             )}
@@ -147,56 +146,54 @@ function ChannelDetails() {
         </Button>
 
         {/* Chanal Count Button */}
-        <Button
+        <Box
           sx={{
             backgroundColor: "lightblue",
             color: "black",
             border: "none",
-            width: "150px",
-            height: "55px",
+
+            textAlign: "center",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            p: 2,
           }}
-          variant="outlined"
         >
-          Chanal Count
-        </Button>
+          <Typography>Chanal Count : {channelList.length}</Typography>
+        </Box>
       </Box>
 
       {/* Table Section */}
       <TableContainer component={Paper}>
-        <Table>
+        <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
-            <TableRow sx={{ backgroundColor: "gray" }}>
-              <TableCell><strong>Action</strong></TableCell>
-              <TableCell><strong>Chanal Id</strong></TableCell>
-              <TableCell><strong>Address</strong></TableCell>
-              <TableCell><strong>Doctor Name</strong></TableCell>
-              <TableCell><strong>Contact No</strong></TableCell>
-              <TableCell><strong>Patient Name</strong></TableCell>
-              <TableCell><strong>Chanal No</strong></TableCell>
-              <TableCell><strong>First Payment</strong></TableCell>
+            <TableRow>
+              <TableCell>ID</TableCell>
+              <TableCell align="right">Address</TableCell>
+              <TableCell align="right">Doctor Name</TableCell>
+              <TableCell align="right">Contact Number</TableCell>
+              <TableCell align="right">Patient Name</TableCell>
+              <TableCell align="right">Channel No</TableCell>
+              <TableCell align="right">First Payment</TableCell>
+              <TableCell align="right">Date</TableCell>
             </TableRow>
           </TableHead>
-          <TableBody sx={{ backgroundColor: "white" }}>
-            {sampleData.map((row, index) => (
-              <TableRow key={index}>
-                <TableCell>
-                  <IconButton size="small" sx={{color:"black" }}>
-                  <Delete />
-                  </IconButton>
-                  <IconButton size="small" sx={{color:"black" }}>
-                    <Edit />
-                  </IconButton>
-                  <IconButton size="small" sx={{color:"black" }}>
-                    <Receipt />
-                  </IconButton>
+          <TableBody>
+            {channelList.map((row) => (
+              <TableRow
+                key={row.id}
+                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+              >
+                <TableCell component="th" scope="row">
+                  {row.id}
                 </TableCell>
-                <TableCell><strong>{row.chanalId}</strong></TableCell>
-                <TableCell><strong>{row.address}</strong></TableCell>
-                <TableCell><strong>{row.doctorName}</strong></TableCell>
-                <TableCell><strong>{row.contactNo}</strong></TableCell>
-                <TableCell><strong>{row.patientName}</strong></TableCell>
-                <TableCell><strong>{row.chanalNo}</strong></TableCell>
-                <TableCell><strong>{row.firstPayment.toFixed(2)}</strong></TableCell>
+                <TableCell align="right">{row.address}</TableCell>
+                <TableCell align="right">{row.doctor_name}</TableCell>
+                <TableCell align="right">{row.contact_number}</TableCell>
+                <TableCell align="right">{row.patient_name}</TableCell>
+                <TableCell align="right">{row.channel_no}</TableCell>
+                <TableCell align="right">{row.first_payment}</TableCell>
+                <TableCell align="right">{row.date}</TableCell>
               </TableRow>
             ))}
           </TableBody>

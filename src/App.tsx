@@ -3,7 +3,7 @@ import { RouterProvider } from "react-router";
 import { router } from "./routes/router";
 import { ThemeProvider } from "@mui/material";
 import theme from "./theme/theme";
-import ThemeSwitch from "./theme/ThemeSwitch";
+// import ThemeSwitch from "./theme/ThemeSwitch";
 
 function App() {
   return (
