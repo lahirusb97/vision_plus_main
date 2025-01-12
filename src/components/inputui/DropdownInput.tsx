@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Autocomplete, CircularProgress, TextField } from "@mui/material";
 
 // Define the option type
-interface Option {
+export interface Option {
   id: number | string;
   name: string;
 }
