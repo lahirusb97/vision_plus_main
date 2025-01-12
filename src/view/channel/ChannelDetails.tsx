@@ -1,10 +1,9 @@
-import React from "react";
+import { useEffect, useState } from "react";
 import {
   Box,
   TextField,
-  Button,
-  MenuItem,
   Table,
+  Button,
   TableBody,
   TableCell,
   TableContainer,
@@ -14,13 +13,15 @@ import {
   IconButton,
   Typography,
 } from "@mui/material";
-import { Delete, Edit, Receipt, Search } from "@mui/icons-material";
+import { Search } from "@mui/icons-material";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { Controller, useForm } from "react-hook-form";
 import AutocompleteInputField from "../../components/inputui/DropdownInput";
-import useData from "../../hooks/useData";
+import useGetDoctors from "../../hooks/useGetDoctors";
+import axiosClient from "../../axiosClient";
+import { cleanParams } from "../../utils/cleanParams";
+import dayjs from "dayjs";
 
 interface ChannelData {
   id: number;
@@ -34,14 +35,32 @@ interface ChannelData {
 }
 
 function ChannelDetails() {
-  const { control } = useForm();
-  const {
-    data: channelList,
-    loading: loadingchannelList,
-    error: errorchannelList,
-  } = useData<ChannelData[] | any>("channels/");
-  console.log(channelList);
+  const { data: doctorList, loading: loadingDoctors } = useGetDoctors();
 
+  //handle Filters
+  const [dateInput, setDateInput] = useState<string | null | undefined>(null);
+  const [doctorInput, setDoctorInput] = useState<string | number | null>(null);
+  const [channelList, setChannelList] = useState([]);
+  const [loadingchannelList, SetloadingchannelList] = useState(true);
+  //handle Filters
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        SetloadingchannelList(true);
+
+        const response = await axiosClient.get(`/channels/`, {
+          params: cleanParams({ doctor: doctorInput, date: dateInput }),
+        });
+        setChannelList(response.data);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        SetloadingchannelList(false);
+      }
+    };
+    getData();
+    console.log(dateInput);
+  }, [doctorInput, dateInput]);
   return (
     <Box sx={{ padding: 3 }}>
       <Box
@@ -93,42 +112,24 @@ function ChannelDetails() {
         }}
       >
         {/* Doctor dropdown */}
-        <Controller
-          name="doctor_id"
-          control={control}
-          render={({ field }) => (
-            <div style={{ width: 150 }}>
-              <AutocompleteInputField
-                options={[]}
-                loading={false}
-                {...field}
-                labelName="Doctor name "
-                defaultId={undefined}
-                sx={{ width: "100%" }}
-              />
-            </div>
-          )}
-        />
+
+        <Box sx={{ width: "200px" }}>
+          <AutocompleteInputField
+            options={doctorList}
+            loading={loadingDoctors}
+            labelName="Doctor name "
+            defaultId={undefined}
+            onChange={(id) => setDoctorInput(id)}
+          />
+        </Box>
 
         {/* Date Picker */}
         <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <Controller
-            name="channel_date"
-            control={control}
-            render={({ field }) => (
-              <DatePicker
-                {...field}
-                label="Date"
-                onChange={(date) => field.onChange(date)}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    size="small"
-                    sx={{ width: "150px", padding: "10px" }}
-                  />
-                )}
-              />
-            )}
+          <DatePicker
+            label="Date"
+            format="YYYY-MM-DD"
+            onChange={(date) => setDateInput(date?.format("YYYY-MM-DD"))}
+            value={dayjs(dateInput)}
           />
         </LocalizationProvider>
 
@@ -141,8 +142,12 @@ function ChannelDetails() {
             height: "55px",
           }}
           variant="contained"
+          onClick={() => {
+            setDateInput(null);
+            setDoctorInput(null);
+          }}
         >
-          OK
+          Clear Date
         </Button>
 
         {/* Chanal Count Button */}
@@ -151,7 +156,6 @@ function ChannelDetails() {
             backgroundColor: "lightblue",
             color: "black",
             border: "none",
-
             textAlign: "center",
             display: "flex",
             justifyContent: "center",
@@ -179,7 +183,7 @@ function ChannelDetails() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {channelList.map((row) => (
+            {channelList.map((row: ChannelData) => (
               <TableRow
                 key={row.id}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -196,6 +200,11 @@ function ChannelDetails() {
                 <TableCell align="right">{row.date}</TableCell>
               </TableRow>
             ))}
+            {loadingchannelList && (
+              <TableRow>
+                <TableCell colSpan={8}>Loading...</TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </TableContainer>
