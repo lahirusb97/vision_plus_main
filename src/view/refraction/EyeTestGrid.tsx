@@ -1,8 +1,6 @@
-<<<<<<< HEAD
-=======
 import React from "react";
 import { DataGrid } from "@mui/x-data-grid";
-import {  Input, Box } from "@mui/material";
+import { Input, Box } from "@mui/material";
 
 const EyeTestGrid: React.FC = () => {
   const columns = [
@@ -24,8 +22,6 @@ const EyeTestGrid: React.FC = () => {
       <DataGrid
         rows={rows}
         columns={columns}
-        pageSize={5}
-        disableSelectionOnClick
         sx={{
           "& .MuiDataGrid-cell": {
             border: "1px solid black",
@@ -43,4 +39,3 @@ const EyeTestGrid: React.FC = () => {
 };
 
 export default EyeTestGrid;
->>>>>>> 5a985de6ae60e609ff6af70d1297abdc8c114578
