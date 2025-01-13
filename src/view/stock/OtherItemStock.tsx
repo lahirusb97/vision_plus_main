@@ -30,17 +30,17 @@ const LensStore = () => {
     <Box
       sx={{
         padding: 4,
-        minHeight:"100vh",
-        gap:2,
+        gap: 2,
       }}
     >
-      
-
       {/* Table Section */}
-      <TableContainer component={Paper} sx={{ borderRadius: 2, width:"1050px"   }}>
+      <TableContainer
+        component={Paper}
+        sx={{ borderRadius: 2, width: "1050px" }}
+      >
         <Table>
           {/* Table Header */}
-          <TableHead >
+          <TableHead>
             <TableRow>
               <TableCell align="center">Action</TableCell>
               <TableCell align="center">Item Name</TableCell>
@@ -50,7 +50,7 @@ const LensStore = () => {
           </TableHead>
 
           {/* Table Body */}
-          <TableBody sx={{marginTop: 12}} >
+          <TableBody sx={{ marginTop: 12 }}>
             {frames.map((frame, index) => (
               <TableRow key={index}>
                 <TableCell align="center">
