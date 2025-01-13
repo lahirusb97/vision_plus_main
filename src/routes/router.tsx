@@ -8,6 +8,7 @@ import { channelRoutes } from "./routelist/channel.route";
 import { transactionRoutes } from "./routelist/transaction.route";
 
 import RegisterUser from "../view/auth/RegisterUser";
+import { stockRoutes } from "./routelist/stock.route";
 
 // Lazy load components
 const Login = lazy(() => import("../view/auth/login"));
@@ -33,8 +34,8 @@ export const router = createBrowserRouter([
         ),
         children: refractionRoutes,
       },
+      
       {
-
         path: "channel",
 
         element: (
@@ -46,13 +47,31 @@ export const router = createBrowserRouter([
         children: channelRoutes,
       },
       {
-        path: "channel_invoice",
+        path: "transaction",
         element: (
           <Suspense fallback={<div>Loading...</div>}>
             <ProtectedChildRoute />
           </Suspense>
         ),
-        children: channelRoutes,
+        children: transactionRoutes,
+      },
+      {
+        path: "stock",
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <ProtectedChildRoute />
+          </Suspense>
+        ),
+        children: stockRoutes,
+      },
+      {
+        path: "transaction",
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <ProtectedChildRoute />
+          </Suspense>
+        ),
+        children: transactionRoutes,
 
       },
     ],

@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import {
   Box,
   CircularProgress,
@@ -8,7 +9,10 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  TableFooter,
+  TablePagination,
   TextField,
+  Typography,
   useTheme,
   IconButton,
 } from "@mui/material";
@@ -73,39 +77,49 @@ interface RefractionData {
   customer_mobile: string;
   refraction_number: string;
 }
-// Sample Data
-const data: RefractionData[] = [
-  {
-    name: "John Doe",
-    mobileNumber: "123-456-7890",
-    refractionNumber: "RF1234",
-  },
-  {
-    name: "Jane Smith",
-    mobileNumber: "987-654-3210",
-    refractionNumber: "RF5678",
-  },
-  {
-    name: "Sam Wilson",
-    mobileNumber: "555-666-7777",
-    refractionNumber: "RF91011",
-  },
-];
-
-// Main Component
 
 export default function RefractionDetails() {
-  const theme = useTheme(); // Accessing MUI theme for dynamic styling
+  const theme = useTheme();
+  const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState("");
 
-  // Determine the background color for the table header based on the current theme
-  const headerBgColor =
-    theme.palette.mode === "dark"
-      ? theme.palette.grey[800]
-      : theme.palette.grey[200];
+  const {
+    data: refractionList,
+    loading: refractionListLoading,
+    error: refractionListError,
+    nextPage,
+    prevPage,
+    refresh,
+  } = useData<RefractionData>("refractions/");
+
+  // Safely access data and meta-information
+  const results = refractionList?.results || [];
+  const count = refractionList?.count || 0;
+
+  // Filtered rows based on the search query
+  const filteredRows = results.filter(
+    (row) =>
+      row.customer_full_name
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase()) ||
+      row.customer_mobile.includes(searchQuery) ||
+      row.refraction_number.includes(searchQuery)
+  );
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const handleNextPage = () => {
+    if (nextPage) nextPage();
+  };
+
+  const handlePrevPage = () => {
+    if (prevPage) prevPage();
+  };
 
   return (
     <Box sx={{ padding: 2 }}>
-     
       {/* Search Bar */}
 
       <TextField
@@ -128,19 +142,10 @@ export default function RefractionDetails() {
       >
         <Table sx={{ minWidth: 650 }} aria-label="Refraction Details Table">
           <TableHead>
-
-            <TableRow sx={{ backgroundColor: headerBgColor }}>
-              <TableCell
-                sx={{ fontWeight: "bold", color: theme.palette.text.primary }}
-              >
-                Name
-              </TableCell>
-              <TableCell
-                sx={{ fontWeight: "bold", color: theme.palette.text.primary }}
-              >
-                Mobile Number
-              </TableCell>
-              <TableCell sx={{ fontWeight: "bold", color: theme.palette.text.primary }}>
+            <TableRow sx={{ backgroundColor: theme.palette.grey[200] }}>
+              <TableCell sx={{ fontWeight: "bold" }}>Name</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Mobile Number</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>
                 Refraction Number
               </TableCell>
             </TableRow>
@@ -156,7 +161,7 @@ export default function RefractionDetails() {
               filteredRows.map((row) => (
                 <TableRow
                   onClick={() =>
-                    navigator(`/refraction/${row.refraction_number}`)
+                    navigate(`/refraction/${row.refraction_number}`)
                   }
                   sx={{
                     cursor: "pointer",
@@ -179,8 +184,32 @@ export default function RefractionDetails() {
           </TableBody>
         </Table>
       </TableContainer>
-       {/* Customer Name Field */}
-       <CustomerNameField />
+
+      {/* Pagination */}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginTop: 2,
+        }}
+      >
+        <IconButton
+          onClick={handlePrevPage}
+          disabled={!refractionList?.previous || refractionListLoading}
+        >
+          <NavigateBefore />
+        </IconButton>
+        <Typography>
+          Showing {results.length} of {count} Pations
+        </Typography>
+        <IconButton
+          onClick={handleNextPage}
+          disabled={!refractionList?.next || refractionListLoading}
+        >
+          <NavigateNext />
+        </IconButton>
+      </Box>
     </Box>
   );
 }

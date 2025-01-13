@@ -1,14 +1,8 @@
 import Factoryinvoice from "../../view/transaction/FactoryInvoice";
 import { RouteObject } from "react-router";
-import NormalInvoice from "../../view/transaction/NormalInvoice";
 import EditInvoice from "../../view/transaction/EditInvoice";
 import DeleteInvoice from "../../view/transaction/DeleteInvoice";
-
-import { lazy, Suspense } from "react";
-const TransactionEdit = lazy(
-  () => import("../../view/transaction/TransactionEdit")
-);
-
+import NormalInvoice from "../../view/transaction/NormalInvoice";
 export const transactionRoutes: RouteObject[] = [
   {
     path: "factory_invoice",

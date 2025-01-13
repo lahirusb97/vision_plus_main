@@ -19,33 +19,26 @@ const useData = <T,>(endpoint: string): UseDataReturn<T> => {
   const [next, setNext] = useState<string | null>(null);
   const [prev, setPrev] = useState<string | null>(null);
 
-  const { token } = useAuthContext();
-
-  const fetchData = useCallback(
-    (url: string) => {
-      setLoading(true);
-      axiosClient
-        .get<{ results: T[]; next: string | null; previous: string | null }>(
-          url
-        )
-        .then((response) => {
-          setData(response.data);
-          setNext(response.data.next);
-          setPrev(response.data.previous);
-          setError(null);
-        })
-        .catch((err) => {
-          setData([]);
-          setNext(null);
-          setPrev(null);
-          setError(err.response?.data?.message || "Network Error");
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    },
-    [token]
-  );
+  const fetchData = useCallback((url: string) => {
+    setLoading(true);
+    axiosClient
+      .get<{ results: T[]; next: string | null; previous: string | null }>(url)
+      .then((response) => {
+        setData(response.data);
+        setNext(response.data.next);
+        setPrev(response.data.previous);
+        setError(null);
+      })
+      .catch((err) => {
+        setData([]);
+        setNext(null);
+        setPrev(null);
+        setError(err.response?.data?.message || "Network Error");
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
 
   useEffect(() => {
     fetchData(`/${endpoint}`);

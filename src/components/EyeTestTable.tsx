@@ -1,7 +1,7 @@
 import { Grid, Paper, Typography, Input } from "@mui/material";
 import React from "react";
-
-export default function EyeTestTable({ register }) {
+import { useForm } from "react-hook-form";
+export default function EyeTestTable({ register, errors }) {
   return (
     <div>
       <Paper elevation={3} sx={{ padding: "10px", marginY: "10px" }}>
@@ -41,22 +41,48 @@ export default function EyeTestTable({ register }) {
           <Typography textAlign="center">Dist</Typography>
           {/* Left Eye */}
           {/* Right Eye */}
-          <Input type="number" {...register("right_eye_dist_sph")} />
-          <Input type="number" {...register("right_eye_dist_cyl")} />
+          <Input
+            error={errors?.right_eye_dist_sph}
+            type="number"
+            {...register("right_eye_dist_sph")}
+          />
+          <Input
+            error={errors?.right_eye_dist_cyl}
+            type="number"
+            {...register("right_eye_dist_cyl")}
+          />
           <Input type="number" {...register("right_eye_dist_axis")} />
           {/* Right Eye */}
 
           {/* Left Eye */}
-          <Input type="number" {...register("left_eye_dist_sph")} />
-          <Input type="number" {...register("left_eye_dist_cyl")} />
+          <Input
+            error={errors?.left_eye_dist_sph}
+            type="number"
+            {...register("left_eye_dist_sph")}
+          />
+          <Input
+            error={errors?.left_eye_dist_cyl}
+            type="number"
+            {...register("left_eye_dist_cyl")}
+          />
           <Input type="number" {...register("left_eye_dist_axis")} />
           {/* Left Eye */}
 
           <Typography textAlign="center">Near</Typography>
           {/* Right Eye */}
 
-          <Input type="number" {...register("right_eye_near_sph")} />
-          <Input type="number" {...register("right_eye_near_cyl")} />
+          <Input
+            error={errors?.right_eye_near_sph}
+            type="number"
+            placeholder="s"
+            {...register("right_eye_near_sph")}
+          />
+          <Input
+            error={errors?.right_eye_near_cyl}
+            type="number"
+            placeholder="s"
+            {...register("right_eye_near_cyl")}
+          />
           <Input type="number" {...register("right_eye_near_axis")} />
           {/* Right Eye */}
           {/* Left Eye */}

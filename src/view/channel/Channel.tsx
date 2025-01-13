@@ -1,15 +1,10 @@
-import React from "react";
 import {
   Box,
   TextField,
   Button,
-  MenuItem,
-  Select,
   FormControl,
   InputLabel,
   Typography,
-  Grid,
-  IconButton,
   Input,
   Paper,
   InputAdornment,
@@ -20,7 +15,6 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { DatePicker } from "@mui/x-date-pickers";
 import { useForm, Controller } from "react-hook-form";
-
 import PaymentsIcon from "@mui/icons-material/Payments";
 import CreditCardIcon from "@mui/icons-material/CreditCard";
 import * as Yup from "yup";
@@ -28,14 +22,16 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { usePostApiCall } from "../../hooks/usePostApiCall";
 import useGetDoctors from "../../hooks/useGetDoctors";
 import AutocompleteInputField from "../../components/inputui/DropdownInput";
+import dayjs from "dayjs";
 interface PostData {
   id: number;
   title: string;
   body: string;
 }
 const Channel = () => {
-  const { error, loading, postApi } = usePostApiCall<PostData>();
-  const { data: doctorList, loading: loadingDoctors } = useGetDoctors();
+  const { loading, postApi } = usePostApiCall<PostData>();
+  const { data: doctorList } = useGetDoctors();
+  console.log(doctorList);
 
   const validationSchema = Yup.object().shape({
     doctor_id: Yup.number().required("Doctor ID is required"),
@@ -48,22 +44,24 @@ const Channel = () => {
     cash_amount: Yup.number().required("Cash Amount is required"),
     card_amount: Yup.number().required("Card Amount is required"),
   });
-  const {
-    register,
-    handleSubmit,
-    control,
-    formState: { errors },
-  } = useForm({
+  const { register, handleSubmit, watch, control } = useForm({
     resolver: yupResolver(validationSchema),
   });
-  const onSubmit = async (data) => {
+  const channelingFee = Number(watch("channeling_fee"));
+  const cashAmount = Number(watch("cash_amount"));
+  const cardAmount = Number(watch("card_amount"));
+
+  const onSubmit = async (data: ChannelData) => {
+    const channelDate = dayjs(data.channel_date).format("YYYY-MM-DD");
+    const channelTime = dayjs(data.time).format("HH:MM:ss");
+
     const payload = {
       doctor_id: data.doctor_id,
       name: data.name,
       address: data.address,
       contact_number: data.contact_number,
-      channel_date: data.channel_date,
-      time: data.time,
+      channel_date: channelDate,
+      time: channelTime,
       channeling_fee: data.channeling_fee,
       payments: [
         {
@@ -80,13 +78,10 @@ const Channel = () => {
 
     try {
       const response = await postApi("/channel/", payload);
-      // Send the form data to the backend
-      // const response = await axios.post(endpointUrl, data);
-      // Handle success (e.g., show a success message or redirect)
-      // console.log("Appointment saved:", response.data);
+
+      console.log("Appointment saved:", response);
     } catch (error) {
-      // Handle error (e.g., show an error message)
-      // console.error("Error submitting the form:", error);
+      console.error("Error submitting the form:", error);
     }
   };
 
@@ -164,6 +159,7 @@ const Channel = () => {
                   {...register("channel_date")}
                   {...field}
                   label="Channel Date"
+                  format="YYYY-MM-DD"
                 />
               )}
             />
@@ -178,7 +174,7 @@ const Channel = () => {
                   {...register("time")}
                   {...field}
                   label="Time"
-                  inputFormat="HH:mm"
+                  format="HH:MM:ss"
                 />
               )}
             />
@@ -197,14 +193,16 @@ const Channel = () => {
 
         <Paper sx={flexBoxStyle}>
           <Typography variant="h6">First Payment</Typography>
-          <Typography variant="h6">5000</Typography>
+          <Typography variant="h6">{cashAmount + cardAmount}</Typography>
         </Paper>
         {/* Balance */}
 
         <Paper sx={flexBoxStyle}>
           <Typography variant="h6">Balance</Typography>
 
-          <Typography variant="h6">6000</Typography>
+          <Typography variant="h6">
+            {channelingFee - (cashAmount + cardAmount)}
+          </Typography>
         </Paper>
 
         {/* Payment Method */}
@@ -260,3 +258,14 @@ const flexBoxStyle = {
   py: 1,
   px: 2,
 };
+interface ChannelData {
+  doctor_id: number;
+  name: string;
+  address: string;
+  contact_number: string;
+  channel_date: Date;
+  time: Date;
+  channeling_fee: number;
+  cash_amount: number;
+  card_amount: number;
+}
