@@ -1,6 +1,6 @@
 import { Grid, Paper, Typography, Input } from "@mui/material";
 import React from "react";
-
+import { useForm } from "react-hook-form";
 export default function EyeTestTable({ register, errors }) {
   return (
     <div>
