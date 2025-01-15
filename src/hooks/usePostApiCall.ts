@@ -19,6 +19,7 @@ export const usePostApiCall = <T>() => {
     try {
       const res = await axiosClient.post<T>(path, payload);
       setResponse({ data: res.data, error: undefined, loading: false });
+
       return res.data; // Return data for additional use
     } catch (err: any) {
       setResponse({

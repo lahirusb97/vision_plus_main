@@ -3,17 +3,17 @@ import { Autocomplete, CircularProgress, TextField } from "@mui/material";
 
 // Define the option type
 export interface Option {
-  id: number | string;
+  id: number;
   name: string;
 }
 
 // Define the props type for the component
 interface AutocompleteInputFieldProps {
   options: Option[];
-  onChange: (selectedId: number | string | null) => void;
+  onChange: (selectedId: number | null) => void;
   loading: boolean;
   labelName: string;
-  defaultId?: number | string;
+  defaultId?: number | null;
 }
 
 const AutocompleteInputField: React.FC<AutocompleteInputFieldProps> = ({

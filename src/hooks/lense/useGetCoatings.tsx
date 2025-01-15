@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import axiosClient from "../axiosClient";
+import axiosClient from "../../axiosClient";
 
 interface Coating {
   id: number;

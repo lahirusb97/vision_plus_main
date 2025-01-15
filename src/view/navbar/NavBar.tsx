@@ -17,6 +17,9 @@ import ChannelNav from "../channel/ChannelNav";
 
 import TransactionNav from "../transaction/TransactionNav";
 import StockNav from "../stock/StockNav";
+import { LogoutOutlined } from "@mui/icons-material";
+import { Cookies } from "typescript-cookie";
+import { useAuthContext } from "../../context/AuthContext";
 
 // TabPanel Component
 
@@ -49,6 +52,7 @@ function TabPanel(props: {
 
 export default function NavBar() {
   const [value, setValue] = React.useState(0);
+  const { setUser, setToken } = useAuthContext();
 
   // Handle Tab Change
   const handleChange = (
@@ -70,7 +74,10 @@ export default function NavBar() {
     { icon: MessangerIcon, label: "Messenger", nav: RefractionNav },
     { icon: UserIcon, label: "User", nav: RefractionNav },
   ];
-
+  const deleteCookie = () => {
+    Cookies.remove("VISION_ACCESS_TOKEN");
+    setToken(null);
+  };
   return (
     <Paper sx={{ width: "100%" }}>
       <Tabs
@@ -95,6 +102,14 @@ export default function NavBar() {
             }}
           />
         ))}
+        <Tab
+          icon={<LogoutOutlined />}
+          label={"LogOut"}
+          onClick={deleteCookie}
+          sx={{
+            textTransform: "capitalize", // Capitalizes the first letter of each word
+          }}
+        />
       </Tabs>
 
       {/* Tab Panels */}

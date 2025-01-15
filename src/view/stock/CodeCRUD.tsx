@@ -1,24 +1,28 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Button, Paper, Typography } from "@mui/material";
-import VariationCRUD from "../../components/VariationCRUD";
 import AutocompleteInputField from "../../components/inputui/DropdownInput";
-
+import VariationCodeCRUD from "../../components/VariationCodeCRUD";
 interface dataList {
   id: number;
   name: string;
-  description?: string | null | undefined;
+  brand: number;
+}
+interface brandList {
+  id: number;
+  name: string;
 }
 interface AddVariationCompProps {
   textName: string;
   Urlpath: string;
   dataList: dataList[];
+  brandList: brandList[];
   refresh: () => void;
 }
-
-export default function AddVariationComp({
+export default function CodeCRUD({
   textName,
   Urlpath,
   dataList,
+  brandList,
   refresh,
 }: AddVariationCompProps) {
   const [variationCrud, setVariationCrud] = React.useState({
@@ -26,7 +30,11 @@ export default function AddVariationComp({
     url: "",
     dialogMode: "",
   });
-  const [lenseCoating, setLenseCoating] = React.useState<number | null>(null);
+  const [lenseCoating, setLenseCoating] = React.useState<
+    string | number | null
+  >(null);
+  const [brandID, setBrandID] = React.useState<number | null>(null);
+  const [avilableCodes, setAvilableCodes] = React.useState<dataList[]>([]);
   const handleClose = () => {
     setVariationCrud({
       open: false,
@@ -34,8 +42,17 @@ export default function AddVariationComp({
       dialogMode: "",
     });
     setLenseCoating(null);
+    setBrandID(null);
+    setAvilableCodes([]);
     refresh();
   };
+  useEffect(() => {
+    if (brandID) {
+      setAvilableCodes(dataList.filter((item) => item.brand === brandID));
+    } else {
+      setAvilableCodes([]);
+    }
+  }, [brandID]);
 
   return (
     <div>
@@ -51,9 +68,17 @@ export default function AddVariationComp({
       >
         <Typography variant="h6">{textName}</Typography>
         <AutocompleteInputField
-          options={dataList}
+          options={brandList}
           loading={false}
-          labelName={textName}
+          labelName="Brand name "
+          defaultId={brandID}
+          onChange={(id) => setBrandID(id)}
+        />
+
+        <AutocompleteInputField
+          options={avilableCodes}
+          loading={false}
+          labelName="Code name "
           defaultId={undefined}
           onChange={(id) => setLenseCoating(id)}
         />
@@ -61,20 +86,22 @@ export default function AddVariationComp({
           <Button
             color="success"
             variant="outlined"
-            onClick={() =>
-              setVariationCrud({
-                open: true,
-                dialogMode: "add",
-                url: Urlpath,
-              })
-            }
+            onClick={() => {
+              if (brandID) {
+                setVariationCrud({
+                  open: true,
+                  dialogMode: "add",
+                  url: Urlpath,
+                });
+              }
+            }}
           >
             Add
           </Button>
           <Button
             variant="outlined"
             onClick={() => {
-              if (lenseCoating) {
+              if (brandID && lenseCoating) {
                 setVariationCrud({
                   open: true,
                   dialogMode: "Edit",
@@ -89,7 +116,7 @@ export default function AddVariationComp({
             color="error"
             variant="outlined"
             onClick={() => {
-              if (lenseCoating) {
+              if (brandID && lenseCoating) {
                 setVariationCrud({
                   open: true,
                   dialogMode: "Delete",
@@ -102,8 +129,9 @@ export default function AddVariationComp({
           </Button>
         </div>
         {/* Dialog */}
-        <VariationCRUD
+        <VariationCodeCRUD
           variationCrud={variationCrud}
+          brandID={brandID}
           handleClose={handleClose}
           refresh={refresh}
         />
