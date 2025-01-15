@@ -6,7 +6,6 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { TextField, Typography } from "@mui/material";
 import axiosClient from "../axiosClient";
-
 interface VariationData {
   open: boolean;
   url: string;
@@ -14,11 +13,13 @@ interface VariationData {
 }
 interface VariationCRUDProps {
   variationCrud: VariationData;
+  brandID: number | null;
   handleClose: () => void;
   refresh: () => void;
 }
-export default function VariationCRUD({
+export default function VariationCodeCRUD({
   variationCrud,
+  brandID,
   handleClose,
   refresh,
 }: VariationCRUDProps) {
@@ -29,7 +30,7 @@ export default function VariationCRUD({
     try {
       await axiosClient.post(variationCrud.url, {
         name: inputName,
-        description: inputdiscription,
+        brand: brandID,
       });
 
       refresh();
@@ -42,9 +43,9 @@ export default function VariationCRUD({
     try {
       await axiosClient.put(variationCrud.url, {
         name: inputName,
-        discription: inputdiscription,
+        brand: brandID,
       });
-      console.log("updates");
+
       refresh();
       handleClose();
     } catch (error) {

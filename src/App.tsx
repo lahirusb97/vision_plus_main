@@ -4,7 +4,7 @@ import { router } from "./routes/router";
 import { ThemeProvider } from "@mui/material";
 import theme from "./theme/theme";
 // import ThemeSwitch from "./theme/ThemeSwitch";
-
+import { Toaster } from "react-hot-toast";
 function App() {
   return (
     <>
@@ -12,6 +12,7 @@ function App() {
         <AuthContext>
           <RouterProvider router={router} />
           {/* <ThemeSwitch /> */}
+          <Toaster />
         </AuthContext>
       </ThemeProvider>
     </>

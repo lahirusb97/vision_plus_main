@@ -1,96 +1,123 @@
-import React from "react";
-import {
-  Box,
-  Button,
-  IconButton,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography,
-  Paper,
-} from "@mui/material";
+import React, { useMemo } from "react";
+import { MaterialReactTable } from "material-react-table";
+import { Box, IconButton } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import HistoryIcon from "@mui/icons-material/History";
 import LoopIcon from "@mui/icons-material/Loop";
+import useGetFrames from "../../hooks/lense/useGetFrames";
 
 const FrameStore = () => {
-  const frames = [
-    {
-      brand: "Rover",
-      code: "1542",
-      color: "green",
-      species: "Metal",
-      shape: "full",
-      price: 1000,
-      stockLimit: 20,
-      quantity: 58,
-    },
-  ];
+  const { frames, framesLoading, framesError } = useGetFrames();
+
+  // Define columns
+  const columns = useMemo(
+    () => [
+      {
+        header: "Action",
+        id: "action",
+        Cell: ({ row }) => (
+          <Box>
+            <IconButton
+              title="Delete"
+              onClick={() => handleDelete(row.original.id)}
+            >
+              <DeleteIcon />
+            </IconButton>
+            <IconButton
+              title="History"
+              onClick={() => handleHistory(row.original.id)}
+            >
+              <HistoryIcon />
+            </IconButton>
+            <IconButton
+              title="Edit"
+              onClick={() => handleEdit(row.original.id)}
+            >
+              <EditIcon />
+            </IconButton>
+            <IconButton
+              title="Update Quantity"
+              onClick={() => handleUpdate(row.original.id)}
+            >
+              <LoopIcon />
+            </IconButton>
+          </Box>
+        ),
+      },
+      {
+        header: "Brand",
+        accessorKey: "brand",
+      },
+      {
+        header: "Code",
+        accessorKey: "code",
+      },
+      {
+        header: "Color",
+        accessorKey: "color",
+      },
+      {
+        header: "Species",
+        accessorKey: "species",
+      },
+      {
+        header: "Shape",
+        accessorKey: "shape",
+      },
+      {
+        header: "Price",
+        accessorKey: "price",
+      },
+      {
+        header: "Stock Limit",
+        accessorKey: "stock.initial_count", // Nested accessor for stock initial count
+      },
+      {
+        header: "Quantity",
+        accessorKey: "stock.qty", // Nested accessor for stock quantity
+      },
+    ],
+    []
+  );
+
+  // Handlers for actions
+  const handleDelete = (id) => {
+    console.log(`Delete Frame ID: ${id}`);
+    // Add delete logic
+  };
+
+  const handleHistory = (id) => {
+    console.log(`View History for Frame ID: ${id}`);
+    // Add history logic
+  };
+
+  const handleEdit = (id) => {
+    console.log(`Edit Frame ID: ${id}`);
+    // Add edit logic
+  };
+
+  const handleUpdate = (id) => {
+    console.log(`Update Quantity for Frame ID: ${id}`);
+    // Add update logic
+  };
 
   return (
-    <Box
-      sx={{
-        padding: 4,
-        minHeight: "100vh",
-        gap:2,
-        
-      }}
-    >
-      
-
-      {/* Table Section */}
-      <TableContainer component={Paper} sx={{ borderRadius: 2, width:"1000px"   }}>
-        <Table>
-          {/* Table Header */}
-          <TableHead >
-            <TableRow>
-              <TableCell align="center">Action</TableCell>
-              <TableCell align="center">Brand</TableCell>
-              <TableCell align="center">Code</TableCell>
-              <TableCell align="center">Color</TableCell>
-              <TableCell align="center">Species</TableCell>
-              <TableCell align="center">Shape</TableCell>
-              <TableCell align="center">Price</TableCell>
-              <TableCell align="center">Stock Limit</TableCell>
-              <TableCell align="center">Quantity</TableCell>
-            </TableRow>
-          </TableHead>
-
-          {/* Table Body */}
-          <TableBody sx={{marginTop: 12}} >
-            {frames.map((frame, index) => (
-              <TableRow key={index}>
-                <TableCell align="center">
-                  <IconButton title="Delete">
-                    <DeleteIcon />
-                  </IconButton>
-                  <IconButton title="History">
-                    <HistoryIcon />
-                  </IconButton>
-                  <IconButton title="Price and Stock Limit Edit">
-                    <EditIcon />
-                  </IconButton>
-                  <IconButton title="Frames Quantity Update">
-                    <LoopIcon />
-                  </IconButton>
-                </TableCell>
-                <TableCell align="center">{frame.brand}</TableCell>
-                <TableCell align="center">{frame.code}</TableCell>
-                <TableCell align="center">{frame.color}</TableCell>
-                <TableCell align="center">{frame.species}</TableCell>
-                <TableCell align="center">{frame.shape}</TableCell>
-                <TableCell align="center">{frame.price}</TableCell>
-                <TableCell align="center">{frame.stockLimit}</TableCell>
-                <TableCell align="center">{frame.quantity}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+    <Box sx={{ padding: 4, maxWidth: "1200px" }}>
+      <MaterialReactTable
+        columns={columns}
+        data={frames}
+        enableColumnActions={false}
+        enableColumnFilters={false}
+        enableSorting
+        enablePagination
+        muiTableProps={{
+          sx: {
+            borderRadius: 2,
+            overflow: "hidden",
+          },
+        }}
+      />
     </Box>
   );
 };
