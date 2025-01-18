@@ -1,7 +1,5 @@
-import React from "react";
 import {
   Box,
-  Button,
   IconButton,
   Table,
   TableBody,
@@ -9,8 +7,6 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Typography,
-  Paper,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -27,7 +23,7 @@ const LensStore = () => {
       ADD: "-",
       lensbrand: "eselar",
       price: 1000,
-      stocklimit:50,
+      stocklimit: 50,
       quantity: 4745,
     },
   ];
@@ -37,16 +33,17 @@ const LensStore = () => {
       sx={{
         padding: 4,
         minHeight: "100vh",
-        gap:2,
+        gap: 2,
       }}
     >
-      
-
       {/* Table Section */}
-      <TableContainer component={Paper} sx={{ borderRadius: 2, width:"1050px"   }}>
+      <TableContainer
+        component={Paper}
+        sx={{ borderRadius: 2, width: "1050px" }}
+      >
         <Table>
           {/* Table Header */}
-          <TableHead >
+          <TableHead>
             <TableRow>
               <TableCell align="center">Action</TableCell>
               <TableCell align="center">Lens type</TableCell>
@@ -62,7 +59,7 @@ const LensStore = () => {
           </TableHead>
 
           {/* Table Body */}
-          <TableBody sx={{marginTop: 12}} >
+          <TableBody sx={{ marginTop: 12 }}>
             {frames.map((frame, index) => (
               <TableRow key={index}>
                 <TableCell align="center">
@@ -98,4 +95,3 @@ const LensStore = () => {
 };
 
 export default LensStore;
-

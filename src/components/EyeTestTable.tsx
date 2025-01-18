@@ -1,7 +1,6 @@
 import { Grid, Paper, Typography, Input } from "@mui/material";
-import React from "react";
-import { useForm } from "react-hook-form";
-export default function EyeTestTable({ register, errors }) {
+
+export default function EyeTestTable({ register, errors }: any) {
   return (
     <div>
       <Paper elevation={3} sx={{ padding: "10px", marginY: "10px" }}>
