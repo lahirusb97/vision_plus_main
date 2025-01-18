@@ -1,4 +1,4 @@
-import React, { forwardRef } from "react";
+import { forwardRef } from "react";
 import { styled, Input, Paper } from "@mui/material";
 
 // Styled Wrapper for Layout

@@ -1,7 +1,5 @@
-import React from "react";
 import {
   Box,
-  Button,
   IconButton,
   Table,
   TableBody,
@@ -9,7 +7,6 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Typography,
   Paper,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
