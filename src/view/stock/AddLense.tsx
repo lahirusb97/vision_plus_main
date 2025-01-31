@@ -2,15 +2,18 @@ import React, { useState } from "react";
 import { Box, Button, Paper, TextField, Typography } from "@mui/material";
 import DropdownInput from "../../components/inputui/DropdownInput"; // Import your reusable dropdown component
 import useGetLenseTypes from "../../hooks/lense/useGetLenseType";
-
+import { Controller, useForm } from "react-hook-form";
+import * as Yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 const AddLens = () => {
+  const {lenseTypes,lenseTypesLoading}=useGetLenseTypes();
   const [lensType, setLensType] = useState<number | null>(null);
   const [sph, setSph] = useState("");
   const [add, setAdd] = useState("");
   const [price, setPrice] = useState("");
   const [quantity, setQuantity] = useState("");
   const [coating, setCoating] = useState<number | null>(null);
-  const { lenseTypes } = useGetLenseTypes();
+
 
   // Dropdown options
 
@@ -19,16 +22,20 @@ const AddLens = () => {
     { id: 2, name: "Blue Light Filter" },
     { id: 3, name: "Scratch Resistant" },
   ];
+  // const bisocal=3;
+  // const Progresive=2;
+  // const single_vision=1;  
+   const bisocal=5;
+   const Progresive=4;
+   const single_vision=3;  
+console.log(coating);
 
   // Submit handler
   const handleSubmit = () => {
-    const lensData = {
-      lensType,
-      sph: Number(sph),
-      add: Number(add),
-      price: Number(price),
-      quantity: Number(quantity),
-      coating,
+    const lense = {
+      type: lensType,
+      coating: coating,
+      price: "150.00"
     };
     console.log("Lens Created:", lensData);
     // Add your API call or further logic here
@@ -45,13 +52,18 @@ const AddLens = () => {
       }}
     >
       {/* Lens Type Dropdown */}
-      <DropdownInput
-        options={lenseTypes}
-        onChange={(selectedId) => setLensType(selectedId)}
-        labelName="Lens Type"
-        loading={false}
-        defaultId={null}
-      />
+
+            <DropdownInput
+         
+              options={lenseTypes}
+              onChange={(selectedId) => setLensType(selectedId)}
+              labelName="Lens Type"
+              loading={false}
+              defaultId={null}
+            />
+     
+        
+    
 
       {/* Lens Power Section */}
       <Box
@@ -83,14 +95,22 @@ const AddLens = () => {
             value={sph}
             onChange={(e) => setSph(e.target.value)}
           />
-          <TextField
+         {single_vision !==lensType && <TextField
             label="ADD"
             type="number"
             fullWidth
             variant="outlined"
             value={add}
             onChange={(e) => setAdd(e.target.value)}
-          />
+          />}
+        { single_vision ===lensType && <TextField
+            label="CYL"
+            type="number"
+            fullWidth
+            variant="outlined"
+            value={add}
+            onChange={(e) => setAdd(e.target.value)}
+          />}
         </Box>
       </Box>
 

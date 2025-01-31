@@ -42,6 +42,7 @@ const AutocompleteInputField: React.FC<AutocompleteInputFieldProps> = ({
     setSelectedOption(newValue);
     onChange(newValue ? newValue.id : null); // Pass only the selected option's id to parent
   };
+console.log(selectedOption);
 
   return (
     <Autocomplete

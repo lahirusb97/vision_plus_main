@@ -86,10 +86,8 @@ export default function RefractionDetails() {
   const {
     data: refractionList,
     loading: refractionListLoading,
-    error: refractionListError,
     nextPage,
-    prevPage,
-    refresh,
+    prevPage
   } = useData<RefractionData>("refractions/");
 
   // Safely access data and meta-information

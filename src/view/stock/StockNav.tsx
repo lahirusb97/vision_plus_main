@@ -3,7 +3,7 @@ import NavButton from "../../components/NavButton";
 export default function StockNav() {
   return (
     <>
-      <NavButton name="Add Frame" path="stock/add_frames" />
+      <NavButton name="Add Frame" path="/stock/add_frames" />
       <NavButton name="Add Lense" path="/stock/add_lense" />
       <NavButton name="Frame Store" path="/stock/frame_store" />
       <NavButton name="Lens Store" path="/stock/lens_store" />

@@ -6,9 +6,11 @@ import EditIcon from "@mui/icons-material/Edit";
 import HistoryIcon from "@mui/icons-material/History";
 import LoopIcon from "@mui/icons-material/Loop";
 import useGetFrames from "../../hooks/lense/useGetFrames";
+import { useNavigate } from "react-router";
 
 const FrameStore = () => {
   const { frames, framesLoading, framesError } = useGetFrames();
+console.log(frames);
 
   // Define columns
   const columns = useMemo(
@@ -48,43 +50,50 @@ const FrameStore = () => {
       {
         header: "Brand",
         accessorKey: "brand",
+        size: 130,
+
       },
       {
         header: "Code",
         accessorKey: "code",
+        size: 130,
+
       },
       {
         header: "Color",
         accessorKey: "color",
+        size: 130,
+
       },
       {
         header: "Species",
         accessorKey: "species",
-      },
-      {
-        header: "Shape",
-        accessorKey: "shape",
+        size: 130,
+
       },
       {
         header: "Price",
         accessorKey: "price",
+        size: 60,
+
       },
       {
         header: "Stock Limit",
         accessorKey: "stock.initial_count", // Nested accessor for stock initial count
+        size: 50,
       },
       {
         header: "Quantity",
         accessorKey: "stock.qty", // Nested accessor for stock quantity
+        size: 50,
       },
     ],
     []
   );
-
+const navigate=useNavigate()
   // Handlers for actions
   const handleDelete = (id) => {
-    console.log(`Delete Frame ID: ${id}`);
-    // Add delete logic
+  
   };
 
   const handleHistory = (id) => {
@@ -100,6 +109,7 @@ const FrameStore = () => {
   const handleUpdate = (id) => {
     console.log(`Update Quantity for Frame ID: ${id}`);
     // Add update logic
+    navigate(`./update_quantity/${id}`);
   };
 
   return (
