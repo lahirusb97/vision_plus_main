@@ -6,8 +6,13 @@ import LenseStore from "../../view/stock/LenseStore";
 import AddVariation from "../../view/stock/AddVariation";
 import AddOtherItem from "../../view/stock/AddOtherItem";
 import OtherItemStock from "../../view/stock/OtherItemStock";
-import UpdateQty from "../../view/stock/UpdateQty";
 import ProtectedChildRoute from "../ProtectedChildRoute";
+import LenseHistory from "../../view/stock/lense/LenseHistory";
+import LenseEdit from "../../view/stock/lense/LenseEdit";
+import FrameEdit from "../../view/stock/frame/FrameEdit";
+import FrameUpdate from "../../view/stock/frame/FrameUpdate";
+import FrameHIstory from "../../view/stock/frame/FrameHIstory";
+import LenseUpdate from "../../view/stock/lense/LenseUpdate";
 
 export const stockRoutes: RouteObject[] = [
   {
@@ -25,15 +30,21 @@ export const stockRoutes: RouteObject[] = [
         ,
       },
       {
-        path: "update_quantity/:id",
+        path: "update/:id",
         element: 
-          <UpdateQty />
+          <FrameUpdate />
         ,
       },
       {
         path: "edit/:id",
         element: 
-          <UpdateQty />
+          <FrameEdit />
+        ,
+      },
+      {
+        path: "history/:id",
+        element: 
+          <FrameHIstory />
         ,
       },
     ],
@@ -44,7 +55,33 @@ export const stockRoutes: RouteObject[] = [
   },
   {
     path: "lens_store",
-    element: <LenseStore />,
+    element: <ProtectedChildRoute />,
+    children: [
+      {
+       index  : true,
+        element: 
+          <LenseStore />
+        ,
+      },
+      {
+        path: "update/:id",
+        element: 
+          <LenseUpdate />
+        ,
+      },
+      {
+        path: "edit/:id",
+        element: 
+          <LenseEdit />
+        ,
+      },
+      {
+        path: "history/:id",
+        element: 
+          <LenseHistory />
+        ,
+      },
+    ],
   },
   {
     path: "add_variation",

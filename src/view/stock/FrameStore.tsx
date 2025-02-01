@@ -10,7 +10,6 @@ import { useNavigate } from "react-router";
 
 const FrameStore = () => {
   const { frames, framesLoading, framesError } = useGetFrames();
-console.log(frames);
 
   // Define columns
   const columns = useMemo(
@@ -97,19 +96,22 @@ const navigate=useNavigate()
   };
 
   const handleHistory = (id) => {
-    console.log(`View History for Frame ID: ${id}`);
+    // console.log(`View History for Frame ID: ${id}`);
     // Add history logic
+    navigate(`./history/${id}`);
+
   };
 
   const handleEdit = (id) => {
-    console.log(`Edit Frame ID: ${id}`);
+    // console.log(`Edit Frame ID: ${id}`);
     // Add edit logic
+    navigate(`./edit/${id}`);
   };
 
   const handleUpdate = (id) => {
-    console.log(`Update Quantity for Frame ID: ${id}`);
+    // console.log(`Update Quantity for Frame ID: ${id}`);
     // Add update logic
-    navigate(`./update_quantity/${id}`);
+    navigate(`./update/${id}`);
   };
 
   return (
