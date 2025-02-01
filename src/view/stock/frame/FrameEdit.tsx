@@ -1,7 +1,53 @@
-import React from 'react'
+import React from "react";
+import { Box, Button, TextField, Typography, ToggleButtonGroup, ToggleButton, Chip } from "@mui/material";
 
-export default function FrameEdit() {
+const FrameEdit = () => {
+  const [alignment, setAlignment] = React.useState("lensType");
+
+  function handleAlignment(event: any, newAlignment: React.SetStateAction<string> | null) {
+    if (newAlignment !== null) {
+      setAlignment(newAlignment);
+    }
+  }
+
   return (
-    <div>FrameEdit</div>
-  )
-}
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "80vh",
+        
+      }}
+    >
+      <Box
+        sx={{
+          width: 400,
+          p: 3,
+          bgcolor: "white",
+          borderRadius: 2,
+          boxShadow: 3,
+        }}
+      >
+        <Typography variant="h6" textAlign="Left" mb={2}>
+          Price and Stock Limit Edit
+        </Typography>
+
+        <Box sx={{ marginY: 2 }}>
+          <Chip label="Brand name" color="primary" sx={{ marginX: 0.5, backgroundColor: "blue" }} />
+          <Chip label="Code" color="primary" sx={{ marginX: 0.5, backgroundColor: "blue" }} />
+          <Chip label="Color" color="primary" sx={{ marginX: 0.5, backgroundColor: "blue" }} />
+        </Box>
+        <TextField fullWidth label="Price" variant="outlined" margin="normal" />
+        <TextField fullWidth label="Stock Limit" variant="outlined" margin="normal" />
+
+        <Button fullWidth variant="contained"  sx={{ mt: 2, backgroundColor:"blue" }}>
+          SAVE
+        </Button>
+      </Box>
+    </Box>
+  );
+};
+
+export default FrameEdit;
+
