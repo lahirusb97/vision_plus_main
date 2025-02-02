@@ -9,8 +9,9 @@ import {
   Paper,
   Select,
   TextField,
+  Typography,
 } from "@mui/material";
-import DropdownInput, { Option } from "../../components/inputui/DropdownInput";
+import DropdownInput from "../../components/inputui/DropdownInput";
 import useGetBrands from "../../hooks/lense/useGetBrand";
 import useGetCodes from "../../hooks/lense/useGetCode";
 import useGetColors from "../../hooks/lense/useGetColors";
@@ -18,30 +19,34 @@ import { Controller, useForm } from "react-hook-form";
 import * as Yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { usePostApiCall } from "../../hooks/usePostApiCall";
+import toast from 'react-hot-toast';
+import axiosClient from "../../axiosClient";
+import { AxiosError } from "axios";
 
 const AddFrames = () => {
   const { brands, brandsLoading, brandsError } = useGetBrands();
   const { codes, codesLoading, codesError } = useGetCodes();
   const { colors, colorsLoading, colorsError } = useGetColors();
-  const { loading, postApi } = usePostApiCall();
+  const [loading, setLoading] = useState(false);
   // Dropdown options
-
+ 
   const validationSchema = Yup.object().shape({
-    brand: Yup.number().required("Doctor ID is required"),
-    code: Yup.number().required("Patient Name is required"),
-    color: Yup.number().required("Patient Address is required"),
-    price: Yup.number().required("Patient Contact is required"),
+    brand: Yup.number().required("Brand Name is required"),
+    code: Yup.number().required("Code is required"),
+    color: Yup.number().required("Color is required"),
+    price: Yup.number().positive().min(0.01, "Price must be positive").required("Price is required"),
     size: Yup.string().required("Channel Date is required"),
     species: Yup.string().required("Time is required"),
     image: Yup.string(),
-    qty: Yup.number().required("quantity is required"),
+    qty: Yup.number().positive().integer().min(1).required("Quantity is required"),
   });
-  const { register, handleSubmit, watch, control } = useForm({
+  const { register, handleSubmit, control,formState: { errors } ,reset} = useForm({
     resolver: yupResolver(validationSchema),
   });
 
   // Submit handler
-  const submitData = (frameData) => {
+  const submitData =async (frameData) => {
+    setLoading(true);
     const postData = {
       frame: {
         brand: frameData.brand,
@@ -58,9 +63,22 @@ const AddFrames = () => {
         qty: frameData.qty,
       },
     };
-    console.log(frameData);
-
-    postApi("/frames/", postData);
+    try {
+      await axiosClient.post("/frames/", postData);
+      toast.success("Frame added successfully");
+      reset();
+    } catch (error) {
+      // Check if the error is an AxiosError
+      if (error instanceof AxiosError) {
+        // Safely access error.response.data.message
+        toast.error(error.response?.data?.message || "Something went wrong");
+      } else {
+        // Handle non-Axios errors (e.g., network errors, syntax errors, etc.)
+        toast.error("Something went wrong");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -75,7 +93,7 @@ const AddFrames = () => {
         gap: 2,
       }}
     >
-      <form onSubmit={handleSubmit(submitData)}>
+      <form style={{display: "flex", flexDirection: "column", gap: 16 ,width:"100%"}} onSubmit={handleSubmit(submitData)}>
         {/* Brand Dropdown */}
         <Controller
           name="brand"
@@ -90,6 +108,8 @@ const AddFrames = () => {
             />
           )}
         />
+   {errors.brand && <Typography color="error">{errors.brand.message}</Typography>}
+
         {/* Code Dropdown */}
 
         <Controller
@@ -106,6 +126,7 @@ const AddFrames = () => {
           )}
         />
         {/* Color Dropdown */}
+        {errors.code && <Typography color="error">{errors.code.message}</Typography>}
 
         <Controller
           name="color"
@@ -120,19 +141,20 @@ const AddFrames = () => {
             />
           )}
         />
+   {errors.color && <Typography color="error">{errors.color.message}</Typography>}
 
         {/* Price Field */}
         <TextField
-          {...register("price", {
-            required: "Price is required",
-            valueAsNumber: true,
-          })}
-          name="price"
           label="Price"
           type="number"
           fullWidth
           margin="normal"
           variant="outlined"
+          error={!!errors.price}
+          helperText={errors.price?.message}
+          {...register('price', {
+            setValueAs: (value) => (value === "" ? undefined : Number(value)),
+          })}
         />
 
         {/* Species Dropdown */}
@@ -140,9 +162,10 @@ const AddFrames = () => {
           name="size"
           control={control}
           render={({ field }) => (
-            <FormControl fullWidth>
+            <FormControl fullWidth error={!!errors.size}>
               <InputLabel id="demo-simple-select-label">Shape</InputLabel>
               <Select
+              
                 {...field}
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
@@ -155,13 +178,14 @@ const AddFrames = () => {
             </FormControl>
           )}
         />
+   {errors.size && <Typography color="error">{errors.size.message}</Typography>}
 
         {/* Species Dropdown */}
         <Controller
           name="species"
           control={control}
           render={({ field }) => (
-            <FormControl fullWidth>
+            <FormControl fullWidth error={!!errors.species}>
               <InputLabel id="demo-simple-select-label">Species</InputLabel>
               <Select
                 {...field}
@@ -176,18 +200,21 @@ const AddFrames = () => {
             </FormControl>
           )}
         />
+   {errors.species && <Typography color="error">{errors.species.message}</Typography>}
 
         {/* Quantity Field */}
         <TextField
-          {...register("qty", {
-            required: "Quantity is required",
-            valueAsNumber: true,
+       
+          {...register('qty', {
+            setValueAs: (value) => (value === "" ? undefined : Number(value)),
           })}
           label="Quantity"
           type="number"
           fullWidth
           margin="normal"
           variant="outlined"
+          error={!!errors.price}
+          helperText={errors.price?.message}
         />
 
         {/* Submit Button */}
@@ -201,6 +228,7 @@ const AddFrames = () => {
           {loading ? <CircularProgress size={24} /> : "Submit"}
         </Button>
       </form>
+      
     </Paper>
   );
 };

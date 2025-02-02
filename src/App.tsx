@@ -12,7 +12,8 @@ function App() {
         <AuthContext>
           <RouterProvider router={router} />
           {/* <ThemeSwitch /> */}
-          <Toaster />
+
+          <Toaster position="bottom-center" gutter={8}/>
         </AuthContext>
       </ThemeProvider>
     </>

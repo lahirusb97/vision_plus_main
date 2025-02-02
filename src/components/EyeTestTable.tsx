@@ -1,4 +1,4 @@
-import { Grid, Paper, Typography, Input } from "@mui/material";
+import { Grid, Paper, Typography, Input, Box } from "@mui/material";
 
 export default function EyeTestTable({ register, errors }: any) {
   return (
@@ -76,19 +76,17 @@ export default function EyeTestTable({ register, errors }: any) {
             placeholder="s"
             {...register("right_eye_near_sph")}
           />
-          <Input
-            error={errors?.right_eye_near_cyl}
-            type="number"
-            placeholder="s"
-            {...register("right_eye_near_cyl")}
-          />
-          <Input type="number" {...register("right_eye_near_axis")} />
+        <Box sx={{ display: "flex", gap: "10px" }}></Box>
+          
+        <Box sx={{ display: "flex", gap: "10px" }}></Box>
+         
           {/* Right Eye */}
           {/* Left Eye */}
 
           <Input type="number" {...register("left_eye_near_sph")} />
-          <Input type="number" {...register("left_eye_near_cyl")} />
-          <Input type="number" {...register("left_eye_near_axis")} />
+          <Box sx={{ display: "flex", gap: "10px" }}></Box>
+          
+          <Box sx={{ display: "flex", gap: "10px" }}></Box>
           {/* Left Eye */}
         </Grid>
       </Paper>
