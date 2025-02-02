@@ -35,7 +35,6 @@ const useGetFrames = (): UseGetFrameReturn => {
     }
   }, []);
 
-  // Automatically fetch data on mount
   useEffect(() => {
     fetchFrames();
   }, [fetchFrames]);

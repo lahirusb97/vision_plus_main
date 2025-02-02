@@ -11,10 +11,11 @@ import useGetLenses from "../../hooks/lense/useGetLense";
 const LenseStore = () => {
   const { lenses, lensesLoading, lensesError } = useGetLenses();
 //! Imporant Values can not be changed
-const SPH=6;
-const CYL=7;
-const ADD=8;
+const SPH=1;
+const CYL=2;
+const ADD=3;
 //! Imporant Values can not be changed
+
 
   // Define columns
   const columns = useMemo(
@@ -92,7 +93,7 @@ const ADD=8;
       },
       {
         header: "Stock Limit",
-        accessorKey: "stock.initial_count", // Nested accessor for stock initial count
+        accessorKey: "stock.limit", // Nested accessor for stock initial count
         size: 50,
       },
       {

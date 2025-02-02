@@ -78,7 +78,7 @@ const FrameStore = () => {
       },
       {
         header: "Stock Limit",
-        accessorKey: "stock.initial_count", // Nested accessor for stock initial count
+        accessorKey: "stock.limit", // Nested accessor for stock initial count
         size: 50,
       },
       {

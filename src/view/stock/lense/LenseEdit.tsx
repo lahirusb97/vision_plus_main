@@ -1,15 +1,57 @@
-import React from "react";
-import { Box, Button, TextField, Typography, ToggleButtonGroup, ToggleButton, Chip } from "@mui/material";
+import React, { useState } from "react";
+import {
+  Box,
+  Button,
+  Chip,
+  TextField,
+  Typography,
+  Paper,
+} from "@mui/material";
+import { useForm, Controller } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import axiosClient from "../../../axiosClient";
+import { useParams } from "react-router";
+import toast from 'react-hot-toast';
+import { AxiosError } from "axios";
 
+interface Stock {
+  price: number;
+}
 const LenseEdit = () => {
-  const [alignment, setAlignment] = React.useState("lensType");
+const {id}=useParams()
 
-  function handleAlignment(event: any, newAlignment: React.SetStateAction<string> | null) {
-    if (newAlignment !== null) {
-      setAlignment(newAlignment);
+
+   const schema = yup.object().shape({
+    price: yup.number().positive().min(0.01, "Price must be positive").required("Price is required"),
+  });
+  const {  handleSubmit, formState: { errors }, register ,reset} = useForm({
+    resolver: yupResolver(schema),
+    defaultValues: {
+      price: undefined,
     }
+  });
+  const submiteData =async (data: Stock) => {
+    const { price } = data;
+    const postDAta={
+      price:price,
   }
-
+  
+  try {
+   await axiosClient.put(`/lenses/${id}/`,postDAta)
+    toast.success("Lense Saved Successfully");
+    reset()
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      // Safely access error.response.data.message
+      toast.error(error.response?.data?.message || "Something went wrong");
+    } else {
+      // Handle non-Axios errors (e.g., network errors, syntax errors, etc.)
+      toast.error("Something went wrong");
+    }
+    
+  }
+  };
   return (
     <Box
       sx={{
@@ -17,34 +59,38 @@ const LenseEdit = () => {
         justifyContent: "center",
         alignItems: "center",
         height: "80vh",
-        
       }}
     >
-      <Box
-        sx={{
-          width: 400,
-          p: 3,
-          bgcolor: "white",
-          borderRadius: 2,
-          boxShadow: 3,
-        }}
-      >
-        <Typography variant="h6" textAlign="Left" mb={2}>
-          Price and Stock Limit Edit
+      <Paper component={"form"} onSubmit={handleSubmit(submiteData)} sx={{ padding: 4, width: 400, textAlign: "Left",   }} elevation={3}>
+        <Typography variant="h6" fontWeight="bold" paddingLeft="9px">
+          Lense Update
         </Typography>
 
         <Box sx={{ marginY: 2 }}>
-          <Chip label="Lens type" color="primary" sx={{ marginX: 0.5, backgroundColor: "blue" }} />
-          <Chip label="Lens brand" color="primary" sx={{ marginX: 0.5, backgroundColor: "blue" }} />
-          <Chip label="Coating" color="primary" sx={{ marginX: 0.5, backgroundColor: "blue" }} />
+          <Chip label="Brand Name" color="primary" sx={{ marginX: 0.5, backgroundColor: "#237ADE",color:'white' }} />
+          <Chip label="code" color="primary" sx={{ marginX: 0.5, backgroundColor: "#237ADE" ,color:'white'}} />
+          <Chip label="color" color="primary" sx={{ marginX: 0.5, backgroundColor: "#237ADE" ,color:'white'}} />
         </Box>
-        <TextField fullWidth label="Price" variant="outlined" margin="normal" />
-        <TextField fullWidth label="Stock Limit" variant="outlined" margin="normal" />
 
-        <Button fullWidth variant="contained"  sx={{ mt: 2, backgroundColor:"blue" }}>
+        <TextField
+          fullWidth
+          label="Price"
+          variant="outlined"
+          inputProps={{ min: 0 }}
+          type="number"
+          {...register('price', {
+            setValueAs: (value) => (value === "" ? undefined : Number(value)),
+          })}
+          error={!!errors.price}
+          helperText={errors.price?.message}
+          sx={{ marginBottom: 2 }}
+        />
+      
+
+        <Button type="submit" variant="contained" fullWidth>
           SAVE
         </Button>
-      </Box>
+      </Paper>
     </Box>
   );
 };

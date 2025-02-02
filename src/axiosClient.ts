@@ -9,15 +9,15 @@ import { getCookie } from "typescript-cookie";
 // Create an Axios instance with a base URL
 const axiosClient: AxiosInstance = axios.create({
   // baseURL: "http://193.203.161.90:8000/api",
-  // baseURL: "http://193.203.161.90:8000/api",
-  baseURL: "http://127.0.0.1:8005/api",
+  baseURL: "http://193.203.161.90:8000/api",
+  // baseURL: "http://127.0.0.1:8005/api",
   withCredentials: false,
 });
 
 // Request interceptor to add Authorization header
 axiosClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   const token = getCookie("VISION_ACCESS_TOKEN");
-  if (token && config.headers && config.url !== "/login/") {
+  if (token && config.headers && config.url !== "/login/" && config.url !=='/register/admin/') {
     config.headers.Authorization = `token ${token}`;
   }
   return config;
