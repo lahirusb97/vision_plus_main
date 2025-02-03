@@ -7,10 +7,16 @@ import HistoryIcon from "@mui/icons-material/History";
 import LoopIcon from "@mui/icons-material/Loop";
 import useGetFrames from "../../hooks/lense/useGetFrames";
 import { useNavigate } from "react-router";
+import DeleteDialog from "../../components/DeleteDialogProps ";
+import axiosClient from "../../axiosClient";
 
 const FrameStore = () => {
-  const { frames, framesLoading, framesError } = useGetFrames();
-
+  const { frames, framesLoading, framesError ,refresh} = useGetFrames();
+const [openDelete, setOpenDelete] = React.useState({
+  open: false,
+  path:'',
+  itemName:''
+});
   // Define columns
   const columns = useMemo(
     () => [
@@ -91,7 +97,19 @@ const FrameStore = () => {
   );
 const navigate=useNavigate()
   // Handlers for actions
-  const handleDelete = (id) => {
+  const handleDelete = async(id) => {
+    setOpenDelete({ open: true, path: `/frames/${id}/`,itemName: 'Frame' });
+      try {
+        // Simulate API call
+        await axiosClient.delete(`/frames/${id}/`);
+        console.error("Deleteed failed");
+        refresh()
+      } catch (error) {
+        console.error("Delete failed", error);
+      }finally{
+        setOpenDelete({ open: false, path: '',itemName: '' });
+      }
+   
   
   };
 
@@ -130,6 +148,12 @@ const navigate=useNavigate()
           },
         }}
       />
+        <DeleteDialog open={openDelete.open} onClose={() => 
+          setOpenDelete({ open: false, path: '',itemName: '' })} 
+          onConfirm={handleDelete} 
+          path={openDelete.path} 
+          itemName={openDelete.itemName} 
+        />
     </Box>
   );
 };
