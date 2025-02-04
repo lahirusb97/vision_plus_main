@@ -10,10 +10,11 @@ import { IconButton } from "@mui/material";
 import AddIcon from "@mui/icons-material/AddBox";
 import CashInput from "../../components/inputui/CashInput";
 import CardInput from "../../components/inputui/CardInput";
+import { useNavigate } from "react-router";
 
 const TransactionUI = () => {
   const lensOptions = ["Option 1", "Option 2", "Option 3"]; // Replace with actual options
-
+const navigate = useNavigate();
   return (
     <Box
       sx={{
@@ -208,6 +209,7 @@ const TransactionUI = () => {
           variant="contained"
           color="secondary"
           sx={{ backgroundColor: "#D4B4DC" }}
+    
         >
           Save
         </Button>
