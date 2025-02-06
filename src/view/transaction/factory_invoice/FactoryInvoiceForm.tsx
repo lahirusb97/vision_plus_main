@@ -1,12 +1,12 @@
-import * as React from 'react';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
-import Box from '@mui/material/Box';
-import FactoryFromOne from './FactoryFromOne';
-import FactoryFromTwo from './FactoryFromTwo';
-import FactoryFromTree from './FactoryFromTree';
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
+import * as React from "react";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import Box from "@mui/material/Box";
+import FactoryFromOne from "./FactoryFromOne";
+import FactoryFromTwo from "./FactoryFromTwo";
+import FactoryFromTree from "./FactoryFromTree";
+import { FormProvider, useForm, useFormContext } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -25,7 +25,7 @@ function CustomTabPanel(props: TabPanelProps) {
       aria-labelledby={`simple-tab-${index}`}
       {...other}
     >
-      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+      {value === index && <Box sx={{ p: 1 }}>{children}</Box>}
     </div>
   );
 }
@@ -33,7 +33,7 @@ function CustomTabPanel(props: TabPanelProps) {
 function a11yProps(index: number) {
   return {
     id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
+    "aria-controls": `simple-tabpanel-${index}`,
   };
 }
 
@@ -43,12 +43,12 @@ export default function FactoryInvoiceForm() {
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
-const handleNext = () => {
-setValue(value + 1)
-}
-const handleBack = () => {
-setValue(value - 1)
-}
+  const handleNext = () => {
+    setValue(value + 1);
+  };
+  const handleBack = () => {
+    setValue(value - 1);
+  };
   const validationSchema = Yup.object().shape({
     hb_rx_right_dist: Yup.string().required("Right Distance is required"),
     hb_rx_left_dist: Yup.string().required("Left Distance is required"),
@@ -56,24 +56,6 @@ setValue(value - 1)
     hb_rx_left_near: Yup.string().required("Left Near is required"),
     auto_ref_right: Yup.string().required("Auto Ref Right is required"),
     auto_ref_left: Yup.string().required("Auto Ref Left is required"),
-    ntc_right: Yup.string().required("NTC Right is required"),
-    ntc_left: Yup.string().required("NTC Left is required"),
-    va_without_glass_right: Yup.string().required(
-      "VA Without Glass Right is required"
-    ),
-    va_without_glass_left: Yup.string().required(
-      "VA Without Glass Left is required"
-    ),
-    va_without_ph_right: Yup.string().required(
-      "VA Without P/H Right is required"
-    ),
-    va_without_ph_left: Yup.string().required(
-      "VA Without P/H Left is required"
-    ),
-    va_with_glass_right: Yup.string().required(
-      "VA With Glass Right is required"
-    ),
-    va_with_glass_left: Yup.string().required("VA With Glass Left is required"),
     right_eye_dist_sph: Yup.string().required(
       "Right Eye Distance Sph is required"
     ),
@@ -96,57 +78,50 @@ setValue(value - 1)
     left_eye_near_sph: Yup.string().required("Left Eye Near Sph is required"),
     remark: Yup.string(),
     customer_name: Yup.string().required("Customer Name is required"),
-    customer_age: Yup.number().min(1).max(120).required("Customer Age is required"),
+    customer_age: Yup.number()
+      .min(1)
+      .max(120)
+      .required("Customer Age is required"),
     customer_mobile: Yup.string().required("Customer Mobile is required"),
     customer_address: Yup.string().required("Customer Address is required"),
   });
 
-  const {
-    register,
-    handleSubmit,
-    control,
-    formState: { errors },
-  } = useForm({
+  const methods = useForm({
     resolver: yupResolver(validationSchema),
   });
-  const submiteFromData=(data)=>{
-    console.log(data)
 
-  }
+  const submiteFromData = (data) => {
+    console.log(data);
+  };
+
   return (
-    <Box component={'form'}  sx={{ maxWidth: '1200px',  }}>
-      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-          <Tab label="Step One" {...a11yProps(0)} />
-          <Tab label="Step Two" {...a11yProps(1)} />
-          <Tab label="Step Three" {...a11yProps(2)} />
-        </Tabs>
+    <FormProvider {...methods}>
+      <Box
+        component={"form"}
+        onSubmit={methods.handleSubmit(submiteFromData)}
+        sx={{ maxWidth: "1200px" }}
+      >
+        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+          <Tabs
+            value={value}
+            onChange={handleChange}
+            aria-label="basic tabs example"
+          >
+            <Tab label="Step One" {...a11yProps(0)} />
+            <Tab label="Step Two" {...a11yProps(1)} />
+            <Tab label="Step Three" {...a11yProps(2)} />
+          </Tabs>
+        </Box>
+        <CustomTabPanel value={value} index={0}>
+          <FactoryFromOne handleNext={handleNext} handleBack={handleBack} />
+        </CustomTabPanel>
+        <CustomTabPanel value={value} index={1}>
+          <FactoryFromTwo handleNext={handleNext} handleBack={handleBack} />
+        </CustomTabPanel>
+        <CustomTabPanel value={value} index={2}>
+          <FactoryFromTree handleNext={handleNext} handleBack={handleBack} />
+        </CustomTabPanel>
       </Box>
-      <CustomTabPanel value={value} index={0}>
-       <FactoryFromOne 
-          register={register}
-          errors={errors}
-          handleNext={handleNext}
-          handleBack={handleBack}
-          />
-      </CustomTabPanel>
-      <CustomTabPanel value={value} index={1}>
-      <FactoryFromTwo
-      control={control}
-      register={register}
-      errors={errors}
-      handleNext={handleNext}
-      handleBack={handleBack}
-      />
-      </CustomTabPanel>
-      <CustomTabPanel value={value} index={2}>
-      <FactoryFromTree
-        register={register}
-        errors={errors}
-        handleNext={handleNext}
-        handleBack={handleBack}
-      />
-      </CustomTabPanel>
-    </Box>
+    </FormProvider>
   );
 }
