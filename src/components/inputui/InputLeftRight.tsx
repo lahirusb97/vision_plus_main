@@ -25,7 +25,7 @@ export default function InputLeftRight({
         <CustomInputWithLabel
           {...register(inputOneName)}
           label={labelName}
-          placeholder={`Enter ${labelName} Right value`}
+          placeholder={`${labelName} Right`}
           type="number"
           error={errors?.[inputOneName]?.message}
         />
@@ -33,7 +33,7 @@ export default function InputLeftRight({
       <Grid item xs={12} md={6}>
         <CustomInput
           {...register(inputTwoName)}
-          placeholder={`Enter ${labelName} Left value`}
+          placeholder={`${labelName} Left`}
           type="number"
           error={errors?.[inputTwoName]?.message}
         />

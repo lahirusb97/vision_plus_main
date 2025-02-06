@@ -14,13 +14,14 @@ import axiosClient from "../../../axiosClient";
 import { useParams } from "react-router";
 import toast from 'react-hot-toast';
 import { AxiosError } from "axios";
+import useGetSingleLense from "../../../hooks/lense/useGetSingleLense";
 
 interface Stock {
   price: number;
 }
 const LenseEdit = () => {
 const {id}=useParams()
-
+const {singleLense,singleLenseLoading,singleLenseError,refresh}=useGetSingleLense(id)
 
    const schema = yup.object().shape({
     price: yup.number().positive().min(0.01, "Price must be positive").required("Price is required"),
@@ -35,12 +36,14 @@ const {id}=useParams()
     const { price } = data;
     const postDAta={
       price:price,
+      brand:singleLense?.brand
   }
   
   try {
    await axiosClient.put(`/lenses/${id}/`,postDAta)
     toast.success("Lense Saved Successfully");
     reset()
+    refresh()
   } catch (error) {
     if (error instanceof AxiosError) {
       // Safely access error.response.data.message
@@ -49,6 +52,7 @@ const {id}=useParams()
       // Handle non-Axios errors (e.g., network errors, syntax errors, etc.)
       toast.error("Something went wrong");
     }
+    console.log(error);
     
   }
   };
@@ -63,15 +67,16 @@ const {id}=useParams()
     >
       <Paper component={"form"} onSubmit={handleSubmit(submiteData)} sx={{ padding: 4, width: 400, textAlign: "Left",   }} elevation={3}>
         <Typography variant="h6" fontWeight="bold" paddingLeft="9px">
-          Lense Update
+          Lense Edit
         </Typography>
 
-        <Box sx={{ marginY: 2 }}>
-          <Chip label="Brand Name" color="primary" sx={{ marginX: 0.5, backgroundColor: "#237ADE",color:'white' }} />
-          <Chip label="code" color="primary" sx={{ marginX: 0.5, backgroundColor: "#237ADE" ,color:'white'}} />
-          <Chip label="color" color="primary" sx={{ marginX: 0.5, backgroundColor: "#237ADE" ,color:'white'}} />
+        <Box sx={{ marginY: 2 ,display:'flex',flexWrap:'wrap',gap:1}}>
+          <Chip label={`${singleLense?.stock?.lens_type}`} color="primary" sx={{ marginX: 0.5, backgroundColor: "#237ADE",color:'white' }} />
+          <Chip label={`Coating - ${singleLense?.coating}`}color="primary" sx={{ marginX: 0.5, backgroundColor: "#237ADE" ,color:'white'}} />
         </Box>
-
+        <Typography marginY={1} variant="body1" fontWeight="bold" paddingLeft="9px">
+          Curent Price- Rs.{singleLense?.price}
+        </Typography>
         <TextField
           fullWidth
           label="Price"

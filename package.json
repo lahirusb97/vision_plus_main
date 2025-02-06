@@ -18,6 +18,7 @@
     "@mui/styles": "^6.3.1",
     "@mui/x-data-grid": "^7.23.3",
     "@mui/x-date-pickers": "^7.23.3",
+    "@reduxjs/toolkit": "^2.5.1",
     "axios": "^1.7.9",
     "dayjs": "^1.11.13",
     "firebase": "^10.8.0",
@@ -26,6 +27,7 @@
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.54.2",
     "react-hot-toast": "^2.5.1",
+    "react-redux": "^9.2.0",
     "react-router": "^7.0.1",
     "typescript-cookie": "^1.0.6",
     "yup": "^1.6.1"

@@ -1,8 +1,8 @@
-import React from 'react';
-import { TextField, Box, Radio, Typography } from '@mui/material';
-import CreditCardIcon from '@mui/icons-material/CreditCard';
+import React from "react";
+import { TextField, Box, Radio, Typography } from "@mui/material";
+import CreditCardIcon from "@mui/icons-material/CreditCard";
 
-const CardInput: React.FC = () => {
+const CardInput: React.FC = ({ card, setCard }) => {
   return (
     <Box display="flex" alignItems="center" gap={2}>
       <Radio />
@@ -15,6 +15,9 @@ const CardInput: React.FC = () => {
         size="small"
         placeholder="Card number"
         sx={{ width: 200 }}
+        type="number"
+        value={card}
+        onChange={(e) => setCard(Number(e.target.value))}
       />
     </Box>
   );
