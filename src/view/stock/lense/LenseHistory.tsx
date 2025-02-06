@@ -9,7 +9,7 @@ const LenseHistory = () => {
       {/* Stock History Header */}
       <Paper sx={{ padding: 2, marginBottom: 2 , width:1000}}>
         <Typography variant="h6" fontWeight="bold">
-          Stock History
+          Lense Stock History
         </Typography>
         <Box sx={{ marginTop: 1 }}>
           <Chip label="lens type" sx={{ marginRight: 1, backgroundColor: "blue"}} />

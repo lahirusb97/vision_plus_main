@@ -13,6 +13,9 @@ import FrameEdit from "../../view/stock/frame/FrameEdit";
 import FrameUpdate from "../../view/stock/frame/FrameUpdate";
 import FrameHIstory from "../../view/stock/frame/FrameHIstory";
 import LenseUpdate from "../../view/stock/lense/LenseUpdate";
+import OtherItemHistory from "../../view/stock/OtherItemHistory";
+import OtherItemUpdate from "../../view/stock/OtherItemUpdate";
+import OtherItemEdit from "../../view/stock/OtherItemEdit";
 
 export const stockRoutes: RouteObject[] = [
   {
@@ -86,13 +89,44 @@ export const stockRoutes: RouteObject[] = [
   {
     path: "add_variation",
     element: <AddVariation />,
-  },
-  {
-    path: "add_other_item",
-    element: <AddOtherItem />,
+    
   },
   {
     path: "other_item_stock",
-    element: <OtherItemStock />,
+    element: <ProtectedChildRoute />,
+    children: [
+      {
+       index  : true,
+        element: 
+          <OtherItemStock />
+        ,
+      },
+   
+      {
+        path: "edit/:id",
+        element: 
+          <OtherItemEdit />
+        ,
+      },
+      {
+        path: "update/:id",
+        element: 
+          <OtherItemUpdate />
+        ,
+      },
+      {
+        path: "history/:id",
+        element: 
+          <OtherItemHistory />
+        ,
+      },
+    ],
+    
+  },
+  {
+    path: "add_other_item",
+    element: 
+      <AddOtherItem />
+    ,
   },
 ];

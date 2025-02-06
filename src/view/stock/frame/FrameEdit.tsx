@@ -6,6 +6,7 @@ import {
   TextField,
   Typography,
   Paper,
+  CircularProgress,
 } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -21,7 +22,7 @@ interface Stock {
 const FrameEdit = () => {
 const {id}=useParams()
 
-
+const {singleFrame,singleFrameLoading,refresh}=useGetSingleFrame(id)
    const schema = yup.object().shape({
     price: yup.number().positive().min(0.01, "Price must be positive").required("Price is required"),
   });
@@ -41,6 +42,7 @@ const {id}=useParams()
    await axiosClient.put(`/frames/${id}/`,postDAta)
     toast.success("Frame added successfully");
     reset()
+    refresh()
   } catch (error) {
     if (error instanceof AxiosError) {
       // Safely access error.response.data.message
@@ -63,15 +65,18 @@ const {id}=useParams()
     >
       <Paper component={"form"} onSubmit={handleSubmit(submiteData)} sx={{ padding: 4, width: 400, textAlign: "Left",   }} elevation={3}>
         <Typography variant="h6" fontWeight="bold" paddingLeft="9px">
-          Frames Update
+          Frames Price Update
         </Typography>
 
-        <Box sx={{ marginY: 2 }}>
-          <Chip label="Brand Name" color="primary" sx={{ marginX: 0.5, backgroundColor: "#237ADE",color:'white' }} />
-          <Chip label="code" color="primary" sx={{ marginX: 0.5, backgroundColor: "#237ADE" ,color:'white'}} />
-          <Chip label="color" color="primary" sx={{ marginX: 0.5, backgroundColor: "#237ADE" ,color:'white'}} />
-        </Box>
-
+      {!singleFrameLoading ? <Box sx={{ marginY: 2 ,display:'flex',flexWrap:'wrap',gap:1}}>
+          <Chip label={`Brand - ${singleFrame?.brand}`} color="primary" sx={{ marginX: 0.5, backgroundColor: "#237ADE",color:'white' }} />
+          <Chip label={`Code - ${singleFrame?.code}`} color="primary" sx={{ marginX: 0.5, backgroundColor: "#237ADE",color:'white' }} />
+          <Chip label={`Color - ${singleFrame?.color}`} color="primary" sx={{ marginX: 0.5, backgroundColor: "#237ADE",color:'white' }} />
+          <Chip label={`species - ${singleFrame?.species}`} color="primary" sx={{ marginX: 0.5, backgroundColor: "#237ADE",color:'white' }} />
+        </Box>:<CircularProgress/>}
+        <Typography marginY={1} variant="body1" fontWeight="bold" paddingLeft="9px">
+          Curent Price- Rs.{singleFrame?.price}
+        </Typography>
         <TextField
           fullWidth
           label="Price"
