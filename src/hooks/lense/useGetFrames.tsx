@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import axiosClient from "../../axiosClient";
 
 interface Frame {
+  brand: number;
   id: number;
   name: string;
   description: string;

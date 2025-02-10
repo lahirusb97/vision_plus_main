@@ -14,7 +14,7 @@ import { useNavigate } from "react-router";
 
 const TransactionUI = () => {
   const lensOptions = ["Option 1", "Option 2", "Option 3"]; // Replace with actual options
-const navigate = useNavigate();
+  const navigate = useNavigate();
   return (
     <Box
       sx={{
@@ -209,7 +209,6 @@ const navigate = useNavigate();
           variant="contained"
           color="secondary"
           sx={{ backgroundColor: "#D4B4DC" }}
-    
         >
           Save
         </Button>

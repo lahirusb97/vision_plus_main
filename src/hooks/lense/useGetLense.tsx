@@ -1,45 +1,16 @@
 import { useState, useEffect, useCallback } from "react";
 import axiosClient from "../../axiosClient";
-
-interface LensPower {
-  id: number;
-  lens: number;
-  power: number;
-  value: string;
-  side: string;
-}
-
-interface LensStock {
-  id: number;
-  lens: number;
-  lens_type: string;
-  coating: string;
-  initial_count: number;
-  qty: number;
-  limit: number;
-  powers: LensPower[];
-  created_at: string;
-  updated_at: string;
-}
-
-interface Lens {
-  id: number;
-  type: number;
-  coating: number;
-  price: string;
-  stock: LensStock;
-  powers: LensPower[];
-}
+import { LenseModel } from "../../model/LenseModel";
 
 interface UseGetLenseReturn {
-  lenses: Lens[];
+  lenses: LenseModel[];
   lensesLoading: boolean;
   lensesError: string | null;
   refresh: () => void;
 }
 
 const useGetLenses = (): UseGetLenseReturn => {
-  const [lenses, setLenses] = useState<Lens[]>([]);
+  const [lenses, setLenses] = useState<LenseModel[]>([]);
   const [lensesLoading, setLensesLoading] = useState<boolean>(true);
   const [lensesError, setLensesError] = useState<string | null>(null);
 
@@ -48,12 +19,10 @@ const useGetLenses = (): UseGetLenseReturn => {
     setLensesError(null);
 
     try {
-      const response = await axiosClient.get<Lens[]>("/lenses/");
+      const response = await axiosClient.get<LenseModel[]>("/lenses/");
       setLenses(response.data);
     } catch (err: any) {
-      setLensesError(
-        err?.response?.data?.message || "Failed to fetch lenses."
-      );
+      setLensesError(err?.response?.data?.message || "Failed to fetch lenses.");
     } finally {
       setLensesLoading(false);
     }

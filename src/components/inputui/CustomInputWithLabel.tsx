@@ -30,7 +30,11 @@ const StyledInput = styled(Input)(({ ...props }) => ({
   width: "350px", // Set width to 100%
   minHeight: "40px", // Add padding for better appearance
   margin: 0, // Add margin for better appearance
+<<<<<<< HEAD
   padding:'0 10px',
+=======
+  padding: "0 10px",
+>>>>>>> 4dec26e71241c34e418248b16da266c27d69a204
   ...props,
 }));
 
@@ -41,12 +45,17 @@ interface CustomInputProps {
   fullWidth?: boolean;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   type: string;
+<<<<<<< HEAD
   error:string
+=======
+  error: string | undefined;
+>>>>>>> 4dec26e71241c34e418248b16da266c27d69a204
 }
 
 import { forwardRef } from "react";
 
 const CustomInputWithLabel = forwardRef<HTMLInputElement, CustomInputProps>(
+<<<<<<< HEAD
   ({ error,label, ...props }, ref) => (
    <div>
      <Paper sx={{display:'grid',gridTemplateColumns:'1fr 1fr'}}>
@@ -55,6 +64,18 @@ const CustomInputWithLabel = forwardRef<HTMLInputElement, CustomInputProps>(
       <Typography m={.5} color="error" variant="caption">{error && <span>{error}</span>}</Typography>
     </Paper>
    </div>
+=======
+  ({ error, label, ...props }, ref) => (
+    <div>
+      <Paper sx={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}>
+        <StyledLabel>{label}</StyledLabel>
+        <StyledInput error={error ? true : false} {...props} ref={ref} />
+        <Typography m={0.5} color="error" variant="caption">
+          {error && <span>{error}</span>}
+        </Typography>
+      </Paper>
+    </div>
+>>>>>>> 4dec26e71241c34e418248b16da266c27d69a204
   )
 );
 
