@@ -10,18 +10,16 @@ import {
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import axiosClient from "../../../axiosClient";
 import { useParams } from "react-router";
 import toast from 'react-hot-toast';
 import { AxiosError } from "axios";
-import useGetSingleLense from "../../../hooks/lense/useGetSingleLense";
-
+import axiosClient from "../../axiosClient";
 interface Stock {
   price: number;
 }
-const LenseEdit = () => {
+const OtherItemEdit = () => {
 const {id}=useParams()
-const {singleLense,singleLenseLoading,singleLenseError,refresh}=useGetSingleLense(id)
+
 
    const schema = yup.object().shape({
     price: yup.number().positive().min(0.01, "Price must be positive").required("Price is required"),
@@ -36,14 +34,12 @@ const {singleLense,singleLenseLoading,singleLenseError,refresh}=useGetSingleLens
     const { price } = data;
     const postDAta={
       price:price,
-      brand:singleLense?.brand
   }
   
   try {
-   await axiosClient.put(`/lenses/${id}/`,postDAta)
-    toast.success("Lense Saved Successfully");
+   await axiosClient.put(`/lens-cleaners/${id}/`,postDAta)
+    toast.success("Frame added successfully");
     reset()
-    refresh()
   } catch (error) {
     if (error instanceof AxiosError) {
       // Safely access error.response.data.message
@@ -52,7 +48,6 @@ const {singleLense,singleLenseLoading,singleLenseError,refresh}=useGetSingleLens
       // Handle non-Axios errors (e.g., network errors, syntax errors, etc.)
       toast.error("Something went wrong");
     }
-    console.log(error);
     
   }
   };
@@ -67,16 +62,14 @@ const {singleLense,singleLenseLoading,singleLenseError,refresh}=useGetSingleLens
     >
       <Paper component={"form"} onSubmit={handleSubmit(submiteData)} sx={{ padding: 4, width: 400, textAlign: "Left",   }} elevation={3}>
         <Typography variant="h6" fontWeight="bold" paddingLeft="9px">
-          Lense Edit
+          Price Update
         </Typography>
 
-        <Box sx={{ marginY: 2 ,display:'flex',flexWrap:'wrap',gap:1}}>
-          <Chip label={`${singleLense?.stock?.lens_type}`} color="primary" sx={{ marginX: 0.5, backgroundColor: "#237ADE",color:'white' }} />
-          <Chip label={`Coating - ${singleLense?.coating}`}color="primary" sx={{ marginX: 0.5, backgroundColor: "#237ADE" ,color:'white'}} />
+        <Box sx={{ marginY: 2 }}>
+          <Chip label="Item Name" color="primary" sx={{ marginX: 0.5, backgroundColor: "#237ADE",color:'white' }} />
+        
         </Box>
-        <Typography marginY={1} variant="body1" fontWeight="bold" paddingLeft="9px">
-          Curent Price- Rs.{singleLense?.price}
-        </Typography>
+
         <TextField
           fullWidth
           label="Price"
@@ -100,4 +93,4 @@ const {singleLense,singleLenseLoading,singleLenseError,refresh}=useGetSingleLens
   );
 };
 
-export default LenseEdit;
+export default OtherItemEdit;

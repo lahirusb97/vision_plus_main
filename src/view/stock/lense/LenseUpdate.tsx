@@ -24,7 +24,7 @@ interface Stock {
 const LenseUpdate = () => {
 const {id}=useParams()
 
-  const {singleLense,singleLenseLoading,singleLenseError}=useGetSingleLense(id)
+  const {singleLense,singleLenseLoading,refresh}=useGetSingleLense(id)
 
    const schema = yup.object().shape({
     alertLevel: yup.number().positive().min(0.01, "Alert Level must be positive").required("Alert Level is required"),
@@ -53,6 +53,7 @@ const {id}=useParams()
    await axiosClient.patch(`/lens-stocks/${id}/`,postDAta)
     toast.success("Lense Updated Successfully");
     reset()
+    refresh()
   } catch (error) {
     if (error instanceof AxiosError) {
       // Safely access error.response.data.message
@@ -75,15 +76,16 @@ const {id}=useParams()
     >
       <Paper component={"form"} onSubmit={handleSubmit(submiteData)} sx={{ padding: 4, width: 400, textAlign: "Left",   }} elevation={3}>
         <Typography variant="h6" fontWeight="bold" paddingLeft="9px">
-          Frames Update
+          Lense Update
         </Typography>
 
-        <Box sx={{ marginY: 2 }}>
-          <Chip label="Lense Name" color="primary" sx={{ marginX: 0.5, backgroundColor: "#237ADE",color:'white' }} />
-          <Chip label="code" color="primary" sx={{ marginX: 0.5, backgroundColor: "#237ADE" ,color:'white'}} />
-          <Chip label="color" color="primary" sx={{ marginX: 0.5, backgroundColor: "#237ADE" ,color:'white'}} />
-        </Box>
-
+         <Box sx={{ marginY: 2 }}>
+            <Chip label={`${singleLense?.stock?.lens_type}`} color="primary" sx={{ marginX: 0.5, backgroundColor: "#237ADE",color:'white' }} />
+            <Chip label={`Coating - ${singleLense?.coating}`}color="primary" sx={{ marginX: 0.5, backgroundColor: "#237ADE" ,color:'white'}} />
+          </Box>
+          <Typography marginY={1} variant="body1" fontWeight="bold" paddingLeft="9px">
+          Curently Avilable Quantity - {singleLense?.stock?.qty}
+        </Typography>
         <TextField
           fullWidth
           label="Quantity"

@@ -1,16 +1,51 @@
 import React from "react";
-import { Box, Button, TextField, Paper } from "@mui/material";
-
+import { Box, Button, TextField, Paper ,Typography} from "@mui/material";
+import { useForm } from "react-hook-form";
+import * as Yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import axiosClient from "../../axiosClient";
+import toast from 'react-hot-toast';
+import { AxiosError } from "axios";
+interface OtherItem {
+  name: string;
+  price: number;
+  qty: number;
+}
 const AddItemsForm = () => {
+  const [loading, setLoading] = React.useState<boolean>(false);
+    const validationSchema = Yup.object().shape({
+      name: Yup.string().required("Product Name is required"),
+      price: Yup.number().positive().min(0.01, "Price must be positive").required("Price is required"),
+      qty: Yup.number().positive().integer().min(1),
+    });
+    const { register, handleSubmit,formState: { errors } ,reset} = useForm({
+      resolver: yupResolver(validationSchema),
+    });
+    const handleData=async(data:OtherItem)=>{
+      try {
+        await axiosClient.post("/lens-cleaners/", data);
+        toast.success("Frame added successfully");
+        reset();
+      } catch (error) {
+        // Check if the error is an AxiosError
+        if (error instanceof AxiosError) {
+          // Safely access error.response.data.message
+          toast.error(error.response?.data?.message || "Something went wrong");
+        } else {
+          // Handle non-Axios errors (e.g., network errors, syntax errors, etc.)
+          toast.error("Something went wrong");
+        }
+      } finally {
+        setLoading(false);
+      }
+    }
   return (
-    <Box
-      display="flex"
-      justifyContent="center"
-      alignItems="center"
-      
-      
-    >
+    <Box>
+     <Typography sx={{ marginBottom: 2 ,fontWeight:"bold"}} variant="h4" gutterBottom>Create Other Item</Typography>
+
       <Paper
+      onSubmit={handleSubmit(handleData)}
+      component={'form'}
         elevation={3}
         sx={{
           padding: 4,
@@ -22,42 +57,52 @@ const AddItemsForm = () => {
         }}
       >
         <TextField
-          label="Item Name"
-          variant="outlined"
+          {...register('name')}
+          label="Product Name"
+          type="text"
           fullWidth
-          InputLabelProps={{
-            style: { fontSize: 14 },
-          }}
+          margin="normal"
+          variant="outlined"
+          error={!!errors.name}
+          helperText={errors.name?.message}
         />
         <TextField
+               disabled
+               
+          {...register('qty', {
+            setValueAs: (value) => (value === "" ? undefined : Number(value)),
+          })}
           label="Quantity"
-          variant="outlined"
-          fullWidth
-          InputLabelProps={{
-            style: { fontSize: 14 },
+          inputProps={{
+            min: 0,
           }}
+          type="number"
+          fullWidth
+          margin="normal"
+          variant="outlined"
+          error={!!errors.qty}
+          helperText={errors.qty?.message}
         />
+        
         <TextField
           label="Price"
+          type="number"
+          fullWidth
+          margin="normal"
           variant="outlined"
-          fullWidth
-          InputLabelProps={{
-            style: { fontSize: 14 },
+          error={!!errors.price}
+          helperText={errors.price?.message}
+          inputProps={{
+            min: 0,
           }}
+
+          {...register('price', {
+            setValueAs: (value) => (value === "" ? undefined : Number(value)),
+          })}
         />
-        <Button
-          variant="contained"
-          fullWidth
-          sx={{
-            backgroundColor: "#42a5f5",
-            ":hover": {
-              backgroundColor: "#1e88e5",
-            },
-          }}
-        >
-          ADD ITEMS
-        </Button>
+        <Button disabled={loading} type="submit" variant="contained" color="primary">{loading?"Creating...":"Create"}</Button>
       </Paper>
+     
     </Box>
   );
 };

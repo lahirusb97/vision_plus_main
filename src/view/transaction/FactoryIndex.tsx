@@ -93,7 +93,6 @@ export default function FactoryIndex() {
   // Safely access data and meta-information
   const results = refractionList?.results || [];
   const count = refractionList?.count || 0;
-
   // Filtered rows based on the search query
   const filteredRows = results.filter(
     (row) =>
@@ -159,7 +158,14 @@ export default function FactoryIndex() {
               filteredRows.map((row) => (
                 <TableRow
                   onClick={() =>
-                    navigate(`create/${row.refraction_number}`)
+                 
+                    navigate(`create/${row.refraction_number}`, {
+                      state: {
+                        customerName: row.customer_full_name,
+                        mobileNumber: row.customer_mobile,
+                        date:'in development'
+                      }
+                    })
                   }
                   sx={{
                     cursor: "pointer",
