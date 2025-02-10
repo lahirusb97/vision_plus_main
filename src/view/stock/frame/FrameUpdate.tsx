@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import {
   Box,
   Button,
@@ -7,11 +6,11 @@ import {
   Typography,
   Paper,
 } from "@mui/material";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import axiosClient from "../../../axiosClient";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import toast from 'react-hot-toast';
 import { AxiosError } from "axios";
 import useGetSingleFrame from "../../../hooks/lense/useGetSingleFrame";
@@ -22,8 +21,9 @@ interface Stock {
 }
 const FrameUpdate = () => {
 const {id}=useParams()
+const navigate=useNavigate()
 
-  const {singleFrame,singleFrameLoading,singleFrameError}=useGetSingleFrame(id)
+  const {singleFrame,singleFrameLoading}=useGetSingleFrame(id??'')
 
    const schema = yup.object().shape({
     alertLevel: yup.number().positive().min(0.01, "Alert Level must be positive").required("Alert Level is required"),
@@ -37,6 +37,8 @@ const {id}=useParams()
       quantity: undefined,
     }
   });
+  console.log(singleFrame);
+  
   const submiteData =async (data: Stock) => {
   if(!singleFrameLoading && singleFrame?.stock.initial_count && singleFrame?.stock.qty){
     const { quantity, alertLevel } = data;
@@ -52,6 +54,7 @@ const {id}=useParams()
    await axiosClient.put(`/frame-stocks/${id}/`,postDAta)
     toast.success("Frame added successfully");
     reset()
+    navigate("/stock/frame_store")
   } catch (error) {
     if (error instanceof AxiosError) {
       // Safely access error.response.data.message
@@ -78,9 +81,9 @@ const {id}=useParams()
         </Typography>
 
         <Box sx={{ marginY: 2 }}>
-          <Chip label="Brand Name" color="primary" sx={{ marginX: 0.5, backgroundColor: "#237ADE",color:'white' }} />
-          <Chip label="code" color="primary" sx={{ marginX: 0.5, backgroundColor: "#237ADE" ,color:'white'}} />
-          <Chip label="color" color="primary" sx={{ marginX: 0.5, backgroundColor: "#237ADE" ,color:'white'}} />
+          <Chip label={`${singleFrame?.brand}`} color="primary" sx={{ marginX: 0.5, backgroundColor: "#237ADE",color:'white' }} />
+          <Chip label={`${singleFrame?.code}`} color="primary" sx={{ marginX: 0.5, backgroundColor: "#237ADE" ,color:'white'}} />
+          <Chip label={`${singleFrame?.color}`} color="primary" sx={{ marginX: 0.5, backgroundColor: "#237ADE" ,color:'white'}} />
         </Box>
 
         <TextField

@@ -3,18 +3,22 @@ import { useForm } from "react-hook-form";
 import CustomInputWithLabel from "../../components/inputui/CustomInputWithLabel";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
-import { Box, Button } from "@mui/material";
+import { Box, Button, Paper, Typography } from "@mui/material";
 import HbRxInput from "../../components/inputui/HbRxInput";
 import InputLeftRight from "../../components/inputui/InputLeftRight";
-import { useParams } from "react-router";
+import { useLocation, useParams } from "react-router";
 import EyeTestTable from "../../components/EyeTestTable";
 import axiosClient from "../../axiosClient";
+import theme from "../../theme/theme";
 
 // Validation Schema
 
 export default function RefractionEdit() {
   const { id } = useParams();
-
+  const location = useLocation();
+  const { customerName, mobileNumber } = location.state || {};
+  
+  
   const validationSchema = Yup.object().shape({
     hb_rx_right_dist: Yup.string().required("Right Distance is required"),
     hb_rx_left_dist: Yup.string().required("Left Distance is required"),
@@ -72,8 +76,6 @@ export default function RefractionEdit() {
   });
 
   const onSubmit = async (data) => {
-    console.log(data);
-
     try {
       const responseData = await axiosClient.post(
         `/refraction-details/create/`,
@@ -97,8 +99,20 @@ export default function RefractionEdit() {
   return (
     <Box sx={{ minWidth: "1000px", padding: "20px" }}>
       <form onSubmit={handleSubmit(onSubmit)}>
+       <Box sx={{display:"flex",justifyContent:"space-between",marginY:3}}>
+       <Paper sx={{ display: "flex", alignItems: "center", textAlign: "right", }}>
+        <Typography  sx={{width:"200px",color:'white',backgroundColor: theme.palette.primary.contrastText,padding:'.4rem',borderRadius:1}}>Customer Name</Typography>
+        <Typography align="left"  sx={{marginLeft:"20px",width:"200px"}}>{customerName}</Typography>
+        </Paper >
+        <Paper sx={{ display: "flex", alignItems: "center", textAlign: "right" }}>
+        <Typography  sx={{width:"200px",color:'white',backgroundColor: theme.palette.primary.contrastText,padding:'.4rem',borderRadius:1}}>Mobile Number</Typography>
+        <Typography align="left" sx={{marginLeft:"20px",width:"200px"}}>{mobileNumber}</Typography>
+        </Paper >
+       </Box>
+        
+        <Paper variant="outlined" sx={{ padding: "20px", marginBottom: "20px" }}>
         <HbRxInput register={register} errors={errors} />
-
+        </Paper>
         <InputLeftRight
           register={register}
           errors={errors}
@@ -137,13 +151,13 @@ export default function RefractionEdit() {
         <EyeTestTable errors={errors} register={register} />
 
         <CustomInputWithLabel
-          {...register("remark")}
-          label="Remark"
-          placeholder="Enter value1"
-          type="text"
-          fullWidth
-        />
-        <Button type="submit" variant="contained" color="primary">
+        error={''} 
+        {...register("remark")}
+        label="Remark"
+        placeholder="Enter value1"
+        type="text"
+        fullWidth        />
+        <Button sx={{width:"100%"}} type="submit" variant="contained" color="primary">
           Submit
         </Button>
       </form>

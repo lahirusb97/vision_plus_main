@@ -18,7 +18,6 @@ import useGetColors from "../../hooks/lense/useGetColors";
 import { Controller, useForm } from "react-hook-form";
 import * as Yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { usePostApiCall } from "../../hooks/usePostApiCall";
 import toast from 'react-hot-toast';
 import axiosClient from "../../axiosClient";
 import { AxiosError } from "axios";
@@ -35,12 +34,12 @@ const AddFrames = () => {
     code: Yup.number().required("Code is required"),
     color: Yup.number().required("Color is required"),
     price: Yup.number().positive().min(0.01, "Price must be positive").required("Price is required"),
-    size: Yup.string().required("Channel Date is required"),
-    species: Yup.string().required("Time is required"),
+    size: Yup.string().required("Frame Size is required"),
+    species: Yup.string().required("species is required"),
     image: Yup.string(),
     qty: Yup.number().positive().integer().min(1).required("Quantity is required"),
   });
-  const { register, handleSubmit, control,formState: { errors } ,reset} = useForm({
+  const { register, handleSubmit, control,formState: { errors } ,reset,watch} = useForm({
     resolver: yupResolver(validationSchema),
   });
 
@@ -82,7 +81,10 @@ const AddFrames = () => {
   };
 
   return (
-    <Paper
+   <div>
+     <Typography sx={{ marginBottom: 2 ,fontWeight:"bold"}} variant="h4" gutterBottom>Create Frame</Typography>
+
+     <Paper
       sx={{
         width: "600px",
         padding: 4,
@@ -93,6 +95,7 @@ const AddFrames = () => {
         gap: 2,
       }}
     >
+      
       <form style={{display: "flex", flexDirection: "column", gap: 16 ,width:"100%"}} onSubmit={handleSubmit(submitData)}>
         {/* Brand Dropdown */}
         <Controller
@@ -102,9 +105,11 @@ const AddFrames = () => {
             <DropdownInput
               {...field}
               options={brands}
-              // onChange={(selectedId) => field.onChange(selectedId)}
+              onChange={(selectedId) => field.onChange(selectedId)}
               loading={brandsLoading}
               labelName="Select Brand"
+              defaultId={watch("brand") ? watch("brand") : null}
+
             />
           )}
         />
@@ -122,6 +127,7 @@ const AddFrames = () => {
               onChange={(selectedId) => field.onChange(selectedId)}
               loading={codesLoading}
               labelName="Select Code"
+              defaultId={watch("code") ? watch("code") : null}
             />
           )}
         />
@@ -138,6 +144,8 @@ const AddFrames = () => {
               onChange={(selectedId) => field.onChange(selectedId)}
               loading={colorsLoading}
               labelName="Select Color"
+              defaultId={watch("color") ? watch("color") : null}
+
             />
           )}
         />
@@ -152,6 +160,8 @@ const AddFrames = () => {
           variant="outlined"
           error={!!errors.price}
           helperText={errors.price?.message}
+       
+
           {...register('price', {
             setValueAs: (value) => (value === "" ? undefined : Number(value)),
           })}
@@ -170,6 +180,7 @@ const AddFrames = () => {
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
                 label="Shape"
+                value={field.value || ""}
               >
                 <MenuItem value={"Half"}>Half</MenuItem>
                 <MenuItem value={"Full"}>Full</MenuItem>
@@ -189,9 +200,12 @@ const AddFrames = () => {
               <InputLabel id="demo-simple-select-label">Species</InputLabel>
               <Select
                 {...field}
+              
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
                 label="species"
+                value={field.value || ""}
+
               >
                 <MenuItem value={"Metal"}>Metal</MenuItem>
                 <MenuItem value={"Plastic"}>Plastic</MenuItem>
@@ -204,7 +218,9 @@ const AddFrames = () => {
 
         {/* Quantity Field */}
         <TextField
-       
+          inputProps={{
+            min: 0,
+          }}
           {...register('qty', {
             setValueAs: (value) => (value === "" ? undefined : Number(value)),
           })}
@@ -213,8 +229,8 @@ const AddFrames = () => {
           fullWidth
           margin="normal"
           variant="outlined"
-          error={!!errors.price}
-          helperText={errors.price?.message}
+          error={!!errors.qty}
+          helperText={errors.qty?.message}
         />
 
         {/* Submit Button */}
@@ -230,6 +246,7 @@ const AddFrames = () => {
       </form>
       
     </Paper>
+   </div>
   );
 };
 

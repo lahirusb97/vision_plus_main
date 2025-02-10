@@ -1,5 +1,5 @@
 import React from "react";
-import { styled, Input, Paper } from "@mui/material";
+import { styled, Input, Paper, Typography } from "@mui/material";
 
 // Styled Wrapper for Layout
 const StyledContainer = styled(Paper)(({ theme }) => ({
@@ -13,7 +13,7 @@ const StyledContainer = styled(Paper)(({ theme }) => ({
 const StyledLabel = styled("label")(({ theme, ...props }) => ({
   color: "#ffff",
   backgroundColor: theme.palette.primary.contrastText, // Set background color from theme
-  padding: theme.spacing(1, 2), // Add padding for better appearance
+  padding: theme.spacing(1, 1), // Add padding for better appearance
   borderRadius: theme.shape.borderRadius, // Rounded corners
   fontFamily: "Roboto, sans-serif", // Ensure Roboto font is applied
   ...props,
@@ -30,6 +30,7 @@ const StyledInput = styled(Input)(({ ...props }) => ({
   width: "350px", // Set width to 100%
   minHeight: "40px", // Add padding for better appearance
   margin: 0, // Add margin for better appearance
+  padding: "0 10px",
   ...props,
 }));
 
@@ -40,16 +41,22 @@ interface CustomInputProps {
   fullWidth?: boolean;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   type: string;
+  error: string | undefined;
 }
 
 import { forwardRef } from "react";
 
 const CustomInputWithLabel = forwardRef<HTMLInputElement, CustomInputProps>(
-  ({ label, ...props }, ref) => (
-    <StyledContainer>
-      <StyledLabel>{label}</StyledLabel>
-      <StyledInput {...props} ref={ref} />
-    </StyledContainer>
+  ({ error, label, ...props }, ref) => (
+    <div>
+      <Paper sx={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}>
+        <StyledLabel>{label}</StyledLabel>
+        <StyledInput error={error ? true : false} {...props} ref={ref} />
+        <Typography m={0.5} color="error" variant="caption">
+          {error && <span>{error}</span>}
+        </Typography>
+      </Paper>
+    </div>
   )
 );
 

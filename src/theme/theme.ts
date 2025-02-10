@@ -14,14 +14,6 @@ const theme = createTheme({
         },
       },
     },
-    dark: {
-      palette: {
-        mode: "dark",
-        primary: {
-          main: yellow[600],
-        },
-      },
-    },
   },
 });
 

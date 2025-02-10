@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { MaterialReactTable } from "material-react-table";
-import { Box, IconButton } from "@mui/material";
+import { Box, IconButton, Typography } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import HistoryIcon from "@mui/icons-material/History";
@@ -26,24 +26,28 @@ const [openDelete, setOpenDelete] = React.useState({
         Cell: ({ row }) => (
           <Box>
             <IconButton
+             color="error"
               title="Delete"
-              onClick={() => handleDelete(row.original.id)}
+              onClick={() => handleDelete(row.original)}
             >
               <DeleteIcon />
             </IconButton>
             <IconButton
+            color="info"
               title="History"
               onClick={() => handleHistory(row.original.id)}
             >
               <HistoryIcon />
             </IconButton>
             <IconButton
+            color="warning"
               title="Edit"
               onClick={() => handleEdit(row.original.id)}
             >
               <EditIcon />
             </IconButton>
             <IconButton
+            color="warning"
               title="Update Quantity"
               onClick={() => handleUpdate(row.original.id)}
             >
@@ -97,20 +101,8 @@ const [openDelete, setOpenDelete] = React.useState({
   );
 const navigate=useNavigate()
   // Handlers for actions
-  const handleDelete = async(id) => {
-    setOpenDelete({ open: true, path: `/frames/${id}/`,itemName: 'Frame' });
-      try {
-        // Simulate API call
-        await axiosClient.delete(`/frames/${id}/`);
-        console.error("Deleteed failed");
-        refresh()
-      } catch (error) {
-        console.error("Delete failed", error);
-      }finally{
-        setOpenDelete({ open: false, path: '',itemName: '' });
-      }
-   
-  
+  const handleDelete = async(row) => {
+    setOpenDelete({ open: true, path: `/frames/${row.id}/`,itemName: `Frame of Brand - ${row.brand} & Code - ${row.code}` });
   };
 
   const handleHistory = (id) => {
@@ -134,6 +126,8 @@ const navigate=useNavigate()
 
   return (
     <Box sx={{ padding: 4, maxWidth: "1200px" }}>
+      <Typography sx={{ marginBottom: 2 ,fontWeight:"bold"}} variant="h4" gutterBottom>Frame Store</Typography>
+
       <MaterialReactTable
         columns={columns}
         data={frames}
@@ -148,11 +142,14 @@ const navigate=useNavigate()
           },
         }}
       />
-        <DeleteDialog open={openDelete.open} onClose={() => 
-          setOpenDelete({ open: false, path: '',itemName: '' })} 
-          onConfirm={handleDelete} 
+        <DeleteDialog 
+          open={openDelete.open}
           path={openDelete.path} 
           itemName={openDelete.itemName} 
+          onClose={() => {
+            setOpenDelete({ open: false, path: '', itemName: '' })
+            refresh()
+          }}
         />
     </Box>
   );

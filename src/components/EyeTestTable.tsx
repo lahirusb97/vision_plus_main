@@ -41,7 +41,7 @@ export default function EyeTestTable({ register, errors }: any) {
           {/* Left Eye */}
           {/* Right Eye */}
           <Input
-            error={errors?.right_eye_dist_sph}
+            error={!!errors?.right_eye_dist_sph}
             type="number"
             {...register("right_eye_dist_sph")}
           />
@@ -49,8 +49,14 @@ export default function EyeTestTable({ register, errors }: any) {
             error={errors?.right_eye_dist_cyl}
             type="number"
             {...register("right_eye_dist_cyl")}
+            
           />
-          <Input type="number" {...register("right_eye_dist_axis")} />
+          <Input 
+            error={errors?.right_eye_dist_axis}
+          
+          type="number" {...register("right_eye_dist_axis")} 
+          
+          />
           {/* Right Eye */}
 
           {/* Left Eye */}
@@ -58,13 +64,19 @@ export default function EyeTestTable({ register, errors }: any) {
             error={errors?.left_eye_dist_sph}
             type="number"
             {...register("left_eye_dist_sph")}
+            
           />
           <Input
             error={errors?.left_eye_dist_cyl}
             type="number"
             {...register("left_eye_dist_cyl")}
+            
           />
-          <Input type="number" {...register("left_eye_dist_axis")} />
+          <Input 
+            error={errors?.left_eye_dist_axis}
+          
+          type="number" {...register("left_eye_dist_axis")} 
+          />
           {/* Left Eye */}
 
           <Typography textAlign="center">Near</Typography>
@@ -73,7 +85,7 @@ export default function EyeTestTable({ register, errors }: any) {
           <Input
             error={errors?.right_eye_near_sph}
             type="number"
-            placeholder="s"
+         
             {...register("right_eye_near_sph")}
           />
         <Box sx={{ display: "flex", gap: "10px" }}></Box>
@@ -83,7 +95,11 @@ export default function EyeTestTable({ register, errors }: any) {
           {/* Right Eye */}
           {/* Left Eye */}
 
-          <Input type="number" {...register("left_eye_near_sph")} />
+          <Input type="number" 
+            error={errors?.right_eye_near_sph}
+          
+          {...register("left_eye_near_sph")}
+          />
           <Box sx={{ display: "flex", gap: "10px" }}></Box>
           
           <Box sx={{ display: "flex", gap: "10px" }}></Box>

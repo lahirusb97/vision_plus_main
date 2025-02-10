@@ -42,7 +42,7 @@ export default function AddVariationComp({
       <Paper
         sx={{
           padding: 2,
-          width: "600px",
+          width: "100%",
           display: "flex",
           flexDirection: "column",
           gap: "10px",
