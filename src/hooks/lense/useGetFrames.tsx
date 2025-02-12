@@ -1,22 +1,17 @@
 import { useState, useEffect, useCallback } from "react";
 import axiosClient from "../../axiosClient";
-
-interface Frame {
-  brand: number;
-  id: number;
-  name: string;
-  description: string;
-}
+import { FrameModel } from "../../model/FrameModel";
+import { handleError } from "../../utils/handleError";
 
 interface UseGetFrameReturn {
-  frames: Frame[];
+  frames: FrameModel[];
   framesLoading: boolean;
   framesError: string | null;
   refresh: () => void;
 }
 
 const useGetFrames = (): UseGetFrameReturn => {
-  const [frames, setFrames] = useState<Frame[]>([]);
+  const [frames, setFrames] = useState<FrameModel[]>([]);
   const [framesLoading, setFramesLoading] = useState<boolean>(true);
   const [framesError, setFramesError] = useState<string | null>(null);
 
@@ -25,12 +20,10 @@ const useGetFrames = (): UseGetFrameReturn => {
     setFramesError(null);
 
     try {
-      const response = await axiosClient.get<Frame[]>("/frames/");
+      const response = await axiosClient.get<FrameModel[]>("/frames/");
       setFrames(response.data);
-    } catch (err: any) {
-      setFramesLoading(
-        err?.response?.data?.message || "Failed to fetch doctors."
-      );
+    } catch (err) {
+      handleError(err, "Failed to recive frames");
     } finally {
       setFramesLoading(false);
     }

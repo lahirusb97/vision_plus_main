@@ -26,6 +26,8 @@ import LenseCoatingAdd from "../../view/stock/lense/LenseCoatingAdd";
 import LenseCoatingEdit from "../../view/stock/lense/LenseCoatingEdit";
 import ColorsAdd from "../../view/stock/frame/ColorsAdd";
 import ColorsEdit from "../../view/stock/frame/ColorsEdit";
+import FrameCodeEdit from "../../view/stock/frame/FrameCodeEdit";
+import FrameCodeAdd from "../../view/stock/frame/FrameCodeAdd";
 
 export const stockRoutes: RouteObject[] = [
   {
@@ -164,11 +166,11 @@ export const stockRoutes: RouteObject[] = [
         children: [
           {
             index: true,
-            element: <ColorsAdd />,
+            element: <FrameCodeAdd />,
           },
           {
             path: ":id",
-            element: <ColorsEdit />,
+            element: <FrameCodeEdit />,
           },
         ],
       },

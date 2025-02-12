@@ -1,11 +1,17 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, TextField, Button, Container, Paper } from "@mui/material";
 import axiosClient from "../../../axiosClient";
 import { toast } from "react-hot-toast";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams, useSearchParams } from "react-router";
 import { handleError } from "../../../utils/handleError";
-const FrameBrandAdd = () => {
+
+const FrameCodeEdit = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
+
+  const [searchParams] = useSearchParams();
+
+  const paramName = searchParams.get("brand");
 
   const [formData, setFormData] = useState({
     name: "",
@@ -18,31 +24,42 @@ const FrameBrandAdd = () => {
       [name]: value,
     });
   };
+  useEffect(() => {
+    const fetchLenseType = async () => {
+      try {
+        const response = await axiosClient.get(`/codes/${id}/`);
+        setFormData(response.data);
+      } catch (error) {
+        handleError(error, "Failed to recive lens type");
+      }
+    };
+    fetchLenseType();
+  }, [id]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await axiosClient.post("/brands/", {
+      await axiosClient.put(`/codes/${id}/`, {
         ...formData,
-        brand_type: "frame",
+        paramName: parseInt(paramName?.toString() ?? ""),
       });
-      toast.success("Lense Brand Added successfully");
+      toast.success("Lense added successfully");
       navigate(-1);
       setFormData({
         name: "",
       });
     } catch (error) {
-      handleError(error, "Failed to recive lens Brand");
+      handleError(error, "Failed to recive lens type");
     }
   };
 
   return (
     <Container maxWidth="sm">
-      <Paper sx={{ p: 4, width: "300px" }}>
+      <Paper sx={{ p: 4 }}>
         <form onSubmit={handleSubmit}>
           <TextField
             fullWidth
-            label="Frame Brand Name"
+            label="Name"
             name="name"
             value={formData.name}
             onChange={handleChange}
@@ -61,4 +78,4 @@ const FrameBrandAdd = () => {
   );
 };
 
-export default FrameBrandAdd;
+export default FrameCodeEdit;

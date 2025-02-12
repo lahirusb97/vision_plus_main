@@ -1,129 +1,171 @@
-import  { useState } from "react";
-import { Box, Button, FormControl, InputLabel, MenuItem, Paper, Select, TextField, Typography } from "@mui/material";
+import { useState } from "react";
+import {
+  Box,
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Paper,
+  Select,
+  TextField,
+  Typography,
+} from "@mui/material";
 import DropdownInput from "../../components/inputui/DropdownInput"; // Import your reusable dropdown component
 import useGetLenseTypes from "../../hooks/lense/useGetLenseType";
 import useGetCoatings from "../../hooks/lense/useGetCoatings";
 import axiosClient from "../../axiosClient";
 import useGetBrands from "../../hooks/lense/useGetBrand";
 import { useForm, Controller } from "react-hook-form";
-import toast from 'react-hot-toast';
+import toast from "react-hot-toast";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 const AddLens = () => {
-  const {lenseTypes,lenseTypesLoading}=useGetLenseTypes();
-  const {brands,brandsLoading}=useGetBrands();
-  const {coatings,coatingsLoading,}=useGetCoatings();
- const [loading, setLoading] = useState(false);
+  const { lenseTypes, lenseTypesLoading } = useGetLenseTypes();
+  const { brands, brandsLoading } = useGetBrands({ brand_type: "lens" });
+  const { coatings, coatingsLoading } = useGetCoatings();
+  const [loading, setLoading] = useState(false);
 
-//! Imporant Values can not be changed
+  //! Imporant Values can not be changed
   // Dropdown options
-  const bisocal=3;
-  const Progresive=2;
-  const single_vision=1;  
+  const bisocal = 3;
+  const Progresive = 2;
+  const single_vision = 1;
 
-//! Imporant Values can not be changed
+  //! Imporant Values can not be changed
 
- const schema = yup.object().shape({
-  lensType: yup.number().required("Lens type is required"),
-  brand: yup.number().required("Brand is required"),
-  coating: yup.number().required("Coating is required"),
-  price: yup.number().positive().min(0.01, "Price must be positive").required("Price is required"),
-  quantity: yup.number().positive().integer().min(1).required("Quantity is required"),
-  sph: yup.number().required("SPH is required"),
-  add: yup.number().when('lensType', {
-    is:Progresive || bisocal,
-    then: (schema) => schema.required("ADD is required"),
-    otherwise: (schema) => schema.notRequired(),
-  }),
-  cyl: yup.number().when('lensType', {
-    is: single_vision ,
-    then: (schema) => schema.required("CYL is required"),
-    otherwise: (schema) => schema.notRequired(),
-  }),
-  lenseSide: yup.string().when('lensType', {
-    is: Progresive,
-    then: (schema) => schema.required("Lens side is required"),
-    otherwise: (schema) => schema.notRequired(),
-  }),
-});
-const { control, handleSubmit, formState: { errors }, watch, register,reset } = useForm({
-  resolver: yupResolver(schema),
-  defaultValues: {
-    lensType: undefined,
-    brand: undefined,
-    coating: undefined,
-    sph: undefined,
-    cyl: undefined,
-    add: undefined,
-    price: undefined,
-    quantity: undefined,
-    lenseSide: ''
-  }
-});
+  const schema = yup.object().shape({
+    lensType: yup.number().required("Lens type is required"),
+    brand: yup.number().required("Brand is required"),
+    coating: yup.number().required("Coating is required"),
+    price: yup
+      .number()
+      .positive()
+      .min(0.01, "Price must be positive")
+      .required("Price is required"),
+    quantity: yup
+      .number()
+      .positive()
+      .integer()
+      .min(1)
+      .required("Quantity is required"),
+    sph: yup.number().required("SPH is required"),
+    add: yup.number().when("lensType", {
+      is: Progresive || bisocal,
+      then: (schema) => schema.required("ADD is required"),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+    cyl: yup.number().when("lensType", {
+      is: single_vision,
+      then: (schema) => schema.required("CYL is required"),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+    lenseSide: yup.string().when("lensType", {
+      is: Progresive,
+      then: (schema) => schema.required("Lens side is required"),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+  });
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    watch,
+    register,
+    reset,
+  } = useForm({
+    resolver: yupResolver(schema),
+    defaultValues: {
+      lensType: undefined,
+      brand: undefined,
+      coating: undefined,
+      sph: undefined,
+      cyl: undefined,
+      add: undefined,
+      price: undefined,
+      quantity: undefined,
+      lenseSide: "",
+    },
+  });
 
   // Submit handler
-  const onSubmit = async(data:Partial<LensFormData>) => {
-    const { lensType, brand, coating, price, quantity, sph, cyl, add, lenseSide } = data;
-const progresivePowers=[{
-      power: 1,
-      value: sph,
-      side: lenseSide,
-    },
-    {
-      power: 3,
-      value: add,
-      side: lenseSide,
-    },
-  ]
-const bisocalPowers=[{
-      power: 1,
-      value: sph,
-    },
-    {
-      power: 3,
-      value: add,
-    },
-  ]
-const singleVisionPowers=[{
-      power: 1,
-      value: sph,
-    },
-    {
-      power: 2,
-      value: cyl,
-
-    },
-  ]
-  const lense ={
-    lens: {
+  const onSubmit = async (data: Partial<LensFormData>) => {
+    const {
+      lensType,
+      brand,
+      coating,
+      price,
+      quantity,
+      sph,
+      cyl,
+      add,
+      lenseSide,
+    } = data;
+    const progresivePowers = [
+      {
+        power: 1,
+        value: sph,
+        side: lenseSide,
+      },
+      {
+        power: 3,
+        value: add,
+        side: lenseSide,
+      },
+    ];
+    const bisocalPowers = [
+      {
+        power: 1,
+        value: sph,
+      },
+      {
+        power: 3,
+        value: add,
+      },
+    ];
+    const singleVisionPowers = [
+      {
+        power: 1,
+        value: sph,
+      },
+      {
+        power: 2,
+        value: cyl,
+      },
+    ];
+    const lense = {
+      lens: {
         type: lensType,
         coating: coating,
         price: price,
-        brand: brand
-    },
-    stock: {
+        brand: brand,
+      },
+      stock: {
         initial_count: quantity,
-        qty: quantity
-    },
-    powers: lensType === Progresive ? progresivePowers : lensType === bisocal ? bisocalPowers : singleVisionPowers
-}
+        qty: quantity,
+      },
+      powers:
+        lensType === Progresive
+          ? progresivePowers
+          : lensType === bisocal
+          ? bisocalPowers
+          : singleVisionPowers,
+    };
     try {
       const data = await axiosClient.post("/lenses/", lense);
       toast.success("Lense added successfully");
-      reset()
+      reset();
     } catch (error) {
       toast.error("Something went wrong");
       console.log(error);
-      
-    }finally{
+    } finally {
       setLoading(false);
     }
   };
-  const lensTypeValue = watch('lensType');
+  const lensTypeValue = watch("lensType");
   return (
     <Paper
-    component={'form'}
-    onSubmit={handleSubmit(onSubmit)}
+      component={"form"}
+      onSubmit={handleSubmit(onSubmit)}
       sx={{
         display: "flex",
         flexDirection: "column",
@@ -133,9 +175,7 @@ const singleVisionPowers=[{
         width: "500px",
       }}
     >
-
-    
-<Controller
+      <Controller
         name="lensType"
         control={control}
         render={({ field }) => (
@@ -148,8 +188,10 @@ const singleVisionPowers=[{
           />
         )}
       />
-   {errors.lensType && <Typography color="error">{errors.lensType.message}</Typography>}
-   <Box my={1} width="100%">
+      {errors.lensType && (
+        <Typography color="error">{errors.lensType.message}</Typography>
+      )}
+      <Box my={1} width="100%">
         <Controller
           name="brand"
           control={control}
@@ -163,54 +205,66 @@ const singleVisionPowers=[{
             />
           )}
         />
-        {errors.brand && <Typography color="error">{errors.brand.message}</Typography>}
+        {errors.brand && (
+          <Typography color="error">{errors.brand.message}</Typography>
+        )}
       </Box>
 
-      <Box sx={{ width: "90%" }} border={1} borderRadius={1} p={2} mt={2} borderColor="#ccc">
+      <Box
+        sx={{ width: "90%" }}
+        border={1}
+        borderRadius={1}
+        p={2}
+        mt={2}
+        borderColor="#ccc"
+      >
         <Typography variant="subtitle1" textAlign="center" mb={2}>
           Lens Power
         </Typography>
-        
+
         {lensTypeValue && (
           <Box display="flex" gap={2}>
             <TextField
-                label="SPH"
-                type="number"
-                fullWidth
-                inputProps={{ step: "0.25" }} // Allow decimal values
-                {...register('sph', {
-                  setValueAs: (value) => (value === "" ? undefined : Number(value)),
-                })}
-                error={!!errors.sph}
-                helperText={errors.sph?.message}
-              />
+              label="SPH"
+              type="number"
+              fullWidth
+              inputProps={{ step: "0.25" }} // Allow decimal values
+              {...register("sph", {
+                setValueAs: (value) =>
+                  value === "" ? undefined : Number(value),
+              })}
+              error={!!errors.sph}
+              helperText={errors.sph?.message}
+            />
 
             {[Progresive, bisocal].includes(lensTypeValue) && (
-            <TextField
+              <TextField
                 label="ADD"
                 type="number"
                 fullWidth
                 inputProps={{ step: "0.25" }} // Allow decimal values
-                {...register('add', {
-                  setValueAs: (value) => (value === "" ? undefined : Number(value)),
+                {...register("add", {
+                  setValueAs: (value) =>
+                    value === "" ? undefined : Number(value),
                 })}
                 error={!!errors.add}
                 helperText={errors.add?.message}
-             />
+              />
             )}
 
             {lensTypeValue === single_vision && (
-            <TextField
-              label="CYL"
-              type="number"
-              fullWidth
-              inputProps={{ step: "0.25" }} // Allow decimal values
-              {...register('cyl', {
-                setValueAs: (value) => (value === "" ? undefined : Number(value)),
-              })}
-              error={!!errors.cyl}
-              helperText={errors.cyl?.message}
-            />
+              <TextField
+                label="CYL"
+                type="number"
+                fullWidth
+                inputProps={{ step: "0.25" }} // Allow decimal values
+                {...register("cyl", {
+                  setValueAs: (value) =>
+                    value === "" ? undefined : Number(value),
+                })}
+                error={!!errors.cyl}
+                helperText={errors.cyl?.message}
+              />
             )}
           </Box>
         )}
@@ -229,7 +283,9 @@ const singleVisionPowers=[{
               </Select>
             )}
           />
-          {errors.lenseSide && <Typography color="error">{errors.lenseSide.message}</Typography>}
+          {errors.lenseSide && (
+            <Typography color="error">{errors.lenseSide.message}</Typography>
+          )}
         </FormControl>
       )}
 
@@ -237,11 +293,11 @@ const singleVisionPowers=[{
         label="Price"
         type="number"
         slotProps={{
-         min: 0, // Ensures only positive numbers are allowed
+          min: 0, // Ensures only positive numbers are allowed
         }}
         fullWidth
         margin="normal"
-        {...register('price', {
+        {...register("price", {
           setValueAs: (value) => (value === "" ? undefined : Number(value)),
         })}
         error={!!errors.price}
@@ -254,7 +310,7 @@ const singleVisionPowers=[{
         inputProps={{ min: 1 }}
         fullWidth
         margin="normal"
-        {...register('quantity', {
+        {...register("quantity", {
           setValueAs: (value) => (value === "" ? undefined : Number(value)),
         })}
         error={!!errors.quantity}
@@ -274,7 +330,9 @@ const singleVisionPowers=[{
           />
         )}
       />
-      {errors.coating && <Typography color="error">{errors.coating.message}</Typography>}
+      {errors.coating && (
+        <Typography color="error">{errors.coating.message}</Typography>
+      )}
 
       <Button
         type="submit"
@@ -286,7 +344,6 @@ const singleVisionPowers=[{
         <strong>ADD LENS</strong>
       </Button>
     </Paper>
-   
   );
 };
 

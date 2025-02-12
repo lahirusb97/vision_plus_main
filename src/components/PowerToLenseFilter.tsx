@@ -26,17 +26,24 @@ import { Delete, Remove, RemoveCircle } from "@mui/icons-material";
 import useGetCoatings from "../hooks/lense/useGetCoatings";
 import useGetLenseTypes from "../hooks/lense/useGetLenseType";
 import { LenseModel } from "../model/LenseModel";
-import { addLense, removeLense } from "../features/invoice/lenseFilterSlice";
+import { removeLense, setLense } from "../features/invoice/lenseFilterSlice";
 import { useFormContext } from "react-hook-form";
-
+import { RootState } from "../store/store";
+interface LenseWithQty extends LenseModel {
+  buyQty: number;
+}
 export default function PowerToLenseFilter() {
   const dispatch = useDispatch();
   const { watch } = useFormContext();
   const selectedLenseList = useSelector(
-    (state) => state.invoice_frame_filer.selectedFrameList
+    (state: RootState) => state.invoice_lense_filer.selectedLenses
   );
+  console.log(selectedLenseList);
+
   const { lenses, lensesLoading } = useGetLenses();
-  const { brands, brandsLoading, brandsError } = useGetBrands();
+  const { brands, brandsLoading } = useGetBrands({
+    brand_type: "lens",
+  });
   const { coatings, coatingsLoading } = useGetCoatings();
   const { lenseTypes, lenseTypesLoading } = useGetLenseTypes();
   const [price, setPrice] = React.useState<number>(0);
@@ -52,34 +59,47 @@ export default function PowerToLenseFilter() {
     coating: null,
     brand: null,
   });
+
   useEffect(() => {
-    if (selectLense.lenseType && selectLense.coating && selectLense.brand) {
-      const rightEyeDistSph = watch("right_eye_dist_sph");
-      const rightEyeDistCyl = watch("right_eye_dist_cyl");
-      const rightEyeNearSph = watch("right_eye_near_sph");
+    if (
+      selectLense.lenseType &&
+      selectLense.coating &&
+      selectLense.brand &&
+      !lensesLoading
+    ) {
+      const normalizeValue = (val: any) => parseFloat(val || "0").toFixed(2); // Convert to float, then string with 2 decimals
+
+      const rightEyeDistSph = normalizeValue(watch("right_eye_dist_sph"));
+      const rightEyeDistCyl = normalizeValue(watch("right_eye_dist_cyl"));
+      const rightEyeNearSph = normalizeValue(watch("right_eye_near_sph"));
 
       const matchingItems: LenseModel[] = lenses.filter((item) => {
         if (
-          item.brand === selectedLense?.brand &&
+          item.brand === selectLense.brand &&
           item.type === selectLense.lenseType &&
-          item.coating === selectLense.lenseType
+          item.coating === selectLense.coating
         ) {
-          const hasSph = item.powers.some(
-            (p) => p.power === 1 && p.value === rightEyeDistSph
-          );
-          const hasCyl = item.powers.some(
-            (p) => p.power === 2 && p.value === rightEyeDistCyl
-          );
-          const hasNearSph = item.powers.some(
-            (p) => p.power === 3 && p.value === rightEyeNearSph
-          );
+          const powers = item.stock?.powers || [];
 
-          return hasSph && hasCyl && hasNearSph; // Only return if all match
-        } else {
-          return false;
+          const matchesPower = (powerType: number, value: string) =>
+            powers.some(
+              (p) => p.power === powerType && normalizeValue(p.value) === value
+            );
+
+          if (item.type === 1) {
+            return (
+              matchesPower(1, rightEyeDistSph) &&
+              matchesPower(2, rightEyeDistCyl)
+            );
+          } else if (item.type === 2 || item.type === 3) {
+            return (
+              matchesPower(1, rightEyeDistSph) &&
+              matchesPower(3, rightEyeNearSph)
+            );
+          }
         }
+        return false;
       });
-
       if (matchingItems.length === 1) {
         setSelectedLense({ ...matchingItems[0] });
         setPrice(parseInt(matchingItems[0].price));
@@ -89,12 +109,26 @@ export default function PowerToLenseFilter() {
     } else {
       setPrice(0);
     }
-  }, [selectLense]);
+  }, [
+    selectLense.brand,
+    selectLense.coating,
+    selectLense.lenseType,
+    lensesLoading,
+    watch("right_eye_dist_sph"),
+    watch("right_eye_dist_cyl"),
+    watch("right_eye_near_sph"),
+  ]);
 
   const addFrameByList = () => {
     if (selectLense) {
       if (price > 0) {
-        dispatch(addLense({ ...selectLense, price: String(price) }));
+        dispatch(
+          setLense({
+            ...selectedLense,
+            price: String(price),
+            buyQty: 1,
+          } as LenseWithQty)
+        );
         toast.success("Lense Added ");
       } else {
         toast.error("Price must be greater than 0");
@@ -105,7 +139,8 @@ export default function PowerToLenseFilter() {
   };
 
   return (
-    <div>
+    <Paper variant="elevation" sx={{ padding: 2, m: 2 }}>
+      <Typography variant="h6">Select Lense </Typography>
       <Box
         sx={{
           display: "flex",
@@ -155,7 +190,7 @@ export default function PowerToLenseFilter() {
           margin="normal"
           variant="outlined"
           value={price}
-          onChange={(e) => setPrice(Number(e.target.value))}
+          onChange={(e) => setPrice(parseInt(e.target.value))}
           inputProps={{ min: 0 }}
         />
 
@@ -163,37 +198,43 @@ export default function PowerToLenseFilter() {
           Add
         </Button>
       </Box>
-
       <Grid container spacing={2} justifyContent="flex-start">
-        {selectedLenseList.map((lense, index) => (
-          <Paper
-            elevation={3}
-            sx={{
-              width: "100%",
-              padding: 1,
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "space-evenly",
-              marginBottom: 1,
-              alignItems: "center",
-            }}
-          >
-            <Typography variant="body2">
-              Lense Type: {lense.stock.lens_type}
-            </Typography>
-            <Typography variant="body2">
-              Coating : {lense.stock.coating}
-            </Typography>
-            <Typography variant="body2">Brand: {lense.brand}</Typography>
-            <IconButton
-              onClick={() => dispatch(removeLense(lense.id))}
-              color="error"
+        {Object.values(selectedLenseList).length === 0 ? (
+          <></>
+        ) : (
+          Object.values(selectedLenseList).map((lense) => (
+            <Paper
+              elevation={3}
+              sx={{
+                width: "100%",
+                padding: 1,
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-evenly",
+                marginBottom: 1,
+                alignItems: "center",
+              }}
             >
-              <Delete />
-            </IconButton>
-          </Paper>
-        ))}
+              <Typography variant="body2">Type: {lense.type}</Typography>
+              <Typography variant="body2">Brand: {lense.brand}</Typography>
+              <Typography variant="body2">Size: {lense.coating}</Typography>
+              <Typography variant="body2">Quantity: {lense.buyQty}</Typography>
+              <Typography variant="body2">
+                Unite Price: {lense.price}
+              </Typography>
+              <Typography variant="body2">
+                Total Price: {parseInt(lense.price) * lense.buyQty}
+              </Typography>
+              <IconButton
+                onClick={() => dispatch(removeLense(lense.id))}
+                color="error"
+              >
+                <Delete />
+              </IconButton>
+            </Paper>
+          ))
+        )}
       </Grid>
-    </div>
+    </Paper>
   );
 }

@@ -4,12 +4,8 @@ import { useLocation } from "react-router";
 import { useFormContext } from "react-hook-form";
 import PowerToFrameFilter from "../../../components/PowerToFrameFilter";
 import PowerToLenseFilter from "../../../components/PowerToLenseFilter";
-interface dataList {
-  id: number;
-  name: string;
-  brand: number;
-}
-export default function FactoryFromTwo({ handleNext, handleBack }) {
+
+export default function FactoryFromTwo() {
   const {
     register,
     formState: { errors },
@@ -50,8 +46,22 @@ export default function FactoryFromTwo({ handleNext, handleBack }) {
             <Input
               error={!!errors.customer_name}
               sx={inputStyle}
-              {...register("customer_name")}
+              {...register("name")}
             />
+          </Paper>
+          <Paper
+            variant="outlined"
+            sx={{
+              display: "flex",
+              gap: 2,
+              justifyContent: "space-between",
+              width: "100%",
+              p: 0.5,
+              alignItems: "center",
+            }}
+          >
+            <Typography>Nic</Typography>
+            <Input error={!!errors.nic} sx={inputStyle} {...register("nic")} />
           </Paper>
           <Paper
             variant="outlined"
@@ -66,9 +76,9 @@ export default function FactoryFromTwo({ handleNext, handleBack }) {
           >
             <Typography>Address</Typography>
             <Input
-              error={!!errors.customer_address}
+              error={!!errors.address}
               sx={inputStyle}
-              {...register("customer_address")}
+              {...register("address")}
             />
           </Paper>
           <Paper
@@ -84,9 +94,9 @@ export default function FactoryFromTwo({ handleNext, handleBack }) {
           >
             <Typography>Contact No.</Typography>
             <Input
-              error={!!errors.customer_mobile}
+              error={!!errors.phone_number}
               sx={inputStyle}
-              {...register("customer_mobile")}
+              {...register("phone_number")}
             />
           </Paper>
           <Paper
@@ -103,23 +113,15 @@ export default function FactoryFromTwo({ handleNext, handleBack }) {
             <Typography>Age</Typography>
             <Input
               type="number"
-              error={!!errors.customer_age}
+              error={!!errors.dob}
               sx={inputStyle}
-              {...register("customer_age")}
+              {...register("dob")}
             />
           </Paper>
         </Paper>
       </Box>
       <PowerToFrameFilter />
-      {/* <PowerToLenseFilter /> */}
-      <Box sx={{ display: "flex", justifyContent: "end", gap: 2 }}>
-        <Button onClick={handleBack} variant="contained">
-          Back
-        </Button>
-        <Button onClick={handleNext} variant="contained">
-          Next
-        </Button>
-      </Box>
+      <PowerToLenseFilter />
     </div>
   );
 }

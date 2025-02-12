@@ -1,10 +1,9 @@
 import React from "react";
 import { Button, Paper, Typography } from "@mui/material";
-import VariationCRUD from "../../components/VariationCRUD";
 import AutocompleteInputField from "../../components/inputui/DropdownInput";
 import { useNavigate } from "react-router";
 import toast from "react-hot-toast";
-
+import { useDeleteDialog } from "../../context/DeleteDialogContext";
 interface dataList {
   id: number;
   name: string;
@@ -14,23 +13,25 @@ interface AddVariationCompProps {
   textName: string;
   Urlpath: string;
   dataList: dataList[];
+  pathroute: string;
+  refresh: () => void;
 }
 
 export default function AddVariationComp({
   textName,
   Urlpath,
   dataList,
+  pathroute,
+  refresh,
 }: AddVariationCompProps) {
   const navigate = useNavigate();
-
+  const { openDialog } = useDeleteDialog();
   const [lenseCoating, setLenseCoating] = React.useState<number | null>(null);
-
   return (
     <div>
       <Paper
         sx={{
           padding: 2,
-          width: "100%",
           display: "flex",
           flexDirection: "column",
           gap: "10px",
@@ -70,7 +71,7 @@ export default function AddVariationComp({
             variant="outlined"
             onClick={() => {
               if (lenseCoating) {
-                // ${Urlpath}${lenseCoating}
+                openDialog(`/${pathroute}/${lenseCoating}/`, textName, refresh);
               }
             }}
           >
