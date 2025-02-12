@@ -7,7 +7,7 @@ export default function TransactionNav() {
       <NavButton name="Factory Invoice" path={"/transaction/factory_invoice"} />
       <NavButton name="Normal Invoice" path={"/transaction/normal_invoice"} />
       <NavButton name="Edit Invoice" path={"/transaction/edit_invoice"} />
-      <NavButton name="Delete Invoice" path={"/transaction/delete_invoice"} />
+      <NavButton name="RePayment" path={"/transaction/repayment"} />
     </>
   );
 }

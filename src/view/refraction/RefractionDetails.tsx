@@ -86,10 +86,8 @@ export default function RefractionDetails() {
   const {
     data: refractionList,
     loading: refractionListLoading,
-    error: refractionListError,
     nextPage,
-    prevPage,
-    refresh,
+    prevPage
   } = useData<RefractionData>("refractions/");
 
   // Safely access data and meta-information
@@ -161,7 +159,13 @@ export default function RefractionDetails() {
               filteredRows.map((row) => (
                 <TableRow
                   onClick={() =>
-                    navigate(`/refraction/${row.refraction_number}`)
+                    //! pass coustomer Data Via React router
+                    navigate(`/refraction/${row.refraction_number}`, {
+                      state: {
+                        customerName: row.customer_full_name,
+                        mobileNumber: row.customer_mobile
+                      }
+                    })
                   }
                   sx={{
                     cursor: "pointer",

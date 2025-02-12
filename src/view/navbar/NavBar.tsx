@@ -20,6 +20,7 @@ import StockNav from "../stock/StockNav";
 import { LogoutOutlined } from "@mui/icons-material";
 import { Cookies } from "typescript-cookie";
 import { useAuthContext } from "../../context/AuthContext";
+import { useLocation } from "react-router";
 
 // TabPanel Component
 
@@ -51,9 +52,30 @@ function TabPanel(props: {
 }
 
 export default function NavBar() {
-  const [value, setValue] = React.useState(0);
-  const { setUser, setToken } = useAuthContext();
+  const tabs = [
+    { path: "refraction", icon: RefractionIcon, label: "Refraction", nav: RefractionNav },
+    { path: "transaction", icon: TransationIcon, label: "Transaction", nav: TransactionNav },
+    { path: "master", icon: MasterIcon, label: "Master", nav: RefractionNav },
+    { path: "account", icon: AccountIcon, label: "Account", nav: RefractionNav },
+    { path: "stock", icon: StockIcon, label: "Stock", nav: StockNav },
+    { path: "channel", icon: ChanneltIcon, label: "Channel", nav: ChannelNav },
+    { path: "reports", icon: ReportsIcon, label: "Reports", nav: RefractionNav },
+    { path: "messenger", icon: MessangerIcon, label: "Messenger", nav: RefractionNav },
+    { path: "user", icon: UserIcon, label: "User", nav: RefractionNav },
+  ];
 
+  const location = useLocation();
+  const firstSegment = location.pathname.split("/")[1] || "home"; // Default to 'home' if empty
+  const getTabIndexFromPath = (path: string) => {
+    const index = tabs.findIndex((tab) => path.startsWith(tab.path));
+    return index !== -1 ? index : 0; // Default to first tab if no match
+  };
+  
+  const [value, setValue] = React.useState(getTabIndexFromPath(firstSegment));
+  const { setUser, setToken } = useAuthContext();
+  
+ 
+ 
   // Handle Tab Change
   const handleChange = (
     _event: React.SyntheticEvent<Element, Event>,
@@ -63,23 +85,13 @@ export default function NavBar() {
   };
 
   // Array of Icons and Labels (dynamically derived)
-  const tabs = [
-    { icon: RefractionIcon, label: "Refraction", nav: RefractionNav },
-    { icon: TransationIcon, label: "Transaction", nav: TransactionNav },
-    { icon: MasterIcon, label: "Master", nav: RefractionNav },
-    { icon: AccountIcon, label: "Account", nav: RefractionNav },
-    { icon: StockIcon, label: "Stock", nav: StockNav },
-    { icon: ChanneltIcon, label: "Channel", nav: ChannelNav },
-    { icon: ReportsIcon, label: "Reports", nav: RefractionNav },
-    { icon: MessangerIcon, label: "Messenger", nav: RefractionNav },
-    { icon: UserIcon, label: "User", nav: RefractionNav },
-  ];
+ 
   const deleteCookie = () => {
     Cookies.remove("VISION_ACCESS_TOKEN");
     setToken(null);
   };
   return (
-    <Paper sx={{ width: "100%" }}>
+    <Paper sx={{ width: "100%", }}>
       <Tabs
         value={value}
         onChange={handleChange}

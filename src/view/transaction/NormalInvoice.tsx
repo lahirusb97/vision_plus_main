@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Box,
   Typography,
@@ -11,10 +10,11 @@ import { IconButton } from "@mui/material";
 import AddIcon from "@mui/icons-material/AddBox";
 import CashInput from "../../components/inputui/CashInput";
 import CardInput from "../../components/inputui/CardInput";
+import { useNavigate } from "react-router";
 
 const TransactionUI = () => {
   const lensOptions = ["Option 1", "Option 2", "Option 3"]; // Replace with actual options
-
+  const navigate = useNavigate();
   return (
     <Box
       sx={{
@@ -196,10 +196,7 @@ const TransactionUI = () => {
 
       {/* Row 4: Payment Methods (Cash and Card) */}
 
-      <Box display="flex" flexDirection="row" gap={10} marginLeft="50px">
-        <CashInput />
-        <CardInput />
-      </Box>
+      <Box display="flex" flexDirection="row" gap={10} marginLeft="50px"></Box>
 
       {/* Save Button */}
       <Box

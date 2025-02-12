@@ -1,101 +1,176 @@
-import React from "react";
-import {
-  Box,
-  Button,
-  IconButton,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography,
-  Paper,
-} from "@mui/material";
+import React, { useMemo } from "react";
+import { MaterialReactTable } from "material-react-table";
+import { Box, IconButton, Typography } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import HistoryIcon from "@mui/icons-material/History";
 import LoopIcon from "@mui/icons-material/Loop";
+import { useNavigate } from "react-router";
+import useGetLenses from "../../hooks/lense/useGetLense";
+import { useDeleteDialog } from "../../context/DeleteDialogContext";
 
-const LensStore = () => {
-  const frames = [
-    {
-      lenstype: "Bifocal",
-      coating: "Blu cut",
-      SPH: "-2.50",
-      CYL: "-2.00",
-      ADD: "-",
-      lensbrand: "eselar",
-      price: 1000,
-      stocklimit:50,
-      quantity: 4745,
-    },
-  ];
+const LenseStore = () => {
+  const { lenses, lensesLoading, refresh } = useGetLenses();
+  //! Imporant Values can not be changed
+  const SPH = 1;
+  const CYL = 2;
+  const ADD = 3;
+  //! Imporant Values can not be changed
+  const { openDialog } = useDeleteDialog();
+
+  // Define columns
+  const columns = useMemo(
+    () => [
+      {
+        header: "Action",
+        id: "action",
+        Cell: ({ row }) => (
+          <Box>
+            <IconButton
+              color="error"
+              title="Delete"
+              onClick={() => handleDelete(row.original)}
+            >
+              <DeleteIcon />
+            </IconButton>
+            <IconButton
+              color="info"
+              title="History"
+              onClick={() => handleHistory(row.original.id)}
+            >
+              <HistoryIcon />
+            </IconButton>
+            <IconButton
+              color="warning"
+              title="Edit"
+              onClick={() => handleEdit(row.original.id)}
+            >
+              <EditIcon />
+            </IconButton>
+            <IconButton
+              color="warning"
+              title="Update Quantity"
+              onClick={() => handleUpdate(row.original.id)}
+            >
+              <LoopIcon />
+            </IconButton>
+          </Box>
+        ),
+      },
+      {
+        header: "Lense Type",
+        accessorKey: "stock.lens_type",
+        size: 130,
+      },
+      {
+        header: "Coating",
+        accessorKey: "stock.coating",
+        size: 130,
+      },
+      {
+        header: "Price",
+        accessorKey: "price",
+        size: 80,
+      },
+      {
+        header: "Side",
+        id: "side",
+        Cell: ({ row }) => {
+          const sphEntry = row.original.powers.find((p) => p.power === SPH);
+          return sphEntry && sphEntry.side ? sphEntry.side : "-";
+        },
+        size: 30,
+      },
+      {
+        header: "SPH",
+        id: "sph",
+        Cell: ({ row }) => {
+          const sphEntry = row.original.powers.find((p) => p.power === SPH);
+          return sphEntry ? sphEntry.value : "-";
+        },
+        size: 30,
+      },
+      {
+        header: "CYL",
+        id: "cyl",
+        Cell: ({ row }) => {
+          const cylEntry = row.original.powers.find((p) => p.power === CYL);
+          return cylEntry ? cylEntry.value : "-";
+        },
+        size: 30,
+      },
+      {
+        header: "ADD",
+        id: "add",
+        Cell: ({ row }) => {
+          const addEntry = row.original.powers.find((p) => p.power === ADD);
+          return addEntry ? addEntry.value : "-";
+        },
+        size: 30,
+      },
+      {
+        header: "Stock Limit",
+        accessorKey: "stock.limit", // Nested accessor for stock initial count
+        size: 50,
+      },
+      {
+        header: "Quantity",
+        accessorKey: "stock.qty", // Nested accessor for stock quantity
+        size: 50,
+      },
+    ],
+    []
+  );
+  const navigate = useNavigate();
+  // Handlers for actions
+  const handleDelete = (row) => {
+    openDialog(
+      `/lenses/${row.id}/`,
+      `Lense of Type - ${row.type} & Brand - ${row.brand}`,
+      refresh
+    );
+  };
+
+  const handleHistory = (id) => {
+    // Add history logic
+    navigate(`history/${id}`);
+  };
+
+  const handleEdit = (id) => {
+    // Add edit logic
+    navigate(`edit/${id}`);
+  };
+
+  const handleUpdate = (id) => {
+    // Add update logic
+    navigate(`update/${id}`);
+  };
 
   return (
-    <Box
-      sx={{
-        padding: 4,
-        minHeight: "100vh",
-        gap:2,
-      }}
-    >
-      
-
-      {/* Table Section */}
-      <TableContainer component={Paper} sx={{ borderRadius: 2, width:"1050px"   }}>
-        <Table>
-          {/* Table Header */}
-          <TableHead >
-            <TableRow>
-              <TableCell align="center">Action</TableCell>
-              <TableCell align="center">Lens type</TableCell>
-              <TableCell align="center">Coating</TableCell>
-              <TableCell align="center">SPH</TableCell>
-              <TableCell align="center">CYL</TableCell>
-              <TableCell align="center">ADD</TableCell>
-              <TableCell align="center">Lens Brand</TableCell>
-              <TableCell align="center">Price</TableCell>
-              <TableCell align="center">Stock limit</TableCell>
-              <TableCell align="center">Quantity</TableCell>
-            </TableRow>
-          </TableHead>
-
-          {/* Table Body */}
-          <TableBody sx={{marginTop: 12}} >
-            {frames.map((frame, index) => (
-              <TableRow key={index}>
-                <TableCell align="center">
-                  <IconButton title="Delete">
-                    <DeleteIcon />
-                  </IconButton>
-                  <IconButton title="History">
-                    <HistoryIcon />
-                  </IconButton>
-                  <IconButton title="Price and Stock Limit Edit">
-                    <EditIcon />
-                  </IconButton>
-                  <IconButton title="Lens Quantity Update">
-                    <LoopIcon />
-                  </IconButton>
-                </TableCell>
-                <TableCell align="center">{frame.lenstype}</TableCell>
-                <TableCell align="center">{frame.coating}</TableCell>
-                <TableCell align="center">{frame.SPH}</TableCell>
-                <TableCell align="center">{frame.CYL}</TableCell>
-                <TableCell align="center">{frame.ADD}</TableCell>
-                <TableCell align="center">{frame.lensbrand}</TableCell>
-                <TableCell align="center">{frame.price}</TableCell>
-                <TableCell align="center">{frame.stocklimit}</TableCell>
-                <TableCell align="center">{frame.quantity}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+    <Box sx={{ padding: 4, maxWidth: "1200px" }}>
+      <Typography
+        sx={{ marginBottom: 2, fontWeight: "bold" }}
+        variant="h4"
+        gutterBottom
+      >
+        Lenses Store
+      </Typography>
+      <MaterialReactTable
+        columns={columns}
+        data={lenses}
+        enableColumnActions={false}
+        enableColumnFilters={false}
+        enableSorting
+        enablePagination
+        muiTableProps={{
+          sx: {
+            borderRadius: 2,
+            overflow: "hidden",
+          },
+        }}
+      />
     </Box>
   );
 };
 
-export default LensStore;
-
+export default LenseStore;

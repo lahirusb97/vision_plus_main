@@ -1,8 +1,9 @@
 import React from "react";
 import { Button, Paper, Typography } from "@mui/material";
-import VariationCRUD from "../../components/VariationCRUD";
 import AutocompleteInputField from "../../components/inputui/DropdownInput";
-
+import { useNavigate } from "react-router";
+import toast from "react-hot-toast";
+import { useDeleteDialog } from "../../context/DeleteDialogContext";
 interface dataList {
   id: number;
   name: string;
@@ -12,6 +13,7 @@ interface AddVariationCompProps {
   textName: string;
   Urlpath: string;
   dataList: dataList[];
+  pathroute: string;
   refresh: () => void;
 }
 
@@ -19,30 +21,17 @@ export default function AddVariationComp({
   textName,
   Urlpath,
   dataList,
+  pathroute,
   refresh,
 }: AddVariationCompProps) {
-  const [variationCrud, setVariationCrud] = React.useState({
-    open: false,
-    url: "",
-    dialogMode: "",
-  });
+  const navigate = useNavigate();
+  const { openDialog } = useDeleteDialog();
   const [lenseCoating, setLenseCoating] = React.useState<number | null>(null);
-  const handleClose = () => {
-    setVariationCrud({
-      open: false,
-      url: "",
-      dialogMode: "",
-    });
-    setLenseCoating(null);
-    refresh();
-  };
-
   return (
     <div>
       <Paper
         sx={{
           padding: 2,
-          width: "600px",
           display: "flex",
           flexDirection: "column",
           gap: "10px",
@@ -61,13 +50,7 @@ export default function AddVariationComp({
           <Button
             color="success"
             variant="outlined"
-            onClick={() =>
-              setVariationCrud({
-                open: true,
-                dialogMode: "add",
-                url: Urlpath,
-              })
-            }
+            onClick={() => navigate(`${Urlpath}/`)}
           >
             Add
           </Button>
@@ -75,11 +58,9 @@ export default function AddVariationComp({
             variant="outlined"
             onClick={() => {
               if (lenseCoating) {
-                setVariationCrud({
-                  open: true,
-                  dialogMode: "Edit",
-                  url: `${Urlpath}${lenseCoating}/`,
-                });
+                navigate(`${Urlpath}/${lenseCoating}`);
+              } else {
+                toast.error("No Item Selected");
               }
             }}
           >
@@ -90,23 +71,13 @@ export default function AddVariationComp({
             variant="outlined"
             onClick={() => {
               if (lenseCoating) {
-                setVariationCrud({
-                  open: true,
-                  dialogMode: "Delete",
-                  url: `${Urlpath}${lenseCoating}/`,
-                });
+                openDialog(`/${pathroute}/${lenseCoating}/`, textName, refresh);
               }
             }}
           >
             Delete
           </Button>
         </div>
-        {/* Dialog */}
-        <VariationCRUD
-          variationCrud={variationCrud}
-          handleClose={handleClose}
-          refresh={refresh}
-        />
       </Paper>
     </div>
   );

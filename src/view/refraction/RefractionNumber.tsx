@@ -40,6 +40,11 @@ export default function RefractionNumber() {
       });
     } catch (error) {
       console.log(error);
+    }finally{
+      setCreateRefraction({
+        customer_full_name: "",
+        customer_mobile: "",
+      });
     }
   };
   const handleToggle = () => {
