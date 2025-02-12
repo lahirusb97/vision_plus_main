@@ -7,53 +7,54 @@ import CodeCRUD from "./CodeCRUD";
 import { Box, Grid2 } from "@mui/material";
 import useGetLenseTypes from "../../hooks/lense/useGetLenseType";
 export default function AddVariation() {
-  const { coatings, refresh: refreshCoatings } = useGetCoatings();
-  const { brands, refresh: refreshBrands } = useGetBrands();
-  const { colors, refresh: refreshColors } = useGetColors();
+  const { coatings } = useGetCoatings();
+  const { brands: lenseBrand } = useGetBrands({ brand_type: "lens" });
+  const { brands: frameBrand } = useGetBrands({ brand_type: "frame" });
+  const { colors } = useGetColors();
   const { codes, refresh: refreshCodes } = useGetCodes();
   const { lenseTypes, refresh: refreshLenseTypes } = useGetLenseTypes();
 
   return (
-    <Grid2 sx={
-      {width: '1200px',
-        display: 'grid',
-        gridTemplateColumns: 'repeat(2, 1fr)',
+    <Grid2
+      sx={{
+        width: "1200px",
+        display: "grid",
+        gridTemplateColumns: "repeat(2, 1fr)",
         columnGap: 10,
         rowGap: 2,
-        '& > :last-child:nth-child(odd)': {  // Full-width for odd last item
-          gridColumn: '1 / -1',
-        }
-      }
-    }>
+        "& > :last-child:nth-child(odd)": {
+          // Full-width for odd last item
+          gridColumn: "1 / -1",
+        },
+      }}
+    >
       <AddVariationComp
         textName="Lense Types"
-        Urlpath="/lens-types/"
+        Urlpath="lense_type"
         dataList={lenseTypes}
-        refresh={refreshLenseTypes}
-      />
-      <AddVariationComp
-        textName="Lense Coating"
-        Urlpath="/lens-coatings/"
-        dataList={coatings}
-        refresh={refreshCoatings}
       />
       <AddVariationComp
         textName="Frames Brand"
-        Urlpath="/brands/"
-        dataList={brands}
-        refresh={refreshBrands}
+        Urlpath="frame_brand"
+        dataList={frameBrand}
       />
       <AddVariationComp
-        textName="Colors"
-        Urlpath="/colors/"
-        dataList={colors}
-        refresh={refreshColors}
+        textName="Lense Brand"
+        Urlpath="lense_brand"
+        dataList={lenseBrand}
       />
+      <AddVariationComp
+        textName="Lense Coating"
+        Urlpath="lens_coatings"
+        dataList={coatings}
+      />
+
+      <AddVariationComp textName="Colors" Urlpath="color" dataList={colors} />
       <CodeCRUD
         textName="Codes"
         Urlpath="/codes/"
         dataList={codes}
-        brandList={brands}
+        brandList={frameBrand}
         refresh={refreshCodes}
       />
     </Grid2>

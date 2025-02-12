@@ -16,6 +16,16 @@ import LenseUpdate from "../../view/stock/lense/LenseUpdate";
 import OtherItemHistory from "../../view/stock/OtherItemHistory";
 import OtherItemUpdate from "../../view/stock/OtherItemUpdate";
 import OtherItemEdit from "../../view/stock/OtherItemEdit";
+import LenseTypeAdd from "../../view/stock/lense/LenseTypeAdd";
+import LenseTypeEdit from "../../view/stock/lense/LenseTypeEdit";
+import LenseBrandAdd from "../../view/stock/lense/LenseBrandAdd";
+import LenseBrandEdit from "../../view/stock/lense/LenseBrandEdit";
+import FrameBrandAdd from "../../view/stock/frame/FrameBrandAdd";
+import FrameBrandEdit from "../../view/stock/frame/FrameBrandEdit";
+import LenseCoatingAdd from "../../view/stock/lense/LenseCoatingAdd";
+import LenseCoatingEdit from "../../view/stock/lense/LenseCoatingEdit";
+import ColorsAdd from "../../view/stock/frame/ColorsAdd";
+import ColorsEdit from "../../view/stock/frame/ColorsEdit";
 
 export const stockRoutes: RouteObject[] = [
   {
@@ -24,31 +34,23 @@ export const stockRoutes: RouteObject[] = [
   },
   {
     path: "frame_store",
-    element: <ProtectedChildRoute/>,
+    element: <ProtectedChildRoute />,
     children: [
       {
-       index  : true,
-        element: 
-          <FrameStore />
-        ,
+        index: true,
+        element: <FrameStore />,
       },
       {
         path: "update/:id",
-        element: 
-          <FrameUpdate />
-        ,
+        element: <FrameUpdate />,
       },
       {
         path: "edit/:id",
-        element: 
-          <FrameEdit />
-        ,
+        element: <FrameEdit />,
       },
       {
         path: "history/:id",
-        element: 
-          <FrameHIstory />
-        ,
+        element: <FrameHIstory />,
       },
     ],
   },
@@ -61,72 +63,142 @@ export const stockRoutes: RouteObject[] = [
     element: <ProtectedChildRoute />,
     children: [
       {
-       index  : true,
-        element: 
-          <LenseStore />
-        ,
+        index: true,
+        element: <LenseStore />,
       },
       {
         path: "update/:id",
-        element: 
-          <LenseUpdate />
-        ,
+        element: <LenseUpdate />,
       },
       {
         path: "edit/:id",
-        element: 
-          <LenseEdit />
-        ,
+        element: <LenseEdit />,
       },
       {
         path: "history/:id",
-        element: 
-          <LenseHistory />
-        ,
+        element: <LenseHistory />,
       },
     ],
   },
   {
     path: "add_variation",
-    element: <AddVariation />,
-    
+    element: <ProtectedChildRoute />,
+    children: [
+      {
+        index: true,
+        element: <AddVariation />,
+      },
+      {
+        path: "lense_type",
+        element: <ProtectedChildRoute />,
+        children: [
+          {
+            index: true,
+            element: <LenseTypeAdd />,
+          },
+          {
+            path: ":id",
+            element: <LenseTypeEdit />,
+          },
+        ],
+      },
+      {
+        path: "lense_brand",
+        element: <ProtectedChildRoute />,
+        children: [
+          {
+            index: true,
+            element: <LenseBrandAdd />,
+          },
+          {
+            path: ":id",
+            element: <LenseBrandEdit />,
+          },
+        ],
+      },
+      {
+        path: "frame_brand",
+        element: <ProtectedChildRoute />,
+        children: [
+          {
+            index: true,
+            element: <FrameBrandAdd />,
+          },
+          {
+            path: ":id",
+            element: <FrameBrandEdit />,
+          },
+        ],
+      },
+      {
+        path: "lens_coatings",
+        element: <ProtectedChildRoute />,
+        children: [
+          {
+            index: true,
+            element: <LenseCoatingAdd />,
+          },
+          {
+            path: ":id",
+            element: <LenseCoatingEdit />,
+          },
+        ],
+      },
+      {
+        path: "color",
+        element: <ProtectedChildRoute />,
+        children: [
+          {
+            index: true,
+            element: <ColorsAdd />,
+          },
+          {
+            path: ":id",
+            element: <ColorsEdit />,
+          },
+        ],
+      },
+      {
+        path: "frame_code",
+        element: <ProtectedChildRoute />,
+        children: [
+          {
+            index: true,
+            element: <ColorsAdd />,
+          },
+          {
+            path: ":id",
+            element: <ColorsEdit />,
+          },
+        ],
+      },
+    ],
   },
   {
     path: "other_item_stock",
     element: <ProtectedChildRoute />,
     children: [
       {
-       index  : true,
-        element: 
-          <OtherItemStock />
-        ,
+        index: true,
+        element: <OtherItemStock />,
       },
-   
+
       {
         path: "edit/:id",
-        element: 
-          <OtherItemEdit />
-        ,
+        element: <OtherItemEdit />,
       },
       {
         path: "update/:id",
-        element: 
-          <OtherItemUpdate />
-        ,
+        element: <OtherItemUpdate />,
       },
       {
         path: "history/:id",
-        element: 
-          <OtherItemHistory />
-        ,
+        element: <OtherItemHistory />,
       },
     ],
-    
   },
   {
     path: "add_other_item",
-    element: 
-      <AddOtherItem />
-    ,
+    element: <AddOtherItem />,
   },
 ];

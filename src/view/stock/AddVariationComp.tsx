@@ -2,6 +2,8 @@ import React from "react";
 import { Button, Paper, Typography } from "@mui/material";
 import VariationCRUD from "../../components/VariationCRUD";
 import AutocompleteInputField from "../../components/inputui/DropdownInput";
+import { useNavigate } from "react-router";
+import toast from "react-hot-toast";
 
 interface dataList {
   id: number;
@@ -12,30 +14,16 @@ interface AddVariationCompProps {
   textName: string;
   Urlpath: string;
   dataList: dataList[];
-  refresh: () => void;
 }
 
 export default function AddVariationComp({
   textName,
   Urlpath,
   dataList,
-  refresh,
 }: AddVariationCompProps) {
-  const [variationCrud, setVariationCrud] = React.useState({
-    open: false,
-    url: "",
-    dialogMode: "",
-  });
+  const navigate = useNavigate();
+
   const [lenseCoating, setLenseCoating] = React.useState<number | null>(null);
-  const handleClose = () => {
-    setVariationCrud({
-      open: false,
-      url: "",
-      dialogMode: "",
-    });
-    setLenseCoating(null);
-    refresh();
-  };
 
   return (
     <div>
@@ -61,13 +49,7 @@ export default function AddVariationComp({
           <Button
             color="success"
             variant="outlined"
-            onClick={() =>
-              setVariationCrud({
-                open: true,
-                dialogMode: "add",
-                url: Urlpath,
-              })
-            }
+            onClick={() => navigate(`${Urlpath}/`)}
           >
             Add
           </Button>
@@ -75,11 +57,9 @@ export default function AddVariationComp({
             variant="outlined"
             onClick={() => {
               if (lenseCoating) {
-                setVariationCrud({
-                  open: true,
-                  dialogMode: "Edit",
-                  url: `${Urlpath}${lenseCoating}/`,
-                });
+                navigate(`${Urlpath}/${lenseCoating}`);
+              } else {
+                toast.error("No Item Selected");
               }
             }}
           >
@@ -90,23 +70,13 @@ export default function AddVariationComp({
             variant="outlined"
             onClick={() => {
               if (lenseCoating) {
-                setVariationCrud({
-                  open: true,
-                  dialogMode: "Delete",
-                  url: `${Urlpath}${lenseCoating}/`,
-                });
+                // ${Urlpath}${lenseCoating}
               }
             }}
           >
             Delete
           </Button>
         </div>
-        {/* Dialog */}
-        <VariationCRUD
-          variationCrud={variationCrud}
-          handleClose={handleClose}
-          refresh={refresh}
-        />
       </Paper>
     </div>
   );
