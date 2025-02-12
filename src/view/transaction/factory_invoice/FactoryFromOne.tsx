@@ -10,7 +10,7 @@ import CustomInputWithLabel from "../../../components/inputui/CustomInputWithLab
 import CustomInput from "../../../components/inputui/CustomInput";
 import { useFormContext } from "react-hook-form";
 
-export default function FactoryFromOne({ handleBack, handleNext }) {
+export default function FactoryFromOne() {
   const {
     register,
     formState: { errors },
@@ -27,7 +27,7 @@ export default function FactoryFromOne({ handleBack, handleNext }) {
     <div>
       <Box sx={{ display: "flex", width: "100%", justifyContent: "end" }}>
         <CustomInput
-          {...register("staff_code")}
+          {...register("sales_staff_code")}
           placeholder="Staff Code"
           type="text"
           error={errors?.staff_code?.message as string}
@@ -74,7 +74,7 @@ export default function FactoryFromOne({ handleBack, handleNext }) {
               borderRadius: 1,
             }}
           >
-            Mobile Number
+            Refraction Number
           </Typography>
           <Typography align="left" sx={{ marginLeft: "20px", width: "200px" }}>
             {mobileNumber}
@@ -119,14 +119,6 @@ export default function FactoryFromOne({ handleBack, handleNext }) {
           fullWidth
         />
       </div>
-      <Box sx={{ display: "flex", justifyContent: "end", gap: 2 }}>
-        <Button onClick={handleBack} variant="contained">
-          Back
-        </Button>
-        <Button onClick={handleNext} variant="contained">
-          Next
-        </Button>
-      </Box>
     </div>
   );
 }

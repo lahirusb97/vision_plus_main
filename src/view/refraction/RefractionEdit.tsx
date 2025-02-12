@@ -17,8 +17,7 @@ export default function RefractionEdit() {
   const { id } = useParams();
   const location = useLocation();
   const { customerName, mobileNumber } = location.state || {};
-  
-  
+
   const validationSchema = Yup.object().shape({
     hb_rx_right_dist: Yup.string().required("Right Distance is required"),
     hb_rx_left_dist: Yup.string().required("Left Distance is required"),
@@ -47,23 +46,15 @@ export default function RefractionEdit() {
     right_eye_dist_sph: Yup.string().required(
       "Right Eye Distance Sph is required"
     ),
-    right_eye_dist_cyl: Yup.string().required(
-      "Right Eye Distance Cyl is required"
-    ),
-    right_eye_dist_axis: Yup.string().required(
-      "Right Eye Distance Axis is required"
-    ),
-    right_eye_near_sph: Yup.string().required("Right Eye Near Sph is required"),
+    right_eye_dist_cyl: Yup.string(),
+    right_eye_dist_axis: Yup.string(),
+    right_eye_near_sph: Yup.string(),
     left_eye_dist_sph: Yup.string().required(
       "Left Eye Distance Sph is required"
     ),
-    left_eye_dist_cyl: Yup.string().required(
-      "Left Eye Distance Cyl is required"
-    ),
-    left_eye_dist_axis: Yup.string().required(
-      "Left Eye Distance Axis is required"
-    ),
-    left_eye_near_sph: Yup.string().required("Left Eye Near Sph is required"),
+    left_eye_dist_cyl: Yup.string(),
+    left_eye_dist_axis: Yup.string(),
+    left_eye_near_sph: Yup.string(),
     remark: Yup.string(),
   });
 
@@ -99,19 +90,58 @@ export default function RefractionEdit() {
   return (
     <Box sx={{ minWidth: "1000px", padding: "20px" }}>
       <form onSubmit={handleSubmit(onSubmit)}>
-       <Box sx={{display:"flex",justifyContent:"space-between",marginY:3}}>
-       <Paper sx={{ display: "flex", alignItems: "center", textAlign: "right", }}>
-        <Typography  sx={{width:"200px",color:'white',backgroundColor: theme.palette.primary.contrastText,padding:'.4rem',borderRadius:1}}>Customer Name</Typography>
-        <Typography align="left"  sx={{marginLeft:"20px",width:"200px"}}>{customerName}</Typography>
-        </Paper >
-        <Paper sx={{ display: "flex", alignItems: "center", textAlign: "right" }}>
-        <Typography  sx={{width:"200px",color:'white',backgroundColor: theme.palette.primary.contrastText,padding:'.4rem',borderRadius:1}}>Mobile Number</Typography>
-        <Typography align="left" sx={{marginLeft:"20px",width:"200px"}}>{mobileNumber}</Typography>
-        </Paper >
-       </Box>
-        
-        <Paper variant="outlined" sx={{ padding: "20px", marginBottom: "20px" }}>
-        <HbRxInput register={register} errors={errors} />
+        <Box
+          sx={{ display: "flex", justifyContent: "space-between", marginY: 3 }}
+        >
+          <Paper
+            sx={{ display: "flex", alignItems: "center", textAlign: "right" }}
+          >
+            <Typography
+              sx={{
+                width: "200px",
+                color: "white",
+                backgroundColor: theme.palette.primary.contrastText,
+                padding: ".4rem",
+                borderRadius: 1,
+              }}
+            >
+              Customer Name
+            </Typography>
+            <Typography
+              align="left"
+              sx={{ marginLeft: "20px", width: "200px" }}
+            >
+              {customerName}
+            </Typography>
+          </Paper>
+          <Paper
+            sx={{ display: "flex", alignItems: "center", textAlign: "right" }}
+          >
+            <Typography
+              sx={{
+                width: "200px",
+                color: "white",
+                backgroundColor: theme.palette.primary.contrastText,
+                padding: ".4rem",
+                borderRadius: 1,
+              }}
+            >
+              Mobile Number
+            </Typography>
+            <Typography
+              align="left"
+              sx={{ marginLeft: "20px", width: "200px" }}
+            >
+              {mobileNumber}
+            </Typography>
+          </Paper>
+        </Box>
+
+        <Paper
+          variant="outlined"
+          sx={{ padding: "20px", marginBottom: "20px" }}
+        >
+          <HbRxInput register={register} errors={errors} />
         </Paper>
         <InputLeftRight
           register={register}
@@ -151,13 +181,19 @@ export default function RefractionEdit() {
         <EyeTestTable errors={errors} register={register} />
 
         <CustomInputWithLabel
-        error={''} 
-        {...register("remark")}
-        label="Remark"
-        placeholder="Enter value1"
-        type="text"
-        fullWidth        />
-        <Button sx={{width:"100%"}} type="submit" variant="contained" color="primary">
+          error={""}
+          {...register("remark")}
+          label="Remark"
+          placeholder="Enter value1"
+          type="text"
+          fullWidth
+        />
+        <Button
+          sx={{ width: "100%" }}
+          type="submit"
+          variant="contained"
+          color="primary"
+        >
           Submit
         </Button>
       </form>

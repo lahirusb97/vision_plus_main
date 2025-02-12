@@ -1,6 +1,6 @@
 // types.ts or models/frame.ts
 
-export interface StockModel {
+interface StockModel {
   id: number; // Unique stock ID
   frame: number; // Reference to the associated frame ID
   qty: number; // Available quantity in stock
@@ -8,7 +8,7 @@ export interface StockModel {
   limit: number; // Stock limit (e.g., threshold for low stock)
 }
 
-export interface FrameModel {
+interface FrameModel {
   id: number; // Unique frame ID
   brand: number; // Reference to the brand ID
   code: number; // Code for the frame
@@ -19,3 +19,5 @@ export interface FrameModel {
   image: string | null; // Optional image URL or null if no image
   stock: StockModel; // Stock details for this frame
 }
+
+export type { FrameModel, StockModel };

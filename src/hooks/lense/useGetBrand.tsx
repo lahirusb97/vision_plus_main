@@ -1,10 +1,11 @@
 import { useState, useEffect, useCallback } from "react";
 import axiosClient from "../../axiosClient";
+import { handleError } from "../../utils/handleError";
 
 interface Brand {
   id: number;
   name: string;
-  description: string;
+  brand_type: string;
 }
 
 interface UseGetBrandReturn {
@@ -14,7 +15,11 @@ interface UseGetBrandReturn {
   refresh: () => void;
 }
 
-const useGetBrands = (): UseGetBrandReturn => {
+const useGetBrands = ({
+  brand_type,
+}: {
+  brand_type: string;
+}): UseGetBrandReturn => {
   const [brands, setBrands] = useState<Brand[]>([]);
   const [brandsLoading, setBrandsLoading] = useState<boolean>(true);
   const [brandsError, setBrandsError] = useState<string | null>(null);
@@ -24,12 +29,13 @@ const useGetBrands = (): UseGetBrandReturn => {
     setBrandsError(null);
 
     try {
-      const response = await axiosClient.get<Brand[]>("/brands/");
+      const response = await axiosClient.get<Brand[]>("/brands/", {
+        params: { brand_type },
+      });
       setBrands(response.data);
-    } catch (err: any) {
-      setBrandsLoading(
-        err?.response?.data?.message || "Failed to fetch doctors."
-      );
+    } catch (err) {
+      handleError(err, "Failed to Recive Brands.");
+      console.log(err);
     } finally {
       setBrandsLoading(false);
     }

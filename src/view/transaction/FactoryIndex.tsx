@@ -19,11 +19,12 @@ import {
 import useData from "../../hooks/useData";
 import { useNavigate } from "react-router";
 import { Forward, NavigateBefore, NavigateNext } from "@mui/icons-material";
+import { RefractionModel } from "../../model/RefractionModel";
 
 // Customer Name Field Component
 const CustomerNameField = () => {
   return (
-    <Box 
+    <Box
       sx={{
         display: "flex",
         alignItems: "center",
@@ -87,7 +88,7 @@ export default function FactoryIndex() {
     data: refractionList,
     loading: refractionListLoading,
     nextPage,
-    prevPage
+    prevPage,
   } = useData<RefractionData>("refractions/");
 
   // Safely access data and meta-information
@@ -155,16 +156,15 @@ export default function FactoryIndex() {
                 </TableCell>
               </TableRow>
             ) : filteredRows.length > 0 ? (
-              filteredRows.map((row) => (
+              filteredRows.map((row: RefractionModel) => (
                 <TableRow
                   onClick={() =>
-                 
                     navigate(`create/${row.refraction_number}`, {
                       state: {
                         customerName: row.customer_full_name,
-                        mobileNumber: row.customer_mobile,
-                        date:'in development'
-                      }
+                        mobileNumber: row.refraction_number,
+                        date: "in development",
+                      },
                     })
                   }
                   sx={{

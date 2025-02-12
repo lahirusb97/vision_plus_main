@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import {
-  Input,
   Box,
   Button,
   FormControl,
@@ -14,26 +13,30 @@ import {
   IconButton,
 } from "@mui/material";
 import DropdownInput from "./inputui/DropdownInput";
-import useGetLenses from "../hooks/lense/useGetLense";
 import useGetFrames from "../hooks/lense/useGetFrames";
 import useGetBrands from "../hooks/lense/useGetBrand";
 import useGetColors from "../hooks/lense/useGetColors";
 import useGetCodes from "../hooks/lense/useGetCode";
 import { useDispatch, useSelector } from "react-redux";
-import { addFrame, removeFrame } from "../features/invoice/frameFilterSlice";
+import { removeFrame, setFrame } from "../features/invoice/frameFilterSlice";
 import { FrameModel } from "../model/FrameModel";
 import toast from "react-hot-toast";
-import { Delete, Remove, RemoveCircle } from "@mui/icons-material";
-
+import { Delete } from "@mui/icons-material";
+import { RootState } from "../store/store";
+interface FrameWithQty extends FrameModel {
+  buyQty: number;
+}
 export default function PowerToFrameFilter() {
   const dispatch = useDispatch();
   const selectedFrameList = useSelector(
-    (state) => state.invoice_frame_filer.selectedFrameList
+    (state: RootState) => state.invoice_frame_filer.selectedFrameList
   );
-  const { frames, framesLoading, framesError } = useGetFrames();
-  const { brands, brandsLoading, brandsError } = useGetBrands();
-  const { codes, codesLoading, codesError } = useGetCodes();
-  const { colors, colorsLoading, colorsError } = useGetColors();
+  const { frames, framesLoading } = useGetFrames();
+  const { brands, brandsLoading } = useGetBrands({
+    brand_type: "frame",
+  });
+  const { codes, codesLoading } = useGetCodes();
+  const { colors, colorsLoading } = useGetColors();
   const [avilableCodes, setAvilableCodes] = React.useState<dataList[]>([]);
   const [price, setPrice] = React.useState<number>(0);
   const [selectedFrame, setSelectedFrame] = React.useState<FrameModel | null>(
@@ -63,6 +66,7 @@ export default function PowerToFrameFilter() {
   }, [selectFrame.brand]);
   useEffect(() => {
     if (
+      framesLoading === false &&
       selectFrame.code &&
       selectFrame.brand &&
       selectFrame.color &&
@@ -87,11 +91,14 @@ export default function PowerToFrameFilter() {
     } else {
       setPrice(0);
     }
-  }, [selectFrame]);
+  }, [selectFrame, framesLoading]);
+
   const addFrameByList = () => {
     if (selectedFrame) {
       if (price > 0) {
-        dispatch(addFrame({ ...selectedFrame, price: String(price) }));
+        dispatch(
+          setFrame({ ...selectedFrame, price: String(price) } as FrameWithQty)
+        );
         toast.success("Frame Added ");
       } else {
         toast.error("Price must be greater than 0");
@@ -102,7 +109,8 @@ export default function PowerToFrameFilter() {
   };
 
   return (
-    <div>
+    <Paper variant="elevation" sx={{ padding: 2, m: 2 }}>
+      <Typography variant="h6">Select Frames </Typography>
       <Box
         sx={{
           display: "flex",
@@ -192,7 +200,7 @@ export default function PowerToFrameFilter() {
           margin="normal"
           variant="outlined"
           value={price}
-          onChange={(e) => setPrice(Number(e.target.value))}
+          onChange={(e) => setPrice(parseInt(e.target.value))}
           inputProps={{ min: 0 }}
         />
 
@@ -202,34 +210,45 @@ export default function PowerToFrameFilter() {
       </Box>
 
       <Grid container spacing={2} justifyContent="flex-start">
-        {selectedFrameList.map((frame, index) => (
-          <Paper
-            elevation={3}
-            sx={{
-              width: "100%",
-              padding: 1,
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "space-evenly",
-              marginBottom: 1,
-              alignItems: "center",
-            }}
-          >
-            <Typography variant="body2">Code: {frame.code}</Typography>
-            <Typography variant="body2">Brand: {frame.brand}</Typography>
-            <Typography variant="body2">Color: {frame.color}</Typography>
-            <Typography variant="body2">Size: {frame.size}</Typography>
-            <Typography variant="body2">Price: {frame.price}</Typography>
-            <IconButton
-              onClick={() => dispatch(removeFrame(frame.id))}
-              color="error"
+        {Object.values(selectedFrameList).length === 0 ? (
+          <></>
+        ) : (
+          Object.values(selectedFrameList).map((frame) => (
+            <Paper
+              elevation={3}
+              sx={{
+                width: "100%",
+                padding: 1,
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-evenly",
+                marginBottom: 1,
+                alignItems: "center",
+              }}
             >
-              <Delete />
-            </IconButton>
-          </Paper>
-        ))}
+              <Typography variant="body2">Code: {frame.code}</Typography>
+              <Typography variant="body2">Brand: {frame.brand}</Typography>
+              <Typography variant="body2">Color: {frame.color}</Typography>
+              <Typography variant="body2">Size: {frame.size}</Typography>
+
+              <Typography variant="body2">Quantity: {frame.buyQty}</Typography>
+              <Typography variant="body2">
+                Unite Price: {frame.price}
+              </Typography>
+              <Typography variant="body2">
+                Total Price: {parseInt(frame.price) * frame.buyQty}
+              </Typography>
+              <IconButton
+                onClick={() => dispatch(removeFrame(frame.id))}
+                color="error"
+              >
+                <Delete />
+              </IconButton>
+            </Paper>
+          ))
+        )}
       </Grid>
-    </div>
+    </Paper>
   );
 }
 interface dataList {
