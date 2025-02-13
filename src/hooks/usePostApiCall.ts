@@ -1,6 +1,6 @@
 import { useState } from "react";
 import axiosClient from "../axiosClient";
-import toast from 'react-hot-toast';
+import toast from "react-hot-toast";
 
 interface ApiResponse<T> {
   data?: T;
@@ -28,7 +28,7 @@ export const usePostApiCall = <T>() => {
         error: err.response?.data?.message || "Something went wrong",
         loading: false,
       });
-    toast.error(err.response?.data?.message || "Something went wrong");
+      toast.error(err.response?.data?.message || "Something went wrong");
       throw err; // Throw error to be handled by caller
     }
   };

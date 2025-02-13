@@ -1,8 +1,13 @@
 import React from "react";
 import { TextField, Box, Radio, Typography } from "@mui/material";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
+import { useFormContext } from "react-hook-form";
 
-const CashInput: React.FC = ({ card, setcash }) => {
+const CashInput: React.FC = () => {
+  const {
+    register,
+    formState: { errors },
+  } = useFormContext();
   return (
     <Box display="flex" alignItems="center" gap={2}>
       <Radio />
@@ -12,13 +17,13 @@ const CashInput: React.FC = ({ card, setcash }) => {
       </Box>
 
       <TextField
+        {...register("cash")}
         variant="outlined"
         size="small"
         type="number"
         placeholder="Enter amount"
         sx={{ width: 200 }}
-        value={card}
-        onChange={(e) => setcash(Number(e.target.value))}
+        error={!!errors.cash}
       />
     </Box>
   );

@@ -1,43 +1,50 @@
 // features/counter/counterSlice.ts
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { FrameModel } from "../../model/FrameModel";
-import { RootState } from "../../store/store";
 
 // Define state interface
-interface FrameList {
-  selectedFrameList: FrameModel[];
+
+interface FrameWithQty extends FrameModel {
+  buyQty: number;
+}
+// Initial state
+
+interface FrameState {
+  selectedFrameList: Record<number, FrameWithQty>; // Store lenses with quantity by ID
 }
 
-// Initial state
-const initialState: FrameList = {
-  selectedFrameList: [],
+const initialState: FrameState = {
+  selectedFrameList: {},
 };
-
 const frameFilterSlice = createSlice({
   name: "invoice_frame_filer",
   initialState,
   reducers: {
     // Reducer to add frame by ID
-    addFrame: (state, action: PayloadAction<FrameModel>) => {
+    setFrame: (state, action: PayloadAction<FrameWithQty>) => {
       const frame = action.payload;
-      state.selectedFrameList.push(frame);
+      if (state.selectedFrameList[frame.id]) {
+        // If lens already exists, increase buyQty
+        state.selectedFrameList[frame.id].buyQty += 1;
+        state.selectedFrameList[frame.id].price = frame.price;
+      } else {
+        // If lens is new, set buyQty = 1
+        state.selectedFrameList[frame.id] = { ...frame, buyQty: 1 };
+      }
     },
-
-    // Reducer to remove frame by ID
     removeFrame: (state, action: PayloadAction<number>) => {
       const frameId = action.payload;
-      const index = state.selectedFrameList.findIndex(
-        (frame) => frame.id === frameId
-      );
-      if (index !== -1) {
-        state.selectedFrameList.splice(index, 1);
-      }
+      delete state.selectedFrameList[frameId]; // Remove the lens from the object
+    },
+
+    clearFrame: (state) => {
+      state.selectedFrameList = {};
     },
   },
 });
 
 // Export actions
-export const { addFrame, removeFrame } = frameFilterSlice.actions;
+export const { setFrame, removeFrame, clearFrame } = frameFilterSlice.actions;
 
 // Export reducer
 export default frameFilterSlice.reducer;

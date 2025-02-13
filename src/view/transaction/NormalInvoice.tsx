@@ -196,10 +196,7 @@ const TransactionUI = () => {
 
       {/* Row 4: Payment Methods (Cash and Card) */}
 
-      <Box display="flex" flexDirection="row" gap={10} marginLeft="50px">
-        <CashInput />
-        <CardInput />
-      </Box>
+      <Box display="flex" flexDirection="row" gap={10} marginLeft="50px"></Box>
 
       {/* Save Button */}
       <Box

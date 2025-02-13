@@ -1,7 +1,9 @@
 import React, { useEffect } from "react";
-import { Button, Paper, Typography } from "@mui/material";
+import { Box, Button, Paper, Typography } from "@mui/material";
 import AutocompleteInputField from "../../components/inputui/DropdownInput";
-import VariationCodeCRUD from "../../components/VariationCodeCRUD";
+import { useNavigate } from "react-router";
+import { useDeleteDialog } from "../../context/DeleteDialogContext";
+
 interface dataList {
   id: number;
   name: string;
@@ -14,56 +16,42 @@ interface brandList {
 interface AddVariationCompProps {
   textName: string;
   Urlpath: string;
+  pathroute: string;
   dataList: dataList[];
   brandList: brandList[];
   refresh: () => void;
 }
 export default function CodeCRUD({
   textName,
-  Urlpath,
   dataList,
   brandList,
+  pathroute,
   refresh,
 }: AddVariationCompProps) {
-  const [variationCrud, setVariationCrud] = React.useState({
-    open: false,
-    url: "",
-    dialogMode: "",
-  });
+  const navigate = useNavigate();
+
   const [lenseCoating, setLenseCoating] = React.useState<
     string | number | null
   >(null);
   const [brandID, setBrandID] = React.useState<number | null>(null);
   const [avilableCodes, setAvilableCodes] = React.useState<dataList[]>([]);
-  const handleClose = () => {
-    setVariationCrud({
-      open: false,
-      url: "",
-      dialogMode: "",
-    });
-    setLenseCoating(null);
-    setBrandID(null);
-    setAvilableCodes([]);
-    refresh();
-  };
+  const { openDialog } = useDeleteDialog();
+
   useEffect(() => {
     if (brandID) {
       setAvilableCodes(dataList.filter((item) => item.brand === brandID));
     } else {
       setAvilableCodes([]);
     }
-  }, [brandID]);
+  }, [brandID, dataList.length]);
 
   return (
     <div>
       <Paper
         sx={{
           padding: 2,
-          width: "600px",
           display: "flex",
           flexDirection: "column",
-          gap: "10px",
-          margin: "10px",
         }}
       >
         <Typography variant="h6">{textName}</Typography>
@@ -75,23 +63,24 @@ export default function CodeCRUD({
           onChange={(id) => setBrandID(id)}
         />
 
-        <AutocompleteInputField
-          options={avilableCodes}
-          loading={false}
-          labelName="Code name "
-          defaultId={undefined}
-          onChange={(id) => setLenseCoating(id)}
-        />
+        <Box sx={{ marginY: 1 }}>
+          <AutocompleteInputField
+            options={avilableCodes}
+            loading={false}
+            labelName="Code name "
+            defaultId={undefined}
+            onChange={(id) => setLenseCoating(id)}
+          />
+        </Box>
         <div style={{ display: "flex", gap: "10px" }}>
           <Button
             color="success"
             variant="outlined"
             onClick={() => {
               if (brandID) {
-                setVariationCrud({
-                  open: true,
-                  dialogMode: "add",
-                  url: Urlpath,
+                navigate({
+                  pathname: `frame_code`,
+                  search: `?brand=${brandID}`,
                 });
               }
             }}
@@ -102,11 +91,7 @@ export default function CodeCRUD({
             variant="outlined"
             onClick={() => {
               if (brandID && lenseCoating) {
-                setVariationCrud({
-                  open: true,
-                  dialogMode: "Edit",
-                  url: `${Urlpath}${lenseCoating}/`,
-                });
+                navigate(`frame_code/${lenseCoating}`);
               }
             }}
           >
@@ -117,24 +102,13 @@ export default function CodeCRUD({
             variant="outlined"
             onClick={() => {
               if (brandID && lenseCoating) {
-                setVariationCrud({
-                  open: true,
-                  dialogMode: "Delete",
-                  url: `${Urlpath}${lenseCoating}/`,
-                });
+                openDialog(`/${pathroute}/${lenseCoating}/`, textName, refresh);
               }
             }}
           >
             Delete
           </Button>
         </div>
-        {/* Dialog */}
-        <VariationCodeCRUD
-          variationCrud={variationCrud}
-          brandID={brandID}
-          handleClose={handleClose}
-          refresh={refresh}
-        />
       </Paper>
     </div>
   );

@@ -23,6 +23,9 @@ import { usePostApiCall } from "../../hooks/usePostApiCall";
 import useGetDoctors from "../../hooks/useGetDoctors";
 import AutocompleteInputField from "../../components/inputui/DropdownInput";
 import dayjs from "dayjs";
+import { handleError } from "../../utils/handleError";
+import axiosClient from "../../axiosClient";
+import toast from "react-hot-toast";
 interface PostData {
   id: number;
   title: string;
@@ -77,11 +80,11 @@ const Channel = () => {
     console.log(payload);
 
     try {
-      const response = await postApi("/channel/", payload);
-
-      console.log("Appointment saved:", response);
+      await axiosClient.post("/channel/", payload);
+      toast.success("Channel created successfully");
     } catch (error) {
-      console.error("Error submitting the form:", error);
+      handleError(error, "Apointment Creation Error");
+      console.log(error);
     }
   };
 

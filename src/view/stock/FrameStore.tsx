@@ -7,16 +7,12 @@ import HistoryIcon from "@mui/icons-material/History";
 import LoopIcon from "@mui/icons-material/Loop";
 import useGetFrames from "../../hooks/lense/useGetFrames";
 import { useNavigate } from "react-router";
-import DeleteDialog from "../../components/DeleteDialogProps ";
-import axiosClient from "../../axiosClient";
+import { useDeleteDialog } from "../../context/DeleteDialogContext";
 
 const FrameStore = () => {
-  const { frames, framesLoading, framesError ,refresh} = useGetFrames();
-const [openDelete, setOpenDelete] = React.useState({
-  open: false,
-  path:'',
-  itemName:''
-});
+  const { frames, framesLoading, refresh } = useGetFrames();
+  const { openDialog } = useDeleteDialog();
+
   // Define columns
   const columns = useMemo(
     () => [
@@ -26,28 +22,28 @@ const [openDelete, setOpenDelete] = React.useState({
         Cell: ({ row }) => (
           <Box>
             <IconButton
-             color="error"
+              color="error"
               title="Delete"
               onClick={() => handleDelete(row.original)}
             >
               <DeleteIcon />
             </IconButton>
             <IconButton
-            color="info"
+              color="info"
               title="History"
               onClick={() => handleHistory(row.original.id)}
             >
               <HistoryIcon />
             </IconButton>
             <IconButton
-            color="warning"
+              color="warning"
               title="Edit"
               onClick={() => handleEdit(row.original.id)}
             >
               <EditIcon />
             </IconButton>
             <IconButton
-            color="warning"
+              color="warning"
               title="Update Quantity"
               onClick={() => handleUpdate(row.original.id)}
             >
@@ -60,31 +56,26 @@ const [openDelete, setOpenDelete] = React.useState({
         header: "Brand",
         accessorKey: "brand",
         size: 130,
-
       },
       {
         header: "Code",
         accessorKey: "code",
         size: 130,
-
       },
       {
         header: "Color",
         accessorKey: "color",
         size: 130,
-
       },
       {
         header: "Species",
         accessorKey: "species",
         size: 130,
-
       },
       {
         header: "Price",
         accessorKey: "price",
         size: 60,
-
       },
       {
         header: "Stock Limit",
@@ -99,17 +90,20 @@ const [openDelete, setOpenDelete] = React.useState({
     ],
     []
   );
-const navigate=useNavigate()
+  const navigate = useNavigate();
   // Handlers for actions
-  const handleDelete = async(row) => {
-    setOpenDelete({ open: true, path: `/frames/${row.id}/`,itemName: `Frame of Brand - ${row.brand} & Code - ${row.code}` });
+  const handleDelete = async (row) => {
+    openDialog(
+      `/frames/${row.id}/`,
+      `Frame of Brand - ${row.brand} & Code - ${row.code}`,
+      refresh
+    );
   };
 
   const handleHistory = (id) => {
     // console.log(`View History for Frame ID: ${id}`);
     // Add history logic
     navigate(`./history/${id}`);
-
   };
 
   const handleEdit = (id) => {
@@ -126,7 +120,13 @@ const navigate=useNavigate()
 
   return (
     <Box sx={{ padding: 4, maxWidth: "1200px" }}>
-      <Typography sx={{ marginBottom: 2 ,fontWeight:"bold"}} variant="h4" gutterBottom>Frame Store</Typography>
+      <Typography
+        sx={{ marginBottom: 2, fontWeight: "bold" }}
+        variant="h4"
+        gutterBottom
+      >
+        Frame Store
+      </Typography>
 
       <MaterialReactTable
         columns={columns}
@@ -142,15 +142,6 @@ const navigate=useNavigate()
           },
         }}
       />
-        <DeleteDialog 
-          open={openDelete.open}
-          path={openDelete.path} 
-          itemName={openDelete.itemName} 
-          onClose={() => {
-            setOpenDelete({ open: false, path: '', itemName: '' })
-            refresh()
-          }}
-        />
     </Box>
   );
 };

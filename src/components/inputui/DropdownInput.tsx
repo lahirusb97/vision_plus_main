@@ -56,7 +56,6 @@ const AutocompleteInputField: React.FC<AutocompleteInputFieldProps> = ({
       renderInput={(params) => (
         <TextField
           {...params}
-          
           label={labelName}
           InputProps={{
             ...params.InputProps,
