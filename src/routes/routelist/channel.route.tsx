@@ -1,13 +1,24 @@
 import { RouteObject } from "react-router";
 import Channel from "../../view/channel/Channel";
 import Doctor from "../../view/channel/Doctor";
-import Channel_Invoice from "../../view/channel/channel_invoice";
+import Channel_Invoice from "../../view/channel/Channel_Invoice";
 import ChannelDetails from "../../view/channel/ChannelDetails";
+import ProtectedChildRoute from "../ProtectedChildRoute";
 
 export const channelRoutes: RouteObject[] = [
   {
     path: "",
-    element: <Channel />,
+    element: <ProtectedChildRoute />,
+    children: [
+      {
+        index: true,
+        element: <Channel />,
+      },
+      {
+        path: ":id",
+        element: <Channel_Invoice />,
+      },
+    ],
   },
   {
     path: "doctor",

@@ -11,8 +11,10 @@ import axiosClient from "../../../axiosClient";
 import { handleError } from "../../../utils/handleError";
 import { clearFrame } from "../../../features/invoice/frameFilterSlice";
 import { clearLenses } from "../../../features/invoice/lenseFilterSlice";
+import { Navigate, useNavigate } from "react-router";
 
 export default function FactoryInvoiceForm() {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const validationSchema = Yup.object().shape({
     sales_staff_code: Yup.string().required("Sales Staff Code is required"),
@@ -88,11 +90,11 @@ export default function FactoryInvoiceForm() {
 
     const postData = {
       patient: {
-        name: "John Doe",
-        nic: "123456789V",
-        address: "123 Main Street",
-        phone_number: "0772034567",
-        dob: "1990-05-15",
+        name: data.name,
+        nic: data.nic,
+        address: data.address,
+        phone_number: data.phone_number,
+        dob: data.dob,
       },
       refraction_details: {
         // TABLE
@@ -135,11 +137,14 @@ export default function FactoryInvoiceForm() {
     };
 
     try {
-      await axiosClient.post("/manual-orders/", postData);
+      const response = await axiosClient.post("/manual-orders/", postData);
       methods.reset();
       dispatch(clearFrame()); // Add dispatch
       dispatch(clearLenses());
-      window.location.reload();
+
+      navigate("view", {
+        state: postData,
+      });
     } catch (error) {
       handleError(error, "Invoice Save Error");
     }
