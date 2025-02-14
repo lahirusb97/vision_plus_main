@@ -1,141 +1,141 @@
 import React from 'react';
-import {
-  Typography,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Box,
-} from '@mui/material';
+import { Container, Typography, Paper, Box, Divider, Button } from '@mui/material';
 
-const Channel_Invoice = () => {
+const ChannelInvoice = () => {
+  // Response object with dummy data
+  const data = {
+    id: 1,
+    doctor: 1,
+    doctor_name: "Dr. Smith",
+    patient: 5,
+    patient_name: "Lahiru Shiran",
+    address: "A20/1, Colombo, Colombo",
+    contact_number: "0711234567",
+    schedule: 1,
+    date: "2025-02-16",
+    time: "13:02:00",
+    status: "Pending",
+    amount: "2500.00",
+    channel_no: 2,
+    payments: [
+      {
+        id: 1,
+        appointment: 1,
+        appointment_details: "1",
+        doctor_name: "Dr. Smith",
+        patient_name: "Lahiru Shiran",
+        payment_date: "2025-02-13T03:32:08.678452Z",
+        amount: "1000.00",
+        payment_method: "Cash",
+        is_final: false,
+        created_at: "2025-02-13T03:32:08.678506Z",
+        updated_at: "2025-02-13T03:32:08.678520Z",
+      },
+      {
+        id: 2,
+        appointment: 1,
+        appointment_details: "1",
+        doctor_name: "Dr. Smith",
+        patient_name: "Lahiru Shiran",
+        payment_date: "2025-02-13T03:32:08.697824Z",
+        amount: "500.00",
+        payment_method: "Card",
+        is_final: false,
+        created_at: "2025-02-13T03:32:08.697871Z",
+        updated_at: "2025-02-13T03:32:08.697885Z",
+      },
+    ],
+  };
+
+  // Calculate the total of payments
+  const totalPayments = data.payments.reduce((total, payment) => total + parseFloat(payment.amount), 0);
+
   return (
-    <Box
-      sx={{
-        padding: '20px',
-        maxWidth: '800px',
-        margin: 'auto',
-        border: '1px solid black',
-        borderRadius: '8px',
-        marginTop:'20px',
-      }}
-    >
-      
-      <TableContainer>
-      <Typography variant="h6" align="center" gutterBottom sx={{ fontWeight: "bold" }}>
-        VISION PLUS OPTICLANS (PVT) LTD
-      </Typography>
-      <Typography align="center">Tel: 034 2247354 / 077 7854695</Typography>
+    <Container maxWidth="sm" sx={{ mt: 4, width:"1400px"}}>
+      <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
+        <Typography variant="h5" align="center" gutterBottom>
+          VISION PLUS OPTICIANS (PVT) LTD
+        </Typography>
+        <Typography variant="body2" align="center">
+          (CHANNELED CONSULTATIONS SERVICE)
+        </Typography>
+        <Typography variant="body2" align="center" gutterBottom>
+          34, Aluthgama Road, Mathugama
+        </Typography>
 
-      <Table>
-        <TableBody>
-          
-          <TableRow sx={{ gap:'2' }}>
-            <TableCell align="left" sx={{ border: "none", padding: "5px 10px " }}>
-              <Typography>
-                <strong>Invoice No:</strong> 584644
-              </Typography>
-            </TableCell>
-            <TableCell align="left" sx={{ border: "none", padding: "5px 10px" }}>
-              <Typography>No: 34, Aluthgama Road,</Typography>
-            </TableCell>
-          </TableRow>
+        <Box sx={{ mt: 2 }}>
+          <Typography variant="body2">Date: {data.date}</Typography>
+          <Typography variant="body2">Tel: 034 - 2247466 / 071 - 7513639</Typography>
+        </Box>
 
-          <TableRow>
-            <TableCell align="left" sx={{ border: "none", padding: "5px 10px" }}>
-              <Typography>
-                <strong>Customer Name:</strong> Dinuka Sadaruwan
-              </Typography>
-            </TableCell>
-            <TableCell align="left" sx={{ border: "none", padding: "5px 10px" }}>
-              <Typography>Mathugama,</Typography>
-            </TableCell>
-          </TableRow>
+        <Box display="flex" justifyContent="space-between" sx={{ mt: 2 }}>
+          <Typography variant="body2">Channel Id:</Typography>
+          <Typography variant="body2">{data.id}</Typography>
+        </Box>
 
-          <TableRow>
-            <TableCell align="left" sx={{ border: "none", padding: "5px 10px" }}>
-              <Typography>
-                <strong>Address:</strong> No: 25/A Agalawatte Road, Yatiyana
-              </Typography>
-            </TableCell>
-            <TableCell align="left" sx={{ border: "none", padding: "5px 10px" }}>
-              <Typography>Sri Lanka</Typography>
-            </TableCell>
-          </TableRow>
+        <Box display="flex" justifyContent="space-between">
+          <Typography variant="body2">Patient Name:</Typography>
+          <Typography variant="body2">{data.patient_name}</Typography>
+        </Box>
 
-          <TableRow>
-            <TableCell align="left" sx={{ border: "none", padding: "5px 10px " }}>
-              <Typography>
-                <strong>Phone Number:</strong> +9477152625
-              </Typography>
-            </TableCell>
-            <TableCell align="left" sx={{ border: "none", padding: "5px 10px" }}>
-              <Typography>November 05th, 2024</Typography>
-            </TableCell>
-          </TableRow>
-        </TableBody>
-      </Table>
-    </TableContainer>
-      
+        <Box display="flex" justifyContent="space-between">
+          <Typography variant="body2">Age:</Typography>
+          <Typography variant="body2">35</Typography> {/* Dummy Age */}
+        </Box>
 
-      
-      <TableContainer sx={{ marginTop:'30px', }} component={Paper}>
-        <Table sx={{ border:'1px solid black'}}>
-          <TableHead >
-            <TableRow sx={{ borderBottom:"1px solid black" }} >
-              <TableCell sx={{ borderBottom:"1px solid black" }}><strong>Items Name</strong></TableCell>
-              <TableCell sx={{ borderBottom:"1px solid black" }}align="center"><strong>Quantity</strong></TableCell>
-              <TableCell sx={{ borderBottom:"1px solid black" }}align="right"><strong>Price</strong></TableCell>
-              <TableCell sx={{ borderBottom:"1px solid black" }}align="right"><strong>Last Price</strong></TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            <TableRow sx={{ borderBottom:'1px solid black' }}>
-              <TableCell sx={{ borderBottom:"1px solid black" }}><strong>Blucut Photocromic</strong></TableCell>
-              <TableCell sx={{ borderBottom:"1px solid black" }}align="center"><strong>1</strong></TableCell>
-              <TableCell sx={{ borderBottom:"1px solid black" }}align="right"><strong>5000.00</strong></TableCell>
-              <TableCell sx={{ borderBottom:"1px solid black" }}align="right"><strong>5000.00</strong></TableCell>
-            </TableRow>
-            <TableRow sx={{ border:'1px solid black' }}>
-              <TableCell sx={{ borderBottom:"1px solid black" }}><strong>Rover</strong></TableCell>
-              <TableCell sx={{ borderBottom:"1px solid black" }} align="center"><strong>1</strong></TableCell>
-              <TableCell sx={{ borderBottom:"1px solid black" }} align="right"><strong>5000.00</strong></TableCell>
-              <TableCell sx={{ borderBottom:"1px solid black" }} align="right"><strong>5000.00</strong></TableCell>
-            </TableRow>
-            <TableRow sx={{ border:'1px solid black' }}>
-            <TableCell sx={{ borderBottom:"1px solid black" }} colSpan={3}><strong>Full Amount</strong></TableCell>
-              
-              <TableCell sx={{ borderBottom:"1px solid black" }} align="right"><strong>10000.00</strong></TableCell>
-            </TableRow>
-            <TableRow>
-            <TableCell sx={{ borderBottom:"1px solid black" }} colSpan={3}><strong>Discount</strong></TableCell>
-              
-              <TableCell sx={{ borderBottom:"1px solid black" }} align="right"><strong>1000.00</strong></TableCell>
-            </TableRow>
-            <TableRow sx={{ border:'1px solid black' }}>
-            <TableCell sx={{ borderBottom:"1px solid black" }} colSpan={3}><strong>Cash / Card</strong></TableCell>
-              
-              <TableCell sx={{ borderBottom:"1px solid black" }} align="right"><strong>10000.00</strong></TableCell>
-            </TableRow>
-            <TableRow sx={{ border:'1px solid black' }}>
-            <TableCell sx={{ borderBottom:"1px solid black" }} colSpan={3}><strong>Balance</strong></TableCell>
-              
-              <TableCell sx={{ borderBottom:"1px solid black" }} align="right"><strong>9000.00</strong></TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-      </TableContainer>
+        <Divider sx={{ my: 2 }} />
 
-      
-      <Typography variant="body2" align="center" sx={{ marginTop: '20px' }}>
-       <strong> Each of these brands has strengths that cater to specific user needs, so consider what aligns best with your
-        priorities—whether that’s speed, endurance, affordability, or brand support.</strong>
-      </Typography>
-    </Box>
+        <Box display="flex" justifyContent="space-between">
+          <Typography variant="body2">Channele No:</Typography>
+          <Typography variant="body2">{data.channel_no}</Typography>
+        </Box>
+
+        <Box display="flex" justifyContent="space-between">
+          <Typography variant="body2">Channel Date:</Typography>
+          <Typography variant="body2">{data.date}</Typography>
+        </Box>
+
+        <Divider sx={{ my: 2 }} />
+
+        <Box display="flex" justifyContent="space-between">
+          <Typography variant="body2">Name of Doctor:</Typography>
+          <Typography variant="body2">{data.doctor_name}</Typography>
+        </Box>
+
+        <Box display="flex" justifyContent="space-between">
+          <Typography variant="body2">Consultant Fee:</Typography>
+          <Typography variant="body2">2000</Typography> {/* Dummy Consultant Fee */}
+        </Box>
+
+        <Box display="flex" justifyContent="space-between">
+          <Typography variant="body2">Establishment Fee:</Typography>
+          <Typography variant="body2">{totalPayments}</Typography>
+        </Box>
+
+        <Box display="flex" justifyContent="space-between">
+          <Typography variant="body2">Total:</Typography>
+          <Typography variant="body2">{data.amount}</Typography>
+        </Box>
+
+        <Box display="flex" justifyContent="space-between" sx={{ mt: 2, backgroundColor: "#f0f0f0", p: 1 }}>
+          <Typography variant="body2">Paid:</Typography>
+          <Typography variant="body2">{totalPayments}</Typography>
+        </Box>
+
+        <Divider sx={{ my: 2 }} />
+
+        <Typography variant="body2" align="right" sx={{ fontStyle: "italic" }}>
+          For Authorized Office
+        </Typography>
+
+        <Box display="flex" justifyContent="center" sx={{ mt: 3, }}>
+          <Button variant="contained" color="primary"sx={{ backgroundColor:"#D4B4DC" }}>
+            Print
+          </Button>
+        </Box>
+      </Paper>
+    </Container>
   );
 };
 
-export default Channel_Invoice;
+export default ChannelInvoice;

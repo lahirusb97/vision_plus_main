@@ -8,7 +8,7 @@ const LoginProtectedRoute: React.FC = () => {
   const { token } = useAuthContext();
 
 
-  return token ? (
+  return !token ? (
     <Paper
       sx={{
         minHeight: "100vh",
