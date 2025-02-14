@@ -7,7 +7,6 @@ import { Paper, Box } from "@mui/material";
 const LoginProtectedRoute: React.FC = () => {
   const { token } = useAuthContext();
 
-
   return token ? (
     <Paper
       sx={{
@@ -26,7 +25,7 @@ const LoginProtectedRoute: React.FC = () => {
           justifyContent: "center", // Horizontally center
           maxWidth: "1200px",
           minWidth: "1000px",
-          paddingTop:2 ,
+          paddingTop: 2,
         }}
       >
         <Outlet />

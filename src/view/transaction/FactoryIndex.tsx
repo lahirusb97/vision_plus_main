@@ -15,11 +15,13 @@ import {
   Typography,
   useTheme,
   IconButton,
+  Button,
 } from "@mui/material";
 import useData from "../../hooks/useData";
 import { useNavigate } from "react-router";
 import { Forward, NavigateBefore, NavigateNext } from "@mui/icons-material";
 import { RefractionModel } from "../../model/RefractionModel";
+import axiosClient from "../../axiosClient";
 
 // Customer Name Field Component
 const CustomerNameField = () => {
@@ -83,6 +85,7 @@ export default function FactoryIndex() {
   const theme = useTheme();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedRow, setSelectedRow] = useState<RefractionModel | null>(null);
 
   const {
     data: refractionList,
@@ -115,7 +118,40 @@ export default function FactoryIndex() {
   const handlePrevPage = () => {
     if (prevPage) prevPage();
   };
+  const handleOkClick = () => {
+    if (selectedRow) {
+      navigate(`create/${selectedRow.refraction_number}`, {
+        state: {
+          customerName: selectedRow.customer_full_name,
+          mobileNumber: selectedRow.refraction_number,
+          date: "in development",
+        },
+      });
+    }
+  };
+  const handleInternalOrder = async () => {
+    // try {
+    //   const response = await axiosClient.get(
+    //     `/refractions/${selectedRow?.refraction_number}/`
+    //   );
+    //   const data = response.data;
 
+    //   console.log(data);
+    // } catch (error) {
+    //   if (error.response.status === 404) {
+    //     console.log("manual order");
+    //   }
+    // }
+    if (selectedRow) {
+      navigate(`create/${selectedRow.refraction_number}`, {
+        state: {
+          customerName: selectedRow.customer_full_name,
+          mobileNumber: selectedRow.refraction_number,
+          date: "in development",
+        },
+      });
+    }
+  };
   return (
     <Box sx={{ padding: 2 }}>
       {/* Search Bar */}
@@ -158,18 +194,16 @@ export default function FactoryIndex() {
             ) : filteredRows.length > 0 ? (
               filteredRows.map((row: RefractionModel) => (
                 <TableRow
-                  onClick={() =>
-                    navigate(`create/${row.refraction_number}`, {
-                      state: {
-                        customerName: row.customer_full_name,
-                        mobileNumber: row.refraction_number,
-                        date: "in development",
-                      },
-                    })
-                  }
+                  onClick={() => setSelectedRow(row)}
                   sx={{
                     cursor: "pointer",
-                    "&:hover": { backgroundColor: theme.palette.grey[600] },
+                    backgroundColor:
+                      selectedRow?.id === row.id
+                        ? theme.palette.grey[600]
+                        : "inherit",
+                    "&:hover": {
+                      backgroundColor: theme.palette.grey[600],
+                    },
                   }}
                   key={row.id}
                 >
@@ -213,6 +247,31 @@ export default function FactoryIndex() {
         >
           <NavigateNext />
         </IconButton>
+      </Box>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          gap: 2,
+        }}
+      >
+        {/* <Button
+          onClick={handleInternalOrder}
+          disabled={!selectedRow}
+          color="primary"
+          variant="contained"
+        >
+          Internal Order
+        </Button> */}
+        <Button
+          disabled={!selectedRow}
+          onClick={handleInternalOrder}
+          color="info"
+          variant="contained"
+        >
+          Invoice
+        </Button>
       </Box>
     </Box>
   );

@@ -23,6 +23,10 @@ import { usePostApiCall } from "../../hooks/usePostApiCall";
 import useGetDoctors from "../../hooks/useGetDoctors";
 import AutocompleteInputField from "../../components/inputui/DropdownInput";
 import dayjs from "dayjs";
+import { handleError } from "../../utils/handleError";
+import axiosClient from "../../axiosClient";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router";
 interface PostData {
   id: number;
   title: string;
@@ -31,6 +35,7 @@ interface PostData {
 const Channel = () => {
   const { loading, postApi } = usePostApiCall<PostData>();
   const { data: doctorList } = useGetDoctors();
+  const navigate = useNavigate();
   console.log(doctorList);
 
   const validationSchema = Yup.object().shape({
@@ -77,11 +82,14 @@ const Channel = () => {
     console.log(payload);
 
     try {
-      const response = await postApi("/channel/", payload);
-
-      console.log("Appointment saved:", response);
+      const response = await axiosClient.post("/channel/", payload);
+      toast.success("Channel created successfully");
+      navigate("1", {
+        state: response.data,
+      });
     } catch (error) {
-      console.error("Error submitting the form:", error);
+      handleError(error, "Apointment Creation Error");
+      console.log(error);
     }
   };
 

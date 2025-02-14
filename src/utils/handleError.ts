@@ -1,21 +1,15 @@
 import { toast } from "react-hot-toast";
+import axios, { AxiosError } from "axios";
 
 export function handleError(
-  error: unknown,
+  error: AxiosError,
   defaultMessage: string = "Something went wrong"
 ) {
-  if (error instanceof Error) {
-    toast.error(`${defaultMessage}: ${error.message}`);
-  } else if (
-    typeof error === "object" &&
-    error !== null &&
-    "response" in error
-  ) {
-    // Handle Axios errors or similar structured errors
-    const axiosError = error as { response: { data: { message: string } } };
-    toast.error(`${defaultMessage}: ${axiosError.response.data.message}`);
+  if (error.response?.data) {
+    toast.error(
+      (error.response?.data as { error: string })?.error || defaultMessage
+    );
   } else {
-    // Fallback for unknown error types
     toast.error(defaultMessage);
   }
 }

@@ -7,6 +7,9 @@ import ProtectedChildRoute from "../ProtectedChildRoute";
 import NormalInvoiceActions from "../../view/transaction/NormalInvoiceActions";
 import FactoryIndex from "../../view/transaction/FactoryIndex";
 import FactoryInvoiceForm from "../../view/transaction/factory_invoice/FactoryInvoiceForm";
+import InvoiceView from "../../view/transaction/factory_invoice/InvoiceView";
+import InternalOrder from "../../view/transaction/factory_invoice/internal_order/InternalOrder";
+
 export const transactionRoutes: RouteObject[] = [
   {
     path: "factory_invoice",
@@ -18,7 +21,39 @@ export const transactionRoutes: RouteObject[] = [
       },
       {
         path: "create/:id",
-        element: <FactoryInvoiceForm />,
+        element: <ProtectedChildRoute />,
+        children: [
+          {
+            index: true,
+            element: <FactoryInvoiceForm />,
+          },
+          // {
+          //   path: "success",
+          //   element: <FactoryInvoiceSucess />,
+          // },
+          {
+            path: "view",
+            element: <InvoiceView />,
+          },
+        ],
+      },
+      {
+        path: "internal_order/:id",
+        element: <ProtectedChildRoute />,
+        children: [
+          {
+            index: true,
+            element: <InternalOrder />,
+          },
+          // {
+          //   path: "success",
+          //   element: <FactoryInvoiceSucess />,
+          // },
+          {
+            path: "view",
+            element: <InvoiceView />,
+          },
+        ],
       },
     ],
   },
@@ -27,16 +62,12 @@ export const transactionRoutes: RouteObject[] = [
     element: <ProtectedChildRoute />,
     children: [
       {
-       index  : true,
-        element: 
-          <NormalInvoice />
-        ,
+        index: true,
+        element: <NormalInvoice />,
       },
       {
-       path: ":id",
-        element: 
-          <NormalInvoiceActions />
-        ,
+        path: ":id",
+        element: <NormalInvoiceActions />,
       },
     ],
   },

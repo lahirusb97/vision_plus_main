@@ -1,20 +1,59 @@
+import { useState } from "react";
 import {
   Box,
-  Typography,
   Paper,
+  Typography,
   TextField,
   MenuItem,
+  IconButton,
   Button,
 } from "@mui/material";
-import { IconButton } from "@mui/material";
 import AddIcon from "@mui/icons-material/AddBox";
-import CashInput from "../../components/inputui/CashInput";
-import CardInput from "../../components/inputui/CardInput";
-import { useNavigate } from "react-router";
+
+const data = [
+  {
+    name: "Premium Lens Cleaner 1",
+    price: "15.99",
+  },
+  {
+    name: "Premium Lens Cleaner 2",
+    price: "15.99",
+  },
+  {
+    name: "Premium Lens Cleaner 3",
+    price: "15.99",
+  },
+];
 
 const TransactionUI = () => {
-  const lensOptions = ["Option 1", "Option 2", "Option 3"]; // Replace with actual options
-  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    name: "",
+    phone: "",
+    address: "",
+    salesCode: "",
+    selectedItem: "",
+    selectedPrice: "",
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleSelectChange = (event) => {
+    const selectedName = event.target.value;
+    const item = data.find((item) => item.name === selectedName);
+
+    setFormData((prevData) => ({
+      ...prevData,
+      selectedItem: selectedName,
+      selectedPrice: item ? item.price : "",
+    }));
+  };
+
   return (
     <Box
       sx={{
@@ -34,18 +73,38 @@ const TransactionUI = () => {
           marginRight: 4,
         }}
       >
-        <Paper sx={{ flex: 1, padding: 2, width: "100px", height: "30px" }}>
-          <Typography>Name</Typography>
-        </Paper>
-        <Paper sx={{ flex: 1, padding: 2, width: "100px", height: "30px" }}>
-          <Typography>Phone No</Typography>
-        </Paper>
-        <Paper sx={{ flex: 1, padding: 2, width: "100px", height: "30px" }}>
-          <Typography>Address</Typography>
-        </Paper>
-        <Paper sx={{ flex: 1, padding: 2, width: "100px", height: "30px" }}>
-          <Typography>Sales Staff Code</Typography>
-        </Paper>
+        <TextField
+          label="Name"
+          name="name"
+          value={formData.name}
+          onChange={handleInputChange}
+          fullWidth
+          sx={{ flex: 1 }}
+        />
+        <TextField
+          label="Phone No"
+          name="phone"
+          value={formData.phone}
+          onChange={handleInputChange}
+          fullWidth
+          sx={{ flex: 1 }}
+        />
+        <TextField
+          label="Address"
+          name="address"
+          value={formData.address}
+          onChange={handleInputChange}
+          fullWidth
+          sx={{ flex: 1 }}
+        />
+        <TextField
+          label="Sales Staff Code"
+          name="salesCode"
+          value={formData.salesCode}
+          onChange={handleInputChange}
+          fullWidth
+          sx={{ flex: 1 }}
+        />
       </Box>
 
       {/* Row 2: Lens Cleaner Dropdown and Price */}
@@ -58,17 +117,34 @@ const TransactionUI = () => {
           marginRight: 4,
         }}
       >
-        <TextField select label="Lens Cleaner" fullWidth sx={{ flex: 1 }}>
-          {lensOptions.map((option, index) => (
-            <MenuItem key={index} value={option}>
-              {option}
+        <TextField
+          select
+          label="Lens Cleaner"
+          name="selectedItem"
+          fullWidth
+          sx={{ flex: 1 }}
+          value={formData.selectedItem}
+          onChange={handleSelectChange}
+        >
+          {data.map((item, index) => (
+            <MenuItem key={index} value={item.name}>
+              {item.name}
             </MenuItem>
           ))}
         </TextField>
-        <Paper sx={{ flex: 1, padding: 2 }}>
-          <Typography>Price</Typography>
-        </Paper>
+        <TextField
+          label="Price"
+          name="selectedPrice"
+          value={formData.selectedPrice}
+          onChange={handleInputChange}
+          fullWidth
+          sx={{ flex: 1 }}
+          InputProps={{
+            readOnly: true,
+          }}
+        />
       </Box>
+
       <Box
         sx={{
           display: "flex",
@@ -92,7 +168,6 @@ const TransactionUI = () => {
       </Box>
 
       {/* Row 3: Full Amount, Discount, First Payment, Balance */}
-
       <Box
         sx={{
           padding: 4,
@@ -104,7 +179,6 @@ const TransactionUI = () => {
           gap: 1,
         }}
       >
-        {/* Full Amount */}
         <Paper
           sx={{
             display: "flex",
@@ -127,7 +201,6 @@ const TransactionUI = () => {
           />
         </Paper>
 
-        {/* Discount */}
         <Paper
           sx={{
             display: "flex",
@@ -149,7 +222,6 @@ const TransactionUI = () => {
           />
         </Paper>
 
-        {/* First Payment */}
         <Paper
           sx={{
             display: "flex",
@@ -171,7 +243,6 @@ const TransactionUI = () => {
           />
         </Paper>
 
-        {/* Balance */}
         <Paper
           sx={{
             display: "flex",
@@ -193,10 +264,6 @@ const TransactionUI = () => {
           />
         </Paper>
       </Box>
-
-      {/* Row 4: Payment Methods (Cash and Card) */}
-
-      <Box display="flex" flexDirection="row" gap={10} marginLeft="50px"></Box>
 
       {/* Save Button */}
       <Box
