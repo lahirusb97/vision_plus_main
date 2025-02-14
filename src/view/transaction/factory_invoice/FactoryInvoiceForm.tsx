@@ -195,7 +195,7 @@ export default function FactoryInvoiceForm() {
 
     try {
       const response = await axiosClient.post(
-        "/manual-orders/",
+        "/orders/",
         refractionDetailError ? postData2 : postData
       );
       methods.reset();
