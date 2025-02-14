@@ -7,8 +7,8 @@ import ProtectedChildRoute from "../ProtectedChildRoute";
 import NormalInvoiceActions from "../../view/transaction/NormalInvoiceActions";
 import FactoryIndex from "../../view/transaction/FactoryIndex";
 import FactoryInvoiceForm from "../../view/transaction/factory_invoice/FactoryInvoiceForm";
-import FactoryInvoiceSucess from "../../view/transaction/factory_invoice/FactoryInvoiceSucess";
-import InvoiceView from "../../view/transaction/factory_invoice/invoiceView";
+import InvoiceView from "../../view/transaction/factory_invoice/InvoiceView";
+import InternalOrder from "../../view/transaction/factory_invoice/internal_order/InternalOrder";
 
 export const transactionRoutes: RouteObject[] = [
   {
@@ -26,6 +26,24 @@ export const transactionRoutes: RouteObject[] = [
           {
             index: true,
             element: <FactoryInvoiceForm />,
+          },
+          // {
+          //   path: "success",
+          //   element: <FactoryInvoiceSucess />,
+          // },
+          {
+            path: "view",
+            element: <InvoiceView />,
+          },
+        ],
+      },
+      {
+        path: "internal_order/:id",
+        element: <ProtectedChildRoute />,
+        children: [
+          {
+            index: true,
+            element: <InternalOrder />,
           },
           // {
           //   path: "success",

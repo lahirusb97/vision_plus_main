@@ -1,0 +1,30 @@
+interface RefractionDetailModel {
+  id: number;
+  refraction: number;
+  patient: null | object;
+  hb_rx_right_dist: string;
+  hb_rx_left_dist: string;
+  hb_rx_right_near: string;
+  hb_rx_left_near: string;
+  auto_ref_right: string;
+  auto_ref_left: string;
+  ntc_right: string;
+  ntc_left: string;
+  va_without_glass_right: string;
+  va_without_glass_left: string;
+  va_without_ph_right: string;
+  va_without_ph_left: string;
+  va_with_glass_right: string;
+  va_with_glass_left: string;
+  right_eye_dist_sph: string;
+  right_eye_dist_cyl: string;
+  right_eye_dist_axis: string;
+  right_eye_near_sph: string;
+  left_eye_dist_sph: string;
+  left_eye_dist_cyl: string;
+  left_eye_dist_axis: string;
+  left_eye_near_sph: string;
+  remark: string;
+  is_manual: boolean;
+}
+export type { RefractionDetailModel };

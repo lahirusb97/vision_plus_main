@@ -7,29 +7,13 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../store/store";
+import axiosClient from "../../../axiosClient";
 import { handleError } from "../../../utils/handleError";
 import { clearFrame } from "../../../features/invoice/frameFilterSlice";
 import { clearLenses } from "../../../features/invoice/lenseFilterSlice";
-import { useLocation, useNavigate } from "react-router";
-import useGetRefractionDetails from "../../../hooks/useGetRefractionDetails";
-import { useEffect } from "react";
-import axiosClient from "../../../axiosClient";
+import { Navigate, useNavigate } from "react-router";
 
 export default function FactoryInvoiceForm() {
-  const location = useLocation();
-  const { customerName, mobileNumber, date } = location.state || {
-    customerName: "",
-    mobileNumber: "",
-    date: "",
-  };
-
-  const {
-    refractionDetail,
-    refractionDetailLoading,
-    refractionDetailError,
-    refresh,
-  } = useGetRefractionDetails(mobileNumber);
-
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const validationSchema = Yup.object().shape({
@@ -85,17 +69,7 @@ export default function FactoryInvoiceForm() {
     (sum, item) => sum + parseFloat(item.price) * item.buyQty,
     0
   );
-  console.log(refractionDetail);
 
-  useEffect(() => {
-    if (!refractionDetailError && !refractionDetailLoading) {
-      if (refractionDetail) {
-        Object.keys(refractionDetail).forEach((key) => {
-          methods.setValue(key, refractionDetail[key]);
-        });
-      }
-    }
-  }, [refractionDetailLoading, refractionDetail]);
   const submiteFromData = async (data) => {
     const lenseByList = Object.values(selectedLenseList).map(
       ({ buyQty, price, lense }) => ({
@@ -161,43 +135,9 @@ export default function FactoryInvoiceForm() {
         },
       ],
     };
-    const postData2 = {
-      patient: {
-        refraction_id: refractionDetail.id,
-        name: data.name,
-        nic: data.nic,
-        address: data.address,
-        phone_number: data.phone_number,
-        dob: data.dob,
-      },
-      order: {
-        refractionDetail: refractionDetail.id,
-        sub_total: totalFramePrice + totalLensePrice,
-        discount: totalFramePrice + totalLensePrice - data.discount,
-        total_price: 180.0,
-        sales_staff_code: data.sales_staff_code,
-        remark: data.remark,
-      },
-      order_items: [...lenseByList, ...frameByList],
-      order_payments: [
-        {
-          amount: parseFloat(data.cash),
-          payment_method: "cash",
-          transaction_status: "success",
-        },
-        {
-          amount: parseFloat(data.card),
-          payment_method: "credit_card",
-          transaction_status: "success",
-        },
-      ],
-    };
 
     try {
-      const response = await axiosClient.post(
-        "/manual-orders/",
-        refractionDetailError ? postData2 : postData
-      );
+      const response = await axiosClient.post("/manual-orders/", postData);
       methods.reset();
       dispatch(clearFrame()); // Add dispatch
       dispatch(clearLenses());
