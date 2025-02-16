@@ -8,7 +8,7 @@ import { getCookie } from "typescript-cookie";
 
 // Create an Axios instance with a base URL
 const axiosClient: AxiosInstance = axios.create({
-  baseURL: import.meta.env.BASE_URL,
+  baseURL: import.meta.env.VITE_BASE_URL,
   withCredentials: false,
 });
 

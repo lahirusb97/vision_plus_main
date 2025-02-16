@@ -11,9 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: npm install vite --save-dev
-        env:
-          VITE_API_BASE_URL: ${{ secrets.BASE_URL }}
+      - run: npm install
+      - run: |
+          echo "VITE_API_BASE_URL=${{ secrets.VITE_BASE_URL }}" >> .env
+      - run: npm run build
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
