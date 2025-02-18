@@ -30,8 +30,8 @@ export default function FactoryFromTree() {
     <div style={{ width: "1200px" }}>
       <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
         <Paper sx={inputStyle1}>
-          <Typography sx={{ padding: 1 }}>Total Price</Typography>
-          <Typography sx={{ padding: 1 }}>
+          <Typography sx={{ padding: 0.5 }}>Total Price</Typography>
+          <Typography sx={{ padding: 0.5 }}>
             {totalFramePrice + totalLensePrice}
           </Typography>
         </Paper>
@@ -52,15 +52,15 @@ export default function FactoryFromTree() {
           <Paper sx={inputStyle2}>
             <Typography>First Payment </Typography>
           </Paper>
-          <Paper sx={{ width: 190, padding: 1 }}>
+          <Paper sx={{ width: 190, padding: 0.5 }}>
             <Typography>
               {parseInt(watch("card")) + parseInt(watch("cash"))}{" "}
             </Typography>
           </Paper>
         </Box>
         <Paper sx={inputStyle1}>
-          <Typography sx={{ padding: 1 }}>Blance</Typography>
-          <Typography sx={{ padding: 1 }}>
+          <Typography sx={{ padding: 0.5 }}>Blance</Typography>
+          <Typography sx={{ padding: 0.5 }}>
             {totalLensePrice +
               totalFramePrice -
               (parseInt(watch("discount")) +
@@ -88,7 +88,7 @@ const inputStyle1 = {
   justifyContent: "space-between",
   width: "100%",
   alignItems: "center",
-  gap: 2,
+  gap: 1,
 };
 const inputStyle2 = {
   Width: 600,
@@ -97,5 +97,5 @@ const inputStyle2 = {
   justifyContent: "space-between",
   width: "100%",
   alignItems: "center",
-  gap: 2,
+  gap: 1,
 };

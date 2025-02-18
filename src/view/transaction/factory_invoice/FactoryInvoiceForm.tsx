@@ -4,67 +4,42 @@ import FactoryFromTwo from "./FactoryFromTwo";
 import FactoryFromTree from "./FactoryFromTree";
 import { FormProvider, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as Yup from "yup";
+
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../store/store";
-import { handleError } from "../../../utils/handleError";
-import { clearFrame } from "../../../features/invoice/frameFilterSlice";
 import { clearLenses } from "../../../features/invoice/lenseFilterSlice";
 import { useLocation, useNavigate } from "react-router";
 import useGetRefractionDetails from "../../../hooks/useGetRefractionDetails";
 import { useEffect } from "react";
 import axiosClient from "../../../axiosClient";
+import axios from "axios";
+import toast from "react-hot-toast";
+import { clearFrame } from "../../../features/invoice/frameFilterSlice";
+import { InvoiceInputModel } from "../../../model/InvoiceInputModel";
+import { RefractionDetailModel } from "../../../model/RefractionDetailModel";
+import { factoryInvoiceSchema } from "../../../validations/factoryInvoiceSchema";
+import LeftEye from "../../../components/LeftEye";
+import PationtDetails from "../../../components/PationtDetails";
+import { Button, Paper, TextField, Typography } from "@mui/material";
+import InvoiceTable from "../../../components/inputui/InvoiceTable";
+import CardInput from "../../../components/inputui/CardInput";
+import CashInput from "../../../components/inputui/CashInput";
 
 export default function FactoryInvoiceForm() {
   const location = useLocation();
-  const { customerName, mobileNumber, date } = location.state || {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const { mobileNumber } = location.state || {
     customerName: "",
     mobileNumber: "",
     date: "",
   };
-
-  const {
-    refractionDetail,
-    refractionDetailLoading,
-    refractionDetailError,
-    refresh,
-  } = useGetRefractionDetails(mobileNumber);
-
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const validationSchema = Yup.object().shape({
-    sales_staff_code: Yup.string().required("Sales Staff Code is required"),
-    hb_rx_right_dist: Yup.string().required("Right Distance is required"),
-    hb_rx_left_dist: Yup.string().required("Left Distance is required"),
-    hb_rx_right_near: Yup.string().required("Right Near is required"),
-    hb_rx_left_near: Yup.string().required("Left Near is required"),
-    auto_ref_right: Yup.string().required("Auto Ref Right is required"),
-    auto_ref_left: Yup.string().required("Auto Ref Left is required"),
-    right_eye_dist_sph: Yup.string().required(
-      "Right Eye Distance Sph is required"
-    ),
-    right_eye_dist_cyl: Yup.string(),
-    right_eye_dist_axis: Yup.string(),
-    right_eye_near_sph: Yup.string(),
-    left_eye_dist_sph: Yup.string().required(
-      "Left Eye Distance Sph is required"
-    ),
-    left_eye_dist_cyl: Yup.string(),
-    left_eye_dist_axis: Yup.string(),
-    left_eye_near_sph: Yup.string(),
-    remark: Yup.string(),
-    name: Yup.string().required("Customer Name is required"),
-    nic: Yup.string().required("Customer Age is required"),
-    phone_number: Yup.string().required("Customer Mobile is required"),
-    address: Yup.string().required("Customer Address is required"),
-    dob: Yup.string().required("Customer age is required"),
-    discount: Yup.number().required("discount is required").min(0),
-    cash: Yup.number().required("payment Amount is required").min(0),
-    card: Yup.number().required("payment Amount is required").min(0),
-  });
+  const { refractionDetail, refractionDetailLoading, refractionDetailError } =
+    useGetRefractionDetails(mobileNumber);
 
   const methods = useForm({
-    resolver: yupResolver(validationSchema),
+    resolver: yupResolver(factoryInvoiceSchema),
     defaultValues: {
       card: 0,
       cash: 0,
@@ -85,30 +60,29 @@ export default function FactoryInvoiceForm() {
     (sum, item) => sum + parseFloat(item.price) * item.buyQty,
     0
   );
-  console.log(refractionDetail);
-
   useEffect(() => {
     if (!refractionDetailError && !refractionDetailLoading) {
       if (refractionDetail) {
-        Object.keys(refractionDetail).forEach((key) => {
-          methods.setValue(key, refractionDetail[key]);
+        (
+          Object.keys(refractionDetail) as Array<keyof RefractionDetailModel>
+        ).forEach((key) => {
+          methods.setValue(key as any, refractionDetail[key]);
         });
       }
     }
   }, [refractionDetailLoading, refractionDetail]);
-  const submiteFromData = async (data) => {
+
+  const submiteFromData = async (data: InvoiceInputModel) => {
     const lenseByList = Object.values(selectedLenseList).map(
-      ({ buyQty, price, lense }) => ({
+      ({ buyQty, price }) => ({
         quantity: buyQty,
-        lense,
         price_per_unit: price,
         subtotal: buyQty * parseInt(price),
       })
     );
     const frameByList = Object.values(selectedFrameList).map(
-      ({ buyQty, price, frame }) => ({
+      ({ buyQty, price }) => ({
         quantity: buyQty,
-        frame,
         price_per_unit: price,
         subtotal: buyQty * parseInt(price),
       })
@@ -194,7 +168,7 @@ export default function FactoryInvoiceForm() {
     };
 
     try {
-      const response = await axiosClient.post(
+      await axiosClient.post(
         "/orders/",
         refractionDetailError ? postData2 : postData
       );
@@ -205,10 +179,12 @@ export default function FactoryInvoiceForm() {
       navigate("view", {
         state: postData,
       });
-    } catch (error) {
-      console.log(error);
-
-      handleError(error, "Invoice Save Error");
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        toast.error(err.response?.data?.message || "Failed to save Order data");
+      } else {
+        toast.error("An unexpected error occurred Failed to save Order data");
+      }
     }
   };
 
@@ -217,14 +193,63 @@ export default function FactoryInvoiceForm() {
       <Box
         component={"form"}
         onSubmit={methods.handleSubmit(submiteFromData)}
-        sx={{ maxWidth: "1200px" }}
+        sx={{
+          width: "100vw", // Ensure the parent takes full width
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center", // Centers the child horizontally
+        }}
       >
-        <FactoryFromOne />
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            maxWidth: "1200px",
+            width: "100%",
+            margin: "0 auto", // Centers it
+          }}
+        >
+          <LeftEye />
+          <LeftEye />
+          <PationtDetails />
+        </Box>
+        <InvoiceTable />
+        <Box
+          sx={{
+            display: "flex",
+            gap: 1,
+            m: 2,
+            width: "100%",
+            maxWidth: "1200px",
+          }}
+        >
+          <TextField
+            sx={{ flexGrow: 1 }}
+            placeholder="remark"
+            multiline
+            rows={2}
+          />
 
-        <FactoryFromTwo />
-
-        <FactoryFromTree />
+          <CardInput />
+          <CashInput />
+        </Box>
+        <Button
+          sx={{ width: "100%", maxWidth: "1200px" }}
+          variant="contained"
+          fullWidth
+        >
+          Submit
+        </Button>
       </Box>
     </FormProvider>
   );
 }
+const inputStyle1 = {
+  paddingY: 1,
+  width: "100%",
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  gap: 1,
+  marginY: 1,
+};

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import {
   Box,
   Paper,
@@ -35,7 +35,7 @@ const TransactionUI = () => {
     selectedPrice: "",
   });
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
@@ -43,7 +43,7 @@ const TransactionUI = () => {
     }));
   };
 
-  const handleSelectChange = (event) => {
+  const handleSelectChange = (event: ChangeEvent<HTMLInputElement>) => {
     const selectedName = event.target.value;
     const item = data.find((item) => item.name === selectedName);
 

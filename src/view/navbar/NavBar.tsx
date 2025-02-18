@@ -53,14 +53,39 @@ function TabPanel(props: {
 
 export default function NavBar() {
   const tabs = [
-    { path: "refraction", icon: RefractionIcon, label: "Refraction", nav: RefractionNav },
-    { path: "transaction", icon: TransationIcon, label: "Transaction", nav: TransactionNav },
+    {
+      path: "refraction",
+      icon: RefractionIcon,
+      label: "Refraction",
+      nav: RefractionNav,
+    },
+    {
+      path: "transaction",
+      icon: TransationIcon,
+      label: "Transaction",
+      nav: TransactionNav,
+    },
     { path: "master", icon: MasterIcon, label: "Master", nav: RefractionNav },
-    { path: "account", icon: AccountIcon, label: "Account", nav: RefractionNav },
+    {
+      path: "account",
+      icon: AccountIcon,
+      label: "Account",
+      nav: RefractionNav,
+    },
     { path: "stock", icon: StockIcon, label: "Stock", nav: StockNav },
     { path: "channel", icon: ChanneltIcon, label: "Channel", nav: ChannelNav },
-    { path: "reports", icon: ReportsIcon, label: "Reports", nav: RefractionNav },
-    { path: "messenger", icon: MessangerIcon, label: "Messenger", nav: RefractionNav },
+    {
+      path: "reports",
+      icon: ReportsIcon,
+      label: "Reports",
+      nav: RefractionNav,
+    },
+    {
+      path: "messenger",
+      icon: MessangerIcon,
+      label: "Messenger",
+      nav: RefractionNav,
+    },
     { path: "user", icon: UserIcon, label: "User", nav: RefractionNav },
   ];
 
@@ -70,12 +95,10 @@ export default function NavBar() {
     const index = tabs.findIndex((tab) => path.startsWith(tab.path));
     return index !== -1 ? index : 0; // Default to first tab if no match
   };
-  
+
   const [value, setValue] = React.useState(getTabIndexFromPath(firstSegment));
   const { setUser, setToken } = useAuthContext();
-  
- 
- 
+
   // Handle Tab Change
   const handleChange = (
     _event: React.SyntheticEvent<Element, Event>,
@@ -85,13 +108,13 @@ export default function NavBar() {
   };
 
   // Array of Icons and Labels (dynamically derived)
- 
+
   const deleteCookie = () => {
     Cookies.remove("VISION_ACCESS_TOKEN");
     setToken(null);
   };
   return (
-    <Paper sx={{ width: "100%", }}>
+    <Paper sx={{ width: "100%" }}>
       <Tabs
         value={value}
         onChange={handleChange}
@@ -129,7 +152,7 @@ export default function NavBar() {
         <TabPanel key={index} value={value} index={index}>
           <Paper
             elevation={4}
-            sx={{ display: "flex", flexWrap: "wrap", gap: 1, py: 2 }}
+            sx={{ display: "flex", flexWrap: "wrap", gap: 1, py: 1 }}
           >
             {tab.nav && <tab.nav />}
           </Paper>

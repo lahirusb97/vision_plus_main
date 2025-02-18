@@ -19,7 +19,6 @@ import PaymentsIcon from "@mui/icons-material/Payments";
 import CreditCardIcon from "@mui/icons-material/CreditCard";
 import * as Yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { usePostApiCall } from "../../hooks/usePostApiCall";
 import useGetDoctors from "../../hooks/useGetDoctors";
 import AutocompleteInputField from "../../components/inputui/DropdownInput";
 import dayjs from "dayjs";
@@ -27,13 +26,8 @@ import { handleError } from "../../utils/handleError";
 import axiosClient from "../../axiosClient";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
-interface PostData {
-  id: number;
-  title: string;
-  body: string;
-}
+
 const Channel = () => {
-  const { loading, postApi } = usePostApiCall<PostData>();
   const { data: doctorList } = useGetDoctors();
   const navigate = useNavigate();
   console.log(doctorList);
