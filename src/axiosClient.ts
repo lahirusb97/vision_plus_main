@@ -10,8 +10,8 @@ import { getCookie } from "typescript-cookie";
 const axiosClient: AxiosInstance = axios.create({
   // baseURL: import.meta.env.VITE_BASE_URL,
   // baseURL: "http://193.203.161.90:8000/api",
-  // baseURL: "http://193.203.161.90:8000/api",
-  baseURL: "http://127.0.0.1:8005/api",
+  baseURL: "http://193.203.161.90:8000/api",
+  // baseURL: "http://127.0.0.1:8005/api",
   withCredentials: false,
 });
 
