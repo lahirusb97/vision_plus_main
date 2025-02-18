@@ -1,8 +1,15 @@
 import React from "react";
 import { TextField, Box, Button, Paper, Typography } from "@mui/material";
 import { History } from "@mui/icons-material";
+import DrawerStock from "./inputui/DrawerStock";
 
 export default function PationtDetails() {
+  const [open, setOpen] = React.useState(false);
+
+  const toggleDrawer = () => {
+    setOpen((prev) => !prev);
+  };
+
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
       <Box sx={{ display: "flex", gap: 1 }}>
@@ -29,19 +36,20 @@ export default function PationtDetails() {
       </Box>
       <TextField size="small" label="Address" />
       <Box sx={{ display: "flex", gap: 1 }}>
-        <Button color="error" variant="contained">
+        <Button onClick={toggleDrawer} color="error" variant="contained">
           Note
         </Button>
-        <Button color="primary" variant="contained">
+        <Button onClick={toggleDrawer} color="primary" variant="contained">
           Frames
         </Button>
-        <Button color="primary" variant="contained">
+        <Button onClick={toggleDrawer} color="primary" variant="contained">
           Stock Lense
         </Button>
-        <Button color="secondary" variant="contained">
+        <Button onClick={toggleDrawer} color="secondary" variant="contained">
           None Stock Lense
         </Button>
       </Box>
+      <DrawerStock open={open} toggleDrawer={toggleDrawer} />
     </Box>
   );
 }
