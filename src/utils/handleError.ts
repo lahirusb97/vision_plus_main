@@ -1,5 +1,5 @@
 import { toast } from "react-hot-toast";
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 
 export function handleError(
   error: AxiosError,

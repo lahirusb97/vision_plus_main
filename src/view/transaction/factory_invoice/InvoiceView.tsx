@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Table,
   TableBody,
@@ -8,16 +7,15 @@ import {
   Paper,
   Typography,
   Box,
-  Grid,
   Button,
 } from "@mui/material";
-import { useLocation, useNavigate } from "react-router";
+import { useLocation } from "react-router";
 import { useRef } from "react";
 import { useReactToPrint } from "react-to-print";
 
 const InvoiceView = () => {
   const location = useLocation();
-  const navigate = useNavigate();
+
   const responce = location.state || {}; // Handle possible undefined state
 
   const componentRef = useRef(null);

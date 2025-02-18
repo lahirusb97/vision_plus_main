@@ -42,7 +42,6 @@ const StateContext = createContext<AuthContextType>({
 
 // AuthContext provider component
 export const AuthContext = ({ children }: AuthContextProps) => {
-  const broadcastChannel = new BroadcastChannel("test_channel");
   const [user, setUser] = useState<LoginResponse | null>(null);
   const [token, _setToken] = useState<string | null>(() => {
     // Retrieve token from cookies
@@ -67,17 +66,6 @@ export const AuthContext = ({ children }: AuthContextProps) => {
     },
     [token]
   );
-
-  useEffect(() => {
-    broadcastChannel.onmessage = (event) => {
-      console.log("BroadcastChannel event data:", event.data);
-    };
-
-    // Cleanup function to close the BroadcastChannel
-    return () => {
-      broadcastChannel.close();
-    };
-  }, []);
 
   return (
     <StateContext.Provider

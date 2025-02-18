@@ -9,17 +9,12 @@ import {
 } from "@mui/material";
 import RefractionCompletePopup from "./RefractionCompletePopup";
 import axiosClient from "../../axiosClient";
-import { usePostApiCall } from "../../hooks/usePostApiCall";
+import { handleError } from "../../utils/handleError";
+import { AxiosError } from "axios";
+import toast from "react-hot-toast";
 
 export default function RefractionNumber() {
-  const { data, error, loading, postApi } = usePostApiCall<{
-    data: {
-      refraction_number: string;
-      customer_full_name: string;
-      id: number;
-      customer_mobile: string;
-    };
-  }>();
+  const [loading, setLoading] = useState(false);
   const [open, setOpen] = React.useState({ open: false, message: "" });
   const [createRefraction, setCreateRefraction] = useState({
     customer_full_name: "",
@@ -29,22 +24,31 @@ export default function RefractionNumber() {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     try {
-      const responseData = await postApi(
+      console.log(createRefraction);
+
+      setLoading(true);
+      const responseData = await axiosClient.post(
         "/refractions/create/",
         createRefraction
       );
-
+      setCreateRefraction({
+        customer_full_name: "",
+        customer_mobile: "",
+      });
       setOpen({
         open: true,
         message: `Refraction Number: ${responseData.data.refraction_number}`,
       });
     } catch (error) {
-      console.log(error);
-    }finally{
+      if (error instanceof AxiosError) {
+        toast.error(error.response?.data?.message || "Something went wrong");
+      }
+    } finally {
       setCreateRefraction({
         customer_full_name: "",
         customer_mobile: "",
       });
+      setLoading(false);
     }
   };
   const handleToggle = () => {

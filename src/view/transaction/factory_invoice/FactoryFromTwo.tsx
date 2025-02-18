@@ -1,6 +1,5 @@
-import React, { useEffect } from "react";
-import { Input, Box, Button, Paper, Typography } from "@mui/material";
-import { useLocation } from "react-router";
+import { Input, Box, Typography, Paper } from "@mui/material";
+
 import { useFormContext } from "react-hook-form";
 import PowerToFrameFilter from "../../../components/PowerToFrameFilter";
 import PowerToLenseFilter from "../../../components/PowerToLenseFilter";
@@ -10,12 +9,7 @@ export default function FactoryFromTwo() {
     register,
     formState: { errors },
   } = useFormContext();
-  const location = useLocation();
-  const { customerName, mobileNumber, date } = location.state || {
-    customerName: "",
-    mobileNumber: "",
-    date: "",
-  };
+
   return (
     <div>
       <Box sx={{ width: "1200px", marginY: 3, p: 2 }}>

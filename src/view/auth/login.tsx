@@ -14,7 +14,6 @@ import logo from "../../assets/defalt/logo.png";
 import axiosClient from "../../axiosClient";
 import { useNavigate } from "react-router";
 import { useAuthContext } from "../../context/AuthContext";
-import axios from "axios";
 
 interface LoginInput {
   username: string;
@@ -187,6 +186,7 @@ export default function Login() {
             }}
           />
         </Box>
+
         <Button
           variant="contained"
           fullWidth

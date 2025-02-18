@@ -5,4 +5,11 @@ interface RefractionModel {
   refraction_number: string;
 }
 
-export type { RefractionModel };
+interface RefractionResponseModel {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: RefractionModel[];
+}
+
+export type { RefractionModel, RefractionResponseModel };
