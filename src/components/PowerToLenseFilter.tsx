@@ -18,6 +18,7 @@ import { RootState } from "../store/store";
 import InvoiceLenseItem from "./InvoiceLenseItem";
 interface LenseWithQty extends LenseModel {
   buyQty: number;
+  lenseSide: string;
 }
 export default function PowerToLenseFilter() {
   const dispatch = useDispatch();
@@ -41,9 +42,10 @@ export default function PowerToLenseFilter() {
 
   const { coatings, coatingsLoading } = useGetCoatings();
   const { lenseTypes, lenseTypesLoading } = useGetLenseTypes();
-  const [selectedLense, setSelectedLense] = React.useState<LenseModel | null>(
-    null
-  );
+  const [selectedLenseLeft, setSelectedLenseLeft] =
+    React.useState<LenseModel | null>(null);
+  const [selectedLenseRight, setSelectedLenseRight] =
+    React.useState<LenseModel | null>(null);
   const selectedLenseList = useSelector(
     (state: RootState) => state.invoice_lense_filer.selectedLenses
   );
@@ -67,57 +69,90 @@ export default function PowerToLenseFilter() {
       right_eye_dist_cyl: watch("right_eye_dist_cyl"),
       right_eye_near_sph: watch("right_eye_near_sph"),
     });
-    console.log("render");
   }, []);
 
   useEffect(() => {
-    // if (
-    //   selectLense.lenseType &&
-    //   selectLense.coating &&
-    //   selectLense.brand &&
-    //   !lensesLoading
-    // ) {
-    //   const normalizeValue = (val: any) => parseFloat(val || "0").toFixed(2); // Convert to float, then string with 2 decimals
-    //   const rightEyeDistSph = normalizeValue(watch("right_eye_dist_sph"));
-    //   const rightEyeDistCyl = normalizeValue(watch("right_eye_dist_cyl"));
-    //   const rightEyeNearSph = normalizeValue(watch("right_eye_near_sph"));
-    //   const leftEyeDistSph = normalizeValue(watch("left_eye_dist_sph"));
-    //   const leftEyeDistCyl = normalizeValue(watch("left_eye_dist_cyl"));
-    //   const leftEyeNearSph = normalizeValue(watch("left_eye_near_sph"));
-    //   const matchingItems: LenseModel[] = lenses.filter((item) => {
-    //     if (
-    //       item.brand === selectLense.brand &&
-    //       item.type === selectLense.lenseType &&
-    //       item.coating === selectLense.coating
-    //     ) {
-    //       const powers = item.stock?.powers || [];
-    //       const matchesPower = (powerType: number, value: string) =>
-    //         powers.some(
-    //           (p) => p.power === powerType && normalizeValue(p.value) === value
-    //         );
-    //       if (item.type === 1) {
-    //         return (
-    //           matchesPower(1, rightEyeDistSph) &&
-    //           matchesPower(2, rightEyeDistCyl)
-    //         );
-    //       } else if (item.type === 2 || item.type === 3) {
-    //         return (
-    //           matchesPower(1, rightEyeDistSph) &&
-    //           matchesPower(3, rightEyeNearSph)
-    //         );
-    //       }
-    //     }
-    //     return false;
-    //   });
-    //   if (matchingItems.length === 1) {
-    //     setSelectedLense({ ...matchingItems[0] });
-    //     setPrice(parseInt(matchingItems[0].price));
-    //   } else {
-    //     setPrice(0);
-    //   }
-    // } else {
-    //   setPrice(0);
-    // }
+    //validate if user selected all dropdowns
+    if (
+      selectLense.lenseType &&
+      selectLense.coating &&
+      selectLense.brand &&
+      !lensesLoading
+    ) {
+      const normalizeValue = (val: any) => parseFloat(val || "0").toFixed(2); // Convert to float, then string with 2 decimals
+      const rightEyeDistSph = normalizeValue(watch("right_eye_dist_sph"));
+      const rightEyeDistCyl = normalizeValue(watch("right_eye_dist_cyl"));
+      const rightEyeNearSph = normalizeValue(watch("right_eye_near_sph"));
+      const leftEyeDistSph = normalizeValue(watch("left_eye_dist_sph"));
+      const leftEyeDistCyl = normalizeValue(watch("left_eye_dist_cyl"));
+      const leftEyeNearSph = normalizeValue(watch("left_eye_near_sph"));
+      const rightMatchingItems: LenseModel[] = lenses.filter((item) => {
+        if (
+          item.brand === selectLense.brand &&
+          item.type === selectLense.lenseType &&
+          item.coating === selectLense.coating
+        ) {
+          const powers = item.stock?.powers || [];
+          const matchesPower = (powerType: number, value: string) =>
+            powers.some(
+              (p) => p.power === powerType && normalizeValue(p.value) === value
+            );
+
+          if (item.type === 1) {
+            return (
+              matchesPower(1, rightEyeDistSph) &&
+              matchesPower(2, rightEyeDistCyl)
+            );
+          } else if (item.type === 2 || item.type === 3) {
+            return (
+              matchesPower(1, rightEyeDistSph) &&
+              matchesPower(3, rightEyeNearSph)
+            );
+          }
+        }
+        return false;
+      });
+
+      const leftMatchingItems: LenseModel[] = lenses.filter((item) => {
+        if (
+          item.brand === selectLense.brand &&
+          item.type === selectLense.lenseType &&
+          item.coating === selectLense.coating
+        ) {
+          const powers = item.stock?.powers || [];
+          const matchesPower = (powerType: number, value: string) =>
+            powers.some(
+              (p) => p.power === powerType && normalizeValue(p.value) === value
+            );
+
+          if (item.type === 1) {
+            return (
+              matchesPower(1, leftEyeDistSph) && matchesPower(2, leftEyeDistCyl)
+            );
+          } else if (item.type === 2 || item.type === 3) {
+            return (
+              matchesPower(1, leftEyeDistSph) && matchesPower(3, leftEyeNearSph)
+            );
+          }
+        }
+        return false;
+      });
+      if (rightMatchingItems.length === 1) {
+        setSelectedLenseRight({ ...rightMatchingItems[0] });
+        setRightPrice(parseInt(rightMatchingItems[0].price));
+      } else {
+        setRightPrice(0);
+      }
+      if (leftMatchingItems.length === 1) {
+        setSelectedLenseLeft({ ...leftMatchingItems[0] });
+        setLeftPrice(parseInt(leftMatchingItems[0].price));
+      } else {
+        setLeftPrice(0);
+      }
+    } else {
+      setLeftPrice(0);
+      setRightPrice(0);
+    }
   }, [
     selectLense.brand,
     selectLense.coating,
@@ -126,25 +161,44 @@ export default function PowerToLenseFilter() {
     watch("right_eye_dist_sph"),
     watch("right_eye_dist_cyl"),
     watch("right_eye_near_sph"),
+    watch("left_eye_dist_sph"),
+    watch("left_eye_dist_cyl"),
+    watch("left_eye_near_sph"),
+    leftPowers,
+    rightPowers,
   ]);
 
   const addFrameByList = () => {
-    // if (selectLense) {
-    //   if (price > 0) {
-    //     dispatch(
-    //       setLense({
-    //         ...selectedLense,
-    //         price: String(price),
-    //         buyQty: 1,
-    //       } as LenseWithQty)
-    //     );
-    //     toast.success("Lense Added ");
-    //   } else {
-    //     toast.error("Price must be greater than 0");
-    //   }
-    // } else {
-    //   toast.error("No Lense Selected");
-    // }
+    if (selectLense) {
+      if (leftPrice > 0) {
+        dispatch(
+          setLense({
+            ...selectedLenseLeft,
+            price: String(leftPrice),
+            buyQty: 1,
+            lenseSide: "left",
+          } as LenseWithQty)
+        );
+        toast.success("Lense Added to Left Side");
+      } else {
+        toast.error("Price  Left Side lense must be greater than 0");
+      }
+      if (rightPrice > 0) {
+        dispatch(
+          setLense({
+            ...selectedLenseRight,
+            price: String(rightPrice),
+            buyQty: 1,
+            lenseSide: "left",
+          } as LenseWithQty)
+        );
+        toast.success("Lense Added to Left Side");
+      } else {
+        toast.error("Price  Left Side lense must be greater than 0");
+      }
+    } else {
+      toast.error("No Lense Selected");
+    }
   };
 
   return (

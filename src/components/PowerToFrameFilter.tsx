@@ -23,6 +23,7 @@ import { FrameModel } from "../model/FrameModel";
 import toast from "react-hot-toast";
 import { Delete } from "@mui/icons-material";
 import { RootState } from "../store/store";
+import InvoiceFrameItem from "./InvoiceFrameItem";
 interface FrameWithQty extends FrameModel {
   buyQty: number;
 }
@@ -210,43 +211,12 @@ export default function PowerToFrameFilter() {
       </Box>
 
       <Grid container spacing={2} justifyContent="flex-start">
-        {Object.values(selectedFrameList).length === 0 ? (
-          <></>
-        ) : (
+        {Object.values(selectedFrameList).length !== 0 &&
           Object.values(selectedFrameList).map((frame) => (
-            <Paper
-              elevation={3}
-              sx={{
-                width: "100%",
-                padding: 1,
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "space-evenly",
-                marginBottom: 1,
-                alignItems: "center",
-              }}
-            >
-              <Typography variant="body2">Code: {frame.code}</Typography>
-              <Typography variant="body2">Brand: {frame.brand}</Typography>
-              <Typography variant="body2">Color: {frame.color}</Typography>
-              <Typography variant="body2">Size: {frame.size}</Typography>
-
-              <Typography variant="body2">Quantity: {frame.buyQty}</Typography>
-              <Typography variant="body2">
-                Unite Price: {frame.price}
-              </Typography>
-              <Typography variant="body2">
-                Total Price: {parseInt(frame.price) * frame.buyQty}
-              </Typography>
-              <IconButton
-                onClick={() => dispatch(removeFrame(frame.id))}
-                color="error"
-              >
-                <Delete />
-              </IconButton>
-            </Paper>
-          ))
-        )}
+            <div>
+              <InvoiceFrameItem frame={frame} />
+            </div>
+          ))}
       </Grid>
     </Paper>
   );
