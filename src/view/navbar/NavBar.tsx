@@ -21,6 +21,7 @@ import { LogoutOutlined } from "@mui/icons-material";
 import { Cookies } from "typescript-cookie";
 import { useAuthContext } from "../../context/AuthContext";
 import { useLocation } from "react-router";
+import UserNav from "../user/UserNav";
 
 // TabPanel Component
 
@@ -86,7 +87,7 @@ export default function NavBar() {
       label: "Messenger",
       nav: RefractionNav,
     },
-    { path: "user", icon: UserIcon, label: "User", nav: RefractionNav },
+    { path: "user", icon: UserIcon, label: "User", nav: UserNav },
   ];
 
   const location = useLocation();

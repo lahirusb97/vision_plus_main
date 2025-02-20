@@ -87,8 +87,8 @@ export default function InvoiceTable() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
-            <TableRow key={row.desc}>
+          {rows.map((row, index) => (
+            <TableRow key={index}>
               <TableCell>
                 <Delete color="error" />
               </TableCell>

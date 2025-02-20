@@ -15,6 +15,11 @@ const theme = createTheme({
       },
     },
   },
+  typography: {
+    button: {
+      textTransform: "capitalize",
+    },
+  },
 });
 
 export default theme;

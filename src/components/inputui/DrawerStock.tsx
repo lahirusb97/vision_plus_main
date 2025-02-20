@@ -1,25 +1,28 @@
-import * as React from "react";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
-import Button from "@mui/material/Button";
-import List from "@mui/material/List";
-import Divider from "@mui/material/Divider";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
-import PowerToFrameFilter from "../PowerToFrameFilter";
 import { IconButton } from "@mui/material";
 import { Close } from "@mui/icons-material";
+import { RootState } from "../../store/store";
+import { useDispatch, useSelector } from "react-redux";
+import { closeStockDrawer } from "../../features/invoice/stockDrawerSlice";
+import FrameStock from "../../view/transaction/factory_invoice/FrameStock";
+import LensStock from "../../view/transaction/factory_invoice/LensStock";
+import LensNoneStock from "../../view/transaction/factory_invoice/LensNoneStock";
+import OtherItem from "../../view/transaction/factory_invoice/OtherItem";
 
-export default function DrawerStock({ open, toggleDrawer }) {
+export default function DrawerStock() {
+  const dispatch = useDispatch();
+  const stockDrawerType = useSelector(
+    (state: RootState) => state.stock_drawer.stockDrawerType
+  );
+  const stockDrawerOpen = useSelector(
+    (state: RootState) => state.stock_drawer.stockDrawerOpen
+  );
   const DrawerList = (
     <Box
       sx={{
         width: "100%",
-        maxWidth: "1200px",
+        maxWidth: "1300px",
         margin: "0 auto",
         flexDirection: "column",
         gap: 1,
@@ -27,10 +30,20 @@ export default function DrawerStock({ open, toggleDrawer }) {
       }}
       role="presentation"
     >
-      <IconButton onClick={toggleDrawer}>
+      <IconButton onClick={() => dispatch(closeStockDrawer())}>
         <Close />
       </IconButton>
-      <PowerToFrameFilter />
+      <Box>
+        {stockDrawerType === "frame" ? (
+          <FrameStock />
+        ) : stockDrawerType === "lense" ? (
+          <LensStock />
+        ) : stockDrawerType === "none_stock_lense" ? (
+          <LensNoneStock />
+        ) : (
+          <OtherItem />
+        )}
+      </Box>
     </Box>
   );
 
@@ -39,8 +52,8 @@ export default function DrawerStock({ open, toggleDrawer }) {
       <Drawer
         hideBackdrop={true}
         anchor="bottom"
-        open={open}
-        onClose={toggleDrawer}
+        open={stockDrawerOpen}
+        onClose={() => dispatch(closeStockDrawer())}
         PaperProps={{
           style: { height: "50vh" }, // adjust the height to 50% of the viewport height
         }}
