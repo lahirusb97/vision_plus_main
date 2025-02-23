@@ -22,6 +22,9 @@ import LeftEyeTable from "../../../components/LeftEyeTable";
 import DrawerStock from "../../../components/inputui/DrawerStock";
 import { RootState } from "../../../store/store";
 import axiosClient from "../../../axiosClient";
+import { clearFrame } from "../../../features/invoice/frameFilterSlice";
+import { clearLenses } from "../../../features/invoice/lenseFilterSlice";
+import { clearOtherItem } from "../../../features/invoice/otherItemSlice";
 
 export default function FactoryInvoiceForm() {
   const location = useLocation();
@@ -65,7 +68,13 @@ export default function FactoryInvoiceForm() {
       discount: 0,
     },
   });
-
+  useEffect(() => {
+    return () => {
+      dispatch(clearFrame());
+      dispatch(clearLenses());
+      dispatch(clearOtherItem());
+    };
+  }, []);
   useEffect(() => {
     if (!refractionDetailError && !refractionDetailLoading) {
       if (refractionDetail) {
