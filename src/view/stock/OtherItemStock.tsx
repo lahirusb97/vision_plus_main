@@ -102,6 +102,7 @@ const FrameStore = () => {
     // Add update logic
     navigate(`update/${id}`);
   };
+  console.log(items);
 
   return (
     <Box sx={{ padding: 4, maxWidth: "1200px" }}>

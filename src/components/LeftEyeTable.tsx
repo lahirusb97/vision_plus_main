@@ -1,12 +1,11 @@
 import { Box, TextField, Typography } from "@mui/material";
 const widthInput = 100;
-import { lightBlue } from "@mui/material/colors";
+import { blue, lightBlue, yellow } from "@mui/material/colors";
 import { useFormContext } from "react-hook-form";
 
 export default function LeftEyeTable() {
   const {
     register,
-    watch,
     formState: { errors },
   } = useFormContext();
 
@@ -17,7 +16,7 @@ export default function LeftEyeTable() {
           display: "flex",
           flexDirection: "column",
           gap: 1,
-          bgcolor: lightBlue[50],
+          bgcolor: blue[50],
           p: 1,
         }}
       >
@@ -96,7 +95,15 @@ export default function LeftEyeTable() {
             label="near"
             sx={{ width: widthInput }}
           />
-          <Box sx={{ flexGrow: 2, p: 1 }}>
+          <Box
+            sx={{
+              flexGrow: 2,
+              p: 1,
+              bgcolor: blue[500],
+              ml: 1,
+              color: "white",
+            }}
+          >
             <Typography>Left Side</Typography>
           </Box>
         </Box>

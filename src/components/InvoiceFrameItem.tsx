@@ -18,9 +18,9 @@ export default function InvoiceFrameItem({ frame }) {
           alignItems: "center",
         }}
       >
-        <Typography variant="body2">Code: {frame.code}</Typography>
-        <Typography variant="body2">Brand: {frame.brand}</Typography>
-        <Typography variant="body2">Color: {frame.color}</Typography>
+        <Typography variant="body2">Code: {frame.code_name}</Typography>
+        <Typography variant="body2">Brand: {frame.brand_name}</Typography>
+        <Typography variant="body2">Color: {frame.color_name}</Typography>
         <Typography variant="body2">Size: {frame.size}</Typography>
 
         <Typography variant="body2">Quantity: {frame.buyQty}</Typography>

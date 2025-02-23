@@ -5,7 +5,6 @@ import {
   ReactNode,
   Dispatch,
   SetStateAction,
-  useCallback,
   useEffect,
 } from "react";
 import { getCookie, removeCookie, setCookie } from "typescript-cookie";
@@ -24,7 +23,8 @@ interface AuthContextType {
   user: LoginResponse | null;
   token: string | null;
   setUser: Dispatch<SetStateAction<LoginResponse | null>>;
-  setToken: Dispatch<SetStateAction<string | null>>;
+  setUserToken: Dispatch<SetStateAction<string | null>>;
+  clearToken: () => void;
 }
 
 // Define props for AuthContext
@@ -37,43 +37,46 @@ const StateContext = createContext<AuthContextType>({
   user: null,
   token: null,
   setUser: () => {},
-  setToken: () => {},
+  setUserToken: () => {},
+  clearToken: () => {},
 });
 
 // AuthContext provider component
 export const AuthContext = ({ children }: AuthContextProps) => {
   const [user, setUser] = useState<LoginResponse | null>(null);
-  const [token, _setToken] = useState<string | null>(() => {
-    // Retrieve token from cookies
-    return getCookie("VISION_ACCESS_TOKEN") || null;
-  });
-
-  // Enhanced setToken to handle SetStateAction
-  const setToken: Dispatch<SetStateAction<string | null>> = useCallback(
-    (value) => {
-      const resolvedValue = typeof value === "function" ? value(token) : value;
-
-      _setToken(resolvedValue);
-      if (resolvedValue) {
-        setCookie("VISION_ACCESS_TOKEN", resolvedValue, {
-          secure: true, // Ensures it’s only sent over HTTPS
-          sameSite: "Strict", // Prevents sending the cookie cross-origin
-          expires: 7, // Token expires in 7 days
-        });
-      } else {
-        removeCookie("VISION_ACCESS_TOKEN");
-      }
-    },
-    [token]
+  const [token, setToken] = useState<string | null>(
+    localStorage.getItem("vision_plus_token")
   );
 
+  useEffect(() => {
+    if (token) {
+      localStorage.setItem("vision_plus_token", token);
+      console.log("auth add");
+    } else {
+      localStorage.removeItem("vision_plus_token");
+      console.log("auth remove");
+    }
+    console.log("auth useEffect Run");
+  }, [token]);
+
+  const setUserToken: Dispatch<SetStateAction<string | null>> = (newToken) => {
+    setToken(newToken);
+    if (token) {
+      localStorage.setItem("vision_plus_token", token);
+    }
+  };
+  const clearToken = () => {
+    removeCookie("vision_plus_token");
+    setToken(null);
+  };
   return (
     <StateContext.Provider
       value={{
         user,
         token,
         setUser,
-        setToken,
+        setUserToken,
+        clearToken,
       }}
     >
       {children}

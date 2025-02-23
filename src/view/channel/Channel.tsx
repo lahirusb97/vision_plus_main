@@ -28,7 +28,7 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
 
 const Channel = () => {
-  const { data: doctorList } = useGetDoctors();
+  const { data: doctorList, loading } = useGetDoctors();
   const navigate = useNavigate();
   console.log(doctorList);
 

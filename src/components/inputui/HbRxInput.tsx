@@ -22,13 +22,12 @@ export default function HbRxInput({ register, errors }: HbRxInputProps) {
         />
       </Grid>
       <Grid item xs={12} md={6}>
-      <CustomInput
+        <CustomInput
           {...register("hb_rx_left_dist")}
           placeholder="Left Distance"
           type="number"
           error={errors?.hb_rx_left_dist?.message}
         />
-      
       </Grid>
 
       {/* Row 2: Inputs 3 and 4 */}
@@ -41,14 +40,13 @@ export default function HbRxInput({ register, errors }: HbRxInputProps) {
         />
       </Grid>
       <Grid item xs={12} md={6}>
-      <CustomInput
+        <CustomInput
           {...register("hb_rx_left_near")}
           placeholder="Left Near"
           type="number"
           error={errors?.hb_rx_left_near?.message}
         />
       </Grid>
-     
     </Grid>
   );
 }

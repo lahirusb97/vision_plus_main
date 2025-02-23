@@ -15,7 +15,6 @@ import {
   Pagination,
   Skeleton,
 } from "@mui/material";
-
 import { useNavigate } from "react-router";
 import { Refresh } from "@mui/icons-material";
 import { RefractionModel } from "../../model/RefractionModel";
@@ -26,6 +25,7 @@ import useGetRefraction from "../../hooks/useGetRefraction";
 export default function FactoryIndex() {
   const theme = useTheme();
   const navigate = useNavigate();
+
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedRow, setSelectedRow] = useState<RefractionModel | null>(null);
 
@@ -41,13 +41,17 @@ export default function FactoryIndex() {
 
   const handleInternalOrder = async () => {
     if (selectedRow) {
-      navigate(`create/${selectedRow.refraction_number}`, {
-        state: {
-          customerName: selectedRow.customer_full_name,
-          mobileNumber: selectedRow.refraction_number,
-          date: "in development",
-        },
-      });
+      const customerName = selectedRow.customer_full_name;
+      const mobileNumber = selectedRow.customer_mobile;
+      const url = `${
+        selectedRow.refraction_number
+      }?customerName=${encodeURIComponent(
+        customerName
+      )}&mobileNumber=${encodeURIComponent(
+        mobileNumber
+      )}&nic=${encodeURIComponent("97824122v")}`;
+
+      navigate(`create/${url}`);
     }
   };
   return (

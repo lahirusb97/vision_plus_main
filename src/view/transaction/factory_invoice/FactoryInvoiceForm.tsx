@@ -24,12 +24,9 @@ export default function FactoryInvoiceForm() {
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const queryParams = new URLSearchParams(location.search);
+
   const { id } = useParams();
-  const { mobileNumber } = location.state || {
-    customerName: "",
-    mobileNumber: "",
-    date: "",
-  };
   const { refractionDetail, refractionDetailLoading, refractionDetailError } =
     useGetRefractionDetails(id);
 
@@ -45,10 +42,17 @@ export default function FactoryInvoiceForm() {
   useEffect(() => {
     if (!refractionDetailError && !refractionDetailLoading) {
       if (refractionDetail) {
+        const personalData = {
+          ...refractionDetail,
+          name: queryParams.get("customerName"),
+          phone_number: queryParams.get("mobileNumber"),
+          nic: queryParams.get("nic"),
+        };
+
         (
-          Object.keys(refractionDetail) as Array<keyof RefractionDetailModel>
+          Object.keys(personalData) as Array<keyof RefractionDetailModel>
         ).forEach((key) => {
-          methods.setValue(key as any, refractionDetail[key]);
+          methods.setValue(key as any, personalData[key]);
         });
       }
     }
@@ -106,6 +110,7 @@ export default function FactoryInvoiceForm() {
             }}
           >
             <TextField
+              {...methods.register("remark")}
               sx={{ flexGrow: 1 }}
               placeholder="remark"
               multiline

@@ -1,6 +1,6 @@
 import { Box, TextField, Typography } from "@mui/material";
 const widthInput = 100;
-import { lightBlue } from "@mui/material/colors";
+import { lightBlue, purple } from "@mui/material/colors";
 import { useFormContext } from "react-hook-form";
 
 export default function RightEyeTable() {
@@ -17,7 +17,7 @@ export default function RightEyeTable() {
           display: "flex",
           flexDirection: "column",
           gap: 1,
-          bgcolor: lightBlue[50],
+          bgcolor: purple[50],
           p: 1,
         }}
       >
@@ -96,7 +96,16 @@ export default function RightEyeTable() {
             label="near"
             sx={{ width: widthInput }}
           />
-          <Box sx={{ flexGrow: 2, p: 1 }}>
+          <Box
+            sx={{
+              flexGrow: 2,
+              p: 1,
+
+              bgcolor: purple[500],
+              ml: 1,
+              color: "white",
+            }}
+          >
             <Typography>right Side</Typography>
           </Box>
         </Box>

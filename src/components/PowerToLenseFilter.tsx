@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Box, Button, Paper, Typography, TextField, Grid } from "@mui/material";
+import {
+  Box,
+  Button,
+  Paper,
+  Typography,
+  TextField,
+  Grid,
+  IconButton,
+} from "@mui/material";
 import DropdownInput from "./inputui/DropdownInput";
 import useGetLenses from "../hooks/lense/useGetLense";
 
@@ -16,6 +24,9 @@ import { setLense } from "../features/invoice/lenseFilterSlice";
 import { useFormContext } from "react-hook-form";
 import { RootState } from "../store/store";
 import InvoiceLenseItem from "./InvoiceLenseItem";
+import { Search } from "@mui/icons-material";
+import axiosClient from "../axiosClient";
+import { findMatchingLense } from "../utils/findMatchingLense";
 interface LenseWithQty extends LenseModel {
   buyQty: number;
   lenseSide: string;
@@ -71,105 +82,116 @@ export default function PowerToLenseFilter() {
     });
   }, []);
 
-  useEffect(() => {
-    //validate if user selected all dropdowns
-    if (
-      selectLense.lenseType &&
-      selectLense.coating &&
-      selectLense.brand &&
-      !lensesLoading
-    ) {
-      const normalizeValue = (val: any) => parseFloat(val || "0").toFixed(2); // Convert to float, then string with 2 decimals
-      const rightEyeDistSph = normalizeValue(watch("right_eye_dist_sph"));
-      const rightEyeDistCyl = normalizeValue(watch("right_eye_dist_cyl"));
-      const rightEyeNearSph = normalizeValue(watch("right_eye_near_sph"));
-      const leftEyeDistSph = normalizeValue(watch("left_eye_dist_sph"));
-      const leftEyeDistCyl = normalizeValue(watch("left_eye_dist_cyl"));
-      const leftEyeNearSph = normalizeValue(watch("left_eye_near_sph"));
-      const rightMatchingItems: LenseModel[] = lenses.filter((item) => {
-        if (
-          item.brand === selectLense.brand &&
-          item.type === selectLense.lenseType &&
-          item.coating === selectLense.coating
-        ) {
-          const powers = item.stock?.powers || [];
-          const matchesPower = (powerType: number, value: string) =>
-            powers.some(
-              (p) => p.power === powerType && normalizeValue(p.value) === value
-            );
+  const addRightLense = () => {
+    console.log("selectedLenseRight", selectedLenseRight);
 
-          if (item.type === 1) {
-            return (
-              matchesPower(1, rightEyeDistSph) &&
-              matchesPower(2, rightEyeDistCyl)
-            );
-          } else if (item.type === 2 || item.type === 3) {
-            return (
-              matchesPower(1, rightEyeDistSph) &&
-              matchesPower(3, rightEyeNearSph)
-            );
-          }
-        }
-        return false;
-      });
-
-      const leftMatchingItems: LenseModel[] = lenses.filter((item) => {
-        if (
-          item.brand === selectLense.brand &&
-          item.type === selectLense.lenseType &&
-          item.coating === selectLense.coating
-        ) {
-          const powers = item.stock?.powers || [];
-          const matchesPower = (powerType: number, value: string) =>
-            powers.some(
-              (p) => p.power === powerType && normalizeValue(p.value) === value
-            );
-
-          if (item.type === 1) {
-            return (
-              matchesPower(1, leftEyeDistSph) && matchesPower(2, leftEyeDistCyl)
-            );
-          } else if (item.type === 2 || item.type === 3) {
-            return (
-              matchesPower(1, leftEyeDistSph) && matchesPower(3, leftEyeNearSph)
-            );
-          }
-        }
-        return false;
-      });
-      if (rightMatchingItems.length === 1) {
-        setSelectedLenseRight({ ...rightMatchingItems[0] });
-        setRightPrice(parseInt(rightMatchingItems[0].price));
-      } else {
+    if (selectedLenseRight) {
+      if (rightPrice > 0) {
+        dispatch(
+          setLense({
+            ...selectedLenseRight,
+            price: String(rightPrice),
+            buyQty: 1,
+            lenseSide: "right",
+          } as LenseWithQty)
+        );
+        toast.success("Lense Added to Right Side");
+        setSelectedLenseRight(null);
         setRightPrice(0);
-      }
-      if (leftMatchingItems.length === 1) {
-        setSelectedLenseLeft({ ...leftMatchingItems[0] });
-        setLeftPrice(parseInt(leftMatchingItems[0].price));
       } else {
-        setLeftPrice(0);
+        toast.error("Price  Right  Side lense must be greater than 0");
       }
     } else {
-      setLeftPrice(0);
-      setRightPrice(0);
+      toast.error("No Lense Selected");
     }
-  }, [
-    selectLense.brand,
-    selectLense.coating,
-    selectLense.lenseType,
-    lensesLoading,
-    watch("right_eye_dist_sph"),
-    watch("right_eye_dist_cyl"),
-    watch("right_eye_near_sph"),
-    watch("left_eye_dist_sph"),
-    watch("left_eye_dist_cyl"),
-    watch("left_eye_near_sph"),
-    leftPowers,
-    rightPowers,
-  ]);
+  };
+  const handleSearchRight = async () => {
+    if (selectLense.brand && selectLense.coating && selectLense.lenseType) {
+      if (
+        (rightPowers.right_eye_near_sph && rightPowers.right_eye_dist_cyl) ||
+        rightPowers.right_eye_dist_sph
+      ) {
+        const params: { [key: string]: any } = {
+          brand_id: selectLense.brand,
+          type_id: selectLense.lenseType,
+          coating_id: selectLense.coating,
+          sph: parseFloat(rightPowers.right_eye_dist_sph).toFixed(2),
+          side: selectLense.lenseType !== 1 ? "right" : null,
+        };
 
-  const addFrameByList = () => {
-    if (selectLense) {
+        if (rightPowers.right_eye_dist_cyl) {
+          params.cyl = parseFloat(rightPowers.right_eye_dist_cyl).toFixed(2);
+        }
+
+        if (rightPowers.right_eye_near_sph) {
+          params.add = rightPowers.right_eye_near_sph;
+        }
+        const matchingLenses = findMatchingLense(params, lenses);
+        console.log("matchingLenses Right", matchingLenses);
+
+        if (matchingLenses.length > 0) {
+          setSelectedLenseRight(matchingLenses[0]);
+          setRightPrice(matchingLenses[0]?.price || 0);
+        } else {
+          setSelectedLenseRight(null);
+          setRightPrice(0);
+        }
+        // try {
+        //   const responce = await axiosClient.get("/lenses/search/", {
+        //     params: params,
+        //   });
+        //   console.log(responce.data);
+        // } catch (error) {
+        //   console.log(error);
+        // }
+      }
+    }
+  };
+  //!Left Side
+  const handleSearchLeft = async () => {
+    if (selectLense.brand && selectLense.coating && selectLense.lenseType) {
+      if (
+        (leftPowers.left_eye_near_sph && leftPowers.left_eye_dist_cyl) ||
+        leftPowers.left_eye_dist_sph
+      ) {
+        const params: { [key: string]: any } = {
+          brand_id: selectLense.brand,
+          type_id: selectLense.lenseType,
+          coating_id: selectLense.coating,
+          sph: parseFloat(leftPowers.left_eye_dist_sph).toFixed(2),
+          side: selectLense.lenseType !== 1 ? "left" : null,
+        };
+
+        if (leftPowers.left_eye_dist_cyl) {
+          params.cyl = parseFloat(leftPowers.left_eye_dist_cyl).toFixed(2);
+        }
+
+        if (leftPowers.left_eye_near_sph) {
+          params.add = leftPowers.left_eye_near_sph;
+        }
+        const matchingLenses = findMatchingLense(params, lenses);
+        console.log(matchingLenses);
+
+        if (matchingLenses.length > 0) {
+          setSelectedLenseLeft(matchingLenses[0]);
+          setLeftPrice(matchingLenses[0]?.price || 0);
+        } else {
+          setSelectedLenseLeft(null);
+          setLeftPrice(0);
+        }
+        // try {
+        //   const responce = await axiosClient.get("/lenses/search/", {
+        //     params: params,
+        //   });
+        //   console.log(responce.data);
+        // } catch (error) {
+        //   console.log(error);
+        // }
+      }
+    }
+  };
+  const addLeftLense = () => {
+    if (selectedLenseLeft) {
       if (leftPrice > 0) {
         dispatch(
           setLense({
@@ -180,27 +202,15 @@ export default function PowerToLenseFilter() {
           } as LenseWithQty)
         );
         toast.success("Lense Added to Left Side");
+        setSelectedLenseLeft(null);
+        setLeftPrice(0);
       } else {
-        toast.error("Price  Left Side lense must be greater than 0");
-      }
-      if (rightPrice > 0) {
-        dispatch(
-          setLense({
-            ...selectedLenseRight,
-            price: String(rightPrice),
-            buyQty: 1,
-            lenseSide: "left",
-          } as LenseWithQty)
-        );
-        toast.success("Lense Added to Left Side");
-      } else {
-        toast.error("Price  Left Side lense must be greater than 0");
+        toast.error("Price  Left  Side lense must be greater than 0");
       }
     } else {
       toast.error("No Lense Selected");
     }
   };
-
   return (
     <Paper variant="elevation" sx={{ padding: 2, m: 2 }}>
       <Typography variant="h6">Select Lense </Typography>
@@ -324,6 +334,17 @@ export default function PowerToLenseFilter() {
               onChange={(e) => setLeftPrice(parseInt(e.target.value))}
               inputProps={{ min: 0 }}
             />
+
+            <Button
+              onClick={handleSearchLeft}
+              color="inherit"
+              variant="contained"
+            >
+              <Search />
+            </Button>
+            <Button onClick={addLeftLense} variant="contained">
+              Left Add
+            </Button>
           </Box>
           <Box
             sx={{
@@ -337,7 +358,6 @@ export default function PowerToLenseFilter() {
             <Paper sx={{ p: 1, m: 1 }}>
               <Typography textAlign={"center"}>R</Typography>
             </Paper>
-
             <TextField
               size="small"
               label="sph"
@@ -388,22 +408,28 @@ export default function PowerToLenseFilter() {
               value={rightPrice}
               onChange={(e) => setRightPrice(parseInt(e.target.value))}
               inputProps={{ min: 0 }}
-            />
+            />{" "}
+            <Button
+              onClick={handleSearchRight}
+              color="inherit"
+              variant="contained"
+            >
+              <Search />
+            </Button>
+            <Button onClick={addRightLense} variant="contained">
+              Right Add
+            </Button>
           </Box>
         </Box>
-
-        <Button onClick={addFrameByList} variant="contained">
-          Add
-        </Button>
       </Box>
-      <Grid container spacing={2} justifyContent="flex-start">
+      <Box sx={{ marginTop: 2, display: "flex", flexDirection: "column" }}>
         {Object.values(selectedLenseList).length !== 0 &&
-          Object.values(selectedLenseList).map((lense) => (
+          Object.values(selectedLenseList).map((lenseitem) => (
             <div>
-              <InvoiceLenseItem lense={lense} />
+              <InvoiceLenseItem lense={lenseitem} />
             </div>
           ))}
-      </Grid>
+      </Box>
     </Paper>
   );
 }

@@ -98,7 +98,7 @@ export default function NavBar() {
   };
 
   const [value, setValue] = React.useState(getTabIndexFromPath(firstSegment));
-  const { setUser, setToken } = useAuthContext();
+  const { setUser, setUserToken, clearToken } = useAuthContext();
 
   // Handle Tab Change
   const handleChange = (
@@ -111,8 +111,7 @@ export default function NavBar() {
   // Array of Icons and Labels (dynamically derived)
 
   const deleteCookie = () => {
-    Cookies.remove("VISION_ACCESS_TOKEN");
-    setToken(null);
+    clearToken();
   };
   return (
     <Paper sx={{ width: "100%" }}>
