@@ -13,7 +13,7 @@ const StyledContainer = styled(Paper)(({ theme }) => ({
 const StyledInput = styled(Input)(() => ({
   minHeight: "40px",
   width: "100%",
-  padding:'0 10px'
+  padding: "0 10px",
 }));
 
 // Props Interface
@@ -29,7 +29,9 @@ const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
   ({ error, ...props }, ref) => (
     <StyledContainer>
       <StyledInput error={!!error} {...props} ref={ref} />
-      <Typography px={0.5} color="error" variant="caption">{error && <span>{error}</span>}</Typography>
+      <Typography px={0.5} color="error" variant="caption">
+        {error && <span>{error}</span>}
+      </Typography>
     </StyledContainer>
   )
 );

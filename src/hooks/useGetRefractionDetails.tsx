@@ -2,21 +2,22 @@ import { useState, useEffect, useCallback } from "react";
 
 import { RefractionDetailModel } from "../model/RefractionDetailModel";
 import axiosClient from "../axiosClient";
-import { handleError } from "../utils/handleError";
-import { AxiosError } from "axios";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 interface UseGetRefractionDetailReturn {
   refractionDetail: RefractionDetailModel;
   refractionDetailLoading: boolean;
-  refractionDetailError: string | null;
+  refractionDetailError: boolean;
   refresh: () => void;
 }
 
 const useGetRefractionDetails = (
-  refractionNumber: string
+  refractionNumber: string | undefined
 ): UseGetRefractionDetailReturn => {
-  const [refractionDetail, setrefractionDetail] =
-    useState<RefractionDetailModel>({});
+  const [refractionDetail, setrefractionDetail] = useState(
+    {} as RefractionDetailModel
+  );
   const [refractionDetailLoading, setrefractionDetailLoading] =
     useState<boolean>(true);
   const [refractionDetailError, setrefractionDetailError] =
@@ -24,21 +25,31 @@ const useGetRefractionDetails = (
 
   const fetchrefractionDetail = useCallback(async () => {
     setrefractionDetailLoading(true);
-    setrefractionDetailError(null);
+    setrefractionDetailError(false);
 
     try {
-      const response = await axiosClient.get<RefractionDetailModel[]>(
+      const response = await axiosClient.get<RefractionDetailModel>(
         `/refractions/${refractionNumber}/`
       );
       setrefractionDetail(response.data);
-    } catch (err: AxiosError) {
-      handleError(err, "Failed to Recive refractionDetail.");
-      if (err.status === 404) {
-        setrefractionDetailError(true);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.status === 404) {
+          setrefractionDetailError(true);
+        }
+      } else {
+        setrefractionDetailError(false);
+        toast.error("Network Error");
       }
-      setrefractionDetailError(err);
     } finally {
-      setrefractionDetailLoading(false);
+      setTimeout(() => {
+        setrefractionDetailLoading(false);
+        if (refractionDetailError) {
+          toast.success("Refraction Detail recived successfully");
+        } else {
+          toast.error("Refraction Detail not found");
+        }
+      }, 2000);
     }
   }, []);
 

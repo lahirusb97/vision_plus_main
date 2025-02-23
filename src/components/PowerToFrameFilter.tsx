@@ -21,8 +21,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { removeFrame, setFrame } from "../features/invoice/frameFilterSlice";
 import { FrameModel } from "../model/FrameModel";
 import toast from "react-hot-toast";
-import { Delete } from "@mui/icons-material";
+import { Delete, FindInPage, Search } from "@mui/icons-material";
 import { RootState } from "../store/store";
+import InvoiceFrameItem from "./InvoiceFrameItem";
 interface FrameWithQty extends FrameModel {
   buyQty: number;
 }
@@ -64,7 +65,8 @@ export default function PowerToFrameFilter() {
       setAvilableCodes([]);
     }
   }, [selectFrame.brand]);
-  useEffect(() => {
+
+  const findFrame = () => {
     if (
       framesLoading === false &&
       selectFrame.code &&
@@ -73,6 +75,7 @@ export default function PowerToFrameFilter() {
       selectFrame.size &&
       selectFrame.species
     ) {
+      setSelectedFrame(null);
       const matchingItems: FrameModel[] = frames.filter(
         (item) =>
           item.code === selectFrame.code &&
@@ -83,23 +86,28 @@ export default function PowerToFrameFilter() {
       );
 
       if (matchingItems.length === 1) {
-        setSelectedFrame({ ...matchingItems[0] });
         setPrice(parseInt(matchingItems[0].price));
+        setSelectedFrame({ ...matchingItems[0] });
       } else {
         setPrice(0);
+        // setSelectFrame({
+        //   brand: null,
+        //   code: null,
+        //   color: null,
+        //   size: null,
+        //   species: null,
+        // });
       }
-    } else {
-      setPrice(0);
     }
-  }, [selectFrame, framesLoading]);
-
+  };
   const addFrameByList = () => {
     if (selectedFrame) {
-      if (price > 0) {
+      if (price > 0 && selectedFrame.id) {
         dispatch(
           setFrame({ ...selectedFrame, price: String(price) } as FrameWithQty)
         );
         toast.success("Frame Added ");
+        setSelectedFrame(null);
       } else {
         toast.error("Price must be greater than 0");
       }
@@ -127,7 +135,7 @@ export default function PowerToFrameFilter() {
           }
           loading={brandsLoading}
           labelName="Select Brand"
-          defaultId={null}
+          defaultId={selectFrame.brand}
         />
 
         <DropdownInput
@@ -137,7 +145,7 @@ export default function PowerToFrameFilter() {
           }
           loading={codesLoading}
           labelName="Select Code"
-          defaultId={null}
+          defaultId={selectFrame.code}
         />
 
         {/* Color Dropdown */}
@@ -148,7 +156,7 @@ export default function PowerToFrameFilter() {
           }
           loading={colorsLoading}
           labelName="Select Color"
-          defaultId={null}
+          defaultId={selectFrame.color}
         />
 
         <FormControl fullWidth>
@@ -203,51 +211,30 @@ export default function PowerToFrameFilter() {
           onChange={(e) => setPrice(parseInt(e.target.value))}
           inputProps={{ min: 0 }}
         />
+        <Paper sx={{ p: 1 }}>
+          {selectedFrame ? selectedFrame?.stock.qty : ""}
+        </Paper>
 
-        <Button onClick={addFrameByList} variant="contained">
+        <Button color="info" onClick={findFrame} variant="contained">
+          <Search />
+        </Button>
+        <Button
+          disabled={!selectedFrame}
+          onClick={addFrameByList}
+          variant="contained"
+        >
           Add
         </Button>
       </Box>
 
-      <Grid container spacing={2} justifyContent="flex-start">
-        {Object.values(selectedFrameList).length === 0 ? (
-          <></>
-        ) : (
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+        {Object.values(selectedFrameList).length !== 0 &&
           Object.values(selectedFrameList).map((frame) => (
-            <Paper
-              elevation={3}
-              sx={{
-                width: "100%",
-                padding: 1,
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "space-evenly",
-                marginBottom: 1,
-                alignItems: "center",
-              }}
-            >
-              <Typography variant="body2">Code: {frame.code}</Typography>
-              <Typography variant="body2">Brand: {frame.brand}</Typography>
-              <Typography variant="body2">Color: {frame.color}</Typography>
-              <Typography variant="body2">Size: {frame.size}</Typography>
-
-              <Typography variant="body2">Quantity: {frame.buyQty}</Typography>
-              <Typography variant="body2">
-                Unite Price: {frame.price}
-              </Typography>
-              <Typography variant="body2">
-                Total Price: {parseInt(frame.price) * frame.buyQty}
-              </Typography>
-              <IconButton
-                onClick={() => dispatch(removeFrame(frame.id))}
-                color="error"
-              >
-                <Delete />
-              </IconButton>
-            </Paper>
-          ))
-        )}
-      </Grid>
+            <div>
+              <InvoiceFrameItem frame={frame} />
+            </div>
+          ))}
+      </Box>
     </Paper>
   );
 }

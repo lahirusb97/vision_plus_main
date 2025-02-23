@@ -1,15 +1,15 @@
+import { Token } from "@mui/icons-material";
 import axios, {
   AxiosInstance,
   AxiosResponse,
   AxiosError,
   InternalAxiosRequestConfig,
 } from "axios";
-import { getCookie } from "typescript-cookie";
+import { getTokenFromLocalStorage } from "./utils/geAuthToken";
 
 // Create an Axios instance with a base URL
 const axiosClient: AxiosInstance = axios.create({
   // baseURL: import.meta.env.VITE_BASE_URL,
-  // baseURL: "http://193.203.161.90:8000/api",
   baseURL: "http://193.203.161.90:8000/api",
   // baseURL: "http://127.0.0.1:8005/api",
   withCredentials: false,
@@ -17,7 +17,8 @@ const axiosClient: AxiosInstance = axios.create({
 
 // Request interceptor to add Authorization header
 axiosClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-  const token = getCookie("VISION_ACCESS_TOKEN");
+  const token = getTokenFromLocalStorage();
+
   if (
     token &&
     config.headers &&

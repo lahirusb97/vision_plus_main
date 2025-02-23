@@ -21,6 +21,7 @@ import { LogoutOutlined } from "@mui/icons-material";
 import { Cookies } from "typescript-cookie";
 import { useAuthContext } from "../../context/AuthContext";
 import { useLocation } from "react-router";
+import UserNav from "../user/UserNav";
 
 // TabPanel Component
 
@@ -86,7 +87,7 @@ export default function NavBar() {
       label: "Messenger",
       nav: RefractionNav,
     },
-    { path: "user", icon: UserIcon, label: "User", nav: RefractionNav },
+    { path: "user", icon: UserIcon, label: "User", nav: UserNav },
   ];
 
   const location = useLocation();
@@ -97,7 +98,7 @@ export default function NavBar() {
   };
 
   const [value, setValue] = React.useState(getTabIndexFromPath(firstSegment));
-  const { setUser, setToken } = useAuthContext();
+  const { setUser, setUserToken, clearToken } = useAuthContext();
 
   // Handle Tab Change
   const handleChange = (
@@ -110,8 +111,7 @@ export default function NavBar() {
   // Array of Icons and Labels (dynamically derived)
 
   const deleteCookie = () => {
-    Cookies.remove("VISION_ACCESS_TOKEN");
-    setToken(null);
+    clearToken();
   };
   return (
     <Paper sx={{ width: "100%" }}>

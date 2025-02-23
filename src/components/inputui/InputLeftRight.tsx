@@ -26,7 +26,6 @@ export default function InputLeftRight({
           {...register(inputOneName)}
           label={labelName}
           placeholder={`${labelName} Right`}
-          type="number"
           error={errors?.[inputOneName]?.message}
         />
       </Grid>
@@ -34,7 +33,6 @@ export default function InputLeftRight({
         <CustomInput
           {...register(inputTwoName)}
           placeholder={`${labelName} Left`}
-          type="number"
           error={errors?.[inputTwoName]?.message}
         />
       </Grid>

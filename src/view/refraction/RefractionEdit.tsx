@@ -1,15 +1,14 @@
-import React from "react";
-import { useForm } from "react-hook-form";
-import CustomInputWithLabel from "../../components/inputui/CustomInputWithLabel";
+import { FormProvider, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as Yup from "yup";
-import { Box, Button, Paper, Typography } from "@mui/material";
-import HbRxInput from "../../components/inputui/HbRxInput";
-import InputLeftRight from "../../components/inputui/InputLeftRight";
+import { Box, Button, Paper, TextField, Typography } from "@mui/material";
 import { useLocation, useParams } from "react-router";
-import EyeTestTable from "../../components/EyeTestTable";
 import axiosClient from "../../axiosClient";
-import theme from "../../theme/theme";
+import { grey } from "@mui/material/colors";
+import RefractionDetailsRight from "./RefractionDetailsRight";
+import RefractionDetailsLeft from "./RefractionDetailsLeft";
+import { refractionValidationSchema } from "../../validations/refractionDetails";
+import toast from "react-hot-toast";
+import axios from "axios";
 
 // Validation Schema
 
@@ -18,54 +17,9 @@ export default function RefractionEdit() {
   const location = useLocation();
   const { customerName, mobileNumber } = location.state || {};
 
-  const validationSchema = Yup.object().shape({
-    hb_rx_right_dist: Yup.string().required("Right Distance is required"),
-    hb_rx_left_dist: Yup.string().required("Left Distance is required"),
-    hb_rx_right_near: Yup.string().required("Right Near is required"),
-    hb_rx_left_near: Yup.string().required("Left Near is required"),
-    auto_ref_right: Yup.string().required("Auto Ref Right is required"),
-    auto_ref_left: Yup.string().required("Auto Ref Left is required"),
-    ntc_right: Yup.string().required("NTC Right is required"),
-    ntc_left: Yup.string().required("NTC Left is required"),
-    va_without_glass_right: Yup.string().required(
-      "VA Without Glass Right is required"
-    ),
-    va_without_glass_left: Yup.string().required(
-      "VA Without Glass Left is required"
-    ),
-    va_without_ph_right: Yup.string().required(
-      "VA Without P/H Right is required"
-    ),
-    va_without_ph_left: Yup.string().required(
-      "VA Without P/H Left is required"
-    ),
-    va_with_glass_right: Yup.string().required(
-      "VA With Glass Right is required"
-    ),
-    va_with_glass_left: Yup.string().required("VA With Glass Left is required"),
-    right_eye_dist_sph: Yup.string().required(
-      "Right Eye Distance Sph is required"
-    ),
-    right_eye_dist_cyl: Yup.string(),
-    right_eye_dist_axis: Yup.string(),
-    right_eye_near_sph: Yup.string(),
-    left_eye_dist_sph: Yup.string().required(
-      "Left Eye Distance Sph is required"
-    ),
-    left_eye_dist_cyl: Yup.string(),
-    left_eye_dist_axis: Yup.string(),
-    left_eye_near_sph: Yup.string(),
-    remark: Yup.string(),
+  const methods = useForm({
+    resolver: yupResolver(refractionValidationSchema),
   });
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
-    resolver: yupResolver(validationSchema),
-  });
-
   const onSubmit = async (data) => {
     try {
       const responseData = await axiosClient.post(
@@ -75,128 +29,113 @@ export default function RefractionEdit() {
           refraction: parseInt(id),
         }
       );
-      console.log(responseData.status);
-    } catch (error) {
-      if (error.response) {
-        // Extract and log backend error details
-        console.error("Backend Error:", error.response.data.refraction[0]); // Full error details
+      toast.success("Refraction saved successfully");
+      methods.reset();
+    } catch (err) {
+      console.log(err);
+
+      if (axios.isAxiosError(err)) {
+        toast.error(
+          err.response?.data?.message || "Failed to save Reraction details"
+        );
       } else {
-        // Handle network or unexpected errors
-        console.error("Request Error:", error.message);
+        toast.error("An unexpected error occurred Refrsh the page");
       }
     }
   };
 
   return (
-    <Box sx={{ minWidth: "1000px", padding: "20px" }}>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Box
-          sx={{ display: "flex", justifyContent: "space-between", marginY: 3 }}
-        >
+    <FormProvider {...methods}>
+      <Box sx={{ minWidth: "1000px", padding: "10px" }}>
+        <form onSubmit={methods.handleSubmit(onSubmit)}>
           <Paper
-            sx={{ display: "flex", alignItems: "center", textAlign: "right" }}
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              padding: 1,
+              borderRadius: 2,
+              boxShadow: 2,
+              backgroundColor: "#f5f5f5",
+            }}
           >
-            <Typography
-              sx={{
-                width: "200px",
-                color: "white",
-                backgroundColor: theme.palette.primary.contrastText,
-                padding: ".4rem",
-                borderRadius: 1,
-              }}
-            >
-              Customer Name
-            </Typography>
-            <Typography
-              align="left"
-              sx={{ marginLeft: "20px", width: "200px" }}
-            >
-              {customerName}
-            </Typography>
+            {[
+              { label: "Name", value: customerName },
+              { label: "NIC", value: "978221112V" },
+              { label: "Mobile", value: mobileNumber },
+            ].map((item, index) => (
+              <Box
+                key={index}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1,
+                  minWidth: "30%",
+                }}
+              >
+                <Typography
+                  variant="body1"
+                  sx={{
+                    bgcolor: grey[700],
+                    color: "white",
+                    p: "4px 12px",
+                    borderRadius: 1,
+                    minWidth: "40px",
+                    textAlign: "center",
+                  }}
+                >
+                  {item.label}
+                </Typography>
+                <Typography
+                  variant="body1"
+                  fontWeight={500}
+                  color="textSecondary"
+                >
+                  {item.value}
+                </Typography>
+              </Box>
+            ))}
           </Paper>
-          <Paper
-            sx={{ display: "flex", alignItems: "center", textAlign: "right" }}
+
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-between",
+              gap: 1,
+              p: 1,
+            }}
           >
-            <Typography
-              sx={{
-                width: "200px",
-                color: "white",
-                backgroundColor: theme.palette.primary.contrastText,
-                padding: ".4rem",
-                borderRadius: 1,
-              }}
-            >
-              Mobile Number
-            </Typography>
-            <Typography
-              align="left"
-              sx={{ marginLeft: "20px", width: "200px" }}
-            >
-              {mobileNumber}
-            </Typography>
-          </Paper>
-        </Box>
+            <RefractionDetailsRight />
+            <RefractionDetailsLeft />
+          </Box>
+          <TextField
+            {...methods.register("note")}
+            sx={{ my: 0.5 }}
+            size="small"
+            error={!!methods.formState.errors.note}
+            fullWidth
+            label="note"
+          />
+          <TextField
+            {...methods.register("remark")}
+            sx={{ my: 0.5 }}
+            size="small"
+            error={!!methods.formState.errors.remark}
+            fullWidth
+            label="remark"
+          />
 
-        <Paper
-          variant="outlined"
-          sx={{ padding: "20px", marginBottom: "20px" }}
-        >
-          <HbRxInput register={register} errors={errors} />
-        </Paper>
-        <InputLeftRight
-          register={register}
-          errors={errors}
-          inputOneName="auto_ref_right"
-          inputTwoName="auto_ref_left"
-          labelName="Auto Ref"
-        />
-        <InputLeftRight
-          register={register}
-          errors={errors}
-          inputOneName="ntc_right"
-          inputTwoName="ntc_left"
-          labelName="NTC"
-        />
-        <InputLeftRight
-          register={register}
-          errors={errors}
-          inputOneName="va_without_glass_right"
-          inputTwoName="va_without_glass_left"
-          labelName="VA Without Glass"
-        />
-        <InputLeftRight
-          register={register}
-          errors={errors}
-          inputOneName="va_without_ph_right"
-          inputTwoName="va_without_ph_left"
-          labelName="VA Without P/H"
-        />
-        <InputLeftRight
-          register={register}
-          errors={errors}
-          inputOneName="va_with_glass_right"
-          inputTwoName="va_with_glass_left"
-          labelName="VA With Glass"
-        />
-        <EyeTestTable errors={errors} register={register} />
-
-        <CustomInputWithLabel
-          error={""}
-          {...register("remark")}
-          label="Remark"
-          placeholder="Enter value1"
-          type="text"
-          fullWidth
-        />
-        <Button
-          sx={{ width: "100%" }}
-          type="submit"
-          variant="contained"
-          color="primary"
-        >
-          Submit
-        </Button>
-      </form>
-    </Box>
+          <Button
+            sx={{ width: "100%" }}
+            type="submit"
+            variant="contained"
+            color="primary"
+          >
+            Submit
+          </Button>
+        </form>
+      </Box>
+    </FormProvider>
   );
 }

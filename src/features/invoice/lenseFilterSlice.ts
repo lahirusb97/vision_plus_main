@@ -5,6 +5,7 @@ import { LenseModel } from "../../model/LenseModel";
 // Extend LenseModel to include buyQty
 interface LenseWithQty extends LenseModel {
   buyQty: number;
+  lenseSide: string;
 }
 
 // Define state interface
@@ -22,7 +23,7 @@ const lenseFilterSlice = createSlice({
   initialState,
   reducers: {
     // Add or update a LenseModel in the store
-    setLense: (state, action: PayloadAction<LenseModel>) => {
+    setLense: (state, action: PayloadAction<LenseWithQty>) => {
       const lense = action.payload;
       if (state.selectedLenses[lense.id]) {
         // If lens already exists, increase buyQty
@@ -30,7 +31,11 @@ const lenseFilterSlice = createSlice({
         state.selectedLenses[lense.id].price = lense.price;
       } else {
         // If lens is new, set buyQty = 1
-        state.selectedLenses[lense.id] = { ...lense, buyQty: 1 };
+        state.selectedLenses[lense.id] = {
+          ...lense,
+          buyQty: 1,
+          lenseSide: lense.lenseSide,
+        };
       }
     },
 

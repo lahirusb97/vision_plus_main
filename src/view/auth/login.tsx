@@ -21,7 +21,7 @@ interface LoginInput {
 }
 
 export default function Login() {
-  const { setUser, setToken } = useAuthContext();
+  const { setUser, setUserToken } = useAuthContext();
   const [loginInput, setLoginInput] = useState<LoginInput>({
     username: "admin",
     password: "admin",
@@ -43,7 +43,7 @@ export default function Login() {
         message: data.data.message,
       };
       setUser(userData);
-      setToken(data.data.token);
+      setUserToken(data.data.token);
       navigate("/");
     } catch (error) {
       console.error(error);

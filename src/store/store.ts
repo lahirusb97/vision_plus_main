@@ -1,11 +1,15 @@
 import { configureStore } from "@reduxjs/toolkit";
 import frameFilterSlice from "../features/invoice/frameFilterSlice";
 import lenseFilterSlice from "../features/invoice/lenseFilterSlice";
+import stockDrawerSlice from "../features/invoice/stockDrawerSlice";
+import otherItemSlice from "../features/invoice/otherItemSlice";
 
 export const store = configureStore({
   reducer: {
     invoice_frame_filer: frameFilterSlice,
     invoice_lense_filer: lenseFilterSlice,
+    stock_drawer: stockDrawerSlice,
+    invoice_other_Item: otherItemSlice,
   },
 });
 

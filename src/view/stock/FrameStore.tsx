@@ -12,6 +12,7 @@ import { useDeleteDialog } from "../../context/DeleteDialogContext";
 const FrameStore = () => {
   const { frames, framesLoading, refresh } = useGetFrames();
   const { openDialog } = useDeleteDialog();
+  console.log(frames);
 
   // Define columns
   const columns = useMemo(
@@ -54,17 +55,17 @@ const FrameStore = () => {
       },
       {
         header: "Brand",
-        accessorKey: "brand",
+        accessorKey: "brand_name",
         size: 130,
       },
       {
         header: "Code",
-        accessorKey: "code",
+        accessorKey: "code_name",
         size: 130,
       },
       {
         header: "Color",
-        accessorKey: "color",
+        accessorKey: "color_name",
         size: 130,
       },
       {
@@ -95,7 +96,7 @@ const FrameStore = () => {
   const handleDelete = async (row) => {
     openDialog(
       `/frames/${row.id}/`,
-      `Frame of Brand - ${row.brand} & Code - ${row.code}`,
+      `Frame of Brand - ${row.brand_name} & Code - ${row.code_name}`,
       refresh
     );
   };

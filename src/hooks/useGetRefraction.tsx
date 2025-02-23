@@ -22,7 +22,7 @@ const useGetRefraction = () => {
         params: params,
       });
       setData(response.data);
-    } catch (err: unknown) {
+    } catch (err) {
       if (axios.isAxiosError(err)) {
         toast.error(
           err.response?.data?.message || "Failed to recive Reraction data"
