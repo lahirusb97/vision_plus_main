@@ -33,8 +33,6 @@ export default function LensNoneStock() {
     (state: RootState) => state.invoice_other_Item.selectedOtherItems
   );
   const dispatch = useDispatch();
-  console.log(selectedFrameList);
-
   const addItems = () => {
     if (selectedItem.id) {
       dispatch(
