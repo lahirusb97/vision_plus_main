@@ -8,6 +8,7 @@ import {
   Typography,
   Box,
   Button,
+  TableHead,
 } from "@mui/material";
 import { useLocation } from "react-router";
 import { useRef } from "react";
@@ -15,11 +16,11 @@ import { useReactToPrint } from "react-to-print";
 
 const InvoiceView = () => {
   const location = useLocation();
-
-  const responce = location.state || {}; // Handle possible undefined state
+  const { lense, frame, order, patient } = location.state || {};
 
   const componentRef = useRef(null);
   const reactToPrintFn = useReactToPrint({ contentRef: componentRef });
+  console.log(order);
 
   return (
     <div>
@@ -62,13 +63,13 @@ const InvoiceView = () => {
               <strong>Invoice No:</strong> 584644
             </Typography>
             <Typography variant="body2">
-              <strong>Customer Name:</strong> {responce.patient.name}
+              <strong>Customer Name:</strong> {patient.name}
             </Typography>
             <Typography variant="body2">
-              <strong>Address:</strong> {responce.patient.address}
+              <strong>Address:</strong> {patient.address}
             </Typography>
             <Typography variant="body2">
-              <strong>Phone Number:</strong> {responce.patient.phone_number}
+              <strong>Phone Number:</strong> {patient.phone_number}
             </Typography>
           </Box>
 
@@ -82,61 +83,93 @@ const InvoiceView = () => {
 
         {/* Table */}
         <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 500, border: "1px solid black" }}>
-            <TableBody>
+          <Table
+            size="small"
+            sx={{ minWidth: 700, maxWidth: "1200px" }}
+            aria-label="spanning table"
+          >
+            <TableHead>
               <TableRow>
-                <TableCell>
-                  <strong>Items Name</strong>
-                </TableCell>
-                <TableCell align="center">
-                  <strong>Quantity</strong>
-                </TableCell>
-                <TableCell align="right">
-                  <strong>Price</strong>
-                </TableCell>
-                <TableCell align="right">
-                  <strong>Last Price</strong>
-                </TableCell>
+                <TableCell>Desc</TableCell>
+                <TableCell align="right">Qty.</TableCell>
+                <TableCell align="right">Unit</TableCell>
+                <TableCell align="right">Sum</TableCell>
               </TableRow>
-
-              {responce.order_items.map((item: any) => (
-                <TableRow>
-                  <TableCell>{item.frame}</TableCell>
-                  <TableCell align="center">{item.quantity}</TableCell>
-                  <TableCell align="right">{item.price_per_unit}</TableCell>
-                  <TableCell align="right">{item.subtotal}</TableCell>
+            </TableHead>
+            <TableBody>
+              {Object.values(frame).map((row, index) => (
+                <TableRow key={index}>
+                  <TableCell>{`${row.brand_name} / ${row.code_name} / ${row.color_name} / ${row.species}`}</TableCell>
+                  <TableCell align="right">{row.buyQty}</TableCell>
+                  <TableCell align="right">{row.price}</TableCell>
+                  <TableCell align="right">
+                    {parseInt(row.price) * row.buyQty}
+                  </TableCell>
                 </TableRow>
               ))}
+              {Object.values(lense).map((row, index) => (
+                <TableRow key={index}>
+                  <TableCell>
+                    {`${row.stock.lens_type} / ${
+                      row.stock.coating
+                    } / ${row.powers
+                      .map((power) => {
+                        if (power.power === 1) {
+                          return `SPH: ${power.value}`; // For SPH (Sphere)
+                        } else if (power.power === 2) {
+                          return `CYL: ${power.value}`; // For CYL (Cylinder)
+                        } else if (power.power === 3) {
+                          return `ADD: ${power.value}`; // For ADD (Addition)
+                        }
+                        return ""; // If no matching power type
+                      })
+                      .join(" / ")} `}
+                  </TableCell>
+
+                  <TableCell align="right">{row.buyQty}</TableCell>
+                  <TableCell align="right">{row.price}</TableCell>
+                  <TableCell align="right">
+                    {parseInt(row.price) * row.buyQty}
+                  </TableCell>
+                </TableRow>
+              ))}
+              {/* {Object.values(OtherInvoiceList).map((row, index) => (
+                <TableRow key={index}>
+                  <TableCell>
+                    <IconButton
+                      onClick={() => dispatch(removeOtherItem(row.id))}
+                    >
+                      <Delete color="error" />
+                    </IconButton>
+                  </TableCell>
+
+                  <TableCell>{`${row.name}  `}</TableCell>
+
+                  <TableCell align="right">{row.buyQty}</TableCell>
+                  <TableCell align="right">{row.price}</TableCell>
+                  <TableCell align="right">
+                    {parseInt(row.price) * row.buyQty}
+                  </TableCell>
+                </TableRow>
+              ))} */}
               <TableRow>
-                <TableCell align="left" colSpan={3}>
-                  <strong>Full Amount</strong>
+                <TableCell rowSpan={3} />
+
+                <TableCell align="right" colSpan={2}>
+                  Subtotal
                 </TableCell>
-                <TableCell align="right">{responce.order.sub_total}</TableCell>
+                <TableCell align="right">{order.sub_total}</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell align="left" colSpan={3}>
-                  <strong>Discount</strong>
-                </TableCell>
-                <TableCell align="right">{responce.order.discount}</TableCell>
+                <TableCell colSpan={1} />
+                <TableCell align="right">Discounts</TableCell>
+                <TableCell align="right">{order.discount}</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell align="left" colSpan={3}>
-                  <strong>Cash / Card</strong>
+                <TableCell align="right" colSpan={2}>
+                  Total
                 </TableCell>
-                <TableCell align="right">
-                  {responce.order_payments[0]["amount"] +
-                    responce.order_payments[1]["amount"]}
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell align="left" colSpan={3}>
-                  <strong>Balance</strong>
-                </TableCell>
-                <TableCell align="right">
-                  {responce.order.sub_total -
-                    (responce.order_payments[0]["amount"] +
-                      responce.order_payments[1]["amount"])}
-                </TableCell>
+                <TableCell align="right">{order.total_price}</TableCell>
               </TableRow>
             </TableBody>
           </Table>
