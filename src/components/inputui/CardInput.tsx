@@ -6,6 +6,7 @@ import { useFormContext } from "react-hook-form";
 const CardInput: React.FC = () => {
   const {
     register,
+    setValue,
     formState: { errors },
   } = useFormContext();
   return (
@@ -22,6 +23,16 @@ const CardInput: React.FC = () => {
         placeholder="Card number"
         sx={{ width: 200 }}
         type="number"
+        onFocus={(e) => {
+          if (e.target.value === "0") {
+            setValue("card", "");
+          }
+        }}
+        onBlur={(e) => {
+          if (e.target.value === "") {
+            setValue("card", "0");
+          }
+        }}
         error={!!errors.card}
       />
     </Box>

@@ -27,15 +27,20 @@ import { clearLenses } from "../../../features/invoice/lenseFilterSlice";
 import { clearOtherItem } from "../../../features/invoice/otherItemSlice";
 
 export default function FactoryInvoiceForm() {
+  const methods = useForm({
+    resolver: yupResolver(factoryInvoiceSchema),
+    defaultValues: {
+      card: 0,
+      cash: 0,
+      discount: 0,
+    },
+  });
+  const discount = methods.watch("discount");
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const queryParams = new URLSearchParams(location.search);
 
-  const [discount, setDiscount] = React.useState(0);
-  const handleDiscountChange = (event) => {
-    setDiscount(event.target.value);
-  };
   const FrameInvoiceList = useSelector(
     (state: RootState) => state.invoice_frame_filer.selectedFrameList
   );
@@ -51,6 +56,7 @@ export default function FactoryInvoiceForm() {
       return acc + rowTotal;
     }, 0);
   };
+
   const frameTotal = calculateTotal(Object.values(FrameInvoiceList));
   const lenseTotal = calculateTotal(Object.values(LenseInvoiceList));
   const otherTotal = calculateTotal(Object.values(OtherInvoiceList));
@@ -60,14 +66,6 @@ export default function FactoryInvoiceForm() {
   const { refractionDetail, refractionDetailLoading, refractionDetailError } =
     useGetRefractionDetails(id);
 
-  const methods = useForm({
-    resolver: yupResolver(factoryInvoiceSchema),
-    defaultValues: {
-      card: 0,
-      cash: 0,
-      discount: 0,
-    },
-  });
   useEffect(() => {
     return () => {
       dispatch(clearFrame());
@@ -223,14 +221,12 @@ export default function FactoryInvoiceForm() {
               margin: "0 auto", // Centers it
             }}
           >
-            <LeftEyeTable />
             <RightEyeTable />
+
+            <LeftEyeTable />
             <PationtDetails />
           </Box>
-          <InvoiceTable
-            handleDiscountChange={handleDiscountChange}
-            discount={discount}
-          />
+          <InvoiceTable />
           <Box
             sx={{
               display: "flex",

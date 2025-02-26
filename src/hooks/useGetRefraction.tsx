@@ -45,7 +45,6 @@ const useGetRefraction = () => {
   const pageNavigation = (page: number) => {
     setParams({ page: page });
   };
-
   return {
     data,
     isLoading,

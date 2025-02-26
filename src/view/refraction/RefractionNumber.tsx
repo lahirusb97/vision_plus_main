@@ -7,53 +7,48 @@ import {
   Typography,
   CircularProgress,
 } from "@mui/material";
-import RefractionCompletePopup from "./RefractionCompletePopup";
 import axiosClient from "../../axiosClient";
-import { handleError } from "../../utils/handleError";
 import { AxiosError } from "axios";
 import toast from "react-hot-toast";
-
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import { useNavigate } from "react-router";
 export default function RefractionNumber() {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [open, setOpen] = React.useState({ open: false, message: "" });
-  const [createRefraction, setCreateRefraction] = useState({
-    customer_full_name: "",
-    customer_mobile: "",
+  const schema = yup.object({
+    customer_full_name: yup.string().required("Full Name is required"),
+    customer_mobile: yup
+      .string()
+      .required("User Name is required")
+      .max(10)
+      .min(10),
   });
 
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
+  const { register, handleSubmit, reset } = useForm({
+    resolver: yupResolver(schema),
+  });
+  const shandleSubmit = async (data) => {
     try {
-      console.log(createRefraction);
-
       setLoading(true);
-      const responseData = await axiosClient.post(
-        "/refractions/create/",
-        createRefraction
-      );
-      setCreateRefraction({
-        customer_full_name: "",
-        customer_mobile: "",
+      const responseData = await axiosClient.post("/refractions/create/", data);
+      const params = new URLSearchParams({
+        customer_full_name: responseData.data.data.customer_full_name,
+        customer_mobile: responseData.data.data.customer_mobile,
+        refraction_number: responseData.data.data.refraction_number,
       });
-      setOpen({
-        open: true,
-        message: `Refraction Number: ${responseData.data.refraction_number}`,
-      });
+      reset();
+      navigate(`success?${params.toString()}`);
     } catch (error) {
       if (error instanceof AxiosError) {
         toast.error(error.response?.data?.message || "Something went wrong");
       }
     } finally {
-      setCreateRefraction({
-        customer_full_name: "",
-        customer_mobile: "",
-      });
       setLoading(false);
     }
   };
-  const handleToggle = () => {
-    setOpen({ open: !open.open, message: "" });
-  };
+
   return (
     <Box
       sx={{
@@ -74,14 +69,9 @@ export default function RefractionNumber() {
         <Typography variant="h6" gutterBottom align="center">
           Customer Details
         </Typography>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit(shandleSubmit)}>
           <TextField
-            onChange={(e) =>
-              setCreateRefraction({
-                ...createRefraction,
-                customer_full_name: e.target.value,
-              })
-            }
+            {...register("customer_full_name")}
             fullWidth
             label="Customer Name"
             variant="outlined"
@@ -89,12 +79,7 @@ export default function RefractionNumber() {
             required
           />
           <TextField
-            onChange={(e) =>
-              setCreateRefraction({
-                ...createRefraction,
-                customer_mobile: e.target.value,
-              })
-            }
+            {...register("customer_mobile")}
             fullWidth
             label="Phone Number"
             variant="outlined"
@@ -119,11 +104,6 @@ export default function RefractionNumber() {
           </Button>
         </form>
       </Paper>
-      <RefractionCompletePopup
-        open={open.open}
-        message={open.message}
-        handleToggle={handleToggle}
-      />
     </Box>
   );
 }

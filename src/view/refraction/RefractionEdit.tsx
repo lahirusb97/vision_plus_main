@@ -109,22 +109,24 @@ export default function RefractionEdit() {
             <RefractionDetailsRight />
             <RefractionDetailsLeft />
           </Box>
-          <TextField
-            {...methods.register("note")}
-            sx={{ my: 0.5 }}
-            size="small"
-            error={!!methods.formState.errors.note}
-            fullWidth
-            label="note"
-          />
-          <TextField
-            {...methods.register("remark")}
-            sx={{ my: 0.5 }}
-            size="small"
-            error={!!methods.formState.errors.remark}
-            fullWidth
-            label="remark"
-          />
+          <Box sx={{ display: "flex", gap: 1 }}>
+            {/* <TextField
+              {...methods.register("note")}
+              sx={{ my: 0.5 }}
+              size="small"
+              fullWidth
+              label="note"
+              multiline
+            /> */}
+            <TextField
+              {...methods.register("remark")}
+              sx={{ my: 0.5 }}
+              size="small"
+              fullWidth
+              label="remark"
+              multiline
+            />
+          </Box>
 
           <Button
             sx={{ width: "100%" }}

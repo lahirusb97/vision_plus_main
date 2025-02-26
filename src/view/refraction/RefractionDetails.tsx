@@ -126,7 +126,7 @@ export default function RefractionDetails() {
                 <TableRow
                   onClick={() => setSelectedRow(row)}
                   sx={{
-                    height: 50,
+                    height: 40,
                     cursor: "pointer",
                     backgroundColor:
                       selectedRow?.id === row.id
@@ -160,7 +160,6 @@ export default function RefractionDetails() {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          marginTop: 1,
         }}
       >
         <Pagination
@@ -183,7 +182,7 @@ export default function RefractionDetails() {
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          gap: 2,
+          gap: 1,
         }}
       >
         <Button

@@ -6,6 +6,8 @@ import { useFormContext } from "react-hook-form";
 const CashInput: React.FC = () => {
   const {
     register,
+    setValue,
+    watch,
     formState: { errors },
   } = useFormContext();
   return (
@@ -24,6 +26,16 @@ const CashInput: React.FC = () => {
         placeholder="Enter amount"
         sx={{ width: 200 }}
         error={!!errors.cash}
+        onFocus={(e) => {
+          if (e.target.value === "0") {
+            setValue("cash", "");
+          }
+        }}
+        onBlur={(e) => {
+          if (e.target.value === "") {
+            setValue("cash", "0");
+          }
+        }}
       />
     </Box>
   );

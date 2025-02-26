@@ -2,85 +2,52 @@
 import { lazy, Suspense } from "react";
 import { createBrowserRouter } from "react-router";
 import { refractionRoutes } from "./routelist/refraction.route";
-
 import { channelRoutes } from "./routelist/channel.route";
-
 import { transactionRoutes } from "./routelist/transaction.route";
-
-import RegisterUser from "../view/auth/RegisterUser";
 import { stockRoutes } from "./routelist/stock.route";
 import { userRoutes } from "./routelist/user.route";
+import LoginProtectedRoute from "./LoginProtectedRoute";
+import ProtectedChildRoute from "./ProtectedChildRoute";
+import PublicRoute from "./PublicRoute";
 
-// Lazy load components
 const Login = lazy(() => import("../view/auth/login"));
-const LoginProtectedRoute = lazy(() => import("./LoginProtectedRoute"));
-const ProtectedChildRoute = lazy(() => import("./ProtectedChildRoute"));
-const PublicRoute = lazy(() => import("./PublicRoute"));
-
+const RegisterUser = lazy(() => import("../view/auth/RegisterUser"));
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: (
-      <Suspense fallback={<div>Loading...</div>}>
-        <LoginProtectedRoute />
-      </Suspense>
-    ),
+    element: <LoginProtectedRoute />,
     children: [
       {
         path: "",
-        element: (
-          <Suspense fallback={<div>Loading...</div>}>
-            <ProtectedChildRoute />
-          </Suspense>
-        ),
+        element: <ProtectedChildRoute />,
         children: refractionRoutes,
       },
 
       {
         path: "channel",
 
-        element: (
-          <Suspense fallback={<div>Loading...</div>}>
-            <ProtectedChildRoute />
-          </Suspense>
-        ),
+        element: <ProtectedChildRoute />,
 
         children: channelRoutes,
       },
       {
         path: "transaction",
-        element: (
-          <Suspense fallback={<div>Loading...</div>}>
-            <ProtectedChildRoute />
-          </Suspense>
-        ),
+        element: <ProtectedChildRoute />,
         children: transactionRoutes,
       },
       {
         path: "stock",
-        element: (
-          <Suspense fallback={<div>Loading...</div>}>
-            <ProtectedChildRoute />
-          </Suspense>
-        ),
+        element: <ProtectedChildRoute />,
         children: stockRoutes,
       },
       {
         path: "transaction",
-        element: (
-          <Suspense fallback={<div>Loading...</div>}>
-            <ProtectedChildRoute />
-          </Suspense>
-        ),
+        element: <ProtectedChildRoute />,
         children: transactionRoutes,
       },
       {
         path: "user",
-        element: (
-          <Suspense fallback={<div>Loading...</div>}>
-            <ProtectedChildRoute />
-          </Suspense>
-        ),
+        element: <ProtectedChildRoute />,
         children: userRoutes,
       },
     ],

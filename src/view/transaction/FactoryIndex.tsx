@@ -134,7 +134,7 @@ export default function FactoryIndex() {
                 <TableRow
                   onClick={() => setSelectedRow(row)}
                   sx={{
-                    height: 50,
+                    height: 40,
                     cursor: "pointer",
                     backgroundColor:
                       selectedRow?.id === row.id

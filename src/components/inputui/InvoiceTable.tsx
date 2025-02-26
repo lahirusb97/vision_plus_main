@@ -13,12 +13,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { removeFrame } from "../../features/invoice/frameFilterSlice";
 import { removeLense } from "../../features/invoice/lenseFilterSlice";
 import { removeOtherItem } from "../../features/invoice/otherItemSlice";
+import { useFormContext } from "react-hook-form";
 
-interface data {
-  handleDiscountChange: () => void;
-  discount: number;
-}
-export default function InvoiceTable({ handleDiscountChange, discount }: data) {
+export default function InvoiceTable() {
+  const { register, watch, setValue } = useFormContext();
+
   const dispatch = useDispatch();
   const FrameInvoiceList = useSelector(
     (state: RootState) => state.invoice_frame_filer.selectedFrameList
@@ -39,7 +38,7 @@ export default function InvoiceTable({ handleDiscountChange, discount }: data) {
   const lenseTotal = calculateTotal(Object.values(LenseInvoiceList));
   const otherTotal = calculateTotal(Object.values(OtherInvoiceList));
   const subtotal = frameTotal + lenseTotal + otherTotal;
-  const grandTotal = subtotal - discount;
+  const grandTotal = subtotal - watch("discount");
 
   return (
     <TableContainer
@@ -146,13 +145,20 @@ export default function InvoiceTable({ handleDiscountChange, discount }: data) {
             <TableCell align="right">Discounts</TableCell>
             <TableCell align="right">
               <Input
+                {...register("discount")}
                 sx={{ width: "100%" }} // Optional for full width
-                value={discount}
                 type="number"
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  handleDiscountChange
-                }
                 inputProps={{ style: { textAlign: "right" } }} // Correct way
+                onFocus={(e) => {
+                  if (e.target.value === "0") {
+                    setValue("discount", "");
+                  }
+                }}
+                onBlur={(e) => {
+                  if (e.target.value === "") {
+                    setValue("discount", "0");
+                  }
+                }}
               />
             </TableCell>
           </TableRow>
