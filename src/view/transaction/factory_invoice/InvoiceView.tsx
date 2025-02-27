@@ -27,7 +27,9 @@ const InvoiceView = () => {
   const { invoiceDetail, invoiceDetailLoading } = useGetSingleInvoiceDetail(
     parseInt(queryParams.get("order_id") ?? "")
   );
-  const DateView = (date) => {
+  console.log(invoiceDetail);
+
+  const DateView = (date: string) => {
     return new Date(date).toLocaleString("default", {
       year: "numeric",
       month: "2-digit",
@@ -152,8 +154,11 @@ const InvoiceView = () => {
                         <Check style={{ marginRight: 8 }} />
                       )}
                       <Typography variant="body1">
-                        {row.lens ? "Lens" : row.frame ? "Frame" : "Item"}{" "}
-                        {index + 1}
+                        {row.lens
+                          ? row?.lense_name
+                          : row.frame
+                          ? row?.frame_name
+                          : ""}
                       </Typography>
                     </Box>
                   </TableCell>
@@ -178,7 +183,7 @@ const InvoiceView = () => {
                 </TableCell>
                 <TableCell align="right">
                   <Typography variant="subtitle1">
-                    ${invoiceDetail.order_details.sub_total}
+                    {invoiceDetail.order_details.sub_total}
                   </Typography>
                 </TableCell>
               </TableRow>
@@ -189,7 +194,7 @@ const InvoiceView = () => {
                 </TableCell>
                 <TableCell align="right">
                   <Typography variant="subtitle1" color="error">
-                    -${invoiceDetail.order_details.discount}
+                    {invoiceDetail.order_details.discount}
                   </Typography>
                 </TableCell>
               </TableRow>
@@ -199,7 +204,7 @@ const InvoiceView = () => {
                 </TableCell>
                 <TableCell align="right">
                   <Typography variant="subtitle1">
-                    ${invoiceDetail.order_details.total_price}
+                    {invoiceDetail.order_details.total_price}
                   </Typography>
                 </TableCell>
               </TableRow>
@@ -221,7 +226,7 @@ const InvoiceView = () => {
                   </TableCell>
                   <TableCell align="right">
                     <Typography variant="subtitle1">
-                      ${payment.amount}
+                      {payment.amount}
                     </Typography>
                   </TableCell>
                 </TableRow>

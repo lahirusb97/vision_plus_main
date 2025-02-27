@@ -20,6 +20,8 @@ interface OrderItem {
   order: number;
   lens: number | null;
   lens_cleaner: number | null;
+  lense_name?: string;
+  frame_name?: string;
   frame: number | null;
   quantity: number;
   price_per_unit: string; // Decimal as string

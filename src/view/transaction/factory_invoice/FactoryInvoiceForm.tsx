@@ -160,6 +160,8 @@ export default function FactoryInvoiceForm() {
     try {
       if (refractionDetailExist && !refractionDetailLoading) {
         // Refraction Data Exsist
+        console.log(postData);
+
         const responce = await axiosClient.post("/orders/", postData);
         toast.success("Order saved successfully");
 
