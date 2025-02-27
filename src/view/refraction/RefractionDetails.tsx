@@ -16,17 +16,21 @@ import {
   Skeleton,
 } from "@mui/material";
 import { useNavigate } from "react-router";
-import { Refresh } from "@mui/icons-material";
+import { Delete, Refresh } from "@mui/icons-material";
 import useGetRefraction from "../../hooks/useGetRefraction";
 import { RefractionModel } from "../../model/RefractionModel";
+import EditIcon from "@mui/icons-material/Edit";
+import { useDeleteDialog } from "../../context/DeleteDialogContext";
 
 export default function RefractionDetails() {
   const theme = useTheme();
   const navigate = useNavigate();
+  const { openDialog } = useDeleteDialog();
+
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedRow, setSelectedRow] = useState<RefractionModel | null>(null);
 
-  const { data, isLoading, updateSearchParams, pageNavigation } =
+  const { data, isLoading, updateSearchParams, pageNavigation, refresh } =
     useGetRefraction();
   // Safely access data and meta-information
 
@@ -38,10 +42,11 @@ export default function RefractionDetails() {
 
   const handleInternalOrder = async () => {
     if (selectedRow) {
-      navigate(`/refraction/${selectedRow.refraction_number}`, {
+      navigate(`/refraction/${selectedRow.id}`, {
         state: {
           customerName: selectedRow.customer_full_name,
           mobileNumber: selectedRow.customer_mobile,
+          refraction_number: selectedRow.refraction_number,
         },
       });
     }
@@ -99,6 +104,7 @@ export default function RefractionDetails() {
                 height: 50,
               }}
             >
+              <TableCell sx={{ fontWeight: "bold" }}>Actions</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Name</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Mobile Number</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>
@@ -126,18 +132,48 @@ export default function RefractionDetails() {
                 <TableRow
                   onClick={() => setSelectedRow(row)}
                   sx={{
-                    height: 50,
+                    height: 40,
                     cursor: "pointer",
                     backgroundColor:
                       selectedRow?.id === row.id
                         ? theme.palette.grey[600]
                         : "inherit",
                     "&:hover": {
-                      backgroundColor: theme.palette.grey[600],
+                      backgroundColor: theme.palette.grey[300],
                     },
                   }}
                   key={row.id}
                 >
+                  <TableCell sx={{ fontWeight: "bold" }}>
+                    <IconButton
+                      color="warning"
+                      title="Edit"
+                      onClick={() => {
+                        // update/:id
+                        const params = new URLSearchParams({
+                          customer_full_name: row.customer_full_name,
+                          customer_mobile: row.customer_mobile,
+                        });
+                        navigate(`update/${row.id}?${params.toString()}`);
+                      }}
+                    >
+                      <EditIcon />
+                    </IconButton>
+                    <IconButton
+                      color="error"
+                      title="Delete"
+                      onClick={() => {
+                        openDialog(
+                          `/refractions/${row.id}/delete/`,
+                          `Refraction User of  - ${row.customer_full_name} & Refraction N0. - ${row.refraction_number}`,
+                          refresh
+                        );
+                      }}
+                    >
+                      <Delete />
+                    </IconButton>
+                  </TableCell>
+
                   <TableCell>{row.customer_full_name}</TableCell>
                   <TableCell>{row.customer_mobile}</TableCell>
                   <TableCell>{row.refraction_number}</TableCell>
@@ -160,7 +196,6 @@ export default function RefractionDetails() {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          marginTop: 1,
         }}
       >
         <Pagination
@@ -183,7 +218,7 @@ export default function RefractionDetails() {
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          gap: 2,
+          gap: 1,
         }}
       >
         <Button

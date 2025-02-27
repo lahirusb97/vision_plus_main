@@ -34,7 +34,10 @@ const useGetRefraction = () => {
       setIsLoading(false);
     }
   };
-
+  const refresh = () => {
+    setParams({});
+    fetchData();
+  };
   useEffect(() => {
     fetchData();
   }, [params]);
@@ -45,12 +48,12 @@ const useGetRefraction = () => {
   const pageNavigation = (page: number) => {
     setParams({ page: page });
   };
-
   return {
     data,
     isLoading,
     updateSearchParams,
     pageNavigation,
+    refresh,
   };
 };
 

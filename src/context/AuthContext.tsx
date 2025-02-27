@@ -51,12 +51,9 @@ export const AuthContext = ({ children }: AuthContextProps) => {
   useEffect(() => {
     if (token) {
       localStorage.setItem("vision_plus_token", token);
-      console.log("auth add");
     } else {
       localStorage.removeItem("vision_plus_token");
-      console.log("auth remove");
     }
-    console.log("auth useEffect Run");
   }, [token]);
 
   const setUserToken: Dispatch<SetStateAction<string | null>> = (newToken) => {

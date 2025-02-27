@@ -13,10 +13,13 @@ import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { useNavigate } from "react-router";
-import { RefractionModel } from "../../model/RefractionModel";
-export default function RefractionNumber() {
+import { useLocation, useNavigate, useParams } from "react-router";
+export default function UpdateRefraction() {
   const navigate = useNavigate();
+  const { id } = useParams();
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+
   const [loading, setLoading] = useState(false);
   const schema = yup.object({
     customer_full_name: yup.string().required("Full Name is required"),
@@ -29,18 +32,21 @@ export default function RefractionNumber() {
 
   const { register, handleSubmit, reset } = useForm({
     resolver: yupResolver(schema),
+    defaultValues: {
+      customer_full_name: searchParams.get("customer_full_name") || "",
+      customer_mobile: searchParams.get("customer_mobile") || "",
+    },
   });
   const shandleSubmit = async (data) => {
     try {
       setLoading(true);
-      const responseData = await axiosClient.post("/refractions/create/", data);
-      const params = new URLSearchParams({
-        customer_full_name: responseData.data.data.customer_full_name,
-        customer_mobile: responseData.data.data.customer_mobile,
-        refraction_number: responseData.data.data.refraction_number,
-      });
+      const responseData = await axiosClient.put(
+        `refractions/${id}/update/`,
+        data
+      );
       reset();
-      navigate(`success?${params.toString()}`);
+      toast.success("Refraction updated successfully");
+      navigate(-1);
     } catch (error) {
       if (error instanceof AxiosError) {
         toast.error(error.response?.data?.message || "Something went wrong");
@@ -68,7 +74,7 @@ export default function RefractionNumber() {
         }}
       >
         <Typography variant="h6" gutterBottom align="center">
-          Customer Details
+          Update Coustomer Details
         </Typography>
         <form onSubmit={handleSubmit(shandleSubmit)}>
           <TextField

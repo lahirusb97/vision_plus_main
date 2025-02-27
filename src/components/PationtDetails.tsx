@@ -15,9 +15,9 @@ export default function PationtDetails() {
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
       <Box sx={{ display: "flex", gap: 1 }}>
-        <Button color="info" variant="contained">
+        {/* <Button color="info" variant="contained">
           <History />
-        </Button>
+        </Button> */}
         <Paper sx={{ p: 1, flexGrow: 2 }}>
           <Typography>R.N0: {id}</Typography>
         </Paper>
@@ -90,13 +90,13 @@ export default function PationtDetails() {
         >
           Lense
         </Button>
-        <Button
-          onClick={() => dispatch(openStockDrawer("none_stock_lense"))}
-          color="secondary"
-          variant="contained"
-        >
-          None Stock Lense
-        </Button>
+        {/* <Button
+            onClick={() => dispatch(openStockDrawer("none_stock_lense"))}
+            color="secondary"
+            variant="contained"
+          >
+            None Stock Lense
+          </Button> */}
         <Button
           onClick={() => dispatch(openStockDrawer("other"))}
           color="secondary"

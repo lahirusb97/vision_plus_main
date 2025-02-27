@@ -17,7 +17,6 @@ const LenseStore = () => {
   const ADD = 3;
   //! Imporant Values can not be changed
   const { openDialog } = useDeleteDialog();
-  console.log(lenses);
 
   // Define columns
   const columns = useMemo(
