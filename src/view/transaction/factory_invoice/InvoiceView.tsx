@@ -9,19 +9,54 @@ import {
   Box,
   Button,
   TableHead,
+  CircularProgress,
+  Chip,
 } from "@mui/material";
 import { useLocation } from "react-router";
 import { useRef } from "react";
 import { useReactToPrint } from "react-to-print";
+import useGetSingleInvoiceDetail from "../../../hooks/useGetSingleInvoiceDetail";
+import { Check } from "@mui/icons-material";
 
 const InvoiceView = () => {
   const location = useLocation();
-  const { lense, frame, order, patient } = location.state || {};
-
+  // const { lense, frame, order, patient } = location.state || {};
+  const queryParams = new URLSearchParams(location.search);
   const componentRef = useRef(null);
   const reactToPrintFn = useReactToPrint({ contentRef: componentRef });
-  console.log(order);
+  const { invoiceDetail, invoiceDetailLoading } = useGetSingleInvoiceDetail(
+    parseInt(queryParams.get("order_id") ?? "")
+  );
+  const DateView = (date) => {
+    return new Date(date).toLocaleString("default", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
+  };
+  if (invoiceDetailLoading) {
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="100vh"
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
 
+  if (!invoiceDetail) {
+    return (
+      <Typography variant="h6" align="center">
+        Invoice not found
+      </Typography>
+    );
+  }
   return (
     <div>
       <Box
@@ -49,6 +84,9 @@ const InvoiceView = () => {
         <Typography variant="body1" align="center">
           Tel: 034 2247354 / 077 7854695
         </Typography>
+        <Typography variant="body1" align="center">
+          Date: {DateView(invoiceDetail.invoice_date)}
+        </Typography>
 
         <Box
           sx={{
@@ -60,16 +98,20 @@ const InvoiceView = () => {
         >
           <Box>
             <Typography variant="body2">
-              <strong>Invoice No:</strong> 584644
+              <strong>Daily Invoice No:</strong>{" "}
+              {invoiceDetail.daily_invoice_no}
             </Typography>
             <Typography variant="body2">
-              <strong>Customer Name:</strong> {patient.name}
+              <strong>Customer Name:</strong>{" "}
+              {invoiceDetail?.customer_details?.name}
             </Typography>
             <Typography variant="body2">
-              <strong>Address:</strong> {patient.address}
+              <strong>Address:</strong>{" "}
+              {invoiceDetail?.customer_details?.address}
             </Typography>
             <Typography variant="body2">
-              <strong>Phone Number:</strong> {patient.phone_number}
+              <strong>Phone Number:</strong>{" "}
+              {invoiceDetail?.customer_details?.phone_number}
             </Typography>
           </Box>
 
@@ -97,80 +139,93 @@ const InvoiceView = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {Object.values(frame).map((row, index) => (
-                <TableRow key={index}>
-                  <TableCell>{`${row.brand_name} / ${row.code_name} / ${row.color_name} / ${row.species}`}</TableCell>
-                  <TableCell align="right">{row.buyQty}</TableCell>
-                  <TableCell align="right">{row.price}</TableCell>
+              {/* Item List */}
+              {invoiceDetail?.order_items.map((row, index) => (
+                <TableRow key={index} hover>
+                  <TableCell>
+                    <Box display="flex" alignItems="center">
+                      {row.lens ? (
+                        <Check style={{ marginRight: 8 }} />
+                      ) : row.frame ? (
+                        <Check style={{ marginRight: 8 }} />
+                      ) : (
+                        <Check style={{ marginRight: 8 }} />
+                      )}
+                      <Typography variant="body1">
+                        {row.lens ? "Lens" : row.frame ? "Frame" : "Item"}{" "}
+                        {index + 1}
+                      </Typography>
+                    </Box>
+                  </TableCell>
+                  <TableCell align="right">{row.quantity}</TableCell>
                   <TableCell align="right">
-                    {parseInt(row.price) * row.buyQty}
+                    <Typography variant="subtitle1">
+                      {" "}
+                      {row.price_per_unit}
+                    </Typography>
+                  </TableCell>
+                  <TableCell align="right">
+                    <Typography variant="subtitle1"> {row.subtotal}</Typography>
                   </TableCell>
                 </TableRow>
               ))}
-              {Object.values(lense).map((row, index) => (
-                <TableRow key={index}>
-                  <TableCell>
-                    {`${row.stock.lens_type} / ${
-                      row.stock.coating
-                    } / ${row.powers
-                      .map((power) => {
-                        if (power.power === 1) {
-                          return `SPH: ${power.value}`; // For SPH (Sphere)
-                        } else if (power.power === 2) {
-                          return `CYL: ${power.value}`; // For CYL (Cylinder)
-                        } else if (power.power === 3) {
-                          return `ADD: ${power.value}`; // For ADD (Addition)
-                        }
-                        return ""; // If no matching power type
-                      })
-                      .join(" / ")} `}
-                  </TableCell>
 
-                  <TableCell align="right">{row.buyQty}</TableCell>
-                  <TableCell align="right">{row.price}</TableCell>
-                  <TableCell align="right">
-                    {parseInt(row.price) * row.buyQty}
-                  </TableCell>
-                </TableRow>
-              ))}
-              {/* {Object.values(OtherInvoiceList).map((row, index) => (
-                <TableRow key={index}>
-                  <TableCell>
-                    <IconButton
-                      onClick={() => dispatch(removeOtherItem(row.id))}
-                    >
-                      <Delete color="error" />
-                    </IconButton>
-                  </TableCell>
-
-                  <TableCell>{`${row.name}  `}</TableCell>
-
-                  <TableCell align="right">{row.buyQty}</TableCell>
-                  <TableCell align="right">{row.price}</TableCell>
-                  <TableCell align="right">
-                    {parseInt(row.price) * row.buyQty}
-                  </TableCell>
-                </TableRow>
-              ))} */}
+              {/* Summary Section */}
               <TableRow>
-                <TableCell rowSpan={3} />
-
+                <TableCell rowSpan={6} />
                 <TableCell align="right" colSpan={2}>
-                  Subtotal
+                  <Typography variant="subtitle1">Subtotal</Typography>
                 </TableCell>
-                <TableCell align="right">{order.sub_total}</TableCell>
+                <TableCell align="right">
+                  <Typography variant="subtitle1">
+                    ${invoiceDetail.order_details.sub_total}
+                  </Typography>
+                </TableCell>
               </TableRow>
               <TableRow>
                 <TableCell colSpan={1} />
-                <TableCell align="right">Discounts</TableCell>
-                <TableCell align="right">{order.discount}</TableCell>
+                <TableCell align="right">
+                  <Typography variant="subtitle1">Discounts</Typography>
+                </TableCell>
+                <TableCell align="right">
+                  <Typography variant="subtitle1" color="error">
+                    -${invoiceDetail.order_details.discount}
+                  </Typography>
+                </TableCell>
               </TableRow>
               <TableRow>
                 <TableCell align="right" colSpan={2}>
-                  Total
+                  <Typography variant="h6">Total</Typography>
                 </TableCell>
-                <TableCell align="right">{order.total_price}</TableCell>
+                <TableCell align="right">
+                  <Typography variant="subtitle1">
+                    ${invoiceDetail.order_details.total_price}
+                  </Typography>
+                </TableCell>
               </TableRow>
+
+              {/* Payment Details */}
+              {invoiceDetail.order_payments.map((payment) => (
+                <TableRow key={payment.id} hover>
+                  <TableCell align="right" colSpan={2}>
+                    <Box
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="flex-end"
+                    >
+                      <Typography variant="body2" style={{ marginRight: 8 }}>
+                        {DateView(payment.payment_date)}
+                      </Typography>
+                      <Chip label={payment.payment_method} />
+                    </Box>
+                  </TableCell>
+                  <TableCell align="right">
+                    <Typography variant="subtitle1">
+                      ${payment.amount}
+                    </Typography>
+                  </TableCell>
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
         </TableContainer>

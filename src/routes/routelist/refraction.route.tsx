@@ -5,6 +5,7 @@ import RefractionNumber from "../../view/refraction/RefractionNumber";
 import { lazy, Suspense } from "react";
 import ProtectedChildRoute from "../ProtectedChildRoute";
 import RefractionGenarated from "../../view/refraction/RefractionGenarated";
+import UpdateRefraction from "../../view/refraction/UpdateRefraction";
 const RefractionEdit = lazy(
   () => import("../../view/refraction/RefractionEdit")
 );
@@ -20,6 +21,10 @@ export const refractionRoutes: RouteObject[] = [
       {
         path: "success/",
         element: <RefractionGenarated />,
+      },
+      {
+        path: "refraction/details/update/:id",
+        element: <UpdateRefraction />,
       },
     ],
   },

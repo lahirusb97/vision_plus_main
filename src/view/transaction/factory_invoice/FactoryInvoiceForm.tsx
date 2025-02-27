@@ -25,6 +25,7 @@ import axiosClient from "../../../axiosClient";
 import { clearFrame } from "../../../features/invoice/frameFilterSlice";
 import { clearLenses } from "../../../features/invoice/lenseFilterSlice";
 import { clearOtherItem } from "../../../features/invoice/otherItemSlice";
+import { RefractionDetailCreate } from "../../../model/RefractionDetailCreate";
 
 export default function FactoryInvoiceForm() {
   const methods = useForm({
@@ -63,8 +64,12 @@ export default function FactoryInvoiceForm() {
   const subtotal = frameTotal + lenseTotal + otherTotal;
   const grandTotal = subtotal - discount;
   const { id } = useParams();
-  const { refractionDetail, refractionDetailLoading, refractionDetailError } =
-    useGetRefractionDetails(id);
+  const {
+    refractionDetail,
+    refractionDetailLoading,
+    refractionDetailExist,
+    refractionDetailError,
+  } = useGetRefractionDetails(id);
 
   useEffect(() => {
     return () => {
@@ -73,29 +78,32 @@ export default function FactoryInvoiceForm() {
       dispatch(clearOtherItem());
     };
   }, []);
+
   useEffect(() => {
-    if (!refractionDetailError && !refractionDetailLoading) {
-      if (refractionDetail) {
-        const personalData = {
-          ...refractionDetail,
-          name: queryParams.get("customerName"),
-          phone_number: queryParams.get("mobileNumber"),
-          nic: queryParams.get("nic"),
-        };
-
-        (
-          Object.keys(personalData) as Array<keyof RefractionDetailModel>
-        ).forEach((key) => {
-          methods.setValue(key as any, personalData[key]);
-        });
-      }
+    if (!refractionDetailLoading && refractionDetailExist) {
+      Object.entries(refractionDetail as RefractionDetailModel).forEach(
+        ([key, value]) => {
+          if (key in methods.getValues()) {
+            methods.setValue(key as keyof InvoiceInputModel, value || null);
+          }
+        }
+      );
     }
-  }, [refractionDetailLoading, refractionDetail]);
-
+  }, [refractionDetailLoading, refractionDetailExist]);
+  const convertEmptyStringsToNull = (
+    obj: Record<string, any>
+  ): Record<string, any> => {
+    return Object.fromEntries(
+      Object.entries(obj).map(([key, value]) => [
+        key,
+        value === "" || value === undefined || value === null ? null : value,
+      ])
+    );
+  };
   const submiteFromData = async (data: InvoiceInputModel) => {
     const postData = {
       patient: {
-        refraction_id: data.refraction,
+        refraction_id: refractionDetail.refraction,
         name: data.name,
         nic: data.nic,
         address: data.address,
@@ -103,7 +111,7 @@ export default function FactoryInvoiceForm() {
         date_of_birth: "1997-10-13",
       },
       order: {
-        refraction: data.refraction,
+        refraction: refractionDetail.refraction,
         status:
           subtotal <= parseInt(data.card || "0") + parseInt(data.cash || "0")
             ? "completed"
@@ -113,15 +121,15 @@ export default function FactoryInvoiceForm() {
         discount: parseFloat(discount) || 0,
         total_price: parseFloat(grandTotal) || 0,
         remark: data.remark,
-        sales_staff_code: parseInt(data.sales_staff_code),
+        sales_staff_code: data.sales_staff_code,
       },
       order_items: [
-        ...Object.values(OtherInvoiceList).map((item) => ({
-          lens_cleaner: item.id,
-          quantity: item.buyQty,
-          price_per_unit: item.price,
-          subtotal: item.buyQty * item.price,
-        })),
+        // ...Object.values(OtherInvoiceList).map((item) => ({
+        //   lens_cleaner: item.id,
+        //   quantity: item.buyQty,
+        //   price_per_unit: item.price,
+        //   subtotal: item.buyQty * item.price,
+        // })),
         ...Object.values(LenseInvoiceList).map((item) => ({
           lense: item.id,
           quantity: item.buyQty,
@@ -150,41 +158,42 @@ export default function FactoryInvoiceForm() {
     };
 
     try {
-      if (!refractionDetailError && !refractionDetailLoading) {
+      if (refractionDetailExist && !refractionDetailLoading) {
+        // Refraction Data Exsist
         const responce = await axiosClient.post("/orders/", postData);
-        console.log(responce.data);
-        console.log(/view/);
+        toast.success("Order saved successfully");
 
-        navigate("view/", {
-          state: {
-            lense: LenseInvoiceList,
-            frame: FrameInvoiceList,
-            order: postData.order,
-            patient: postData.patient,
-          },
-        });
-        console.log({
-          lense: LenseInvoiceList,
-          frame: FrameInvoiceList,
-          order: postData.order,
-          patient: postData.patient,
-        });
-      } else if (!refractionDetailLoading && refractionDetailError) {
-        const responce = await axiosClient.post("/orders/", postData);
-        console.log(responce.data);
-        console.log(/view/);
+        const url = `?order_id=${encodeURIComponent(responce.data.id)}`;
 
-        navigate("/view/", {
-          state: {
-            lense: LenseInvoiceList,
-            frame: FrameInvoiceList,
-            order: postData.order,
-            patient: postData.patient,
-          },
+        navigate(`view/${url}`);
+      } else {
+        const refDetails = convertEmptyStringsToNull({
+          hb_rx_right_dist: data.hb_rx_right_dist,
+          hb_rx_left_dist: data.hb_rx_left_dist,
+          hb_rx_right_near: data.hb_rx_right_near,
+          hb_rx_left_near: data.hb_rx_left_near,
+          auto_ref_right: data.auto_ref_right,
+          auto_ref_left: data.auto_ref_left,
+          right_eye_dist_sph: data.right_eye_dist_sph,
+          right_eye_dist_cyl: data.right_eye_dist_cyl,
+          right_eye_dist_axis: data.right_eye_dist_axis,
+          right_eye_near_sph: data.right_eye_near_sph,
+          left_eye_dist_sph: data.left_eye_dist_sph,
+          left_eye_dist_cyl: data.left_eye_dist_cyl,
+          left_eye_dist_axis: data.left_eye_dist_axis,
+          left_eye_near_sph: data.left_eye_near_sph,
+          remark: data.remark,
         });
+        // No refraction Data but have Refraction Number
+        const responce = await axiosClient.post("/orders/", {
+          ...postData,
+          refraction_details: { ...refDetails, is_manual: 1 },
+        });
+        toast.success("Order & Refraction Details saved successfully");
+        const url = `?order_id=${encodeURIComponent(responce.data.id)}`;
+
+        navigate(`view/${url}`);
       }
-
-      console.log(data);
     } catch (err) {
       if (axios.isAxiosError(err)) {
         toast.error(err.response?.data?.message || "Failed to save Order data");

@@ -43,9 +43,7 @@ export default function FactoryIndex() {
     if (selectedRow) {
       const customerName = selectedRow.customer_full_name;
       const mobileNumber = selectedRow.customer_mobile;
-      const url = `${
-        selectedRow.refraction_number
-      }?customerName=${encodeURIComponent(
+      const url = `${selectedRow.id}?customerName=${encodeURIComponent(
         customerName
       )}&mobileNumber=${encodeURIComponent(
         mobileNumber

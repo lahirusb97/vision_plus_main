@@ -4,7 +4,7 @@ import { useFormContext } from "react-hook-form";
 const widthInput = 160;
 
 export default function RefractionDetailsRight() {
-  const { register } = useFormContext();
+  const { register, watch } = useFormContext();
 
   return (
     <div>
@@ -31,6 +31,7 @@ export default function RefractionDetailsRight() {
             size="small"
             label={"Hb Rx dist"}
             type="number"
+            InputLabelProps={{ shrink: Boolean(watch("hb_rx_right_dist")) }}
           />
           <TextField
             inputProps={{ step: 0.25 }}
@@ -38,6 +39,7 @@ export default function RefractionDetailsRight() {
             size="small"
             label={"Hb Rx near"}
             type="number"
+            InputLabelProps={{ shrink: Boolean(watch("hb_rx_right_near")) }}
           />
           <TextField
             inputProps={{ step: 0.25 }}
@@ -45,6 +47,7 @@ export default function RefractionDetailsRight() {
             size="small"
             label={"Auto Ref"}
             type="number"
+            InputLabelProps={{ shrink: Boolean(watch("auto_ref_right")) }}
           />
           <TextField
             inputProps={{ step: 0.25 }}
@@ -52,6 +55,7 @@ export default function RefractionDetailsRight() {
             size="small"
             label={"NTC"}
             type="number"
+            InputLabelProps={{ shrink: Boolean(watch("ntc_right")) }}
           />
           <TextField
             inputProps={{ step: 0.25 }}
@@ -59,6 +63,9 @@ export default function RefractionDetailsRight() {
             size="small"
             label={"VA Without Glass"}
             type="number"
+            InputLabelProps={{
+              shrink: Boolean(watch("va_without_glass_right")),
+            }}
           />
           <TextField
             inputProps={{ step: 0.25 }}
@@ -66,6 +73,7 @@ export default function RefractionDetailsRight() {
             size="small"
             label={"VA Without P/H"}
             type="number"
+            InputLabelProps={{ shrink: Boolean(watch("va_without_ph_right")) }}
           />
           <TextField
             inputProps={{ step: 0.25 }}
@@ -73,6 +81,7 @@ export default function RefractionDetailsRight() {
             size="small"
             label={"VA With Glass"}
             type="number"
+            InputLabelProps={{ shrink: Boolean(watch("va_with_glass_right")) }}
           />
         </Box>
         <Paper variant="elevation" sx={{ bgcolor: purple[100] }}>
@@ -86,6 +95,9 @@ export default function RefractionDetailsRight() {
                 size="small"
                 label="sph"
                 sx={{ width: widthInput }}
+                InputLabelProps={{
+                  shrink: Boolean(watch("right_eye_dist_sph")),
+                }}
               />
 
               <TextField
@@ -96,6 +108,9 @@ export default function RefractionDetailsRight() {
                 size="small"
                 label="cyl"
                 sx={{ width: widthInput }}
+                InputLabelProps={{
+                  shrink: Boolean(watch("right_eye_dist_cyl")),
+                }}
               />
 
               <TextField
@@ -106,6 +121,9 @@ export default function RefractionDetailsRight() {
                 size="small"
                 label="axis"
                 sx={{ width: widthInput }}
+                InputLabelProps={{
+                  shrink: Boolean(watch("right_eye_dist_axis")),
+                }}
               />
             </Box>
           </Box>
@@ -127,6 +145,9 @@ export default function RefractionDetailsRight() {
               size="small"
               label="near"
               sx={{ width: widthInput }}
+              InputLabelProps={{
+                shrink: Boolean(watch("right_eye_near_sph")),
+              }}
             />
             <Box
               sx={{

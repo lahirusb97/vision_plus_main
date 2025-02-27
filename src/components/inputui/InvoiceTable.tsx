@@ -94,7 +94,7 @@ export default function InvoiceTable() {
               </TableCell>
 
               <TableCell>
-                {`${row.stock.lens_type} / ${row.stock.coating} / ${row.powers
+                {`${row?.lens_type} / ${row.coating} / ${row.powers
                   .map((power) => {
                     if (power.power === 1) {
                       return `SPH: ${power.value}`; // For SPH (Sphere)

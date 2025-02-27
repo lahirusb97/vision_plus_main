@@ -1,7 +1,7 @@
 import { FormProvider, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Box, Button, Paper, TextField, Typography } from "@mui/material";
-import { useLocation, useParams } from "react-router";
+import { useLocation, useNavigate, useParams } from "react-router";
 import axiosClient from "../../axiosClient";
 import { grey } from "@mui/material/colors";
 import RefractionDetailsRight from "./RefractionDetailsRight";
@@ -9,40 +9,94 @@ import RefractionDetailsLeft from "./RefractionDetailsLeft";
 import { refractionValidationSchema } from "../../validations/refractionDetails";
 import toast from "react-hot-toast";
 import axios from "axios";
-
-// Validation Schema
+import useGetRefractionDetails from "../../hooks/useGetRefractionDetails";
+import { useEffect } from "react";
+import { RefractionDetailCreate } from "../../model/RefractionDetailCreate";
 
 export default function RefractionEdit() {
   const { id } = useParams();
   const location = useLocation();
-  const { customerName, mobileNumber } = location.state || {};
+  const navigate = useNavigate();
+  const { customerName, mobileNumber, refraction_number } =
+    location.state || {};
 
   const methods = useForm({
     resolver: yupResolver(refractionValidationSchema),
   });
-  const onSubmit = async (data) => {
-    try {
-      const responseData = await axiosClient.post(
-        `/refraction-details/create/`,
-        {
-          ...data,
-          refraction: parseInt(id),
-        }
-      );
-      toast.success("Refraction saved successfully");
-      methods.reset();
-    } catch (err) {
-      console.log(err);
+  const { refractionDetail, refractionDetailLoading, refractionDetailExist } =
+    useGetRefractionDetails(id);
+  console.log(refractionDetail);
 
-      if (axios.isAxiosError(err)) {
-        toast.error(
-          err.response?.data?.message || "Failed to save Reraction details"
-        );
+  const convertEmptyStringsToNull = (data: RefractionDetailCreate) => {
+    return Object.fromEntries(
+      Object.entries(data).map(([key, value]) => [
+        key,
+        value === "" || value === undefined || value === null ? null : value,
+      ])
+    );
+  };
+  const onSubmit = async (data: unknown) => {
+    const convertedData = convertEmptyStringsToNull(
+      data as RefractionDetailCreate
+    );
+    // console.log(convertedData);
+
+    if (id !== undefined && id !== null) {
+      if (refractionDetailExist) {
+        try {
+          await axiosClient.put(`/refractions/${id}/`, {
+            ...convertedData,
+            refraction: refractionDetail.refraction,
+            is_manual: refractionDetail.is_manual,
+          });
+          toast.success("Refraction saved successfully");
+          methods.reset();
+          navigate(-1);
+        } catch (err) {
+          console.log(err);
+
+          if (axios.isAxiosError(err)) {
+            toast.error(
+              err.response?.data?.refraction[0] ||
+                "Failed to save Reraction details"
+            );
+          } else {
+            toast.error("An unexpected error occurred Refrsh the page");
+          }
+        }
       } else {
-        toast.error("An unexpected error occurred Refrsh the page");
+        try {
+          await axiosClient.post(`/refraction-details/create/`, {
+            ...convertedData,
+            refraction: parseInt(id),
+          });
+          toast.success("Refraction saved successfully");
+          methods.reset();
+          navigate(-1);
+        } catch (err) {
+          console.log(err);
+
+          if (axios.isAxiosError(err)) {
+            toast.error(
+              err.response?.data?.refraction[0] ||
+                "Failed to save Reraction details"
+            );
+          } else {
+            toast.error("An unexpected error occurred Refrsh the page");
+          }
+        }
       }
     }
   };
+  useEffect(() => {
+    if (!refractionDetailLoading && refractionDetailExist) {
+      Object.entries(refractionDetail).forEach(([key, value]) => {
+        if (key in methods.getValues()) {
+          methods.setValue(key as keyof RefractionDetailCreate, value || null);
+        }
+      });
+    }
+  }, [refractionDetailLoading, refractionDetailExist]);
 
   return (
     <FormProvider {...methods}>
@@ -61,7 +115,7 @@ export default function RefractionEdit() {
           >
             {[
               { label: "Name", value: customerName },
-              { label: "NIC", value: "978221112V" },
+              { label: "Refraction No.", value: refraction_number },
               { label: "Mobile", value: mobileNumber },
             ].map((item, index) => (
               <Box
@@ -110,6 +164,7 @@ export default function RefractionEdit() {
             <RefractionDetailsLeft />
           </Box>
           <Box sx={{ display: "flex", gap: 1 }}>
+            {/* //TODO V2 */}
             {/* <TextField
               {...methods.register("note")}
               sx={{ my: 0.5 }}
@@ -133,8 +188,9 @@ export default function RefractionEdit() {
             type="submit"
             variant="contained"
             color="primary"
+            disabled={refractionDetailLoading}
           >
-            Submit
+            {refractionDetailExist ? "Update" : "Create"}
           </Button>
         </form>
       </Box>

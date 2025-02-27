@@ -6,8 +6,6 @@ import { LenseModel } from "../model/LenseModel";
 import { blue, orange, purple, yellow } from "@mui/material/colors";
 
 export default function InvoiceLenseItem({ lense }: LenseModel) {
-  console.log(lense);
-
   const dispatch = useDispatch();
   return (
     <Paper
@@ -31,9 +29,9 @@ export default function InvoiceLenseItem({ lense }: LenseModel) {
       >
         {lense?.lenseSide.toString().toUpperCase()}
       </Typography>
-      <Typography variant="body2">Type: {lense?.stock?.lens_type}</Typography>
+      <Typography variant="body2">Type: {lense?.lens_type}</Typography>
       <Typography variant="body2">Brand: {lense?.brand}</Typography>
-      <Typography variant="body2">Size: {lense?.stock?.coating}</Typography>
+      <Typography variant="body2">Coating: {lense?.coating}</Typography>
       <Typography variant="body2">Quantity: {lense?.buyQty}</Typography>
       <Typography variant="body2">Unite Price: {lense?.price}</Typography>
       <Typography variant="body2">
