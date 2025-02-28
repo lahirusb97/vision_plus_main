@@ -25,7 +25,6 @@ import axiosClient from "../../../axiosClient";
 import { clearFrame } from "../../../features/invoice/frameFilterSlice";
 import { clearLenses } from "../../../features/invoice/lenseFilterSlice";
 import { clearOtherItem } from "../../../features/invoice/otherItemSlice";
-import { RefractionDetailCreate } from "../../../model/RefractionDetailCreate";
 
 export default function FactoryInvoiceForm() {
   const methods = useForm({
@@ -37,10 +36,9 @@ export default function FactoryInvoiceForm() {
     },
   });
   const discount = methods.watch("discount");
-  const location = useLocation();
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const queryParams = new URLSearchParams(location.search);
 
   const FrameInvoiceList = useSelector(
     (state: RootState) => state.invoice_frame_filer.selectedFrameList

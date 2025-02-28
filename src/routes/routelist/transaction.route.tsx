@@ -4,7 +4,7 @@ import NormalInvoice from "../../view/transaction/NormalInvoice";
 import Repayment from "../../view/transaction/Repayment";
 import ProtectedChildRoute from "../ProtectedChildRoute";
 import NormalInvoiceActions from "../../view/transaction/NormalInvoiceActions";
-import FactoryIndex from "../../view/transaction/FactoryIndex";
+import FactoryTable from "../../view/transaction/FactoryTable";
 import FactoryInvoiceForm from "../../view/transaction/factory_invoice/FactoryInvoiceForm";
 import InvoiceView from "../../view/transaction/factory_invoice/InvoiceView";
 
@@ -15,7 +15,7 @@ export const transactionRoutes: RouteObject[] = [
     children: [
       {
         index: true,
-        element: <FactoryIndex />,
+        element: <FactoryTable />,
       },
       {
         path: "create/:id",

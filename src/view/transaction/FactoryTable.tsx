@@ -22,7 +22,7 @@ import useGetRefraction from "../../hooks/useGetRefraction";
 
 // Interface for Refraction Data
 
-export default function FactoryIndex() {
+export default function FactoryTable() {
   const theme = useTheme();
   const navigate = useNavigate();
 
@@ -43,11 +43,13 @@ export default function FactoryIndex() {
     if (selectedRow) {
       const customerName = selectedRow.customer_full_name;
       const mobileNumber = selectedRow.customer_mobile;
+      const refractionNumber = selectedRow.refraction_number;
       const url = `${selectedRow.id}?customerName=${encodeURIComponent(
         customerName
       )}&mobileNumber=${encodeURIComponent(
         mobileNumber
-      )}&nic=${encodeURIComponent("97824122v")}`;
+      )}&nic=${encodeURIComponent("97824122v")}
+      )}&refractionNumber=${encodeURIComponent(refractionNumber)}`;
 
       navigate(`create/${url}`);
     }

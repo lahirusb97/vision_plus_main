@@ -1,11 +1,19 @@
 import { TextField, Box, Button, Paper, Typography } from "@mui/material";
 import { History } from "@mui/icons-material";
 import { useFormContext } from "react-hook-form";
-import { useParams } from "react-router";
+import { useLocation, useParams } from "react-router";
 import { useDispatch } from "react-redux";
 import { openStockDrawer } from "../features/invoice/stockDrawerSlice";
 export default function PationtDetails() {
-  const { id } = useParams();
+  const { id } = useParams(); // Read ID from URL
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+
+  const customerName = queryParams.get("customerName");
+  const mobileNumber = queryParams.get("mobileNumber");
+  const nic = queryParams.get("nic");
+  const refractionNumber = queryParams.get("refractionNumber");
+
   const dispatch = useDispatch();
   const {
     register,
@@ -19,7 +27,7 @@ export default function PationtDetails() {
           <History />
         </Button> */}
         <Paper sx={{ p: 1, flexGrow: 2 }}>
-          <Typography>R.N0: {id}</Typography>
+          <Typography>R.N0: {refractionNumber}</Typography>
         </Paper>
         <Paper>
           <Typography sx={{ p: 1 }}>

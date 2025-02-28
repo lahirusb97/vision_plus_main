@@ -30,7 +30,7 @@ export default function AddVariation() {
         />
 
         <AddVariationComp
-          textName="Lense Brand"
+          textName="Lens Factory"
           Urlpath="lense_brand"
           dataList={lenseBrand}
           pathroute={"brands"}
