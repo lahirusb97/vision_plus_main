@@ -295,7 +295,7 @@ export default function PowerToLenseFilter() {
               setSelectLense((preState) => ({ ...preState, brand: id }))
             }
             loading={brandsLoading}
-            labelName="Select Brand"
+            labelName="Lens Factory"
             defaultId={null}
           />
 

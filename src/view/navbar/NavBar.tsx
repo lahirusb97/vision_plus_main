@@ -66,7 +66,7 @@ export default function NavBar() {
       label: "Transaction",
       nav: TransactionNav,
     },
-    { path: "master", icon: MasterIcon, label: "Master", nav: RefractionNav },
+    { path: "master", icon: MasterIcon, label: "Check In", nav: RefractionNav },
     {
       path: "account",
       icon: AccountIcon,

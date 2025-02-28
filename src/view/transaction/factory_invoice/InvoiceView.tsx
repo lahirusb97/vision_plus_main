@@ -100,7 +100,9 @@ const InvoiceView = () => {
         >
           <Box>
             <Typography variant="body2">
-              <strong>Daily Invoice No:</strong>{" "}
+              <span style={{ fontWeight: "bold", fontSize: "18px" }}>
+                Invoice No:
+              </span>{" "}
               {invoiceDetail.daily_invoice_no}
             </Typography>
             <Typography variant="body2">
@@ -241,9 +243,12 @@ const InvoiceView = () => {
           align="center"
           sx={{ mt: 3, fontWeight: "Bold" }}
         >
-          Each of these brands has strengths that cater to specific user needs.
-          Consider what aligns best with your priorities—whether speed,
-          endurance, affordability, or brand support.
+          <strong>
+            {" "}
+            We will not be responsible for any uncollected orders after 3 months
+            * Non-refundable{" "}
+          </strong>
+          Software develop by Furigen technology
         </Typography>
       </Box>
       <Button
