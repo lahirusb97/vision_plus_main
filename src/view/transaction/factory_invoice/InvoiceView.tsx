@@ -100,10 +100,9 @@ const InvoiceView = () => {
         >
           <Box>
             <Typography variant="body2">
-              <span style={{ fontWeight: "bold", fontSize: "18px" }}>
-                Invoice No:
-              </span>{" "}
-              {invoiceDetail.daily_invoice_no}
+              <span style={{ fontWeight: "bold", fontSize: "16px" }}>
+                Invoice No: {invoiceDetail.daily_invoice_no}
+              </span>
             </Typography>
             <Typography variant="body2">
               <strong>Customer Name:</strong>{" "}
