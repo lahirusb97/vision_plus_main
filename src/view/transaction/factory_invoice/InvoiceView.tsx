@@ -17,7 +17,7 @@ import { useRef } from "react";
 import { useReactToPrint } from "react-to-print";
 import useGetSingleInvoiceDetail from "../../../hooks/useGetSingleInvoiceDetail";
 import { Check } from "@mui/icons-material";
-
+import log from "../../../assets/defalt/Rectangle 522.png";
 const InvoiceView = () => {
   const location = useLocation();
   // const { lense, frame, order, patient } = location.state || {};
@@ -73,11 +73,7 @@ const InvoiceView = () => {
       >
         {/* Logo and Header */}
         <Box display="flex" justifyContent="center" alignItems="center" mb={2}>
-          <img
-            src="\src\assets\defalt\Rectangle 522.png"
-            alt="Vision Plus Logo"
-            style={{ height: 50 }}
-          />
+          <img src={log} alt="Vision Plus Logo" style={{ height: 50 }} />
         </Box>
 
         <Typography variant="h5" align="center" fontWeight="bold">
@@ -100,7 +96,7 @@ const InvoiceView = () => {
         >
           <Box>
             <Typography variant="body2">
-              <span style={{ fontWeight: "bold", fontSize: "16px" }}>
+              <span style={{ fontWeight: "bold", fontSize: "20px" }}>
                 Invoice No: {invoiceDetail.daily_invoice_no}
               </span>
             </Typography>
