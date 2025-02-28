@@ -4,6 +4,8 @@ import { useFormContext } from "react-hook-form";
 import { useLocation, useParams } from "react-router";
 import { useDispatch } from "react-redux";
 import { openStockDrawer } from "../features/invoice/stockDrawerSlice";
+import { useEffect } from "react";
+import DateInput from "./inputui/DateInput";
 export default function PationtDetails() {
   const { id } = useParams(); // Read ID from URL
   const location = useLocation();
@@ -17,8 +19,15 @@ export default function PationtDetails() {
   const dispatch = useDispatch();
   const {
     register,
+    setValue,
     formState: { errors },
   } = useFormContext();
+  useEffect(() => {
+    if (customerName || mobileNumber) {
+      setValue("name", customerName);
+      setValue("phone_number", mobileNumber);
+    }
+  }, []);
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
@@ -50,13 +59,15 @@ export default function PationtDetails() {
           size="small"
           label="name"
         />
-        <TextField
+
+        <DateInput />
+        {/* <TextField
           {...register("dob")}
           error={!!errors.dob}
           sx={{ width: 80 }}
           size="small"
           label="Age"
-        />
+        /> */}
       </Box>
       <Box sx={{ display: "flex", gap: 1 }}>
         <TextField

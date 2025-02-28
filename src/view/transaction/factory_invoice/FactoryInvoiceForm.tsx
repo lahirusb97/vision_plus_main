@@ -106,7 +106,7 @@ export default function FactoryInvoiceForm() {
         nic: data.nic,
         address: data.address,
         phone_number: data.phone_number,
-        date_of_birth: "1997-10-13",
+        date_of_birth: data.dob,
       },
       order: {
         refraction: refractionDetail.refraction,

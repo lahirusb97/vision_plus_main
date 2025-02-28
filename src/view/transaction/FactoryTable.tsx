@@ -19,6 +19,7 @@ import { useNavigate } from "react-router";
 import { Refresh } from "@mui/icons-material";
 import { RefractionModel } from "../../model/RefractionModel";
 import useGetRefraction from "../../hooks/useGetRefraction";
+import EditIcon from "@mui/icons-material/Edit";
 
 // Interface for Refraction Data
 
@@ -107,6 +108,7 @@ export default function FactoryTable() {
                 height: 50,
               }}
             >
+              <TableCell sx={{ fontWeight: "bold" }}>Actions</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Name</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Mobile Number</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>
@@ -146,6 +148,26 @@ export default function FactoryTable() {
                   }}
                   key={row.id}
                 >
+                  <TableCell>
+                    <IconButton
+                      color="warning"
+                      title="Edit"
+                      onClick={() => {
+                        // update/:id
+                        const params = new URLSearchParams({
+                          customer_full_name: row.customer_full_name,
+                          customer_mobile: row.customer_mobile,
+                        });
+                        navigate(
+                          `/refraction/details/update/${
+                            row.id
+                          }?${params.toString()}`
+                        );
+                      }}
+                    >
+                      <EditIcon />
+                    </IconButton>
+                  </TableCell>
                   <TableCell>{row.customer_full_name}</TableCell>
                   <TableCell>{row.customer_mobile}</TableCell>
                   <TableCell>{row.refraction_number}</TableCell>
