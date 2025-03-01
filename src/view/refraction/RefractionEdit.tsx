@@ -115,6 +115,7 @@ export default function RefractionEdit() {
           >
             {[
               { label: "Name", value: customerName },
+              { label: "NIC", value: nic },
               { label: "Refraction No.", value: refraction_number },
               { label: "Mobile", value: mobileNumber },
             ].map((item, index) => (
@@ -161,8 +162,9 @@ export default function RefractionEdit() {
             }}
           >
             <RefractionDetailsRight />
+              
             <RefractionDetailsLeft />
-          </Box>
+                </Box>
           <Box sx={{ display: "flex", gap: 1 }}>
             {/* //TODO V2 */}
             {/* <TextField
@@ -176,7 +178,7 @@ export default function RefractionEdit() {
             <TextField
               {...methods.register("remark")}
               sx={{ my: 0.5 }}
-              size="small"
+              size=""
               fullWidth
               label="remark"
               multiline

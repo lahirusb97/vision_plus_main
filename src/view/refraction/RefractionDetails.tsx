@@ -35,7 +35,12 @@ export default function RefractionDetails() {
   // Safely access data and meta-information
 
   // Filtered rows based on the search query
-
+  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault(); // Prevents page reload
+    updateSearchParams(searchQuery);
+  };
+  
+  
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
   };
@@ -45,6 +50,7 @@ export default function RefractionDetails() {
       navigate(`/refraction/${selectedRow.id}`, {
         state: {
           customerName: selectedRow.customer_full_name,
+          nic: selectedRow.nic,
           mobileNumber: selectedRow.customer_mobile,
           refraction_number: selectedRow.refraction_number,
         },
@@ -63,18 +69,21 @@ export default function RefractionDetails() {
           alignItems: "baseline",
         }}
       >
-        <TextField
-          label="Search"
-          variant="outlined"
-          fullWidth
-          margin="normal"
-          value={searchQuery}
-          onChange={handleSearchChange}
-        />
+        
+        <form onSubmit={handleSearch} style={{ display: "flex", gap: "10px" }}> 
+    <TextField
+      label="Search"
+      variant="outlined"
+      fullWidth
+      margin="normal"
+      value={searchQuery}
+      onChange={(e) => setSearchQuery(e.target.value)}
+    />
+    
+  </form>
+
         <Button
-          onClick={() => {
-            updateSearchParams(searchQuery);
-          }}
+          onClick={handleSearch} 
           sx={{ height: 55 }}
           variant="contained"
         >
@@ -106,6 +115,7 @@ export default function RefractionDetails() {
             >
               <TableCell sx={{ fontWeight: "bold" }}>Actions</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Name</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>NIC</TableCell> 
               <TableCell sx={{ fontWeight: "bold" }}>Mobile Number</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>
                 Refraction Number
@@ -116,6 +126,9 @@ export default function RefractionDetails() {
             {isLoading ? (
               [...Array(10)].map((_, index) => (
                 <TableRow key={index}>
+                  <TableCell>
+                    <Skeleton variant="text" />
+                  </TableCell>
                   <TableCell>
                     <Skeleton variant="text" />
                   </TableCell>
@@ -152,6 +165,7 @@ export default function RefractionDetails() {
                         // update/:id
                         const params = new URLSearchParams({
                           customer_full_name: row.customer_full_name,
+                          nic: row.nic,
                           customer_mobile: row.customer_mobile,
                         });
                         navigate(`update/${row.id}?${params.toString()}`);
@@ -159,22 +173,11 @@ export default function RefractionDetails() {
                     >
                       <EditIcon />
                     </IconButton>
-                    <IconButton
-                      color="error"
-                      title="Delete"
-                      onClick={() => {
-                        openDialog(
-                          `/refractions/${row.id}/delete/`,
-                          `Refraction User of  - ${row.customer_full_name} & Refraction N0. - ${row.refraction_number}`,
-                          refresh
-                        );
-                      }}
-                    >
-                      <Delete />
-                    </IconButton>
+                    
                   </TableCell>
 
                   <TableCell>{row.customer_full_name}</TableCell>
+                  <TableCell>{row.nic}</TableCell>
                   <TableCell>{row.customer_mobile}</TableCell>
                   <TableCell>{row.refraction_number}</TableCell>
                 </TableRow>

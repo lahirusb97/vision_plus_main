@@ -17,7 +17,7 @@ export default function RightEyeTable() {
           display: "flex",
           flexDirection: "column",
           gap: 1,
-          bgcolor: purple[50],
+          backgroundColor: "#f5f5f5",/* chalani- backgroundcolor change*/
           p: 1,
         }}
       >

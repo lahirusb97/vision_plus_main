@@ -13,8 +13,9 @@ export default function RefractionDetailsRight() {
           display: "flex",
           flexDirection: "column",
           gap: 1,
-          bgcolor: purple[50],
+          backgroundColor: "#f5f5f5", /* chalani- backgroundcolor change*/
           p: 2,
+
         }}
       >
         {/* //!Right EYE */}
@@ -71,7 +72,7 @@ export default function RefractionDetailsRight() {
             inputProps={{ step: 0.25 }}
             {...register("va_without_ph_right")}
             size="small"
-            label={"VA Without P/H"}
+            label={"VA with P/H"} /* chalani- labelname change*/
             type="number"
             InputLabelProps={{ shrink: Boolean(watch("va_without_ph_right")) }}
           />
@@ -84,7 +85,7 @@ export default function RefractionDetailsRight() {
             InputLabelProps={{ shrink: Boolean(watch("va_with_glass_right")) }}
           />
         </Box>
-        <Paper variant="elevation" sx={{ bgcolor: purple[100] }}>
+        <Paper variant="elevation" sx={{ bgcolor: "#f5f5f5" }}>
           <Box sx={{ p: 2 }}>
             <Box sx={{ display: "flex", gap: 1, mt: 1 }}>
               <TextField

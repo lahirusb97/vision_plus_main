@@ -11,6 +11,7 @@ interface CustomerDetails {
 interface RefractionDetails {
   id: number;
   customer_full_name: string;
+  nic: string;
   customer_mobile: string;
   refraction_number: string;
 }
