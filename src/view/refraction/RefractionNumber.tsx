@@ -20,6 +20,7 @@ export default function RefractionNumber() {
   const [loading, setLoading] = useState(false);
   const schema = yup.object({
     customer_full_name: yup.string().required("Full Name is required"),
+    nic: yup.string().required("Full Name is required"),
     customer_mobile: yup
       .string()
       .required("User Name is required")
@@ -36,6 +37,7 @@ export default function RefractionNumber() {
       const responseData = await axiosClient.post("/refractions/create/", data);
       const params = new URLSearchParams({
         customer_full_name: responseData.data.data.customer_full_name,
+        nic: responseData.data.data.nic,
         customer_mobile: responseData.data.data.customer_mobile,
         refraction_number: responseData.data.data.refraction_number,
       });
@@ -75,6 +77,14 @@ export default function RefractionNumber() {
             {...register("customer_full_name")}
             fullWidth
             label="Customer Name"
+            variant="outlined"
+            margin="normal"
+            required
+          />
+          <TextField
+            {...register("nic")}   /* chalani- textfiled added and connected to use form hook*/
+            fullWidth
+            label="NIC"
             variant="outlined"
             margin="normal"
             required

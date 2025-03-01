@@ -14,18 +14,19 @@ import { useEffect } from "react";
 import { RefractionDetailCreate } from "../../model/RefractionDetailCreate";
 
 export default function RefractionEdit() {
-  const { id } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
-  const { customerName, mobileNumber, refraction_number } =
-    location.state || {};
-
+  const searchParams = new URLSearchParams(location.search);
+  const customerName = searchParams.get("customerName") || "";
+  const nic = searchParams.get("nic") || "";
+  const mobileNumber = searchParams.get("mobileNumber") || "";
+  const refraction_number = searchParams.get("refraction_number") || "";
+  const { id } = useParams();
   const methods = useForm({
     resolver: yupResolver(refractionValidationSchema),
   });
   const { refractionDetail, refractionDetailLoading, refractionDetailExist } =
     useGetRefractionDetails(id);
-  console.log(refractionDetail);
 
   const convertEmptyStringsToNull = (data: RefractionDetailCreate) => {
     return Object.fromEntries(
@@ -115,6 +116,7 @@ export default function RefractionEdit() {
           >
             {[
               { label: "Name", value: customerName },
+              { label: "NIC", value: nic },
               { label: "Refraction No.", value: refraction_number },
               { label: "Mobile", value: mobileNumber },
             ].map((item, index) => (
@@ -124,7 +126,7 @@ export default function RefractionEdit() {
                   display: "flex",
                   alignItems: "center",
                   gap: 1,
-                  minWidth: "30%",
+                  minWidth: "20%",
                 }}
               >
                 <Typography
@@ -161,18 +163,19 @@ export default function RefractionEdit() {
             }}
           >
             <RefractionDetailsRight />
+
             <RefractionDetailsLeft />
           </Box>
           <Box sx={{ display: "flex", gap: 1 }}>
             {/* //TODO V2 */}
-            {/* <TextField
+            <TextField
               {...methods.register("note")}
               sx={{ my: 0.5 }}
               size="small"
               fullWidth
               label="note"
               multiline
-            /> */}
+            />
             <TextField
               {...methods.register("remark")}
               sx={{ my: 0.5 }}

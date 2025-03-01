@@ -20,12 +20,12 @@ import { Delete, Refresh } from "@mui/icons-material";
 import useGetRefraction from "../../hooks/useGetRefraction";
 import { RefractionModel } from "../../model/RefractionModel";
 import EditIcon from "@mui/icons-material/Edit";
-import { useDeleteDialog } from "../../context/DeleteDialogContext";
+// import { useDeleteDialog } from "../../context/DeleteDialogContext";
 
 export default function RefractionDetails() {
   const theme = useTheme();
   const navigate = useNavigate();
-  const { openDialog } = useDeleteDialog();
+  // const { openDialog } = useDeleteDialog();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedRow, setSelectedRow] = useState<RefractionModel | null>(null);
@@ -35,33 +35,28 @@ export default function RefractionDetails() {
   // Safely access data and meta-information
 
   // Filtered rows based on the search query
-
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
+  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault(); // Prevents page reload
+    updateSearchParams(searchQuery);
   };
 
   const handleInternalOrder = async () => {
     if (selectedRow) {
-      navigate(`/refraction/${selectedRow.id}`, {
-        state: {
-          customerName: selectedRow.customer_full_name,
-          mobileNumber: selectedRow.customer_mobile,
-          refraction_number: selectedRow.refraction_number,
-        },
+      const params = new URLSearchParams({
+        customerName: selectedRow.customer_full_name,
+        nic: selectedRow.nic,
+        mobileNumber: selectedRow.customer_mobile,
+        refraction_number: selectedRow.refraction_number,
       });
+      navigate(`/refraction/${selectedRow.id}?${params.toString()}`);
     }
   };
   return (
     <Box sx={{ padding: 2 }}>
       {/* Search Bar */}
-
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          gap: 2,
-          alignItems: "baseline",
-        }}
+      <form
+        onSubmit={handleSearch}
+        style={{ display: "flex", gap: "10px", alignItems: "center" }}
       >
         <TextField
           label="Search"
@@ -69,18 +64,20 @@ export default function RefractionDetails() {
           fullWidth
           margin="normal"
           value={searchQuery}
-          onChange={handleSearchChange}
+          onChange={(e) => setSearchQuery(e.target.value)}
         />
-        <Button
-          onClick={() => {
-            updateSearchParams(searchQuery);
-          }}
-          sx={{ height: 55 }}
-          variant="contained"
-        >
+        <Button type="submit" variant="contained" sx={{ height: 50 }}>
           Search
         </Button>
-      </Box>
+      </form>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          gap: 2,
+          alignItems: "baseline",
+        }}
+      ></Box>
 
       {/* Table Container */}
       <TableContainer
@@ -106,6 +103,7 @@ export default function RefractionDetails() {
             >
               <TableCell sx={{ fontWeight: "bold" }}>Actions</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Name</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>NIC</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Mobile Number</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>
                 Refraction Number
@@ -116,6 +114,9 @@ export default function RefractionDetails() {
             {isLoading ? (
               [...Array(10)].map((_, index) => (
                 <TableRow key={index}>
+                  <TableCell>
+                    <Skeleton variant="text" />
+                  </TableCell>
                   <TableCell>
                     <Skeleton variant="text" />
                   </TableCell>
@@ -152,6 +153,7 @@ export default function RefractionDetails() {
                         // update/:id
                         const params = new URLSearchParams({
                           customer_full_name: row.customer_full_name,
+                          nic: row.nic,
                           customer_mobile: row.customer_mobile,
                         });
                         navigate(`update/${row.id}?${params.toString()}`);
@@ -159,22 +161,10 @@ export default function RefractionDetails() {
                     >
                       <EditIcon />
                     </IconButton>
-                    <IconButton
-                      color="error"
-                      title="Delete"
-                      onClick={() => {
-                        openDialog(
-                          `/refractions/${row.id}/delete/`,
-                          `Refraction User of  - ${row.customer_full_name} & Refraction N0. - ${row.refraction_number}`,
-                          refresh
-                        );
-                      }}
-                    >
-                      <Delete />
-                    </IconButton>
                   </TableCell>
 
                   <TableCell>{row.customer_full_name}</TableCell>
+                  <TableCell>{row.nic}</TableCell>
                   <TableCell>{row.customer_mobile}</TableCell>
                   <TableCell>{row.refraction_number}</TableCell>
                 </TableRow>

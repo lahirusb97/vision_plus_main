@@ -1,12 +1,11 @@
 import { Box, TextField, Typography } from "@mui/material";
 const widthInput = 100;
-import { lightBlue, purple } from "@mui/material/colors";
+import { purple } from "@mui/material/colors";
 import { useFormContext } from "react-hook-form";
 
 export default function RightEyeTable() {
   const {
     register,
-    watch,
     formState: { errors },
   } = useFormContext();
 
@@ -17,7 +16,7 @@ export default function RightEyeTable() {
           display: "flex",
           flexDirection: "column",
           gap: 1,
-          bgcolor: purple[50],
+          backgroundColor: "#f5f5f5" /* chalani- backgroundcolor change*/,
           p: 1,
         }}
       >

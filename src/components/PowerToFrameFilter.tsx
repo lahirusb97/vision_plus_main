@@ -48,10 +48,14 @@ export default function PowerToFrameFilter() {
     brand: number | null;
     code: number | null;
     color: number | null;
+    size: string | null;
+    species: string | null;
   }>({
     brand: null,
     code: null,
     color: null,
+    size: null,
+    species: null,
   });
   useEffect(() => {
     if (selectFrame.brand) {
@@ -64,10 +68,10 @@ export default function PowerToFrameFilter() {
   }, [selectFrame.brand]);
   useEffect(() => {
     findFrame();
-    if (selectFrame.brand || selectFrame.code || selectFrame.color) {
-      setSelectedFrame(null);
-      setPrice(0);
-    }
+    // if (selectFrame.brand || selectFrame.code || selectFrame.color) {
+    //   setSelectedFrame(null);
+    //   setPrice(0);
+    // }
   }, [selectFrame.brand, selectFrame.code, selectFrame.color]);
 
   const findFrame = () => {
@@ -84,6 +88,7 @@ export default function PowerToFrameFilter() {
           item.brand === selectFrame.brand &&
           item.color === selectFrame.color
       );
+      console.log(matchingItems);
 
       if (matchingItems.length === 1) {
         setPrice(parseInt(matchingItems[0].price));
@@ -159,7 +164,7 @@ export default function PowerToFrameFilter() {
         />
 
         {/* Color Dropdown */}
-        {/* <DropdownInput
+        <DropdownInput
           options={colors}
           onChange={(selectedId) =>
             setSelectFrame((preState) => ({ ...preState, color: selectedId }))
@@ -167,7 +172,7 @@ export default function PowerToFrameFilter() {
           loading={colorsLoading}
           labelName="Select Color"
           defaultId={selectFrame.color}
-        /> */}
+        />
 
         {/* <FormControl fullWidth>
           <InputLabel id="demo-simple-select-label">Shape</InputLabel>
@@ -190,8 +195,6 @@ export default function PowerToFrameFilter() {
         </FormControl> */}
 
         {/* Species Dropdown */}
-        {console.log("selectedFrame", selectedFrame)}
-
         <Box width={{ minWidth: 130 }}>
           <Typography>
             Size- {selectedFrame ? selectedFrame.size : "__"}

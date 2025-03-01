@@ -11,7 +11,6 @@ export default function DateInput() {
     watch,
     formState: { errors },
   } = useFormContext();
-  console.log(watch("dob"));
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
