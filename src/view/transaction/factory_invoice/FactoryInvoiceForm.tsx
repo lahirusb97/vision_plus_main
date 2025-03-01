@@ -62,12 +62,8 @@ export default function FactoryInvoiceForm() {
   const subtotal = frameTotal + lenseTotal + otherTotal;
   const grandTotal = subtotal - discount;
   const { id } = useParams();
-  const {
-    refractionDetail,
-    refractionDetailLoading,
-    refractionDetailExist,
-    refractionDetailError,
-  } = useGetRefractionDetails(id);
+  const { refractionDetail, refractionDetailLoading, refractionDetailExist } =
+    useGetRefractionDetails(id);
 
   useEffect(() => {
     return () => {
@@ -197,6 +193,7 @@ export default function FactoryInvoiceForm() {
     } catch (err) {
       if (axios.isAxiosError(err)) {
         toast.error(err.response?.data?.message || "Failed to save Order data");
+        toast.error(err.response?.data?.error || "Failed to save Order data");
         console.log(err);
       } else {
         toast.error("An unexpected error occurred Failed to save Order data");

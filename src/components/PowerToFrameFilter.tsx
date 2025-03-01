@@ -24,6 +24,7 @@ import toast from "react-hot-toast";
 import { Delete, FindInPage, Search } from "@mui/icons-material";
 import { RootState } from "../store/store";
 import InvoiceFrameItem from "./InvoiceFrameItem";
+import { set } from "react-hook-form";
 interface FrameWithQty extends FrameModel {
   buyQty: number;
 }
@@ -65,25 +66,29 @@ export default function PowerToFrameFilter() {
       setAvilableCodes([]);
     }
   }, [selectFrame.brand]);
+  useEffect(() => {
+    findFrame();
+    // if (selectFrame.brand || selectFrame.code || selectFrame.color) {
+    //   setSelectedFrame(null);
+    //   setPrice(0);
+    // }
+  }, [selectFrame.brand, selectFrame.code, selectFrame.color]);
 
   const findFrame = () => {
     if (
       framesLoading === false &&
       selectFrame.code &&
       selectFrame.brand &&
-      selectFrame.color &&
-      selectFrame.size &&
-      selectFrame.species
+      selectFrame.color
     ) {
       setSelectedFrame(null);
       const matchingItems: FrameModel[] = frames.filter(
         (item) =>
           item.code === selectFrame.code &&
           item.brand === selectFrame.brand &&
-          item.color === selectFrame.color &&
-          item.size === selectFrame.size &&
-          item.species === selectFrame.species
+          item.color === selectFrame.color
       );
+      console.log(matchingItems);
 
       if (matchingItems.length === 1) {
         setPrice(parseInt(matchingItems[0].price));
@@ -100,6 +105,8 @@ export default function PowerToFrameFilter() {
       }
     }
   };
+  console.log("selectedFrame", selectFrame);
+
   const addFrameByList = () => {
     if (selectedFrame) {
       if (price > 0 && selectedFrame.id) {
@@ -108,6 +115,13 @@ export default function PowerToFrameFilter() {
         );
         toast.success("Frame Added ");
         setSelectedFrame(null);
+        setSelectFrame({
+          brand: null,
+          code: null,
+          color: null,
+          size: null,
+          species: null,
+        });
       } else {
         toast.error("Price must be greater than 0");
       }
@@ -115,6 +129,7 @@ export default function PowerToFrameFilter() {
       toast.error("No Frame Selected");
     }
   };
+  console.log("selectedFrameList", selectFrame);
 
   return (
     <Paper variant="elevation" sx={{ padding: 2, m: 2 }}>
@@ -159,7 +174,7 @@ export default function PowerToFrameFilter() {
           defaultId={selectFrame.color}
         />
 
-        <FormControl fullWidth>
+        {/* <FormControl fullWidth>
           <InputLabel id="demo-simple-select-label">Shape</InputLabel>
           <Select
             onChange={(e) =>
@@ -177,13 +192,24 @@ export default function PowerToFrameFilter() {
             <MenuItem value={"Full"}>Full</MenuItem>
             <MenuItem value={"Rimless"}>Rimless</MenuItem>
           </Select>
-        </FormControl>
+        </FormControl> */}
 
         {/* Species Dropdown */}
+        <Box width={{ minWidth: 130 }}>
+          <Typography>
+            Size- {selectedFrame ? selectedFrame.size : "__"}
+          </Typography>
+        </Box>
+        <Box width={{ minWidth: 150 }}>
+          <Typography>
+            Species- {selectedFrame ? selectedFrame.species : "__"}
+          </Typography>
+        </Box>
 
-        <FormControl fullWidth>
+        {/* <FormControl fullWidth>
           <InputLabel id="demo-simple-select-label">Species</InputLabel>
           <Select
+            disabled
             onChange={(e) =>
               setSelectFrame((preState) => ({
                 ...preState,
@@ -193,13 +219,13 @@ export default function PowerToFrameFilter() {
             labelId="demo-simple-select-label"
             id="demo-simple-select"
             label="species"
-            value={selectFrame.species}
+            value={selectedFrame.species}
           >
             <MenuItem value={"Metal"}>Metal</MenuItem>
             <MenuItem value={"Plastic"}>Plastic</MenuItem>
             <MenuItem value={"Metal/Plastic"}>Metal/Plastic</MenuItem>
           </Select>
-        </FormControl>
+        </FormControl> */}
 
         <TextField
           label="Price"
@@ -215,9 +241,9 @@ export default function PowerToFrameFilter() {
           {selectedFrame ? selectedFrame?.stock.qty : ""}
         </Paper>
 
-        <Button color="info" onClick={findFrame} variant="contained">
+        {/* <Button color="info" onClick={findFrame} variant="contained">
           <Search />
-        </Button>
+        </Button> */}
         <Button
           disabled={!selectedFrame}
           onClick={addFrameByList}

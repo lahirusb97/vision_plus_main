@@ -36,10 +36,6 @@ export default function FactoryTable() {
 
   // Filtered rows based on the search query
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
-  };
-
   const handleInternalOrder = async () => {
     if (selectedRow) {
       const customerName = selectedRow.customer_full_name;
@@ -49,7 +45,8 @@ export default function FactoryTable() {
         customerName
       )}&mobileNumber=${encodeURIComponent(
         mobileNumber
-      )}&nic=${encodeURIComponent("97824122v")}
+      )}&nic=${encodeURIComponent(
+        selectedRow.nic
       )}&refractionNumber=${encodeURIComponent(refractionNumber)}`;
 
       navigate(`create/${url}`);
@@ -60,11 +57,16 @@ export default function FactoryTable() {
       {/* Search Bar */}
 
       <Box
+        component={"form"}
         sx={{
           display: "flex",
           justifyContent: "space-between",
           gap: 2,
           alignItems: "baseline",
+        }}
+        onSubmit={(e) => {
+          e.preventDefault();
+          updateSearchParams(searchQuery);
         }}
       >
         <TextField
@@ -73,15 +75,9 @@ export default function FactoryTable() {
           fullWidth
           margin="normal"
           value={searchQuery}
-          onChange={handleSearchChange}
+          onChange={(e) => setSearchQuery(e.target.value)}
         />
-        <Button
-          onClick={() => {
-            updateSearchParams(searchQuery);
-          }}
-          sx={{ height: 55 }}
-          variant="contained"
-        >
+        <Button type="submit" variant="contained" sx={{ height: 50 }}>
           Search
         </Button>
       </Box>
@@ -110,6 +106,7 @@ export default function FactoryTable() {
             >
               <TableCell sx={{ fontWeight: "bold" }}>Actions</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Name</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Nic</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Mobile Number</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>
                 Refraction Number
@@ -169,6 +166,7 @@ export default function FactoryTable() {
                     </IconButton>
                   </TableCell>
                   <TableCell>{row.customer_full_name}</TableCell>
+                  <TableCell>{row.nic}</TableCell>
                   <TableCell>{row.customer_mobile}</TableCell>
                   <TableCell>{row.refraction_number}</TableCell>
                 </TableRow>

@@ -26,7 +26,7 @@ const LenseBrandAdd = () => {
         ...formData,
         brand_type: "lens",
       });
-      toast.success("Lense Brand Added successfully");
+      toast.success("Lense Factory Added successfully");
       navigate(-1);
       setFormData({
         name: "",
@@ -42,7 +42,7 @@ const LenseBrandAdd = () => {
         <form onSubmit={handleSubmit}>
           <TextField
             fullWidth
-            label="Brand Name"
+            label="Lense Factory Name"
             name="name"
             value={formData.name}
             onChange={handleChange}

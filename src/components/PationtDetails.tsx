@@ -1,11 +1,12 @@
 import { TextField, Box, Button, Paper, Typography } from "@mui/material";
-import { History } from "@mui/icons-material";
 import { useFormContext } from "react-hook-form";
 import { useLocation, useParams } from "react-router";
 import { useDispatch } from "react-redux";
 import { openStockDrawer } from "../features/invoice/stockDrawerSlice";
 import { useEffect } from "react";
 import DateInput from "./inputui/DateInput";
+import FilterPatient from "./FilterPatient";
+import { getBirthdateFromNIC } from "../utils/NictoBirthday";
 export default function PationtDetails() {
   const { id } = useParams(); // Read ID from URL
   const location = useLocation();
@@ -20,15 +21,25 @@ export default function PationtDetails() {
   const {
     register,
     setValue,
+    watch,
     formState: { errors },
   } = useFormContext();
   useEffect(() => {
     if (customerName || mobileNumber) {
       setValue("name", customerName);
       setValue("phone_number", mobileNumber);
+      setValue("nic", nic);
     }
   }, []);
-
+  useEffect(() => {
+    if (watch("nic").length >= 10) {
+      const birthdate = getBirthdateFromNIC(watch("nic"));
+      setValue("dob", ""); // Force clear first
+      setTimeout(() => {
+        setValue("dob", birthdate);
+      }, 0); // Add a slight delay
+    }
+  }, [nic, watch("nic")]);
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
       <Box sx={{ display: "flex", gap: 1 }}>
@@ -70,6 +81,8 @@ export default function PationtDetails() {
         /> */}
       </Box>
       <Box sx={{ display: "flex", gap: 1 }}>
+        <FilterPatient />
+
         <TextField
           {...register("phone_number")}
           error={!!errors.phone_number}

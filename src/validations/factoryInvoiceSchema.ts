@@ -92,9 +92,12 @@ export const factoryInvoiceSchema = Yup.object().shape({
     .transform((value, originalValue) =>
       String(originalValue).trim() === "" ? null : value
     ),
-  name: Yup.string(),
+  name: Yup.string().required("Patient Name is required"),
   nic: Yup.string(),
-  phone_number: Yup.string(),
+  phone_number: Yup.string()
+    .required("Phone number is required")
+    .min(10)
+    .max(10),
   address: Yup.string(),
   dob: Yup.string(),
   discount: Yup.number().required("discount is required").min(0),
