@@ -7,11 +7,6 @@ import {
   Paper,
   Typography,
   IconButton,
-  Modal,
-  Card,
-  CardContent,
-  Divider,
-  Grid,
 } from "@mui/material";
 import { DeleteForever, Edit, Info } from "@mui/icons-material";
 import axiosClient from "../../axiosClient";

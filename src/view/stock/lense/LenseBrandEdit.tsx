@@ -38,13 +38,13 @@ const LenseBrandEdit = () => {
         ...formData,
         brand_type: "lens",
       });
-      toast.success("Lense Brand Added successfully");
+      toast.success("Lense Factory Added successfully");
       navigate(-1);
       setFormData({
         name: "",
       });
     } catch (error) {
-      handleError(error, "Failed to recive lens Brand");
+      handleError(error, "Failed to recive lens Factory");
     }
   };
 
@@ -54,7 +54,7 @@ const LenseBrandEdit = () => {
         <form onSubmit={handleSubmit}>
           <TextField
             fullWidth
-            label="Brand Name"
+            label="Lense Factory Name"
             name="name"
             value={formData.name}
             onChange={handleChange}
