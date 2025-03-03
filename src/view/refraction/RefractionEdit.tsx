@@ -175,6 +175,9 @@ export default function RefractionEdit() {
               fullWidth
               label="note"
               multiline
+              InputLabelProps={{
+                shrink: Boolean(methods.watch("note")),
+              }}
             />
             <TextField
               {...methods.register("remark")}
@@ -183,6 +186,9 @@ export default function RefractionEdit() {
               fullWidth
               label="remark"
               multiline
+              InputLabelProps={{
+                shrink: Boolean(methods.watch("remark")),
+              }}
             />
           </Box>
 

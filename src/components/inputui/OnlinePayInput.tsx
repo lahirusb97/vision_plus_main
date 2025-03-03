@@ -2,8 +2,8 @@ import React from "react";
 import { TextField, Box, Typography } from "@mui/material";
 import CreditCardIcon from "@mui/icons-material/CreditCard";
 import { useFormContext } from "react-hook-form";
-
-const CardInput: React.FC = () => {
+import LanguageIcon from "@mui/icons-material/Language";
+const OnlinePayInput: React.FC = () => {
   const {
     register,
     setValue,
@@ -12,11 +12,11 @@ const CardInput: React.FC = () => {
   return (
     <Box display="flex" alignItems="center" gap={2}>
       <Box display="flex" alignItems="center" gap={1}>
-        <CreditCardIcon />
+        <LanguageIcon />
         <Typography>Card</Typography>
       </Box>
       <TextField
-        {...register("card")}
+        {...register("online_transfer")}
         variant="outlined"
         size="small"
         placeholder="Enter Amount"
@@ -24,12 +24,12 @@ const CardInput: React.FC = () => {
         type="number"
         onFocus={(e) => {
           if (e.target.value === "0") {
-            setValue("card", "");
+            setValue("online_transfer", "");
           }
         }}
         onBlur={(e) => {
           if (e.target.value === "") {
-            setValue("card", "0");
+            setValue("online_transfer", "0");
           }
         }}
         error={!!errors.card}
@@ -38,4 +38,4 @@ const CardInput: React.FC = () => {
   );
 };
 
-export default CardInput;
+export default OnlinePayInput;
