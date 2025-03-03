@@ -35,7 +35,7 @@ const useGetRefractionDetails = (
       setrefractionDetail(response.data);
       setrefractionDetailExist(true);
       toast.success("Previous Refraction Detail Found loading..");
-      console.log("RUN");
+
       setRefractionDetailError(false);
     } catch (error) {
       if (axios.isAxiosError(error)) {

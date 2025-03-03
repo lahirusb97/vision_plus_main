@@ -19,6 +19,7 @@ interface RefractionDetailModel {
   left_eye_dist_axis: number | null;
   left_eye_near_sph: number | null;
   remark: string;
+  note: string;
   name: string;
   nic: string;
   phone_number: string;

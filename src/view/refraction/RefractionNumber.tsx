@@ -20,7 +20,7 @@ export default function RefractionNumber() {
   const [loading, setLoading] = useState(false);
   const schema = yup.object({
     customer_full_name: yup.string().required("Full Name is required"),
-    nic: yup.string().required("Full Name is required"),
+    nic: yup.string().notRequired(),
     customer_mobile: yup
       .string()
       .required("User Name is required")
@@ -83,12 +83,13 @@ export default function RefractionNumber() {
             required
           />
           <TextField
-            {...register("nic")}   /* chalani- textfiled added and connected to use form hook*/
+            {...register(
+              "nic"
+            )} /* chalani- textfiled added and connected to use form hook*/
             fullWidth
             label="NIC"
             variant="outlined"
             margin="normal"
-            required
           />
           <TextField
             {...register("customer_mobile")}

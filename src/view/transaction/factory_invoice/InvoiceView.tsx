@@ -16,6 +16,12 @@ import { useRef } from "react";
 import { useReactToPrint } from "react-to-print";
 import useGetSingleInvoiceDetail from "../../../hooks/useGetSingleInvoiceDetail";
 import log from "../../../assets/defalt/Rectangle 522.png";
+import {
+  ArrowLeft,
+  ArrowRightAltSharp,
+  Phone,
+  Telegram,
+} from "@mui/icons-material";
 import OrderForm from "../../../components/OrderForm";
 
 const InvoiceView = () => {
@@ -69,29 +75,34 @@ const InvoiceView = () => {
           minHeight: "148mm", // A5 height
           margin: "0 auto",
           border: "1px solid #000",
-          fontFamily: 'Arial, sans-serif',
+          fontFamily: "Arial, sans-serif",
           "@media print": {
             width: "210mm",
             minHeight: "148mm",
             border: "none",
             margin: "0",
-            padding: "5mm",
+            padding: "2mm",
           },
         }}
         ref={componentRef}
       >
         {/* Logo and Header */}
-        <Box display="flex" justifyContent="center" alignItems="center" mb={2}>
-          <img src={log} alt="Vision Plus Logo" style={{ height: 50 }} />
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          mb={"2mm"}
+        >
+          <img src={log} alt="Vision Plus Logo" style={{ height: "8mm" }} />
         </Box>
 
-        <Typography variant="h5" align="center" fontWeight="bold">
+        <Typography variant="h6" align="center" fontWeight="bold">
           VISION PLUS OPTICIANS (PVT) LTD
         </Typography>
-        <Typography variant="body1" align="center">
+        <Typography variant="body2" align="center">
           Tel: 034 2247354 / 077 7854695
         </Typography>
-        <Typography variant="body1" align="center">
+        <Typography variant="body2" align="center">
           Date: {DateView(invoiceDetail.invoice_date)}
         </Typography>
 
@@ -99,8 +110,8 @@ const InvoiceView = () => {
           sx={{
             display: "flex",
             justifyContent: "space-between",
-            mt: 3,
-            mb: 3,
+            mt: "-2mm",
+            mb: "2mm",
           }}
         >
           <Box>
@@ -110,16 +121,13 @@ const InvoiceView = () => {
               </span>
             </Typography>
             <Typography variant="body2">
-              <strong>Customer Name:</strong>{" "}
-              {invoiceDetail?.customer_details?.name}
+              Customer Name: {invoiceDetail?.customer_details?.name}
             </Typography>
             <Typography variant="body2">
-              <strong>Address:</strong>{" "}
-              {invoiceDetail?.customer_details?.address}
+              Address: {invoiceDetail?.customer_details?.address}
             </Typography>
             <Typography variant="body2">
-              <strong>Phone Number:</strong>{" "}
-              {invoiceDetail?.customer_details?.phone_number}
+              Phone Number: {invoiceDetail?.customer_details?.phone_number}
             </Typography>
           </Box>
 
@@ -138,7 +146,7 @@ const InvoiceView = () => {
             aria-label="spanning table"
           >
             <TableHead>
-              <TableRow>
+              <TableRow sx={{ height: 10 }}>
                 <TableCell>Item Name</TableCell>
                 <TableCell align="right">Qty</TableCell>
                 <TableCell align="right">Unit</TableCell>
@@ -151,7 +159,11 @@ const InvoiceView = () => {
                 <TableRow key={index}>
                   <TableCell>
                     <Typography variant="body1">
-                      {row.lens ? row?.lense_name : row.frame ? row?.frame_name : ""}
+                      {row.lens
+                        ? row?.lense_name
+                        : row.frame
+                        ? row?.frame_name
+                        : ""}
                     </Typography>
                   </TableCell>
                   <TableCell align="right">{row.quantity}</TableCell>
@@ -164,10 +176,10 @@ const InvoiceView = () => {
               <TableRow>
                 <TableCell rowSpan={6} />
                 <TableCell align="right" colSpan={2}>
-                  <Typography variant="subtitle1">Subtotal</Typography>
+                  <Typography variant="body1">Subtotal</Typography>
                 </TableCell>
                 <TableCell align="right">
-                  <Typography variant="subtitle1">
+                  <Typography variant="body1">
                     {invoiceDetail.order_details.sub_total}
                   </Typography>
                 </TableCell>
@@ -175,41 +187,42 @@ const InvoiceView = () => {
               <TableRow>
                 <TableCell colSpan={1} />
                 <TableCell align="right">
-                  <Typography variant="subtitle1">Discounts</Typography>
+                  <Typography variant="body1">Discounts</Typography>
                 </TableCell>
                 <TableCell align="right">
-                  <Typography variant="subtitle1" color="error">
+                  <Typography variant="body1" color="error">
                     {invoiceDetail.order_details.discount}
                   </Typography>
                 </TableCell>
               </TableRow>
               <TableRow>
                 <TableCell align="right" colSpan={2}>
-                  <Typography variant="h6">Total</Typography>
+                  <Typography variant="body1">Total</Typography>
                 </TableCell>
                 <TableCell align="right">
-                  <Typography variant="subtitle1">
+                  <Typography variant="body1">
                     {invoiceDetail.order_details.total_price}
                   </Typography>
                 </TableCell>
               </TableRow>
               <TableRow>
                 <TableCell align="right" colSpan={2}>
-                  <Typography variant="subtitle1">Cash/Card</Typography>
+                  <Typography variant="body1">Cash/Card</Typography>
                 </TableCell>
                 <TableCell align="right">
-                  <Typography variant="subtitle1">
+                  <Typography variant="body1">
                     {invoiceDetail.order_payments[0]?.amount}
                   </Typography>
                 </TableCell>
               </TableRow>
               <TableRow>
                 <TableCell align="right" colSpan={2}>
-                  <Typography variant="subtitle1">Balance</Typography>
+                  <Typography variant="body1">Balance</Typography>
                 </TableCell>
                 <TableCell align="right">
-                  <Typography variant="subtitle1">
-                    {invoiceDetail.order_details.total_price - invoiceDetail.order_payments[0]?.amount}
+                  <Typography variant="body1">
+                    {invoiceDetail.order_details.total_price -
+                      invoiceDetail.order_payments[0]?.amount}
                   </Typography>
                 </TableCell>
               </TableRow>
@@ -218,21 +231,38 @@ const InvoiceView = () => {
         </TableContainer>
 
         {/* Branches Section */}
-        <Box sx={{ mt: 3 }}>
-          <Typography sx={{ mt: 3 }} variant="h6">Our Branches</Typography>
-          <Typography sx={{ mt: 2 }}variant="body1">Mathugama Branch</Typography>
-          <Typography variant="body1">Tel: 0342247354</Typography>
-          <Typography sx={{ mt: 2 }} variant="body1">Aluthgama Branch</Typography>
-          <Typography variant="body1">Tel: 0342275268</Typography>
+        <Box
+          sx={{
+            mt: "2mm",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <Typography sx={{ mt: "2mm" }} variant="h6">
+            <span style={{ display: "flex", alignItems: "center" }}>
+              Our Branches
+              <ArrowRightAltSharp sx={{ fontSize: "10mm" }} />
+            </span>
+          </Typography>
+          <Typography sx={{ mt: "2mm" }} variant="body1">
+            Mathugama Branch{" - "}
+            <span>0342247354</span>
+          </Typography>
+          <Typography sx={{ mt: "2mm" }} variant="body1">
+            Aluthgama Branch{" - "}
+            <span>0342275268</span>
+          </Typography>
         </Box>
 
         {/* Footer Note */}
         <Typography
           variant="body2"
           align="center"
-          sx={{ mt: 3, fontWeight: "bold" }}
+          sx={{ mt: "2mm", fontWeight: "bold" }}
         >
-          We will not be responsible for any uncollected orders after 3 months * Non-refundable
+          We will not be responsible for any uncollected orders after 3 months *
+          Non-refundable
         </Typography>
         <Typography variant="body2" align="center">
           Software developed by Furigen technology
@@ -242,7 +272,7 @@ const InvoiceView = () => {
         variant="contained"
         color="primary"
         onClick={() => reactToPrintFn()}
-        sx={{ mt: 2 }}
+        sx={{ mt: "2mm" }}
       >
         Print Invoice
       </Button>

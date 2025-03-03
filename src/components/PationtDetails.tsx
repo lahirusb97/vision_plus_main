@@ -1,14 +1,15 @@
-import { TextField, Box, Button, Paper, Typography } from "@mui/material";
+import { TextField, Box, Button, Paper, Typography, Chip } from "@mui/material";
 import { useFormContext } from "react-hook-form";
-import { useLocation, useParams } from "react-router";
+import { useLocation } from "react-router";
 import { useDispatch } from "react-redux";
 import { openStockDrawer } from "../features/invoice/stockDrawerSlice";
 import { useEffect } from "react";
 import DateInput from "./inputui/DateInput";
 import FilterPatient from "./FilterPatient";
 import { getBirthdateFromNIC } from "../utils/NictoBirthday";
+import { birthdayToAge } from "../utils/BirthdayToAge";
+import HidenNoteDialog from "./HidenNoteDialog";
 export default function PationtDetails() {
-  const { id } = useParams(); // Read ID from URL
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
 
@@ -62,7 +63,7 @@ export default function PationtDetails() {
           label="Staff Code"
         />
       </Box>
-      <Box sx={{ display: "flex", gap: 1 }}>
+      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
         <TextField
           {...register("name")}
           error={!!errors.name}
@@ -70,7 +71,6 @@ export default function PationtDetails() {
           size="small"
           label="name"
         />
-
         <DateInput />
         {/* <TextField
           {...register("dob")}
@@ -79,6 +79,10 @@ export default function PationtDetails() {
           size="small"
           label="Age"
         /> */}
+        <Chip
+          sx={{ p: 1, fontWeight: "bold" }}
+          label={birthdayToAge(watch("dob"))}
+        ></Chip>
       </Box>
       <Box sx={{ display: "flex", gap: 1 }}>
         <FilterPatient />
@@ -105,9 +109,8 @@ export default function PationtDetails() {
         label="Address"
       />
       <Box sx={{ display: "flex", gap: 1 }}>
-        <Button onClick={() => {}} color="error" variant="contained">
-          Note
-        </Button>
+        <HidenNoteDialog />
+
         <Button
           onClick={() => dispatch(openStockDrawer("frame"))}
           color="primary"
