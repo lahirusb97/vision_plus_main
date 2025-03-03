@@ -44,6 +44,7 @@ export default function RefractionNumber() {
       reset();
       navigate(`success?${params.toString()}`);
     } catch (error) {
+      console.log(error);
       if (error instanceof AxiosError) {
         toast.error(error.response?.data?.message || "Something went wrong");
       }

@@ -13,7 +13,7 @@ const OnlinePayInput: React.FC = () => {
     <Box display="flex" alignItems="center" gap={2}>
       <Box display="flex" alignItems="center" gap={1}>
         <LanguageIcon />
-        <Typography>Card</Typography>
+        <Typography>Online Payment</Typography>
       </Box>
       <TextField
         {...register("online_transfer")}
