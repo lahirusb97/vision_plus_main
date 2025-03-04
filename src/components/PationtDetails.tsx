@@ -1,14 +1,24 @@
-import { TextField, Box, Button, Paper, Typography, Chip } from "@mui/material";
+import {
+  TextField,
+  Box,
+  Button,
+  Paper,
+  Typography,
+  Chip,
+  InputAdornment,
+  IconButton,
+} from "@mui/material";
 import { useFormContext } from "react-hook-form";
 import { useLocation } from "react-router";
 import { useDispatch } from "react-redux";
 import { openStockDrawer } from "../features/invoice/stockDrawerSlice";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import DateInput from "./inputui/DateInput";
 import FilterPatient from "./FilterPatient";
 import { getBirthdateFromNIC } from "../utils/NictoBirthday";
 import { birthdayToAge } from "../utils/BirthdayToAge";
 import HidenNoteDialog from "./HidenNoteDialog";
+import { SearchSharp } from "@mui/icons-material";
 export default function PationtDetails() {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
@@ -17,7 +27,10 @@ export default function PationtDetails() {
   const mobileNumber = queryParams.get("mobileNumber");
   const nic = queryParams.get("nic");
   const refractionNumber = queryParams.get("refractionNumber");
-
+  const [openSearchDialog, setOpenSearchDialog] = useState({
+    open: false,
+    searchType: "",
+  });
   const dispatch = useDispatch();
   const {
     register,
@@ -43,6 +56,11 @@ export default function PationtDetails() {
   }, [nic, watch("nic")]);
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+      <FilterPatient
+        open={openSearchDialog.open}
+        searchType={openSearchDialog.searchType}
+        handleClose={() => setOpenSearchDialog({ open: false, searchType: "" })}
+      />
       <Box sx={{ display: "flex", gap: 1 }}>
         {/* <Button color="info" variant="contained">
           <History />
@@ -70,6 +88,22 @@ export default function PationtDetails() {
           sx={{ flexGrow: 1 }}
           size="small"
           label="name"
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  onClick={() =>
+                    setOpenSearchDialog({ open: true, searchType: "name" })
+                  }
+                >
+                  <SearchSharp />
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
+          InputLabelProps={{
+            shrink: Boolean(watch("name")),
+          }}
         />
         <DateInput />
         {/* <TextField
@@ -85,14 +119,31 @@ export default function PationtDetails() {
         ></Chip>
       </Box>
       <Box sx={{ display: "flex", gap: 1 }}>
-        <FilterPatient />
-
         <TextField
           {...register("phone_number")}
           error={!!errors.phone_number}
           sx={{ flexGrow: 1 }}
           size="small"
           label="Mobile Number"
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  onClick={() =>
+                    setOpenSearchDialog({
+                      open: true,
+                      searchType: "phone_number",
+                    })
+                  }
+                >
+                  <SearchSharp />
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
+          InputLabelProps={{
+            shrink: Boolean(watch("phone_number")),
+          }}
         />
         <TextField
           {...register("nic")}
@@ -100,6 +151,9 @@ export default function PationtDetails() {
           sx={{ flexGrow: 1 }}
           size="small"
           label="NIC"
+          InputLabelProps={{
+            shrink: Boolean(watch("nic")),
+          }}
         />
       </Box>
       <TextField
@@ -107,6 +161,9 @@ export default function PationtDetails() {
         error={!!errors.address}
         size="small"
         label="Address"
+        InputLabelProps={{
+          shrink: Boolean(watch("address")),
+        }}
       />
       <Box sx={{ display: "flex", gap: 1 }}>
         <HidenNoteDialog />

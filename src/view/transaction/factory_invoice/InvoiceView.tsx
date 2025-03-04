@@ -16,12 +16,7 @@ import { useRef } from "react";
 import { useReactToPrint } from "react-to-print";
 import useGetSingleInvoiceDetail from "../../../hooks/useGetSingleInvoiceDetail";
 import log from "../../../assets/defalt/Rectangle 522.png";
-import {
-  ArrowLeft,
-  ArrowRightAltSharp,
-  Phone,
-  Telegram,
-} from "@mui/icons-material";
+import { ArrowRightAltSharp } from "@mui/icons-material";
 
 const InvoiceView = () => {
   const location = useLocation();
@@ -63,6 +58,7 @@ const InvoiceView = () => {
       </Typography>
     );
   }
+  console.log(invoiceDetail);
 
   return (
     <div>
@@ -109,7 +105,7 @@ const InvoiceView = () => {
           sx={{
             display: "flex",
             justifyContent: "space-between",
-            mt: "-2mm",
+            mt: "-12mm",
             mb: "2mm",
           }}
         >
@@ -175,10 +171,10 @@ const InvoiceView = () => {
               <TableRow>
                 <TableCell rowSpan={6} />
                 <TableCell align="right" colSpan={2}>
-                  <Typography variant="body1">Subtotal</Typography>
+                  <Typography variant="body2">Subtotal</Typography>
                 </TableCell>
                 <TableCell align="right">
-                  <Typography variant="body1">
+                  <Typography variant="body2">
                     {invoiceDetail.order_details.sub_total}
                   </Typography>
                 </TableCell>
@@ -186,40 +182,40 @@ const InvoiceView = () => {
               <TableRow>
                 <TableCell colSpan={1} />
                 <TableCell align="right">
-                  <Typography variant="body1">Discounts</Typography>
+                  <Typography variant="body2">Discounts</Typography>
                 </TableCell>
                 <TableCell align="right">
-                  <Typography variant="body1" color="error">
+                  <Typography variant="body2">
                     {invoiceDetail.order_details.discount}
                   </Typography>
                 </TableCell>
               </TableRow>
               <TableRow>
                 <TableCell align="right" colSpan={2}>
-                  <Typography variant="body1">Total</Typography>
+                  <Typography variant="body2">Total</Typography>
                 </TableCell>
                 <TableCell align="right">
-                  <Typography variant="body1">
+                  <Typography variant="body2">
                     {invoiceDetail.order_details.total_price}
                   </Typography>
                 </TableCell>
               </TableRow>
               <TableRow>
                 <TableCell align="right" colSpan={2}>
-                  <Typography variant="body1">Cash/Card</Typography>
+                  <Typography variant="body2">Payment</Typography>
                 </TableCell>
                 <TableCell align="right">
-                  <Typography variant="body1">
+                  <Typography variant="body2">
                     {invoiceDetail.order_payments[0]?.amount}
                   </Typography>
                 </TableCell>
               </TableRow>
               <TableRow>
                 <TableCell align="right" colSpan={2}>
-                  <Typography variant="body1">Balance</Typography>
+                  <Typography variant="body2">Balance</Typography>
                 </TableCell>
                 <TableCell align="right">
-                  <Typography variant="body1">
+                  <Typography variant="body2">
                     {invoiceDetail.order_details.total_price -
                       invoiceDetail.order_payments[0]?.amount}
                   </Typography>

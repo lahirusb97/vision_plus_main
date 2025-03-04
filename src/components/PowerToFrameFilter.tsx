@@ -16,6 +16,7 @@ import { set } from "react-hook-form";
 import axiosClient from "../axiosClient";
 import { Colors } from "../model/ColorsModel";
 import axios from "axios";
+import { closeStockDrawer } from "../features/invoice/stockDrawerSlice";
 interface FrameWithQty extends FrameModel {
   buyQty: number;
 }
@@ -145,6 +146,7 @@ export default function PowerToFrameFilter() {
           size: null,
           species: null,
         });
+        dispatch(closeStockDrawer());
       } else {
         toast.error("Price must be greater than 0");
       }
