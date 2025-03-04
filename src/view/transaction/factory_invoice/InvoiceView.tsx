@@ -1,22 +1,15 @@
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableRow,
-  Paper,
-  Typography,
   Box,
+  Typography,
   Button,
-  TableHead,
   CircularProgress,
+  Paper,
 } from "@mui/material";
 import { useLocation } from "react-router";
 import { useRef } from "react";
 import { useReactToPrint } from "react-to-print";
 import useGetSingleInvoiceDetail from "../../../hooks/useGetSingleInvoiceDetail";
 import log from "../../../assets/defalt/Rectangle 522.png";
-import { ArrowRightAltSharp } from "@mui/icons-material";
 import OrderForm from "../../../components/OrderForm";
 
 const InvoiceView = () => {
@@ -59,7 +52,6 @@ const InvoiceView = () => {
       </Typography>
     );
   }
-  console.log(invoiceDetail);
 
   return (
     <div>
@@ -106,10 +98,15 @@ const InvoiceView = () => {
           sx={{
             display: "flex",
             justifyContent: "space-between",
-            mt: "-12mm",
+            mt: "-8mm",
             mb: "2mm",
           }}
         >
+          <Box sx={{ textAlign: "left" }}>
+            <Typography variant="body2">No: 34, Aluthgama Road</Typography>
+            <Typography variant="body2">Mathugama</Typography>
+            <Typography variant="body2">Sri Lanka</Typography>
+          </Box>
           <Box>
             <Typography variant="body2">
               <span style={{ fontWeight: "bold", fontSize: "20px" }}>
@@ -126,136 +123,150 @@ const InvoiceView = () => {
               Phone Number: {invoiceDetail?.customer_details?.phone_number}
             </Typography>
           </Box>
+        </Box>
 
-          <Box sx={{ textAlign: "left" }}>
-            <Typography variant="body2">No: 34, Aluthgama Road</Typography>
-            <Typography variant="body2">Mathugama</Typography>
-            <Typography variant="body2">Sri Lanka</Typography>
+        {/* Table using CSS Grid */}
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: "repeat(4, 1fr)",
+            gap: "1px",
+            backgroundColor: "#000",
+            border: "1px solid #000",
+            mt: "2mm",
+          }}
+        >
+          {/* Table Header */}
+          <Box
+            sx={{
+              gridColumn: "1 / -1",
+              display: "grid",
+              gridTemplateColumns: "repeat(4, 1fr)",
+              backgroundColor: "#f0f0f0",
+              fontWeight: "bold",
+              padding: "8px",
+            }}
+          >
+            <Box>Item Name</Box>
+            <Box sx={{ textAlign: "right" }}>Qty</Box>
+            <Box sx={{ textAlign: "right" }}>Unit</Box>
+            <Box sx={{ textAlign: "right" }}>Value</Box>
+          </Box>
+
+          {/* Item List */}
+          {invoiceDetail?.order_items.map((row, index) => (
+            <Box
+              key={index}
+              sx={{
+                gridColumn: "1 / -1",
+                display: "grid",
+                gridTemplateColumns: "repeat(4, 1fr)",
+                backgroundColor: "#fff",
+                padding: "8px",
+              }}
+            >
+              <Box>
+                {row.lens
+                  ? row?.lense_name
+                  : row.frame
+                  ? row?.frame_name
+                  : ""}
+              </Box>
+              <Box sx={{ textAlign: "right" }}>{row.quantity}</Box>
+              <Box sx={{ textAlign: "right" }}>{row.price_per_unit}</Box>
+              <Box sx={{ textAlign: "right" }}>{row.subtotal}</Box>
+            </Box>
+          ))}
+
+          {/* Summary Section */}
+          <Box
+            sx={{
+              gridColumn: "1 / -1",
+              display: "grid",
+              gridTemplateColumns: "repeat(2, 1fr)",
+              backgroundColor: "#fff",
+              padding: "8px",
+            }}
+          >
+            <Box sx={{ gridColumn: "2/ 3" }}>Subtotal</Box>
+            <Box sx={{ textAlign: "right", gridColumn: "3 / 4" }}>
+              {invoiceDetail.order_details.sub_total}
+            </Box>
+          </Box>
+          <Box
+            sx={{
+              gridColumn: "1 / -1",
+              display: "grid",
+              gridTemplateColumns: "repeat(2, 1fr)",
+              backgroundColor: "#fff",
+              padding: "8px",
+            }}
+          >
+            <Box sx={{ gridColumn: "2 / 3" }}>Discounts</Box>
+            <Box sx={{ textAlign: "right", gridColumn: "3 / 4" }}>
+              {invoiceDetail.order_details.discount}
+            </Box>
+          </Box>
+          <Box
+            sx={{
+              gridColumn: "1 / -1",
+              display: "grid",
+              gridTemplateColumns: "repeat(2, 1fr)",
+              backgroundColor: "#fff",
+              padding: "8px",
+            }}
+          >
+            <Box sx={{ gridColumn: "2 / 3", fontWeight: "bold" }}>Total</Box>
+            <Box sx={{ textAlign: "right", gridColumn: "3 / 4" }}>
+              <strong>{invoiceDetail.order_details.total_price}</strong>
+            </Box>
+          </Box>
+          <Box
+            sx={{
+              gridColumn: "1 / -1",
+              display: "grid",
+              gridTemplateColumns: "repeat(2, 1fr)",
+              backgroundColor: "#fff",
+              padding: "8px",
+            }}
+          >
+            <Box sx={{ gridColumn: "2 / 3" }}>Payment</Box>
+            <Box sx={{ textAlign: "right", gridColumn: "3 / 4" }}>
+              {invoiceDetail.order_payments[0]?.amount}
+            </Box>
+          </Box>
+          <Box
+            sx={{
+              gridColumn: "1 / -1",
+              display: "grid",
+              gridTemplateColumns: "repeat(2, 1fr)",
+              backgroundColor: "#fff",
+              padding: "8px",
+            }}
+          >
+            <Box sx={{ gridColumn: "2 / 3" }}>Balance</Box>
+            <Box sx={{ textAlign: "right", gridColumn: "3 / 4" }}>
+              {invoiceDetail.order_details.total_price -
+                invoiceDetail.order_payments[0]?.amount}
+            </Box>
           </Box>
         </Box>
 
-        {/* Table */}
-        <TableContainer component={Paper}>
-          <Table
-            size="small"
-            sx={{ width: "100%" }}
-            aria-label="spanning table"
-          >
-            <TableHead>
-              <TableRow sx={{ height: 10 }}>
-                <TableCell>Item Name</TableCell>
-                <TableCell align="right">Qty</TableCell>
-                <TableCell align="right">Unit</TableCell>
-                <TableCell align="right">Value</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {/* Item List */}
-              {invoiceDetail?.order_items.map((row, index) => (
-                <TableRow key={index}>
-                  <TableCell>
-                    <Typography variant="body1">
-                      {row.lens
-                        ? row?.lense_name
-                        : row.frame
-                        ? row?.frame_name
-                        : ""}
-                    </Typography>
-                  </TableCell>
-                  <TableCell align="right">{row.quantity}</TableCell>
-                  <TableCell align="right">{row.price_per_unit}</TableCell>
-                  <TableCell align="right">{row.subtotal}</TableCell>
-                </TableRow>
-              ))}
-
-              {/* Summary Section */}
-              <TableRow>
-                <TableCell rowSpan={6} />
-                <TableCell align="right" colSpan={2}>
-                  <Typography variant="body2">Subtotal</Typography>
-                </TableCell>
-                <TableCell align="right">
-                  <Typography variant="body2">
-                    {invoiceDetail.order_details.sub_total}
-                  </Typography>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell colSpan={1} />
-                <TableCell align="right">
-                  <Typography variant="body2">Discounts</Typography>
-                </TableCell>
-                <TableCell align="right">
-                  <Typography variant="body2">
-                    {invoiceDetail.order_details.discount}
-                  </Typography>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell align="right" colSpan={2}>
-                  <Typography variant="body2">Total</Typography>
-                </TableCell>
-                <TableCell align="right">
-                  <Typography variant="body2">
-                    {invoiceDetail.order_details.total_price}
-                  </Typography>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell align="right" colSpan={2}>
-                  <Typography variant="body2">Payment</Typography>
-                </TableCell>
-                <TableCell align="right">
-                  <Typography variant="body2">
-                    {invoiceDetail.order_payments[0]?.amount}
-                  </Typography>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell align="right" colSpan={2}>
-                  <Typography variant="body2">Balance</Typography>
-                </TableCell>
-                <TableCell align="right">
-                  <Typography variant="body2">
-                    {invoiceDetail.order_details.total_price -
-                      invoiceDetail.order_payments[0]?.amount}
-                  </Typography>
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </TableContainer>
-
         {/* Branches Section */}
-        <Box
-          sx={{
-            mt: "2mm",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <Typography sx={{ mt: "2mm" }} variant="h6">
-            <span style={{ display: "flex", alignItems: "center" }}>
-              Our Branches
-              <ArrowRightAltSharp sx={{ fontSize: "10mm" }} />
-            </span>
-          </Typography>
-          <Typography sx={{ mt: "2mm" }} variant="body1">
-            Mathugama Branch{" - "}
-            <span>0342247354</span>
-          </Typography>
-          <Typography sx={{ mt: "2mm" }} variant="body1">
-            Aluthgama Branch{" - "}
-            <span>0342275268</span>
-          </Typography>
-        </Box>
+<Box sx={{ mt: "2mm", display: "flex", justifyContent: "space-between" }}>
+  <Typography variant="h6">Our Branches</Typography>
+
+  <Box sx={{ display: "flex", gap: "20px" }}>
+    <Typography variant="body1">Mathugama - 0342247354</Typography>
+    <Typography variant="body1">Aluthgama - 0342275268</Typography>
+  </Box>
+</Box>
 
         {/* Footer Note */}
         <Typography
           variant="body2"
           align="center"
-          sx={{ mt: "2mm", fontWeight: "bold" }}
+          sx={{ mt: "3mm", fontWeight: "bold" }}
         >
           We will not be responsible for any uncollected orders after 3 months *
           Non-refundable
