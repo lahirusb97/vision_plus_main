@@ -13,37 +13,15 @@ import {
   TextField,
   Button,
 } from "@mui/material";
+import { useReactToPrint } from "react-to-print";
 
 const Invoice = ({ invoiceDetails }) => {
-  const invoiceRef = useRef(null);
-
-  const handlePrint = () => {
-    const printContent = invoiceRef.current;
-    const newWindow = window.open("", "_blank");
-    newWindow.document.write(`
-      <html>
-      <head>
-        <title>Print Invoice</title>
-        <style>
-          body { font-family: Arial, sans-serif; padding: 20px; }
-          table { width: 100%; border-collapse: collapse; }
-          th, td { border: 1px solid black; padding: 5px; text-align: center; }
-          .invoice-box { width: 100%; border: 1px solid black; padding: 20px; }
-        </style>
-      </head>
-      <body>
-        <div class="invoice-box">${printContent.innerHTML}</div>
-      </body>
-      </html>
-    `);
-    newWindow.document.close();
-    newWindow.print();
-    newWindow.close();
-  };
+  const componentRef = useRef(null);
+  const reactToPrintFn = useReactToPrint({ contentRef: componentRef });
 
   return (
     <Box sx={{ padding: 3, minHeight: "100vh" }}>
-      <div ref={invoiceRef}>
+      <div ref={componentRef}>
         {/* Header Section */}
         <Typography variant="body1" sx={{ fontWeight: "bold" }}>
           Date: 2025.02.15 &nbsp;&nbsp;&nbsp;&nbsp; Time: 10.30 a.m
@@ -217,7 +195,12 @@ const Invoice = ({ invoiceDetails }) => {
 
       {/* Print Button */}
       <Box sx={{ mt: 3, textAlign: "center" }}>
-        <Button variant="contained" color="primary" onClick={handlePrint}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => reactToPrintFn()}
+          sx={{ mt: "2mm" }}
+        >
           Print Invoice
         </Button>
       </Box>
