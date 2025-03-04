@@ -20,13 +20,33 @@ const Invoice = ({ invoiceDetails }) => {
   const reactToPrintFn = useReactToPrint({ contentRef: componentRef });
 
   return (
+    
+    
     <Box sx={{ padding: 3, minHeight: "100vh" }}>
-      <div ref={componentRef}>
+      
+        <Box
+          sx={{
+            p: 4,
+            width: "210mm", // A5 width
+            minHeight: "148mm", // A5 height
+            margin: "0 auto",
+            border: "1px solid #000",
+            fontFamily: "Arial, sans-serif",
+            "@media print": {
+              width: "210mm",
+              minHeight: "148mm",
+              border: "none",
+              margin: "0",
+              padding: "2mm",
+            },
+          }}
+        ref={componentRef}>
+        
         {/* Header Section */}
-        <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+        <Typography variant="body2" sx={{ fontWeight: "bold" }}>
           Date: 2025.02.15 &nbsp;&nbsp;&nbsp;&nbsp; Time: 10.30 a.m
         </Typography>
-        <Typography variant="h5" sx={{ fontWeight: "bold", mt: 2 }}>
+        <Typography variant="body2" sx={{ fontWeight: "bold", mt: 2 }}>
           VISION PLUS OPTICIANS (PVT) LTD
         </Typography>
 
@@ -89,7 +109,7 @@ const Invoice = ({ invoiceDetails }) => {
                 alignItems: "center",
               }}
             >
-              <Typography variant="body1" sx={{ fontWeight: "bold", flex: 1 }}>
+              <Typography variant="body2" sx={{ fontWeight: "bold", flex: 1 }}>
                 Invoice Number
               </Typography>
               <Box
@@ -100,7 +120,7 @@ const Invoice = ({ invoiceDetails }) => {
                 }}
               >
                 <Typography
-                  variant="body1"
+                  variant="body2"
                   sx={{ fontWeight: "bold", color: "black" }}
                 >
                   65644
@@ -117,7 +137,7 @@ const Invoice = ({ invoiceDetails }) => {
                 mt: 2,
               }}
             >
-              <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+              <Typography variant="body2" sx={{ fontWeight: "bold" }}>
                 Remark
               </Typography>
               <TextField
@@ -129,8 +149,8 @@ const Invoice = ({ invoiceDetails }) => {
             </Box>
 
             {/* Payment Details */}
-            <Box sx={{ mt: 2 }}>
-              <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+            <Box sx={{ mt: 1 }}>
+              <Typography variant="body2" sx={{ fontWeight: "bold" }}>
                 Payment Details:
               </Typography>
               <Typography variant="body2">
@@ -164,17 +184,17 @@ const Invoice = ({ invoiceDetails }) => {
               >
                 65644
               </Typography>
-              <Typography variant="body1" sx={{ fontWeight: "bold", mt: 2 }}>
+              <Typography variant="body2" sx={{ fontWeight: "bold", mt: 2 }}>
                 Name: Mr. Nandasena Perera
               </Typography>
-              <Typography variant="body1" sx={{ fontWeight: "bold", mt: 1 }}>
+              <Typography variant="body2" sx={{ fontWeight: "bold", mt: 1 }}>
                 Staff Member: Mr. Nithini
               </Typography>
-              <Typography variant="body1" sx={{ fontWeight: "bold", mt: 1 }}>
+              <Typography variant="body2" sx={{ fontWeight: "bold", mt: 1 }}>
                 Refraction: Mr. Piumi
               </Typography>
 
-              <Typography variant="body1" sx={{ fontWeight: "bold", mt: 2 }}>
+              <Typography variant="body2" sx={{ fontWeight: "bold", mt: 2 }}>
                 Frame:
               </Typography>
               <Typography variant="body2">- Crown 8005</Typography>
@@ -182,7 +202,7 @@ const Invoice = ({ invoiceDetails }) => {
               <Typography variant="body2">- Metal Frame</Typography>
               <Typography variant="body2">- Full Frame</Typography>
 
-              <Typography variant="body1" sx={{ fontWeight: "bold", mt: 2 }}>
+              <Typography variant="body2" sx={{ fontWeight: "bold", mt: 2 }}>
                 Lens:
               </Typography>
               <Typography variant="body2">- Lanka Optic</Typography>
@@ -191,7 +211,8 @@ const Invoice = ({ invoiceDetails }) => {
             </Paper>
           </Grid>
         </Grid>
-      </div>
+        </Box>
+    
 
       {/* Print Button */}
       <Box sx={{ mt: 3, textAlign: "center" }}>
