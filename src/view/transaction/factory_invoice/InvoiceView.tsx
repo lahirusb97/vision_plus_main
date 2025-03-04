@@ -11,6 +11,7 @@ import { useReactToPrint } from "react-to-print";
 import useGetSingleInvoiceDetail from "../../../hooks/useGetSingleInvoiceDetail";
 import log from "../../../assets/defalt/Rectangle 522.png";
 import OrderForm from "../../../components/OrderForm";
+import EastIcon from "@mui/icons-material/East";
 
 const InvoiceView = () => {
   const location = useLocation();
@@ -98,7 +99,7 @@ const InvoiceView = () => {
           sx={{
             display: "flex",
             justifyContent: "space-between",
-            mt: "-8mm",
+            mt: "2mm",
             mb: "2mm",
           }}
         >
@@ -179,13 +180,13 @@ const InvoiceView = () => {
             sx={{
               gridColumn: "1 / -1",
               display: "grid",
-              gridTemplateColumns: "repeat(2, 1fr)",
+              gridTemplateColumns: "repeat(4  , 1fr)",
               backgroundColor: "#fff",
               padding: "8px",
             }}
           >
-            <Box sx={{ gridColumn: "2/ 3" }}>Subtotal</Box>
-            <Box sx={{ textAlign: "right", gridColumn: "3 / 4" }}>
+            <Box sx={{ gridColumn: "3/4" }}>Subtotal</Box>
+            <Box sx={{ textAlign: "right", gridColumn: "4 / 5" }}>
               {invoiceDetail.order_details.sub_total}
             </Box>
           </Box>
@@ -193,13 +194,13 @@ const InvoiceView = () => {
             sx={{
               gridColumn: "1 / -1",
               display: "grid",
-              gridTemplateColumns: "repeat(2, 1fr)",
+              gridTemplateColumns: "repeat(4, 1fr)",
               backgroundColor: "#fff",
               padding: "8px",
             }}
           >
-            <Box sx={{ gridColumn: "2 / 3" }}>Discounts</Box>
-            <Box sx={{ textAlign: "right", gridColumn: "3 / 4" }}>
+            <Box sx={{ gridColumn: "3 / 4" }}>Discounts</Box>
+            <Box sx={{ textAlign: "right", gridColumn: "4 / 5" }}>
               {invoiceDetail.order_details.discount}
             </Box>
           </Box>
@@ -207,13 +208,13 @@ const InvoiceView = () => {
             sx={{
               gridColumn: "1 / -1",
               display: "grid",
-              gridTemplateColumns: "repeat(2, 1fr)",
+              gridTemplateColumns: "repeat(4, 1fr)",
               backgroundColor: "#fff",
               padding: "8px",
             }}
           >
-            <Box sx={{ gridColumn: "2 / 3", fontWeight: "bold" }}>Total</Box>
-            <Box sx={{ textAlign: "right", gridColumn: "3 / 4" }}>
+            <Box sx={{ gridColumn: "3 / 4", fontWeight: "bold" }}>Total</Box>
+            <Box sx={{ textAlign: "right", gridColumn: "4 / 5" }}>
               <strong>{invoiceDetail.order_details.total_price}</strong>
             </Box>
           </Box>
@@ -221,13 +222,13 @@ const InvoiceView = () => {
             sx={{
               gridColumn: "1 / -1",
               display: "grid",
-              gridTemplateColumns: "repeat(2, 1fr)",
+              gridTemplateColumns: "repeat(4, 1fr)",
               backgroundColor: "#fff",
               padding: "8px",
             }}
           >
-            <Box sx={{ gridColumn: "2 / 3" }}>Payment</Box>
-            <Box sx={{ textAlign: "right", gridColumn: "3 / 4" }}>
+            <Box sx={{ gridColumn: "3 / 4" }}>Payment</Box>
+            <Box sx={{ textAlign: "right", gridColumn: "4 / 5" }}>
               {invoiceDetail.order_payments[0]?.amount}
             </Box>
           </Box>
@@ -235,13 +236,13 @@ const InvoiceView = () => {
             sx={{
               gridColumn: "1 / -1",
               display: "grid",
-              gridTemplateColumns: "repeat(2, 1fr)",
+              gridTemplateColumns: "repeat(4, 1fr)",
               backgroundColor: "#fff",
               padding: "8px",
             }}
           >
-            <Box sx={{ gridColumn: "2 / 3" }}>Balance</Box>
-            <Box sx={{ textAlign: "right", gridColumn: "3 / 4" }}>
+            <Box sx={{ gridColumn: "3 / 4" }}>Balance</Box>
+            <Box sx={{ textAlign: "right", gridColumn: "4 / 5" }}>
               {invoiceDetail.order_details.total_price -
                 invoiceDetail.order_payments[0]?.amount}
             </Box>
@@ -252,12 +253,15 @@ const InvoiceView = () => {
         <Box
           sx={{ mt: "2mm", display: "flex", justifyContent: "space-between" }}
         >
-          <Typography variant="h6">Our Branches</Typography>
+          <Typography
+            sx={{ fontWeight: "bold", display: "flex", alignItems: "center" }}
+            variant="body2"
+          >
+            <span>Our Branches</span> <EastIcon />
+          </Typography>
 
-          <Box sx={{ display: "flex", gap: "20px" }}>
-            <Typography variant="body1">Mathugama - 0342247354</Typography>
-            <Typography variant="body1">Aluthgama - 0342275268</Typography>
-          </Box>
+          <Typography variant="body1">Mathugama - 0342247354</Typography>
+          <Typography variant="body1">Aluthgama - 0342275268</Typography>
         </Box>
 
         {/* Footer Note */}
