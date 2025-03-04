@@ -17,6 +17,7 @@ import { useReactToPrint } from "react-to-print";
 import useGetSingleInvoiceDetail from "../../../hooks/useGetSingleInvoiceDetail";
 import log from "../../../assets/defalt/Rectangle 522.png";
 import { ArrowRightAltSharp } from "@mui/icons-material";
+import OrderForm from "../../../components/OrderForm";
 
 const InvoiceView = () => {
   const location = useLocation();
@@ -271,6 +272,7 @@ const InvoiceView = () => {
       >
         Print Invoice
       </Button>
+      <OrderForm invoiceDetail={invoiceDetail} />
     </div>
   );
 };
