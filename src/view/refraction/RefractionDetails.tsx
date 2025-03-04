@@ -61,6 +61,7 @@ export default function RefractionDetails() {
         <TextField
           label="Search"
           variant="outlined"
+          placeholder="Refraction Number"
           fullWidth
           margin="normal"
           value={searchQuery}

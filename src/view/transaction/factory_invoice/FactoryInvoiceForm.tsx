@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 import { FormProvider, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useNavigate, useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import useGetRefractionDetails from "../../../hooks/useGetRefractionDetails";
 import { useEffect } from "react";
 import axios from "axios";
@@ -25,6 +25,7 @@ import axiosClient from "../../../axiosClient";
 import { clearFrame } from "../../../features/invoice/frameFilterSlice";
 import { clearLenses } from "../../../features/invoice/lenseFilterSlice";
 import { clearOtherItem } from "../../../features/invoice/otherItemSlice";
+import OnlinePayInput from "../../../components/inputui/OnlinePayInput";
 
 export default function FactoryInvoiceForm() {
   const methods = useForm({
@@ -75,15 +76,17 @@ export default function FactoryInvoiceForm() {
 
   useEffect(() => {
     if (!refractionDetailLoading && refractionDetailExist) {
+      console.log("Form Values Before:", methods.getValues());
+      console.log("Refraction Detail Data:", refractionDetail);
       Object.entries(refractionDetail as RefractionDetailModel).forEach(
         ([key, value]) => {
-          if (key in methods.getValues()) {
-            methods.setValue(key as keyof InvoiceInputModel, value || null);
-          }
+          methods.setValue(key as keyof InvoiceInputModel, value || null);
         }
       );
     }
   }, [refractionDetailLoading, refractionDetailExist]);
+  // console.log(methods.watch("note"));
+
   const convertEmptyStringsToNull = (
     obj: Record<string, any>
   ): Record<string, any> => {
@@ -94,6 +97,7 @@ export default function FactoryInvoiceForm() {
       ])
     );
   };
+
   const submiteFromData = async (data: InvoiceInputModel) => {
     const postData = {
       patient: {
@@ -178,6 +182,7 @@ export default function FactoryInvoiceForm() {
           left_eye_dist_cyl: data.left_eye_dist_cyl,
           left_eye_dist_axis: data.left_eye_dist_axis,
           left_eye_near_sph: data.left_eye_near_sph,
+          note: data.note,
           remark: data.remark,
         });
         // No refraction Data but have Refraction Number
@@ -230,9 +235,18 @@ export default function FactoryInvoiceForm() {
             <RightEyeTable />
 
             <LeftEyeTable />
+            {/* Passing The Note DAta to show in tthe dialog */}
             <PationtDetails />
           </Box>
           <InvoiceTable />
+          <TextField
+            fullWidth
+            size="small"
+            {...methods.register("remark")}
+            sx={{ flexGrow: 1, maxWidth: "1200px", mt: 1 }}
+            placeholder="remark"
+            multiline
+          />
           <Box
             sx={{
               display: "flex",
@@ -240,18 +254,12 @@ export default function FactoryInvoiceForm() {
               m: 2,
               width: "100%",
               maxWidth: "1200px",
+              justifyContent: "space-between",
             }}
           >
-            <TextField
-              {...methods.register("remark")}
-              sx={{ flexGrow: 1 }}
-              placeholder="remark"
-              multiline
-              rows={2}
-            />
-
-            <CardInput />
             <CashInput />
+            <CardInput />
+            <OnlinePayInput />
           </Box>
           <DrawerStock />
           <Button

@@ -1,17 +1,5 @@
-import React, { useEffect } from "react";
-import {
-  Box,
-  Button,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Paper,
-  Select,
-  Typography,
-  TextField,
-  Grid,
-  IconButton,
-} from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Box, Button, Paper, Typography, TextField } from "@mui/material";
 import DropdownInput from "./inputui/DropdownInput";
 import useGetFrames from "../hooks/lense/useGetFrames";
 import useGetBrands from "../hooks/lense/useGetBrand";
@@ -25,11 +13,16 @@ import { Delete, FindInPage, Search } from "@mui/icons-material";
 import { RootState } from "../store/store";
 import InvoiceFrameItem from "./InvoiceFrameItem";
 import { set } from "react-hook-form";
+import axiosClient from "../axiosClient";
+import { Colors } from "../model/ColorsModel";
+import axios from "axios";
+import { closeStockDrawer } from "../features/invoice/stockDrawerSlice";
 interface FrameWithQty extends FrameModel {
   buyQty: number;
 }
 export default function PowerToFrameFilter() {
   const dispatch = useDispatch();
+  //GET FRAME LIST
   const selectedFrameList = useSelector(
     (state: RootState) => state.invoice_frame_filer.selectedFrameList
   );
@@ -37,8 +30,10 @@ export default function PowerToFrameFilter() {
   const { brands, brandsLoading } = useGetBrands({
     brand_type: "frame",
   });
+
   const { codes, codesLoading } = useGetCodes();
-  const { colors, colorsLoading } = useGetColors();
+  const [colors, setColors] = useState<Colors[]>([]);
+  const [colorLoading, setColorLoading] = useState<boolean>(false);
   const [avilableCodes, setAvilableCodes] = React.useState<dataList[]>([]);
   const [price, setPrice] = React.useState<number>(0);
   const [selectedFrame, setSelectedFrame] = React.useState<FrameModel | null>(
@@ -57,6 +52,7 @@ export default function PowerToFrameFilter() {
     size: null,
     species: null,
   });
+  //Filter Codes usign Brand
   useEffect(() => {
     if (selectFrame.brand) {
       setAvilableCodes(
@@ -66,46 +62,74 @@ export default function PowerToFrameFilter() {
       setAvilableCodes([]);
     }
   }, [selectFrame.brand]);
-  useEffect(() => {
-    findFrame();
-    // if (selectFrame.brand || selectFrame.code || selectFrame.color) {
-    //   setSelectedFrame(null);
-    //   setPrice(0);
-    // }
-  }, [selectFrame.brand, selectFrame.code, selectFrame.color]);
+  //Filter Codes usign Brand
 
-  const findFrame = () => {
+  //Filter Colors usign Brand ID and frame ID **
+  useEffect(() => {
+    if (selectFrame.brand && selectFrame.code) {
+      filterColorsByBrandAndCode();
+    } else {
+      setColors([]);
+    }
+  }, [selectFrame.brand, selectFrame.code]);
+  //Filter Colors usign Brand ID and frame ID
+  //* GET FROM DB FIILTERD COLORS
+  const filterColorsByBrandAndCode = async () => {
+    try {
+      setColorLoading(true);
+      const response = await axiosClient.get<Colors[]>("/frames/colors/", {
+        params: {
+          brand_id: selectFrame.brand,
+          code_id: selectFrame.code,
+        },
+      });
+      setColors(response.data);
+    } catch (error) {
+      setColors([]);
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 400) {
+          toast.error("Brand And Code need to be selected");
+        }
+      } else {
+        toast.error("try again netowek error");
+      }
+    } finally {
+      setColorLoading(false);
+    }
+  };
+  //TODO GET DATA FROM DB FIILTERD COLORS END**
+
+  //TODO find a maching frame by brand code and color
+
+  useEffect(() => {
     if (
-      framesLoading === false &&
-      selectFrame.code &&
+      !framesLoading &&
       selectFrame.brand &&
+      selectFrame.code &&
       selectFrame.color
     ) {
       setSelectedFrame(null);
+      setPrice(0);
       const matchingItems: FrameModel[] = frames.filter(
         (item) =>
           item.code === selectFrame.code &&
           item.brand === selectFrame.brand &&
           item.color === selectFrame.color
       );
-      console.log(matchingItems);
-
       if (matchingItems.length === 1) {
         setPrice(parseInt(matchingItems[0].price));
         setSelectedFrame({ ...matchingItems[0] });
-      } else {
-        setPrice(0);
-        // setSelectFrame({
-        //   brand: null,
-        //   code: null,
-        //   color: null,
-        //   size: null,
-        //   species: null,
-        // });
+      } else if (matchingItems.length > 1) {
+        toast.error("Multiple frames found check the stock ");
       }
+    } else {
+      //! If Any of valuse null set selected frame to null & Price 0
+      setSelectedFrame(null);
+      setPrice(0);
     }
-  };
-  console.log("selectedFrame", selectFrame);
+  }, [selectFrame.brand, selectFrame.code, selectFrame.color, framesLoading]);
+
+  //TODO find a maching frame by brand code and color END***
 
   const addFrameByList = () => {
     if (selectedFrame) {
@@ -122,6 +146,7 @@ export default function PowerToFrameFilter() {
           size: null,
           species: null,
         });
+        dispatch(closeStockDrawer());
       } else {
         toast.error("Price must be greater than 0");
       }
@@ -129,7 +154,6 @@ export default function PowerToFrameFilter() {
       toast.error("No Frame Selected");
     }
   };
-  console.log("selectedFrameList", selectFrame);
 
   return (
     <Paper variant="elevation" sx={{ padding: 2, m: 2 }}>
@@ -169,64 +193,21 @@ export default function PowerToFrameFilter() {
           onChange={(selectedId) =>
             setSelectFrame((preState) => ({ ...preState, color: selectedId }))
           }
-          loading={colorsLoading}
+          loading={false}
           labelName="Select Color"
           defaultId={selectFrame.color}
         />
-
-        {/* <FormControl fullWidth>
-          <InputLabel id="demo-simple-select-label">Shape</InputLabel>
-          <Select
-            onChange={(e) =>
-              setSelectFrame((preState) => ({
-                ...preState,
-                size: e.target.value,
-              }))
-            }
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            label="Shape"
-            value={selectFrame.size}
-          >
-            <MenuItem value={"Half"}>Half</MenuItem>
-            <MenuItem value={"Full"}>Full</MenuItem>
-            <MenuItem value={"Rimless"}>Rimless</MenuItem>
-          </Select>
-        </FormControl> */}
-
         {/* Species Dropdown */}
         <Box width={{ minWidth: 130 }}>
           <Typography>
-            Size- {selectedFrame ? selectedFrame.size : "__"}
+            Size- {selectedFrame ? selectedFrame.size : "N/A"}
           </Typography>
         </Box>
         <Box width={{ minWidth: 150 }}>
           <Typography>
-            Species- {selectedFrame ? selectedFrame.species : "__"}
+            Species- {selectedFrame ? selectedFrame.species : "N/A"}
           </Typography>
         </Box>
-
-        {/* <FormControl fullWidth>
-          <InputLabel id="demo-simple-select-label">Species</InputLabel>
-          <Select
-            disabled
-            onChange={(e) =>
-              setSelectFrame((preState) => ({
-                ...preState,
-                species: e.target.value,
-              }))
-            }
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            label="species"
-            value={selectedFrame.species}
-          >
-            <MenuItem value={"Metal"}>Metal</MenuItem>
-            <MenuItem value={"Plastic"}>Plastic</MenuItem>
-            <MenuItem value={"Metal/Plastic"}>Metal/Plastic</MenuItem>
-          </Select>
-        </FormControl> */}
-
         <TextField
           label="Price"
           type="number"

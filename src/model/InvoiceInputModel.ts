@@ -14,7 +14,8 @@ interface InvoiceInputModel {
   left_eye_dist_axis: string | null;
   left_eye_dist_sph: string | null;
   left_eye_near_sph: string | null;
-  remark?: string;
+  remark?: string | null;
+  note: string | null;
   name: string;
   nic: string;
   phone_number: string;

@@ -92,6 +92,11 @@ export const factoryInvoiceSchema = Yup.object().shape({
     .transform((value, originalValue) =>
       String(originalValue).trim() === "" ? null : value
     ),
+  note: Yup.string()
+    .nullable()
+    .transform((value, originalValue) =>
+      String(originalValue).trim() === "" ? null : value
+    ),
   name: Yup.string().required("Patient Name is required"),
   nic: Yup.string(),
   phone_number: Yup.string()
@@ -103,4 +108,5 @@ export const factoryInvoiceSchema = Yup.object().shape({
   discount: Yup.number().required("discount is required").min(0),
   cash: Yup.number().required("payment Amount is required").min(0),
   card: Yup.number().required("payment Amount is required").min(0),
+  online_transfer: Yup.number().required("payment Amount is required").min(0),
 });
