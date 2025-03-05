@@ -17,7 +17,8 @@ const CashInput: React.FC = () => {
       </Box>
 
       <TextField
-        {...register("cash")}
+        {...register("cash", { valueAsNumber: true, min: 0, required: true })}
+        inputProps={{ min: 0 }}
         variant="outlined"
         size="small"
         type="number"
@@ -31,7 +32,7 @@ const CashInput: React.FC = () => {
         }}
         onBlur={(e) => {
           if (e.target.value === "") {
-            setValue("cash", "0");
+            setValue("cash", 0);
           }
         }}
       />

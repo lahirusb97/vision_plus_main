@@ -14,19 +14,21 @@ import { removeFrame } from "../../features/invoice/frameFilterSlice";
 import { removeLense } from "../../features/invoice/lenseFilterSlice";
 import { removeOtherItem } from "../../features/invoice/otherItemSlice";
 import { useFormContext } from "react-hook-form";
+import { removeexternalLense } from "../../features/invoice/externalLenseSlice";
+import { calculateExternalLensTotal } from "../../utils/calculateExternalLensTotal";
 
 export default function InvoiceTable() {
   const { register, watch, setValue } = useFormContext();
 
   const dispatch = useDispatch();
+  const externalLenseInvoiceList = useSelector(
+    (state: RootState) => state.invoice_external_lense.externalLense
+  );
   const FrameInvoiceList = useSelector(
     (state: RootState) => state.invoice_frame_filer.selectedFrameList
   );
   const LenseInvoiceList = useSelector(
     (state: RootState) => state.invoice_lense_filer.selectedLenses
-  );
-  const OtherInvoiceList = useSelector(
-    (state: RootState) => state.invoice_other_Item.selectedOtherItems
   );
   const calculateTotal = (list: any[]) => {
     return list.reduce((acc, row) => {
@@ -36,8 +38,11 @@ export default function InvoiceTable() {
   };
   const frameTotal = calculateTotal(Object.values(FrameInvoiceList));
   const lenseTotal = calculateTotal(Object.values(LenseInvoiceList));
-  const otherTotal = calculateTotal(Object.values(OtherInvoiceList));
-  const subtotal = frameTotal + lenseTotal + otherTotal;
+  const ExtraTotal = calculateExternalLensTotal(
+    Object.values(externalLenseInvoiceList)
+  );
+  //calcuate Total
+  const subtotal = frameTotal + lenseTotal + ExtraTotal;
   const grandTotal = subtotal - watch("discount");
 
   return (
@@ -115,26 +120,29 @@ export default function InvoiceTable() {
               </TableCell>
             </TableRow>
           ))}
-          {Object.values(OtherInvoiceList).map((row, index) => (
+          {/* //! External Invoice */}
+          {Object.values(externalLenseInvoiceList).map((row, index) => (
             <TableRow key={index}>
               <TableCell>
-                <IconButton onClick={() => dispatch(removeOtherItem(row.id))}>
+                <IconButton
+                  onClick={() => dispatch(removeexternalLense(row.id))}
+                >
                   <Delete color="error" />
                 </IconButton>
               </TableCell>
 
-              <TableCell>{`${row.name}  `}</TableCell>
+              <TableCell>{`${row.lensNames.typeName} / ${row.lensNames.brandName} /${row.lensNames.coatingName} `}</TableCell>
 
-              <TableCell align="right">{row.buyQty}</TableCell>
-              <TableCell align="right">{row.price}</TableCell>
-              <TableCell align="right">
-                {parseInt(row.price) * row.buyQty}
-              </TableCell>
+              <TableCell align="right">{row.quantity}</TableCell>
+              <TableCell align="right">{row.price_per_unit}</TableCell>
+              <TableCell align="right">{row.subtotal}</TableCell>
             </TableRow>
           ))}
+          {/* //! External Invoice */}
+
           <TableRow>
-            <TableCell rowSpan={3} />
-            <TableCell rowSpan={3} />
+            <TableCell rowSpan={4} />
+            <TableCell rowSpan={4} />
             <TableCell align="right" colSpan={2}>
               Subtotal
             </TableCell>
@@ -148,7 +156,7 @@ export default function InvoiceTable() {
                 {...register("discount")}
                 sx={{ width: "100%" }} // Optional for full width
                 type="number"
-                inputProps={{ style: { textAlign: "right" } }} // Correct way
+                inputProps={{ style: { textAlign: "right" }, min: 0 }} // Correct way
                 onFocus={(e) => {
                   if (e.target.value === "0") {
                     setValue("discount", "");
@@ -167,6 +175,17 @@ export default function InvoiceTable() {
               Total
             </TableCell>
             <TableCell align="right">{grandTotal}</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell sx={{ fontWeight: "bold" }} align="right" colSpan={2}>
+              Balance
+            </TableCell>
+            <TableCell sx={{ fontWeight: "bold" }} align="right">
+              {grandTotal -
+                (parseInt(watch("online_transfer") || 0) +
+                  parseInt(watch("card") || 0) +
+                  parseInt(watch("cash") || 0))}
+            </TableCell>
           </TableRow>
         </TableBody>
       </Table>

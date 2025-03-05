@@ -31,6 +31,8 @@ import DrawerStock from "../../../components/inputui/DrawerStock";
 import axiosClient from "../../../axiosClient";
 import PationtDetails from "../../../components/PationtDetails";
 import { convertEmptyStringsToNull } from "../../../utils/convertEmptyStringsToNull";
+import { ExternalLenseModel } from "../../../model/ExternalLenseModel";
+import { calculateExternalLensTotal } from "../../../utils/calculateExternalLensTotal";
 
 export default function FactoryInvoiceForm() {
   const { id } = useParams();
@@ -45,6 +47,10 @@ export default function FactoryInvoiceForm() {
   );
   const OtherInvoiceList = useSelector(
     (state: RootState) => state.invoice_other_Item.selectedOtherItems
+  );
+
+  const externalLenseInvoiceList = useSelector(
+    (state: RootState) => state.invoice_external_lense.externalLense
   );
   // Store Data**
 
@@ -64,11 +70,16 @@ export default function FactoryInvoiceForm() {
       return acc + rowTotal;
     }, 0);
   };
+  //test this function
 
   const frameTotal = calculateTotal(Object.values(FrameInvoiceList));
   const lenseTotal = calculateTotal(Object.values(LenseInvoiceList));
-  const otherTotal = calculateTotal(Object.values(OtherInvoiceList));
-  const subtotal = frameTotal + lenseTotal + otherTotal;
+  //calculate total send
+  const ExtraTotal = calculateExternalLensTotal(
+    Object.values(externalLenseInvoiceList)
+  );
+
+  const subtotal = frameTotal + lenseTotal + ExtraTotal;
   const grandTotal = subtotal - discount;
   const { refractionDetail, refractionDetailLoading, refractionDetailExist } =
     useGetRefractionDetails(id);
@@ -134,6 +145,12 @@ export default function FactoryInvoiceForm() {
           price_per_unit: item.price,
           subtotal: item.buyQty * item.price,
         })),
+        ...Object.values(externalLenseInvoiceList).map((item) => {
+          const { lensNames, ...rest } = item; // Exclude `name` and keep the rest
+          return {
+            ...rest, // Send the rest of the object without `name`
+          };
+        }),
       ],
       order_payments: [
         {
@@ -148,6 +165,7 @@ export default function FactoryInvoiceForm() {
         },
       ],
     };
+    console.log(postData);
 
     try {
       if (refractionDetailExist && !refractionDetailLoading) {
@@ -191,6 +209,7 @@ export default function FactoryInvoiceForm() {
     } catch (err) {
       if (axios.isAxiosError(err)) {
         toast.error(err.response?.data?.message || "Failed to save Order data");
+        console.log(err);
       } else {
         toast.error("An unexpected error occurred Failed to save Order data");
       }

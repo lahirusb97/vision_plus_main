@@ -16,9 +16,10 @@ import { useEffect, useState } from "react";
 import DateInput from "./inputui/DateInput";
 import FilterPatient from "./FilterPatient";
 import { getBirthdateFromNIC } from "../utils/NictoBirthday";
-import { birthdayToAge } from "../utils/BirthdayToAge";
+
 import HidenNoteDialog from "./HidenNoteDialog";
 import { SearchSharp } from "@mui/icons-material";
+import { birthdayToAge } from "../utils/BirthdayToAge";
 export default function PationtDetails() {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
