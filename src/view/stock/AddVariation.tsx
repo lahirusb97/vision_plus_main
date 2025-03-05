@@ -17,6 +17,7 @@ export default function AddVariation() {
   const { colors, refresh: refreshColors } = useGetColors();
   const { codes, refresh: refreshCodes } = useGetCodes();
   const { lenseTypes, refresh: refreshLenseTypes } = useGetLenseTypes();
+  console.log(frameBrand);
 
   return (
     <Box sx={{ display: "flex", gap: 2 }}>

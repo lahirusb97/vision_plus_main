@@ -28,30 +28,38 @@ export default function LensNoneStock() {
   const { coatings, coatingsLoading } = useGetCoatings();
   const { lenseTypes, lenseTypesLoading } = useGetLenseTypes();
   const [selectedItem, setSelecedIteme] = React.useState<{
-    id: number | null;
-    name: string | null;
-    price: number;
+    lenseTypeId: number | null;
+    coatingId: number | null;
+    lenseFactoryId: number | null;
+    price: string;
   }>({
-    id: null,
-    name: null,
-    price: 0,
+    lenseTypeId: null,
+    coatingId: null,
+    lenseFactoryId: null,
+    price: "",
   });
-  const [price, setPrice] = React.useState<number>(0);
+  const [price, setPrice] = React.useState<string>("");
   const selectedFrameList = useSelector(
     (state: RootState) => state.invoice_other_Item.selectedOtherItems
   );
   const dispatch = useDispatch();
-  // const addItems = () => {
-  //   if (selectedItem.id) {
-  //     dispatch(
-  //       setotherItem({
-  //         id: selectedItem.id,
-  //         name: selectedItem.name,
-  //         price: price,
-  //       })
-  //     );
-  //   }
-  // };
+  const addNoneStockLense = () => {
+    if (
+      selectedItem.coatingId &&
+      selectedItem.lenseFactoryId &&
+      selectedItem.lenseTypeId
+    ) {
+      console.log({ ...selectedItem, price: price });
+
+      // dispatch(
+      //   setotherItem({
+      //     id: selectedItem.id,
+      //     name: selectedItem.name,
+      //     price: price,
+      //   })
+      // );
+    }
+  };
   return (
     <div>
       <Paper variant="elevation" sx={{ padding: 2, m: 2 }}>
@@ -66,10 +74,11 @@ export default function LensNoneStock() {
         >
           <DropdownInput
             options={LensFactory}
-            onChange={
-              (id) => console.log(id)
-
-              // setSelectLense((preState) => ({ ...preState, brand: id }))
+            onChange={(id) =>
+              setSelecedIteme((preState) => ({
+                ...preState,
+                lenseFactoryId: id,
+              }))
             }
             loading={LensFactoryLoading}
             labelName="Lens Factory"
@@ -77,10 +86,11 @@ export default function LensNoneStock() {
           />
           <DropdownInput
             options={coatings}
-            onChange={
-              (id) => console.log(id)
-
-              // setSelectLense((preState) => ({ ...preState, brand: id }))
+            onChange={(id) =>
+              setSelecedIteme((preState) => ({
+                ...preState,
+                coatingId: id,
+              }))
             }
             loading={LensFactoryLoading}
             labelName="Lens Coating"
@@ -88,10 +98,11 @@ export default function LensNoneStock() {
           />
           <DropdownInput
             options={lenseTypes}
-            onChange={
-              (id) => console.log(id)
-
-              // setSelectLense((preState) => ({ ...preState, brand: id }))
+            onChange={(id) =>
+              setSelecedIteme((preState) => ({
+                ...preState,
+                lenseTypeId: id,
+              }))
             }
             loading={lenseTypesLoading}
             labelName="Lens Types"
@@ -102,18 +113,19 @@ export default function LensNoneStock() {
             type="number"
             size="medium"
             value={price}
+            onChange={(e) => setPrice(e.target.value)}
             onFocus={(e) => {
               if (e.target.value === "0") {
-                setPrice(0);
+                setPrice("");
               }
             }}
             onBlur={(e) => {
               if (e.target.value === "") {
-                setPrice(0);
+                setPrice("0");
               }
             }}
           />
-          <Button onClick={addItems} variant="contained">
+          <Button onClick={addNoneStockLense} variant="contained">
             Add
           </Button>
         </Box>

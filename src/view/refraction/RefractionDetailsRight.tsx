@@ -13,9 +13,8 @@ export default function RefractionDetailsRight() {
           display: "flex",
           flexDirection: "column",
           gap: 1,
-          backgroundColor: "#f5f5f5", /* chalani- backgroundcolor change*/
-          p: 2,
-
+          backgroundColor: "#f5f5f5" /* chalani- backgroundcolor change*/,
+          p: 1,
         }}
       >
         {/* //!Right EYE */}
@@ -31,7 +30,7 @@ export default function RefractionDetailsRight() {
             {...register("hb_rx_right_dist")}
             size="small"
             label={"Hb Rx dist"}
-            type="number"
+            type="text"
             InputLabelProps={{ shrink: Boolean(watch("hb_rx_right_dist")) }}
           />
           <TextField
@@ -39,7 +38,7 @@ export default function RefractionDetailsRight() {
             {...register("hb_rx_right_near")}
             size="small"
             label={"Hb Rx near"}
-            type="number"
+            type="text"
             InputLabelProps={{ shrink: Boolean(watch("hb_rx_right_near")) }}
           />
           <TextField
@@ -47,7 +46,7 @@ export default function RefractionDetailsRight() {
             {...register("auto_ref_right")}
             size="small"
             label={"Auto Ref"}
-            type="number"
+            type="text"
             InputLabelProps={{ shrink: Boolean(watch("auto_ref_right")) }}
           />
           <TextField
@@ -55,7 +54,7 @@ export default function RefractionDetailsRight() {
             {...register("ntc_right")}
             size="small"
             label={"NTC"}
-            type="number"
+            type="text"
             InputLabelProps={{ shrink: Boolean(watch("ntc_right")) }}
           />
           <TextField
@@ -63,7 +62,7 @@ export default function RefractionDetailsRight() {
             {...register("va_without_glass_right")}
             size="small"
             label={"VA Without Glass"}
-            type="number"
+            type="text"
             InputLabelProps={{
               shrink: Boolean(watch("va_without_glass_right")),
             }}
@@ -73,7 +72,7 @@ export default function RefractionDetailsRight() {
             {...register("va_without_ph_right")}
             size="small"
             label={"VA with P/H"} /* chalani- labelname change*/
-            type="number"
+            type="text"
             InputLabelProps={{ shrink: Boolean(watch("va_without_ph_right")) }}
           />
           <TextField
@@ -81,13 +80,13 @@ export default function RefractionDetailsRight() {
             {...register("va_with_glass_right")}
             size="small"
             label={"VA With Glass"}
-            type="number"
+            type="text"
             InputLabelProps={{ shrink: Boolean(watch("va_with_glass_right")) }}
           />
         </Box>
         <Paper variant="elevation" sx={{ bgcolor: "#f5f5f5" }}>
-          <Box sx={{ p: 2 }}>
-            <Box sx={{ display: "flex", gap: 1, mt: 1 }}>
+          <Box sx={{ p: 1 }}>
+            <Box sx={{ display: "flex", gap: 1 }}>
               <TextField
                 inputProps={{ step: 0.25 }}
                 type="number"
@@ -135,7 +134,7 @@ export default function RefractionDetailsRight() {
               display: "flex",
               justifyContent: "space-between",
               px: 2,
-              pb: 2,
+              pb: 1,
             }}
           >
             <TextField

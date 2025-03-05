@@ -101,14 +101,14 @@ export default function RefractionEdit() {
 
   return (
     <FormProvider {...methods}>
-      <Box sx={{ minWidth: "1000px", padding: "10px" }}>
+      <Box sx={{ minWidth: "1000px" }}>
         <form onSubmit={methods.handleSubmit(onSubmit)}>
           <Paper
             sx={{
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-              padding: 1,
+              padding: 0.5,
               borderRadius: 2,
               boxShadow: 2,
               backgroundColor: "#f5f5f5",
@@ -134,7 +134,7 @@ export default function RefractionEdit() {
                   sx={{
                     bgcolor: grey[700],
                     color: "white",
-                    p: "4px 12px",
+                    p: "2px 6px",
                     borderRadius: 1,
                     minWidth: "40px",
                     textAlign: "center",
@@ -162,35 +162,33 @@ export default function RefractionEdit() {
               p: 1,
             }}
           >
-            <RefractionDetailsRight />
-
             <RefractionDetailsLeft />
+            <RefractionDetailsRight />
           </Box>
-          <Box sx={{ display: "flex", gap: 1 }}>
-            {/* //TODO V2 */}
-            <TextField
-              {...methods.register("note")}
-              sx={{ my: 0.5 }}
-              size="small"
-              fullWidth
-              label="note"
-              multiline
-              InputLabelProps={{
-                shrink: Boolean(methods.watch("note")),
-              }}
-            />
-            <TextField
-              {...methods.register("remark")}
-              sx={{ my: 0.5 }}
-              size="small"
-              fullWidth
-              label="remark"
-              multiline
-              InputLabelProps={{
-                shrink: Boolean(methods.watch("remark")),
-              }}
-            />
-          </Box>
+
+          {/* //TODO V2 */}
+          <TextField
+            {...methods.register("note")}
+            sx={{ my: 0.5 }}
+            size="small"
+            fullWidth
+            label="note"
+            multiline
+            InputLabelProps={{
+              shrink: Boolean(methods.watch("note")),
+            }}
+          />
+          <TextField
+            {...methods.register("remark")}
+            sx={{ my: 0.5 }}
+            size="small"
+            fullWidth
+            label="remark"
+            multiline
+            InputLabelProps={{
+              shrink: Boolean(methods.watch("remark")),
+            }}
+          />
 
           <Button
             sx={{ width: "100%" }}

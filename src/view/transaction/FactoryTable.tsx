@@ -147,6 +147,7 @@ export default function FactoryTable() {
                 >
                   <TableCell>
                     <IconButton
+                      size="small"
                       color="warning"
                       title="Edit"
                       onClick={() => {
@@ -162,7 +163,7 @@ export default function FactoryTable() {
                         );
                       }}
                     >
-                      <EditIcon />
+                      <EditIcon fontSize="small" />
                     </IconButton>
                   </TableCell>
                   <TableCell>{row.customer_full_name}</TableCell>

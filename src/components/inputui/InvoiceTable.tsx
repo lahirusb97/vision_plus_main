@@ -61,8 +61,8 @@ export default function InvoiceTable() {
       >
         <TableHead>
           <TableRow>
-            <TableCell>action</TableCell>
-            <TableCell>Desc</TableCell>
+            <TableCell>Remove</TableCell>
+            <TableCell>Description</TableCell>
             <TableCell align="right">Qty.</TableCell>
             <TableCell align="right">Unit</TableCell>
             <TableCell align="right">Sum</TableCell>
