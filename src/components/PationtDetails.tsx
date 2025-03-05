@@ -190,11 +190,11 @@ export default function PationtDetails() {
             None Stock Lense
           </Button> */}
         <Button
-          onClick={() => dispatch(openStockDrawer("other"))}
+          onClick={() => dispatch(openStockDrawer("none_stock_lense"))}
           color="secondary"
           variant="contained"
         >
-          Other
+          None Stock Lense
         </Button>
       </Box>
     </Box>
