@@ -17,8 +17,16 @@ import DropdownInput from "../../../components/inputui/DropdownInput";
 import { setotherItem } from "../../../features/invoice/otherItemSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../store/store";
+import useGetBrands from "../../../hooks/lense/useGetBrand";
+import useGetCoatings from "../../../hooks/lense/useGetCoatings";
+import useGetLenseTypes from "../../../hooks/lense/useGetLenseType";
 export default function LensNoneStock() {
-  const { items, itemsLoading } = useGetOtherItems();
+  //CAll Hoos to recive Type Brand and Coating
+  const { brands: LensFactory, brandsLoading: LensFactoryLoading } =
+    useGetBrands({ brand_type: "lens" });
+
+  const { coatings, coatingsLoading } = useGetCoatings();
+  const { lenseTypes, lenseTypesLoading } = useGetLenseTypes();
   const [selectedItem, setSelecedIteme] = React.useState<{
     id: number | null;
     name: string | null;
@@ -33,17 +41,17 @@ export default function LensNoneStock() {
     (state: RootState) => state.invoice_other_Item.selectedOtherItems
   );
   const dispatch = useDispatch();
-  const addItems = () => {
-    if (selectedItem.id) {
-      dispatch(
-        setotherItem({
-          id: selectedItem.id,
-          name: selectedItem.name,
-          price: price,
-        })
-      );
-    }
-  };
+  // const addItems = () => {
+  //   if (selectedItem.id) {
+  //     dispatch(
+  //       setotherItem({
+  //         id: selectedItem.id,
+  //         name: selectedItem.name,
+  //         price: price,
+  //       })
+  //     );
+  //   }
+  // };
   return (
     <div>
       <Paper variant="elevation" sx={{ padding: 2, m: 2 }}>
@@ -57,26 +65,54 @@ export default function LensNoneStock() {
           }}
         >
           <DropdownInput
-            options={items}
-            onChange={(selectedId) => {
-              if (selectedId) {
-                const item = items.filter((item) => item.id === selectedId);
-                setSelecedIteme(item[0]);
-                setPrice(item[0].price || 0);
-              } else {
-                setSelecedIteme({
-                  id: null,
-                  name: null,
-                  price: 0,
-                });
+            options={LensFactory}
+            onChange={
+              (id) => console.log(id)
+
+              // setSelectLense((preState) => ({ ...preState, brand: id }))
+            }
+            loading={LensFactoryLoading}
+            labelName="Lens Factory"
+            defaultId={null}
+          />
+          <DropdownInput
+            options={coatings}
+            onChange={
+              (id) => console.log(id)
+
+              // setSelectLense((preState) => ({ ...preState, brand: id }))
+            }
+            loading={LensFactoryLoading}
+            labelName="Lens Coating"
+            defaultId={null}
+          />
+          <DropdownInput
+            options={lenseTypes}
+            onChange={
+              (id) => console.log(id)
+
+              // setSelectLense((preState) => ({ ...preState, brand: id }))
+            }
+            loading={lenseTypesLoading}
+            labelName="Lens Types"
+            defaultId={null}
+          />
+          <TextField
+            fullWidth
+            type="number"
+            size="medium"
+            value={price}
+            onFocus={(e) => {
+              if (e.target.value === "0") {
                 setPrice(0);
               }
             }}
-            loading={itemsLoading}
-            labelName="Select Code"
-            defaultId={selectedItem.id}
+            onBlur={(e) => {
+              if (e.target.value === "") {
+                setPrice(0);
+              }
+            }}
           />
-          <TextField type="number" size="small" value={price} />
           <Button onClick={addItems} variant="contained">
             Add
           </Button>
