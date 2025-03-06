@@ -18,6 +18,8 @@ import { removeexternalLense } from "../../features/invoice/externalLenseSlice";
 import { calculateExternalLensTotal } from "../../utils/calculateExternalLensTotal";
 
 export default function InvoiceTable() {
+
+  
   const { register, watch, setValue } = useFormContext();
 
   const dispatch = useDispatch();
@@ -46,6 +48,7 @@ export default function InvoiceTable() {
   const grandTotal = subtotal - watch("discount");
 
   return (
+    
     <TableContainer
       sx={{
         display: "flex",
@@ -190,5 +193,6 @@ export default function InvoiceTable() {
         </TableBody>
       </Table>
     </TableContainer>
+    
   );
 }
