@@ -46,58 +46,70 @@ const Invoice = ({ invoiceDetails }) => {
         <Typography variant="body2" sx={{ fontWeight: "bold" }}>
           Date: 2025.02.15 &nbsp;&nbsp;&nbsp;&nbsp; Time: 10.30 a.m
         </Typography>
-        <Typography variant="body2" sx={{ fontWeight: "bold", mt: 2 }}>
+        <Typography variant="h6" sx={{ fontWeight: "bold", mt: 2 }}>
           VISION PLUS OPTICIANS (PVT) LTD
         </Typography>
 
         <Grid container spacing={2} mt={2}>
           {/* Left Section - Main Invoice */}
           <Grid item xs={8}>
-            {/* Prescription Table */}
-            <TableContainer component={Paper} sx={{ mb: 2 }}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell
-                      align="center"
-                      colSpan={3}
-                      sx={{ fontWeight: "bold" }}
-                    >
-                      Right Eye
-                    </TableCell>
-                    <TableCell
-                      align="center"
-                      colSpan={3}
-                      sx={{ fontWeight: "bold" }}
-                    >
-                      Left Eye
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>SPH</TableCell>
-                    <TableCell>CYL</TableCell>
-                    <TableCell>AXIS</TableCell>
-                    <TableCell>SPH</TableCell>
-                    <TableCell>CYL</TableCell>
-                    <TableCell>AXIS</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  <TableRow>
-                    <TableCell>Plano</TableCell>
-                    <TableCell>-0.50</TableCell>
-                    <TableCell>120</TableCell>
-                    <TableCell>Plano</TableCell>
-                    <TableCell>-0.50</TableCell>
-                    <TableCell>120</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>+2.50</TableCell>
-                    <TableCell colSpan={5}></TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </TableContainer>
+           {/* Prescription Table */}
+<TableContainer component={Paper} sx={{ mb: 2, border: "1px solid black" }}>
+  <Table sx={{ border: "1px solid black" }}>
+    <TableHead>
+      <TableRow>
+        <TableCell 
+          align="center"
+          colSpan={3}
+          sx={{ 
+            fontWeight: "bold", 
+            border: "2px solid black" // Right Eye border
+          }}
+        >
+          Right Eye
+        </TableCell>
+        <TableCell
+          align="center"
+          colSpan={3}
+          sx={{ 
+            fontWeight: "bold", 
+            border: "2px solid black" // Left Eye border
+          }}
+        >
+          Left Eye
+        </TableCell>
+      </TableRow>
+      <TableRow>
+        {/* Right Eye Columns */}
+        <TableCell sx={{ border: "2px solid black" }}>SPH</TableCell>
+        <TableCell sx={{ border: "2px solid black" }}>CYL</TableCell>
+        <TableCell sx={{ border: "2px solid black" }}>AXIS</TableCell>
+        
+        {/* Left Eye Columns */}
+        <TableCell sx={{ border: "2px solid black" }}>SPH</TableCell>
+        <TableCell sx={{ border: "2px solid black" }}>CYL</TableCell>
+        <TableCell sx={{ border: "2px solid black" }}>AXIS</TableCell>
+      </TableRow>
+    </TableHead>
+    <TableBody>
+      <TableRow>
+        {/* Right Eye Data */}
+        <TableCell sx={{ border: "2px solid black" }}>Plano</TableCell>
+        <TableCell sx={{ border: "2px solid black" }}>-0.50</TableCell>
+        <TableCell sx={{ border: "2px solid black" }}>120</TableCell>
+        
+        {/* Left Eye Data */}
+        <TableCell sx={{ border: "2px solid black" }}>Plano</TableCell>
+        <TableCell sx={{ border: "2px solid black" }}>-0.50</TableCell>
+        <TableCell sx={{ border: "2px solid black" }}>120</TableCell>
+      </TableRow>
+      <TableRow>
+        <TableCell sx={{ border: "2px solid black" }}>+2.50</TableCell>
+        <TableCell colSpan={5} sx={{ border: "2px solid black" }}></TableCell>
+      </TableRow>
+    </TableBody>
+  </Table>
+</TableContainer>
 
             {/* Invoice Number */}
             <Box
