@@ -32,6 +32,7 @@ import axiosClient from "../../../axiosClient";
 import PationtDetails from "../../../components/PationtDetails";
 import { convertEmptyStringsToNull } from "../../../utils/convertEmptyStringsToNull";
 import { calculateExternalLensTotal } from "../../../utils/calculateExternalLensTotal";
+import { clearexternalLense } from "../../../features/invoice/externalLenseSlice";
 
 export default function FactoryInvoiceForm() {
   const { id } = useParams();
@@ -84,6 +85,7 @@ export default function FactoryInvoiceForm() {
       dispatch(clearFrame());
       dispatch(clearLenses());
       dispatch(clearOtherItem());
+      dispatch(clearexternalLense());
     };
   }, []);
 
@@ -109,41 +111,70 @@ export default function FactoryInvoiceForm() {
         date_of_birth: data.dob,
       },
       order: {
-        refraction: id,
-        status:
-          subtotal <= parseInt(data.card || "0") + parseInt(data.cash || "0")
-            ? "completed"
-            : "pending",
-
-        sub_total: parseFloat(subtotal) || 0,
-        discount: parseFloat(discount) || 0,
-        total_price: parseFloat(grandTotal) || 0,
-        remark: data.remark,
-        sales_staff_code: data.sales_staff_code,
+        refraction: 3,
+        status: "pending",
+        sub_total: 740.0,
+        discount: 20.0,
+        total_price: 720.0,
+        remark: "ok",
+        sales_staff_code: 1,
       },
       order_items: [
-        // ...Object.values(OtherInvoiceList).map((item) => ({
-        //   lens_cleaner: item.id,
-        //   quantity: item.buyQty,
-        //   price_per_unit: item.price,
-        //   subtotal: item.buyQty * item.price,
-        // })),
         ...Object.values(LenseInvoiceList).map((item) => ({
           lense: item.id,
           quantity: item.buyQty,
           price_per_unit: item.price,
           subtotal: item.buyQty * item.price,
         })),
+
         ...Object.values(FrameInvoiceList).map((item) => ({
           frame: item.id,
           quantity: item.buyQty,
           price_per_unit: item.price,
           subtotal: item.buyQty * item.price,
         })),
+
         ...Object.values(externalLenseInvoiceList).map((item) => {
-          const { lensNames, ...rest } = item; // Exclude `name` and keep the rest
+          const { external_lens_data = {}, lensNames, ...rest } = item; // Default to empty object if not available
+
+          const powers = [
+            {
+              power: 1,
+              value: methods.watch("right_eye_dist_sph") || null,
+              side: "left",
+            },
+            {
+              power: 2,
+              value: methods.watch("right_eye_dist_cyl") || null,
+              side: "left",
+            },
+            {
+              power: 3,
+              value: methods.watch("right_eye_near_sph") || null,
+              side: "left",
+            },
+            {
+              power: 1,
+              value: methods.watch("left_eye_dist_sph") || null,
+              side: "right",
+            },
+            {
+              power: 2,
+              value: methods.watch("left_eye_dist_cyl") || null,
+              side: "right",
+            },
+            {
+              power: 3,
+              value: methods.watch("left_eye_near_sph") || null,
+              side: "right",
+            },
+          ];
           return {
-            ...rest, // Send the rest of the object without `name`
+            ...rest,
+            external_lens_data: {
+              ...external_lens_data,
+              powers,
+            }, // Send the rest of the object without `name`
           };
         }),
       ],
@@ -160,6 +191,7 @@ export default function FactoryInvoiceForm() {
         },
       ],
     };
+    console.log(postData);
 
     try {
       if (refractionDetailExist && !refractionDetailLoading) {

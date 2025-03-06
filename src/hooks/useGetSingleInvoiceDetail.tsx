@@ -34,7 +34,7 @@ const useGetSingleInvoiceDetail = (
       setInvoiceDetailError(false);
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        toast.error("Invoice Found");
+        toast.error("Invoice not Found");
       }
       setInvoiceDetailError(true);
     } finally {

@@ -1,5 +1,4 @@
 import { RouteObject } from "react-router";
-import EditInvoice from "../../view/transaction/EditInvoice";
 import NormalInvoice from "../../view/transaction/NormalInvoice";
 import Repayment from "../../view/transaction/Repayment";
 import ProtectedChildRoute from "../ProtectedChildRoute";
@@ -7,6 +6,8 @@ import ProtectedChildRoute from "../ProtectedChildRoute";
 import FactoryTable from "../../view/transaction/FactoryTable";
 import FactoryInvoiceForm from "../../view/transaction/factory_order/FactoryInvoiceForm";
 import InvoiceView from "../../view/transaction/factory_order/InvoiceView";
+import OrderEditFrom from "../../view/transaction/order_edit/OrderEditFrom";
+import OrderEditIndex from "../../view/transaction/OrderEditIndex";
 
 export const transactionRoutes: RouteObject[] = [
   {
@@ -53,7 +54,17 @@ export const transactionRoutes: RouteObject[] = [
   },
   {
     path: "order_edit",
-    element: <EditInvoice />,
+    element: <ProtectedChildRoute />,
+    children: [
+      {
+        index: true,
+        element: <OrderEditIndex />,
+      },
+      {
+        path: ":id",
+        element: <OrderEditFrom />,
+      },
+    ],
   },
   {
     path: "repayment",

@@ -28,6 +28,7 @@ const LenseStore = () => {
         Cell: ({ row }) => (
           <Box>
             <IconButton
+              size="small"
               color="error"
               title="Delete"
               onClick={() => handleDelete(row.original)}
@@ -35,6 +36,7 @@ const LenseStore = () => {
               <DeleteIcon />
             </IconButton>
             <IconButton
+              size="small"
               color="info"
               title="History"
               onClick={() => handleHistory(row.original.id)}
@@ -42,6 +44,7 @@ const LenseStore = () => {
               <HistoryIcon />
             </IconButton>
             <IconButton
+              size="small"
               color="warning"
               title="Edit"
               onClick={() => handleEdit(row.original.id)}
@@ -49,6 +52,7 @@ const LenseStore = () => {
               <EditIcon />
             </IconButton>
             <IconButton
+              size="small"
               color="warning"
               title="Update Quantity"
               onClick={() => handleUpdate(row.original.id)}
@@ -61,6 +65,11 @@ const LenseStore = () => {
       {
         header: "Lense Type",
         accessorKey: "stock.lens_type",
+        size: 130,
+      },
+      {
+        header: "Lense Factory",
+        accessorKey: "brand_name",
         size: 130,
       },
       {
@@ -110,13 +119,13 @@ const LenseStore = () => {
         size: 30,
       },
       {
-        header: "Stock Limit",
-        accessorKey: "stock.limit", // Nested accessor for stock initial count
+        header: "Quantity",
+        accessorKey: "stock.qty", // Nested accessor for stock quantity
         size: 50,
       },
       {
-        header: "Quantity",
-        accessorKey: "stock.qty", // Nested accessor for stock quantity
+        header: "Stock Limit",
+        accessorKey: "stock.limit", // Nested accessor for stock initial count
         size: 50,
       },
     ],

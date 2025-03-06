@@ -21,6 +21,7 @@ const InvoiceView = () => {
   const { invoiceDetail, invoiceDetailLoading } = useGetSingleInvoiceDetail(
     parseInt(queryParams.get("order_id") ?? "")
   );
+  console.log(invoiceDetail);
 
   const DateView = (date: string) => {
     return new Date(date).toLocaleString("default", {
