@@ -21,6 +21,7 @@ import { LogoutOutlined } from "@mui/icons-material";
 import { useAuthContext } from "../../context/AuthContext";
 import { useLocation } from "react-router";
 import UserNav from "../user/UserNav";
+import CheckInNav from "../checkin/CheckInNav";
 
 // TabPanel Component
 
@@ -65,7 +66,7 @@ export default function NavBar() {
       label: "Transaction",
       nav: TransactionNav,
     },
-    { path: "master", icon: MasterIcon, label: "Check In", nav: RefractionNav },
+    { path: "checkin", icon: MasterIcon, label: "Check In", nav: CheckInNav },
     {
       path: "account",
       icon: AccountIcon,
