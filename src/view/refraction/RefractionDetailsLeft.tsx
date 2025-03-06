@@ -12,15 +12,15 @@ export default function RefractionDetailsLeft() {
           display: "flex",
           flexDirection: "column",
           gap: 1,
-          backgroundColor: "#f5f5f5",  /* chalani- backgroundcolor change*/
-          p: 2,
+          backgroundColor: "#f5f5f5" /* chalani- backgroundcolor change*/,
+          p: 1,
         }}
       >
         <TextField
           {...register("hb_rx_left_dist")}
           size="small"
           label={"Hb Rx dist"}
-          type="number"
+          type="text"
           inputProps={{ step: 0.25 }}
           InputLabelProps={{
             shrink: Boolean(watch("hb_rx_left_dist")),
@@ -30,7 +30,7 @@ export default function RefractionDetailsLeft() {
           {...register("hb_rx_left_near")}
           size="small"
           label={"Hb Rx near"}
-          type="number"
+          type="text"
           inputProps={{ step: 0.25 }}
           InputLabelProps={{
             shrink: Boolean(watch("hb_rx_left_near")),
@@ -40,7 +40,7 @@ export default function RefractionDetailsLeft() {
           {...register("auto_ref_left")}
           size="small"
           label={"Auto Ref"}
-          type="number"
+          type="text"
           inputProps={{ step: 0.25 }}
           InputLabelProps={{
             shrink: Boolean(watch("auto_ref_left")),
@@ -50,7 +50,7 @@ export default function RefractionDetailsLeft() {
           {...register("ntc_left")}
           size="small"
           label={"NTC"}
-          type="number"
+          type="text"
           inputProps={{ step: 0.25 }}
           InputLabelProps={{
             shrink: Boolean(watch("ntc_left")),
@@ -60,7 +60,7 @@ export default function RefractionDetailsLeft() {
           {...register("va_without_glass_left")}
           size="small"
           label={"VA Without Glass"}
-          type="number"
+          type="text"
           inputProps={{ step: 0.25 }}
           InputLabelProps={{
             shrink: Boolean(watch("va_without_glass_left")),
@@ -69,8 +69,8 @@ export default function RefractionDetailsLeft() {
         <TextField
           {...register("va_without_ph_left")}
           size="small"
-          label={"VA with P/H"}/* chalani- labelname change*/
-          type="number"
+          label={"VA with P/H"} /* chalani- labelname change*/
+          type="text"
           inputProps={{ step: 0.25 }}
           InputLabelProps={{
             shrink: Boolean(watch("va_without_ph_left")),
@@ -80,15 +80,15 @@ export default function RefractionDetailsLeft() {
           {...register("va_with_glass_left")}
           size="small"
           label={"VA With Glass"}
-          type="number"
+          type="text"
           inputProps={{ step: 0.25 }}
           InputLabelProps={{
             shrink: Boolean(watch("va_with_glass_left")),
           }}
         />
-        <Paper sx={{ p: 2, bgcolor: "#f5f5f5" }}>
+        <Paper sx={{ p: 1, bgcolor: "#f5f5f5" }}>
           <Box>
-            <Box sx={{ display: "flex", gap: 1, mt: 1 }}>
+            <Box sx={{ display: "flex", gap: 1 }}>
               <TextField
                 inputProps={{ step: 0.25 }}
                 type="number"
@@ -131,7 +131,7 @@ export default function RefractionDetailsLeft() {
           </Box>
 
           {/* show this below */}
-          <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
+          <Box sx={{ display: "flex", justifyContent: "space-between", mt: 1 }}>
             <TextField
               inputProps={{ step: 0.25 }}
               type="number"

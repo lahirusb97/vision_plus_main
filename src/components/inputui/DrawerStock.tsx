@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { closeStockDrawer } from "../../features/invoice/stockDrawerSlice";
 import FrameStock from "../../view/transaction/factory_invoice/FrameStock";
 import LensStock from "../../view/transaction/factory_invoice/LensStock";
-import LensNoneStock from "../../view/transaction/factory_invoice/LensNoneStock";
+import ExternalLense from "../../view/transaction/factory_invoice/ExternalLense";
 
 export default function DrawerStock() {
   const dispatch = useDispatch();
@@ -38,7 +38,7 @@ export default function DrawerStock() {
         ) : stockDrawerType === "lense" ? (
           <LensStock />
         ) : stockDrawerType === "none_stock_lense" ? (
-          <LensNoneStock />
+          <ExternalLense />
         ) : (
           <>Error Refresh The Page</>
         )}

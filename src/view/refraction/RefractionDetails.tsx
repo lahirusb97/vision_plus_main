@@ -98,8 +98,6 @@ export default function RefractionDetails() {
             <TableRow
               sx={{
                 backgroundColor: theme.palette.grey[200],
-
-                height: 50,
               }}
             >
               <TableCell sx={{ fontWeight: "bold" }}>Actions</TableCell>
@@ -134,7 +132,6 @@ export default function RefractionDetails() {
                 <TableRow
                   onClick={() => setSelectedRow(row)}
                   sx={{
-                    height: 40,
                     cursor: "pointer",
                     backgroundColor:
                       selectedRow?.id === row.id
@@ -148,6 +145,7 @@ export default function RefractionDetails() {
                 >
                   <TableCell sx={{ fontWeight: "bold" }}>
                     <IconButton
+                      size="small"
                       color="warning"
                       title="Edit"
                       onClick={() => {
@@ -160,7 +158,7 @@ export default function RefractionDetails() {
                         navigate(`update/${row.id}?${params.toString()}`);
                       }}
                     >
-                      <EditIcon />
+                      <EditIcon fontSize="small" />
                     </IconButton>
                   </TableCell>
 

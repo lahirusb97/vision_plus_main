@@ -1,18 +1,26 @@
-import * as React from "react";
 import Box from "@mui/material/Box";
 import { FormProvider, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router";
-import useGetRefractionDetails from "../../../hooks/useGetRefractionDetails";
 import { useEffect } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { Button, TextField } from "@mui/material";
+// Hooks
+import useGetRefractionDetails from "../../../hooks/useGetRefractionDetails";
+//Models
 import { InvoiceInputModel } from "../../../model/InvoiceInputModel";
 import { RefractionDetailModel } from "../../../model/RefractionDetailModel";
+//schemas
 import { factoryInvoiceSchema } from "../../../validations/factoryInvoiceSchema";
-import PationtDetails from "../../../components/PationtDetails";
-import { Button, TextField } from "@mui/material";
+//Store
+import { RootState } from "../../../store/store";
+import { clearFrame } from "../../../features/invoice/frameFilterSlice";
+import { clearLenses } from "../../../features/invoice/lenseFilterSlice";
+import { clearOtherItem } from "../../../features/invoice/otherItemSlice";
+//Components
+import OnlinePayInput from "../../../components/inputui/OnlinePayInput";
 import InvoiceTable from "../../../components/inputui/InvoiceTable";
 import CardInput from "../../../components/inputui/CardInput";
 import CashInput from "../../../components/inputui/CashInput";
@@ -20,14 +28,32 @@ import LoadingAnimation from "../../../components/LoadingAnimation";
 import RightEyeTable from "../../../components/RightEyeTable";
 import LeftEyeTable from "../../../components/LeftEyeTable";
 import DrawerStock from "../../../components/inputui/DrawerStock";
-import { RootState } from "../../../store/store";
 import axiosClient from "../../../axiosClient";
-import { clearFrame } from "../../../features/invoice/frameFilterSlice";
-import { clearLenses } from "../../../features/invoice/lenseFilterSlice";
-import { clearOtherItem } from "../../../features/invoice/otherItemSlice";
-import OnlinePayInput from "../../../components/inputui/OnlinePayInput";
+import PationtDetails from "../../../components/PationtDetails";
+import { convertEmptyStringsToNull } from "../../../utils/convertEmptyStringsToNull";
+import { ExternalLenseModel } from "../../../model/ExternalLenseModel";
+import { calculateExternalLensTotal } from "../../../utils/calculateExternalLensTotal";
 
 export default function FactoryInvoiceForm() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  //Store Data
+  const FrameInvoiceList = useSelector(
+    (state: RootState) => state.invoice_frame_filer.selectedFrameList
+  );
+  const LenseInvoiceList = useSelector(
+    (state: RootState) => state.invoice_lense_filer.selectedLenses
+  );
+  const OtherInvoiceList = useSelector(
+    (state: RootState) => state.invoice_other_Item.selectedOtherItems
+  );
+
+  const externalLenseInvoiceList = useSelector(
+    (state: RootState) => state.invoice_external_lense.externalLense
+  );
+  // Store Data**
+
   const methods = useForm({
     resolver: yupResolver(factoryInvoiceSchema),
     defaultValues: {
@@ -38,31 +64,23 @@ export default function FactoryInvoiceForm() {
   });
   const discount = methods.watch("discount");
 
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-
-  const FrameInvoiceList = useSelector(
-    (state: RootState) => state.invoice_frame_filer.selectedFrameList
-  );
-  const LenseInvoiceList = useSelector(
-    (state: RootState) => state.invoice_lense_filer.selectedLenses
-  );
-  const OtherInvoiceList = useSelector(
-    (state: RootState) => state.invoice_other_Item.selectedOtherItems
-  );
   const calculateTotal = (list: any[]) => {
     return list.reduce((acc, row) => {
       const rowTotal = parseInt(row.price) * row.buyQty;
       return acc + rowTotal;
     }, 0);
   };
+  //test this function
 
   const frameTotal = calculateTotal(Object.values(FrameInvoiceList));
   const lenseTotal = calculateTotal(Object.values(LenseInvoiceList));
-  const otherTotal = calculateTotal(Object.values(OtherInvoiceList));
-  const subtotal = frameTotal + lenseTotal + otherTotal;
+  //calculate total send
+  const ExtraTotal = calculateExternalLensTotal(
+    Object.values(externalLenseInvoiceList)
+  );
+
+  const subtotal = frameTotal + lenseTotal + ExtraTotal;
   const grandTotal = subtotal - discount;
-  const { id } = useParams();
   const { refractionDetail, refractionDetailLoading, refractionDetailExist } =
     useGetRefractionDetails(id);
 
@@ -76,8 +94,6 @@ export default function FactoryInvoiceForm() {
 
   useEffect(() => {
     if (!refractionDetailLoading && refractionDetailExist) {
-      console.log("Form Values Before:", methods.getValues());
-      console.log("Refraction Detail Data:", refractionDetail);
       Object.entries(refractionDetail as RefractionDetailModel).forEach(
         ([key, value]) => {
           methods.setValue(key as keyof InvoiceInputModel, value || null);
@@ -87,21 +103,10 @@ export default function FactoryInvoiceForm() {
   }, [refractionDetailLoading, refractionDetailExist]);
   // console.log(methods.watch("note"));
 
-  const convertEmptyStringsToNull = (
-    obj: Record<string, any>
-  ): Record<string, any> => {
-    return Object.fromEntries(
-      Object.entries(obj).map(([key, value]) => [
-        key,
-        value === "" || value === undefined || value === null ? null : value,
-      ])
-    );
-  };
-
   const submiteFromData = async (data: InvoiceInputModel) => {
     const postData = {
       patient: {
-        refraction_id: refractionDetail.refraction,
+        refraction_id: id,
         name: data.name,
         nic: data.nic,
         address: data.address,
@@ -109,7 +114,7 @@ export default function FactoryInvoiceForm() {
         date_of_birth: data.dob,
       },
       order: {
-        refraction: refractionDetail.refraction,
+        refraction: id,
         status:
           subtotal <= parseInt(data.card || "0") + parseInt(data.cash || "0")
             ? "completed"
@@ -140,6 +145,12 @@ export default function FactoryInvoiceForm() {
           price_per_unit: item.price,
           subtotal: item.buyQty * item.price,
         })),
+        ...Object.values(externalLenseInvoiceList).map((item) => {
+          const { lensNames, ...rest } = item; // Exclude `name` and keep the rest
+          return {
+            ...rest, // Send the rest of the object without `name`
+          };
+        }),
       ],
       order_payments: [
         {
@@ -154,17 +165,13 @@ export default function FactoryInvoiceForm() {
         },
       ],
     };
+    console.log(postData);
 
     try {
       if (refractionDetailExist && !refractionDetailLoading) {
-        // Refraction Data Exsist
-        console.log(postData);
-
         const responce = await axiosClient.post("/orders/", postData);
         toast.success("Order saved successfully");
-
         const url = `?order_id=${encodeURIComponent(responce.data.id)}`;
-
         navigate(`view/${url}`);
       } else {
         const refDetails = convertEmptyStringsToNull({
@@ -188,7 +195,11 @@ export default function FactoryInvoiceForm() {
         // No refraction Data but have Refraction Number
         const responce = await axiosClient.post("/orders/", {
           ...postData,
-          refraction_details: { ...refDetails, is_manual: 1 },
+          refraction_details: {
+            ...refDetails,
+            is_manual: 1,
+            refraction: id,
+          },
         });
         toast.success("Order & Refraction Details saved successfully");
         const url = `?order_id=${encodeURIComponent(responce.data.id)}`;
@@ -198,7 +209,6 @@ export default function FactoryInvoiceForm() {
     } catch (err) {
       if (axios.isAxiosError(err)) {
         toast.error(err.response?.data?.message || "Failed to save Order data");
-        toast.error(err.response?.data?.error || "Failed to save Order data");
         console.log(err);
       } else {
         toast.error("An unexpected error occurred Failed to save Order data");
@@ -232,9 +242,9 @@ export default function FactoryInvoiceForm() {
               margin: "0 auto", // Centers it
             }}
           >
+            <LeftEyeTable />
             <RightEyeTable />
 
-            <LeftEyeTable />
             {/* Passing The Note DAta to show in tthe dialog */}
             <PationtDetails />
           </Box>

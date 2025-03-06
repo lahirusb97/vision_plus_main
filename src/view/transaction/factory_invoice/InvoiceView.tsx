@@ -167,7 +167,7 @@ const InvoiceView = () => {
               }}
             >
               <Box>
-                {row.lens ? row?.lense_name : row.frame ? row?.frame_name : ""}
+                {row.lens ? row?.lens_name : row.frame ? row?.frame_name : ""}
               </Box>
               <Box sx={{ textAlign: "right" }}>{row.quantity}</Box>
               <Box sx={{ textAlign: "right" }}>{row.price_per_unit}</Box>

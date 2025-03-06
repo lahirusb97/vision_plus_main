@@ -23,7 +23,7 @@ export default function RightEyeTable() {
         <Box>
           <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
             <TextField
-              type="number"
+              type="text"
               inputProps={{ step: 0.25 }}
               {...register("hb_rx_right_dist")}
               size="small"
@@ -32,7 +32,7 @@ export default function RightEyeTable() {
             />
             <TextField
               inputProps={{ step: 0.25 }}
-              type="number"
+              type="text"
               {...register("hb_rx_right_near")}
               size="small"
               error={!!errors.hb_rx_right_near}
@@ -40,7 +40,7 @@ export default function RightEyeTable() {
             />
             <TextField
               inputProps={{ step: 0.25 }}
-              type="number"
+              type="text"
               {...register("auto_ref_right")}
               size="small"
               error={!!errors.auto_ref_right}
