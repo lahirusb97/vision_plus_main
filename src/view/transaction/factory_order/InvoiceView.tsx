@@ -21,7 +21,6 @@ const InvoiceView = () => {
   const { invoiceDetail, invoiceDetailLoading } = useGetSingleInvoiceDetail(
     parseInt(queryParams.get("order_id") ?? "")
   );
-  console.log(invoiceDetail);
 
   const DateView = (date: string) => {
     return new Date(date).toLocaleString("default", {
@@ -104,7 +103,7 @@ const InvoiceView = () => {
             mb: "2mm",
           }}
         >
-          <Box sx={{ textAlign: "left" }}>
+          <Box sx={{ textAlign: "left", mt:4 }}>
             <Typography variant="body2">No: 34, Aluthgama Road</Typography>
             <Typography variant="body2">Mathugama</Typography>
             <Typography variant="body2">Sri Lanka</Typography>
@@ -250,26 +249,27 @@ const InvoiceView = () => {
           </Box>
         </Box>
 
-        {/* Branches Section */}
-        <Box
-          sx={{ mt: "2mm", display: "flex", justifyContent: "space-between" }}
-        >
-          <Typography
-            sx={{ fontWeight: "bold", display: "flex", alignItems: "center" }}
-            variant="body2"
-          >
-            <span>Our Branches</span> <EastIcon />
-          </Typography>
-
-          <Typography variant="body1">Mathugama - 0342247354</Typography>
-          <Typography variant="body1">Aluthgama - 0342275268</Typography>
-        </Box>
+       {/* Branches Section */}
+<Box
+  sx={{ mt: "4mm",  }}
+>
+  <Typography
+    sx={{ fontWeight: "bold", display: "flex", alignItems: "center" }}
+    variant="body2"
+  >
+    <span>Our Branches</span> 
+  </Typography>
+  <Box sx={{ mt: "2mm" }}>
+    <Typography variant="body1">Mathugama - 0342247354</Typography>
+    <Typography variant="body1">Aluthgama - 0342275268</Typography>
+  </Box>
+</Box>
 
         {/* Footer Note */}
         <Typography
           variant="body2"
           align="center"
-          sx={{ mt: "3mm", fontWeight: "bold" }}
+          sx={{ mt: "8mm", fontWeight: "bold" }}
         >
           We will not be responsible for any uncollected orders after 3 months *
           Non-refundable
