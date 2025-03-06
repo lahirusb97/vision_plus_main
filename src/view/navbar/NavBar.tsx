@@ -18,10 +18,10 @@ import ChannelNav from "../channel/ChannelNav";
 import TransactionNav from "../transaction/TransactionNav";
 import StockNav from "../stock/StockNav";
 import { LogoutOutlined } from "@mui/icons-material";
-import { Cookies } from "typescript-cookie";
 import { useAuthContext } from "../../context/AuthContext";
 import { useLocation } from "react-router";
 import UserNav from "../user/UserNav";
+import CheckInNav from "../checkin/CheckInNav";
 
 // TabPanel Component
 
@@ -66,7 +66,7 @@ export default function NavBar() {
       label: "Transaction",
       nav: TransactionNav,
     },
-    { path: "master", icon: MasterIcon, label: "Check In", nav: RefractionNav },
+    { path: "checkin", icon: MasterIcon, label: "Check In", nav: CheckInNav },
     {
       path: "account",
       icon: AccountIcon,
@@ -98,7 +98,7 @@ export default function NavBar() {
   };
 
   const [value, setValue] = React.useState(getTabIndexFromPath(firstSegment));
-  const { setUser, setUserToken, clearToken } = useAuthContext();
+  const { clearToken } = useAuthContext();
 
   // Handle Tab Change
   const handleChange = (

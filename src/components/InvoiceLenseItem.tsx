@@ -20,15 +20,6 @@ export default function InvoiceLenseItem({ lense }: LenseModel) {
         alignItems: "center",
       }}
     >
-      <Typography
-        sx={{
-          p: 1,
-          bgcolor: lense?.lenseSide === "left" ? blue[500] : purple[400],
-        }}
-        variant="body2"
-      >
-        {lense?.lenseSide.toString().toUpperCase()}
-      </Typography>
       <Typography variant="body2">Type: {lense?.lens_type}</Typography>
       <Typography variant="body2">Brand: {lense?.brand}</Typography>
       <Typography variant="body2">Coating: {lense?.coating}</Typography>

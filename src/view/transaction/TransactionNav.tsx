@@ -4,9 +4,9 @@ export default function TransactionNav() {
   return (
     <>
       {/* Pass unique onClick handlers */}
-      <NavButton name="Factory Invoice" path={"/transaction/factory_invoice"} />
-      <NavButton name="Normal Invoice" path={"/transaction/normal_invoice"} />
-      <NavButton name="Edit Invoice" path={"/transaction/edit_invoice"} />
+      <NavButton name="Factory Order" path={"/transaction/factory_order"} />
+      <NavButton name="Normal Order" path={"/transaction/normal_order"} />
+      <NavButton name="Order Edit" path={"/transaction/order_edit"} />
       <NavButton name="RePayment" path={"/transaction/repayment"} />
     </>
   );

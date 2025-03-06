@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Box, Button, Paper, Typography, TextField } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../store/store";
@@ -12,6 +12,7 @@ import { closeStockDrawer } from "../../../features/invoice/stockDrawerSlice";
 import toast from "react-hot-toast";
 
 export default function ExternalLense() {
+  const dispatch = useDispatch();
   const { watch } = useFormContext();
   const externalLenseInvoiceList = useSelector(
     (state: RootState) => state.invoice_external_lense.externalLense
@@ -40,7 +41,6 @@ export default function ExternalLense() {
 
   const [price, setPrice] = React.useState<string>("");
 
-  const dispatch = useDispatch();
   const addNoneStockLense = () => {
     if (
       lenseTypeSelection &&
@@ -66,42 +66,6 @@ export default function ExternalLense() {
             brand: lenseFactorySelection.id,
             price: parseInt(price),
           },
-          powers: [
-            {
-              power: 1,
-              value: watch("right_eye_dist_sph") || null,
-              side: "left",
-            },
-
-            {
-              power: 2,
-              value: watch("right_eye_dist_cyl") || null,
-              side: "left",
-            },
-
-            {
-              power: 3,
-              value: watch("right_eye_near_sph") || null,
-              side: "left",
-            },
-
-            // below Right
-            {
-              power: 1,
-              value: watch("left_eye_dist_sph") || null,
-              side: "right",
-            },
-            {
-              power: 2,
-              value: watch("left_eye_dist_cyl") || null,
-              side: "right",
-            },
-            {
-              power: 3,
-              value: watch("left_eye_near_sph") || null,
-              side: "right",
-            },
-          ],
         },
         quantity: 1,
         price_per_unit: parseInt(price),

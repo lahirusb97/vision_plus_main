@@ -32,6 +32,7 @@ export default function PationtDetails() {
     open: false,
     searchType: "",
   });
+
   const dispatch = useDispatch();
   const {
     register,
@@ -47,7 +48,7 @@ export default function PationtDetails() {
     }
   }, []);
   useEffect(() => {
-    if (watch("nic").length >= 10) {
+    if (watch("nic")?.length >= 10) {
       const birthdate = getBirthdateFromNIC(watch("nic"));
       setValue("dob", ""); // Force clear first
       setTimeout(() => {

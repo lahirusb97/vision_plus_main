@@ -26,7 +26,12 @@ import { RootState } from "../store/store";
 import InvoiceLenseItem from "./InvoiceLenseItem";
 import { Search } from "@mui/icons-material";
 import axiosClient from "../axiosClient";
-import { findMatchingLense } from "../utils/findMatchingLense";
+import {
+  bifocalID,
+  progresiveID,
+  singleVisionID,
+} from "../data/staticVariables";
+import { AxiosError } from "axios";
 interface LenseWithQty extends LenseModel {
   buyQty: number;
   lenseSide: string;
@@ -109,8 +114,6 @@ export default function PowerToLenseFilter() {
         (rightPowers.right_eye_near_sph && rightPowers.right_eye_dist_cyl) ||
         rightPowers.right_eye_dist_sph
       ) {
-        console.log(rightPowers);
-
         // const params: { [key: string]: any } = {
         //   brand_id: selectLense.brand,
         //   type_id: selectLense.lenseType,
@@ -148,17 +151,18 @@ export default function PowerToLenseFilter() {
           sph: rightPowers.right_eye_dist_sph,
           add: rightPowers.right_eye_near_sph,
         };
+
         try {
           const responce = await axiosClient.get("/lenses/search/", {
             params: {
               brand_id: selectLense.brand,
               type_id: selectLense.lenseType,
               coating_id: selectLense.coating,
-              ...(selectLense.lenseType.toString() === "3"
+              ...(selectLense.lenseType === progresiveID
                 ? progresive
-                : selectLense.lenseType.toString() === "1"
+                : selectLense.lenseType === singleVisionID
                 ? normal
-                : selectLense.lenseType.toString() === "2"
+                : selectLense.lenseType === bifocalID
                 ? bifocal
                 : null),
             },
@@ -169,8 +173,14 @@ export default function PowerToLenseFilter() {
 
           setSelectedLenseRight({ ...lenseObj, ...stockObj });
           setRightPrice(lenseObj?.price || 0);
+          toast.success("Exact Lens Mach Found");
         } catch (error) {
-          console.log(error);
+          if (error instanceof AxiosError) {
+            // Safely access error.response.data.message
+            toast.error(
+              error.response?.data?.message || "Something went wrong"
+            );
+          }
         }
       }
     }
@@ -290,16 +300,6 @@ export default function PowerToLenseFilter() {
           }}
         >
           <DropdownInput
-            options={brands}
-            onChange={(id) =>
-              setSelectLense((preState) => ({ ...preState, brand: id }))
-            }
-            loading={brandsLoading}
-            labelName="Lens Factory"
-            defaultId={null}
-          />
-
-          <DropdownInput
             options={coatings}
             onChange={(selectedId) =>
               setSelectLense((preState) => ({
@@ -309,6 +309,15 @@ export default function PowerToLenseFilter() {
             }
             loading={coatingsLoading}
             labelName="Select Coating"
+            defaultId={null}
+          />
+          <DropdownInput
+            options={brands}
+            onChange={(id) =>
+              setSelectLense((preState) => ({ ...preState, brand: id }))
+            }
+            loading={brandsLoading}
+            labelName="Lens Factory"
             defaultId={null}
           />
 
@@ -327,83 +336,6 @@ export default function PowerToLenseFilter() {
           />
         </Box>
         <Box>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              gap: 1,
-            }}
-          >
-            <Paper sx={{ p: 1, m: 1 }}>
-              <Typography textAlign={"center"}>L</Typography>
-            </Paper>
-
-            <TextField
-              size="small"
-              label="sph"
-              type="number"
-              variant="outlined"
-              value={leftPowers.left_eye_dist_sph}
-              onChange={(e) =>
-                setLeftPowers({
-                  ...leftPowers,
-                  left_eye_dist_sph: e.target.value,
-                })
-              }
-              inputProps={{ step: 0.25 }}
-            />
-            <TextField
-              size="small"
-              label="cyl"
-              type="number"
-              variant="outlined"
-              value={leftPowers.left_eye_dist_cyl}
-              onChange={(e) =>
-                setLeftPowers({
-                  ...leftPowers,
-                  left_eye_dist_cyl: e.target.value,
-                })
-              }
-              inputProps={{ step: 0.25 }}
-            />
-            <TextField
-              size="small"
-              label="add"
-              type="number"
-              variant="outlined"
-              value={leftPowers.left_eye_near_sph}
-              onChange={(e) =>
-                setLeftPowers({
-                  ...leftPowers,
-                  left_eye_near_sph: e.target.value,
-                })
-              }
-              inputProps={{ step: 0.25 }}
-            />
-            <TextField
-              label="Price"
-              type="number"
-              margin="normal"
-              variant="outlined"
-              value={leftPrice}
-              onChange={(e) => setLeftPrice(parseInt(e.target.value))}
-              inputProps={{ min: 0 }}
-            />
-            <Paper sx={{ p: 1 }}>
-              {selectedLenseLeft ? selectedLenseLeft?.qty : ""}
-            </Paper>
-            <Button
-              onClick={handleSearchLeft}
-              color="inherit"
-              variant="contained"
-            >
-              <Search />
-            </Button>
-            <Button onClick={addLeftLense} variant="contained">
-              Left Add
-            </Button>
-          </Box>
           <Box
             sx={{
               display: "flex",
@@ -467,8 +399,19 @@ export default function PowerToLenseFilter() {
               onChange={(e) => setRightPrice(parseInt(e.target.value))}
               inputProps={{ min: 0 }}
             />
-            <Paper sx={{ p: 1 }}>
-              {selectedLenseRight ? selectedLenseRight?.qty : ""}
+            <Paper
+              sx={{
+                p: 1,
+                minWidth: 40,
+                minHeight: 30,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Typography>
+                {selectedLenseRight ? selectedLenseRight?.qty : "N/A"}
+              </Typography>
             </Paper>
             <Button
               onClick={handleSearchRight}
@@ -477,8 +420,97 @@ export default function PowerToLenseFilter() {
             >
               <Search />
             </Button>
-            <Button onClick={addRightLense} variant="contained">
+            <Button size="small" onClick={addRightLense} variant="contained">
               Right Add
+            </Button>
+          </Box>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              gap: 1,
+            }}
+          >
+            <Paper sx={{ p: 1, m: 1 }}>
+              <Typography textAlign={"center"}>L</Typography>
+            </Paper>
+
+            <TextField
+              size="small"
+              label="sph"
+              type="number"
+              variant="outlined"
+              value={leftPowers.left_eye_dist_sph}
+              onChange={(e) =>
+                setLeftPowers({
+                  ...leftPowers,
+                  left_eye_dist_sph: e.target.value,
+                })
+              }
+              inputProps={{ step: 0.25 }}
+            />
+            <TextField
+              size="small"
+              label="cyl"
+              type="number"
+              variant="outlined"
+              value={leftPowers.left_eye_dist_cyl}
+              onChange={(e) =>
+                setLeftPowers({
+                  ...leftPowers,
+                  left_eye_dist_cyl: e.target.value,
+                })
+              }
+              inputProps={{ step: 0.25 }}
+            />
+            <TextField
+              size="small"
+              label="add"
+              type="number"
+              variant="outlined"
+              value={leftPowers.left_eye_near_sph}
+              onChange={(e) =>
+                setLeftPowers({
+                  ...leftPowers,
+                  left_eye_near_sph: e.target.value,
+                })
+              }
+              inputProps={{ step: 0.25 }}
+            />
+            <TextField
+              label="Price"
+              type="number"
+              margin="normal"
+              variant="outlined"
+              value={leftPrice}
+              onChange={(e) => setLeftPrice(parseInt(e.target.value))}
+              inputProps={{ min: 0 }}
+            />
+            <Paper
+              sx={{
+                p: 1,
+                minWidth: 40,
+                minHeight: 30,
+
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Typography>
+                {selectedLenseLeft ? selectedLenseLeft?.qty : "N/A"}
+              </Typography>
+            </Paper>
+            <Button
+              onClick={handleSearchLeft}
+              color="inherit"
+              variant="contained"
+            >
+              <Search />
+            </Button>
+            <Button size="small" onClick={addLeftLense} variant="contained">
+              Left Add
             </Button>
           </Box>
         </Box>
