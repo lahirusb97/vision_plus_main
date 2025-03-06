@@ -3,14 +3,14 @@ import EditInvoice from "../../view/transaction/EditInvoice";
 import NormalInvoice from "../../view/transaction/NormalInvoice";
 import Repayment from "../../view/transaction/Repayment";
 import ProtectedChildRoute from "../ProtectedChildRoute";
-import NormalInvoiceActions from "../../view/transaction/NormalInvoiceActions";
+
 import FactoryTable from "../../view/transaction/FactoryTable";
-import FactoryInvoiceForm from "../../view/transaction/factory_invoice/FactoryInvoiceForm";
-import InvoiceView from "../../view/transaction/factory_invoice/InvoiceView";
+import FactoryInvoiceForm from "../../view/transaction/factory_order/FactoryInvoiceForm";
+import InvoiceView from "../../view/transaction/factory_order/InvoiceView";
 
 export const transactionRoutes: RouteObject[] = [
   {
-    path: "factory_invoice",
+    path: "factory_order",
     element: <ProtectedChildRoute />,
     children: [
       {
@@ -38,7 +38,7 @@ export const transactionRoutes: RouteObject[] = [
     ],
   },
   {
-    path: "normal_invoice",
+    path: "normal_order",
     element: <ProtectedChildRoute />,
     children: [
       {
@@ -47,12 +47,12 @@ export const transactionRoutes: RouteObject[] = [
       },
       {
         path: ":id",
-        element: <NormalInvoiceActions />,
+        element: <>s</>,
       },
     ],
   },
   {
-    path: "edit_invoice",
+    path: "order_edit",
     element: <EditInvoice />,
   },
   {

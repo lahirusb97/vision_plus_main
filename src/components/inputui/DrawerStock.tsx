@@ -5,9 +5,9 @@ import { Close } from "@mui/icons-material";
 import { RootState } from "../../store/store";
 import { useDispatch, useSelector } from "react-redux";
 import { closeStockDrawer } from "../../features/invoice/stockDrawerSlice";
-import FrameStock from "../../view/transaction/factory_invoice/FrameStock";
-import LensStock from "../../view/transaction/factory_invoice/LensStock";
-import ExternalLense from "../../view/transaction/factory_invoice/ExternalLense";
+import FrameStock from "../../view/transaction/factory_order/FrameStock";
+import LensStock from "../../view/transaction/factory_order/LensStock";
+import ExternalLense from "../../view/transaction/factory_order/ExternalLense";
 
 export default function DrawerStock() {
   const dispatch = useDispatch();

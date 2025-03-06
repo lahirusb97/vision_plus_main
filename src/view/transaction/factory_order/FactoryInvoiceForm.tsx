@@ -31,7 +31,6 @@ import DrawerStock from "../../../components/inputui/DrawerStock";
 import axiosClient from "../../../axiosClient";
 import PationtDetails from "../../../components/PationtDetails";
 import { convertEmptyStringsToNull } from "../../../utils/convertEmptyStringsToNull";
-import { ExternalLenseModel } from "../../../model/ExternalLenseModel";
 import { calculateExternalLensTotal } from "../../../utils/calculateExternalLensTotal";
 
 export default function FactoryInvoiceForm() {
@@ -45,10 +44,6 @@ export default function FactoryInvoiceForm() {
   const LenseInvoiceList = useSelector(
     (state: RootState) => state.invoice_lense_filer.selectedLenses
   );
-  const OtherInvoiceList = useSelector(
-    (state: RootState) => state.invoice_other_Item.selectedOtherItems
-  );
-
   const externalLenseInvoiceList = useSelector(
     (state: RootState) => state.invoice_external_lense.externalLense
   );
@@ -165,7 +160,6 @@ export default function FactoryInvoiceForm() {
         },
       ],
     };
-    console.log(postData);
 
     try {
       if (refractionDetailExist && !refractionDetailLoading) {
