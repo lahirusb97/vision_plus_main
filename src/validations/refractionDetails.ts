@@ -13,8 +13,8 @@ export const refractionValidationSchema = Yup.object().shape({
     .transform((value, originalValue) =>
       String(originalValue).trim() === "" ? null : value
     ),
-  hb_rx_right_near: Yup.string().required("Hb Rx Rigt near rquired"),
-  hb_rx_left_near: Yup.string().required("Hb Rx Left near rquired"),
+  hb_rx_right_near: Yup.string().notRequired(),
+  hb_rx_left_near: Yup.string().notRequired(),
   auto_ref_right: Yup.string()
     .nullable()
     .strict()
@@ -76,6 +76,7 @@ export const refractionValidationSchema = Yup.object().shape({
       String(originalValue).trim() === "" ? null : value
     ),
   right_eye_dist_sph: Yup.string()
+    .required("Right Sph is Required")
     .nullable()
     .strict()
     .transform((value, originalValue) =>
@@ -100,6 +101,7 @@ export const refractionValidationSchema = Yup.object().shape({
       String(originalValue).trim() === "" ? null : value
     ),
   left_eye_dist_sph: Yup.string()
+    .required("Left Sph is Required")
     .nullable()
     .strict()
     .transform((value, originalValue) =>

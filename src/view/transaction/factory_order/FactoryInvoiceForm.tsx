@@ -273,8 +273,9 @@ export default function FactoryInvoiceForm() {
               margin: "0 auto", // Centers it
             }}
           >
-            <LeftEyeTable />
             <RightEyeTable />
+
+            <LeftEyeTable />
 
             {/* Passing The Note DAta to show in tthe dialog */}
             <PationtDetails />

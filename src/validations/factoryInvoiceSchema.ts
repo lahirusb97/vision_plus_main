@@ -39,6 +39,7 @@ export const factoryInvoiceSchema = Yup.object().shape({
       String(originalValue).trim() === "" ? null : value
     ),
   right_eye_dist_sph: Yup.string()
+    .required("Right Sph is Required")
     .nullable()
     .strict()
     .transform((value, originalValue) =>
@@ -63,6 +64,7 @@ export const factoryInvoiceSchema = Yup.object().shape({
       String(originalValue).trim() === "" ? null : value
     ),
   left_eye_dist_sph: Yup.string()
+    .required("Left Sph is Required")
     .nullable()
     .strict()
     .transform((value, originalValue) =>

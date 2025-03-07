@@ -70,6 +70,7 @@ export default function FactoryTable() {
         }}
       >
         <TextField
+          size="small"
           label="Search"
           variant="outlined"
           fullWidth
@@ -77,7 +78,7 @@ export default function FactoryTable() {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
-        <Button type="submit" variant="contained" sx={{ height: 50 }}>
+        <Button type="submit" variant="contained">
           Search
         </Button>
       </Box>

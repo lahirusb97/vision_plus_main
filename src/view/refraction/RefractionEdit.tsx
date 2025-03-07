@@ -170,8 +170,8 @@ export default function RefractionEdit() {
               p: 1,
             }}
           >
-            <RefractionDetailsLeft />
             <RefractionDetailsRight />
+            <RefractionDetailsLeft />
           </Box>
 
           {/* //TODO V2 */}

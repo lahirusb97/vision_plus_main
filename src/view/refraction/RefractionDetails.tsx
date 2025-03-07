@@ -59,6 +59,7 @@ export default function RefractionDetails() {
         style={{ display: "flex", gap: "10px", alignItems: "center" }}
       >
         <TextField
+          size="small"
           label="Search"
           variant="outlined"
           placeholder="Refraction Number"
@@ -67,7 +68,7 @@ export default function RefractionDetails() {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
-        <Button type="submit" variant="contained" sx={{ height: 50 }}>
+        <Button type="submit" variant="contained">
           Search
         </Button>
       </form>
