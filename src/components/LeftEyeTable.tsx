@@ -1,6 +1,6 @@
 import { Box, TextField, Typography } from "@mui/material";
 const widthInput = 100;
-import { blue, lightBlue, yellow } from "@mui/material/colors";
+import { blue, lightBlue, yellow, grey } from "@mui/material/colors";
 import { useFormContext } from "react-hook-form";
 
 export default function LeftEyeTable() {
@@ -99,7 +99,7 @@ export default function LeftEyeTable() {
             sx={{
               flexGrow: 2,
               p: 1,
-              bgcolor: blue[500],
+              bgcolor: grey[800],
               ml: 1,
               color: "white",
             }}

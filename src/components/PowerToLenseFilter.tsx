@@ -49,12 +49,11 @@ export default function PowerToLenseFilter() {
     right_eye_near_sph: "",
   });
   const { watch } = useFormContext();
-  const { lenses, lensesLoading } = useGetLenses();
   const { brands, brandsLoading } = useGetBrands({
     brand_type: "lens",
   });
-  const [leftPrice, setLeftPrice] = React.useState<number>(0);
-  const [rightPrice, setRightPrice] = React.useState<number>(0);
+  const [leftPrice, setLeftPrice] = React.useState<string>("");
+  const [rightPrice, setRightPrice] = React.useState<string>("");
 
   const { coatings, coatingsLoading } = useGetCoatings();
   const { lenseTypes, lenseTypesLoading } = useGetLenseTypes();
@@ -89,18 +88,18 @@ export default function PowerToLenseFilter() {
 
   const addRightLense = () => {
     if (selectedLenseRight) {
-      if (rightPrice > 0) {
+      if (parseInt(rightPrice)) {
         dispatch(
           setLense({
             ...selectedLenseRight,
-            price: String(rightPrice),
+            price: rightPrice,
             buyQty: 1,
             lenseSide: "right",
           } as LenseWithQty)
         );
         toast.success("Lense Added to Right Side");
         setSelectedLenseRight(null);
-        setRightPrice(0);
+        setRightPrice("");
       } else {
         toast.error("Price  Right  Side lense must be greater than 0");
       }
@@ -114,31 +113,6 @@ export default function PowerToLenseFilter() {
         (rightPowers.right_eye_near_sph && rightPowers.right_eye_dist_cyl) ||
         rightPowers.right_eye_dist_sph
       ) {
-        // const params: { [key: string]: any } = {
-        //   brand_id: selectLense.brand,
-        //   type_id: selectLense.lenseType,
-        //   coating_id: selectLense.coating,
-        //   sph: parseFloat(rightPowers.right_eye_dist_sph).toFixed(2),
-        //   side: selectLense.lenseType !== 1 ? "right" : null,
-        // };
-
-        // if (rightPowers.right_eye_dist_cyl) {
-        //   params.cyl = parseFloat(rightPowers.right_eye_dist_cyl).toFixed(2);
-        // }
-
-        // if (rightPowers.right_eye_near_sph) {
-        //   params.add = rightPowers.right_eye_near_sph;
-        // }
-        // const matchingLenses = findMatchingLense(params, lenses);
-        // console.log("matchingLenses Right", matchingLenses);
-
-        // if (matchingLenses.length > 0) {
-        //   setSelectedLenseRight(matchingLenses[0]);
-        //   setRightPrice(matchingLenses[0]?.price || 0);
-        // } else {
-        //   setSelectedLenseRight(null);
-        //   setRightPrice(0);
-        // }
         const progresive = {
           sph_right: rightPowers.right_eye_dist_sph,
           add_right: rightPowers.right_eye_near_sph,
@@ -170,6 +144,7 @@ export default function PowerToLenseFilter() {
 
           const lenseObj = responce.data.lens;
           const stockObj = responce.data.stock;
+          console.log(lenseObj);
 
           setSelectedLenseRight({ ...lenseObj, ...stockObj });
           setRightPrice(lenseObj?.price || 0);
@@ -192,31 +167,6 @@ export default function PowerToLenseFilter() {
         (leftPowers.left_eye_near_sph && leftPowers.left_eye_dist_cyl) ||
         leftPowers.left_eye_dist_sph
       ) {
-        // const params: { [key: string]: any } = {
-        //   brand_id: selectLense.brand,
-        //   type_id: selectLense.lenseType,
-        //   coating_id: selectLense.coating,
-        //   sph: parseFloat(leftPowers.left_eye_dist_sph).toFixed(2),
-        //   side: selectLense.lenseType !== 1 ? "left" : null,
-        // };
-
-        // if (leftPowers.left_eye_dist_cyl) {
-        //   params.cyl = parseFloat(leftPowers.left_eye_dist_cyl).toFixed(2);
-        // }
-
-        // if (leftPowers.left_eye_near_sph) {
-        //   params.add = leftPowers.left_eye_near_sph;
-        // }
-        // const matchingLenses = findMatchingLense(params, lenses);
-        // console.log(matchingLenses);
-
-        // if (matchingLenses.length > 0) {
-        //   setSelectedLenseLeft(matchingLenses[0]);
-        //   setLeftPrice(matchingLenses[0]?.price || 0);
-        // } else {
-        //   setSelectedLenseLeft(null);
-        //   setLeftPrice(0);
-        // }
         const progresive = {
           sph_left: leftPowers.left_eye_dist_sph,
           add_left: leftPowers.left_eye_near_sph,
@@ -229,7 +179,6 @@ export default function PowerToLenseFilter() {
           sph: leftPowers.left_eye_dist_sph,
           add: leftPowers.left_eye_near_sph,
         };
-        console.log(leftPowers);
 
         try {
           const responce = await axiosClient.get("/lenses/search/", {
@@ -258,11 +207,11 @@ export default function PowerToLenseFilter() {
   };
   const addLeftLense = () => {
     if (selectedLenseLeft) {
-      if (leftPrice > 0) {
+      if (parseInt(leftPrice)) {
         dispatch(
           setLense({
             ...selectedLenseLeft,
-            price: String(leftPrice),
+            price: leftPrice,
             buyQty: 1,
             lenseSide: "left",
           } as LenseWithQty)
@@ -291,51 +240,70 @@ export default function PowerToLenseFilter() {
         <Box
           sx={{
             display: "flex",
+            flexDirection: "row",
             justifyContent: "end",
             alignItems: "center",
             marginY: 3,
             width: "100%",
-
             gap: 2,
           }}
         >
-          <DropdownInput
-            options={coatings}
-            onChange={(selectedId) =>
-              setSelectLense((preState) => ({
-                ...preState,
-                coating: selectedId,
-              }))
-            }
-            loading={coatingsLoading}
-            labelName="Select Coating"
-            defaultId={null}
-          />
-          <DropdownInput
-            options={brands}
-            onChange={(id) =>
-              setSelectLense((preState) => ({ ...preState, brand: id }))
-            }
-            loading={brandsLoading}
-            labelName="Lens Factory"
-            defaultId={null}
-          />
+          <Box
+            sx={{
+              flexGrow: 1,
+              display: "flex",
+              flexDirection: "column",
+              gap: 1,
+            }}
+          >
+            <DropdownInput
+              options={coatings}
+              onChange={(selectedId) =>
+                setSelectLense((preState) => ({
+                  ...preState,
+                  coating: selectedId,
+                }))
+              }
+              loading={coatingsLoading}
+              labelName="Select Coating"
+              defaultId={null}
+            />
+            <DropdownInput
+              options={brands}
+              onChange={(id) =>
+                setSelectLense((preState) => ({ ...preState, brand: id }))
+              }
+              loading={brandsLoading}
+              labelName="Lens Factory"
+              defaultId={null}
+            />
+          </Box>
 
           {/* Color Dropdown */}
-          <DropdownInput
-            options={lenseTypes}
-            onChange={(selectedId) =>
-              setSelectLense((preState) => ({
-                ...preState,
-                lenseType: selectedId,
-              }))
-            }
-            loading={lenseTypesLoading}
-            labelName="Select Type"
-            defaultId={null}
-          />
+          <Box sx={{ flexGrow: 1 }}>
+            <DropdownInput
+              options={lenseTypes}
+              onChange={(selectedId) =>
+                setSelectLense((preState) => ({
+                  ...preState,
+                  lenseType: selectedId,
+                }))
+              }
+              loading={lenseTypesLoading}
+              labelName="Select Type"
+              defaultId={null}
+            />
+          </Box>
         </Box>
-        <Box>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 1,
+          }}
+        >
           <Box
             sx={{
               display: "flex",
@@ -396,7 +364,7 @@ export default function PowerToLenseFilter() {
               margin="normal"
               variant="outlined"
               value={rightPrice}
-              onChange={(e) => setRightPrice(parseInt(e.target.value))}
+              onChange={(e) => setRightPrice(e.target.value)}
               inputProps={{ min: 0 }}
             />
             <Paper
@@ -484,7 +452,7 @@ export default function PowerToLenseFilter() {
               margin="normal"
               variant="outlined"
               value={leftPrice}
-              onChange={(e) => setLeftPrice(parseInt(e.target.value))}
+              onChange={(e) => setLeftPrice(e.target.value)}
               inputProps={{ min: 0 }}
             />
             <Paper

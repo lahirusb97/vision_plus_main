@@ -53,6 +53,7 @@ const InvoiceView = () => {
       </Typography>
     );
   }
+  console.log(invoiceDetail);
 
   return (
     <div>
@@ -103,7 +104,7 @@ const InvoiceView = () => {
             mb: "2mm",
           }}
         >
-          <Box sx={{ textAlign: "left", mt:4 }}>
+          <Box sx={{ textAlign: "left", mt: 4 }}>
             <Typography variant="body2">No: 34, Aluthgama Road</Typography>
             <Typography variant="body2">Mathugama</Typography>
             <Typography variant="body2">Sri Lanka</Typography>
@@ -111,7 +112,8 @@ const InvoiceView = () => {
           <Box>
             <Typography variant="body2">
               <span style={{ fontWeight: "bold", fontSize: "20px" }}>
-                Invoice No: {invoiceDetail.daily_invoice_no}
+                Invoice No: {invoiceDetail.order}{" "}
+                {/* //!Order ID as Invoice Number */}
               </span>
             </Typography>
             <Typography variant="body2">
@@ -155,7 +157,7 @@ const InvoiceView = () => {
           </Box>
 
           {/* Item List */}
-          {invoiceDetail?.order_items.map((row, index) => (
+          {invoiceDetail?.order_details.order_items.map((row, index) => (
             <Box
               key={index}
               sx={{
@@ -186,9 +188,9 @@ const InvoiceView = () => {
             }}
           >
             <Box sx={{ gridColumn: "3/4" }}>Subtotal</Box>
-            <Box sx={{ textAlign: "right", gridColumn: "4 / 5" }}>
+            {/* <Box sx={{ textAlign: "right", gridColumn: "4 / 5" }}>
               {invoiceDetail.order_details.sub_total}
-            </Box>
+            </Box> */}
           </Box>
           <Box
             sx={{
@@ -200,9 +202,9 @@ const InvoiceView = () => {
             }}
           >
             <Box sx={{ gridColumn: "3 / 4" }}>Discounts</Box>
-            <Box sx={{ textAlign: "right", gridColumn: "4 / 5" }}>
+            {/* <Box sx={{ textAlign: "right", gridColumn: "4 / 5" }}>
               {invoiceDetail.order_details.discount}
-            </Box>
+            </Box> */}
           </Box>
           <Box
             sx={{
@@ -214,9 +216,9 @@ const InvoiceView = () => {
             }}
           >
             <Box sx={{ gridColumn: "3 / 4", fontWeight: "bold" }}>Total</Box>
-            <Box sx={{ textAlign: "right", gridColumn: "4 / 5" }}>
+            {/* <Box sx={{ textAlign: "right", gridColumn: "4 / 5" }}>
               <strong>{invoiceDetail.order_details.total_price}</strong>
-            </Box>
+            </Box> */}
           </Box>
           <Box
             sx={{
@@ -228,9 +230,9 @@ const InvoiceView = () => {
             }}
           >
             <Box sx={{ gridColumn: "3 / 4" }}>Payment</Box>
-            <Box sx={{ textAlign: "right", gridColumn: "4 / 5" }}>
+            {/* <Box sx={{ textAlign: "right", gridColumn: "4 / 5" }}>
               {invoiceDetail.order_payments[0]?.amount}
-            </Box>
+            </Box> */}
           </Box>
           <Box
             sx={{
@@ -242,28 +244,26 @@ const InvoiceView = () => {
             }}
           >
             <Box sx={{ gridColumn: "3 / 4" }}>Balance</Box>
-            <Box sx={{ textAlign: "right", gridColumn: "4 / 5" }}>
+            {/* <Box sx={{ textAlign: "right", gridColumn: "4 / 5" }}>
               {invoiceDetail.order_details.total_price -
                 invoiceDetail.order_payments[0]?.amount}
-            </Box>
+            </Box> */}
           </Box>
         </Box>
 
-       {/* Branches Section */}
-<Box
-  sx={{ mt: "4mm",  }}
->
-  <Typography
-    sx={{ fontWeight: "bold", display: "flex", alignItems: "center" }}
-    variant="body2"
-  >
-    <span>Our Branches</span> 
-  </Typography>
-  <Box sx={{ mt: "2mm" }}>
-    <Typography variant="body1">Mathugama - 0342247354</Typography>
-    <Typography variant="body1">Aluthgama - 0342275268</Typography>
-  </Box>
-</Box>
+        {/* Branches Section */}
+        <Box sx={{ mt: "4mm" }}>
+          <Typography
+            sx={{ fontWeight: "bold", display: "flex", alignItems: "center" }}
+            variant="body2"
+          >
+            <span>Our Branches</span>
+          </Typography>
+          <Box sx={{ mt: "2mm" }}>
+            <Typography variant="body1">Mathugama - 0342247354</Typography>
+            <Typography variant="body1">Aluthgama - 0342275268</Typography>
+          </Box>
+        </Box>
 
         {/* Footer Note */}
         <Typography

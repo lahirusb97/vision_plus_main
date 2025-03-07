@@ -21,6 +21,9 @@ export interface RefractionDetailCreate {
   left_eye_dist_cyl: string | null;
   left_eye_dist_axis: string | null;
   left_eye_near_sph: string | null;
-  remark?: string;
-  note?: string;
+  remark: string | null;
+  note: string | null;
+  pd: string;
+  h: string;
+  shuger: boolean;
 }

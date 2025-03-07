@@ -28,5 +28,9 @@ interface LenseModel {
   stock: Stock;
   powers: Power[];
 }
+interface LenseWithQty extends LenseModel {
+  buyQty: number;
+  lenseSide: string;
+}
 
-export type { Power, Stock, LenseModel };
+export type { Power, Stock, LenseModel, LenseWithQty };

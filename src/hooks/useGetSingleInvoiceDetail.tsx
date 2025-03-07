@@ -13,7 +13,7 @@ interface UseGetInvoiceDetailReturn {
 const useGetSingleInvoiceDetail = (
   order_id: number
 ): UseGetInvoiceDetailReturn => {
-  const [invoiceDetail, setinvoiceDetail] = useState({} as Invoice);
+  const [invoiceDetail, setinvoiceDetail] = useState<Invoice | null>(null);
   const [invoiceDetailLoading, setinvoiceDetailLoading] =
     useState<boolean>(true);
 
@@ -33,6 +33,8 @@ const useGetSingleInvoiceDetail = (
 
       setInvoiceDetailError(false);
     } catch (error) {
+      setinvoiceDetailLoading(false);
+      setinvoiceDetail(null);
       if (axios.isAxiosError(error)) {
         toast.error("Invoice not Found");
       }

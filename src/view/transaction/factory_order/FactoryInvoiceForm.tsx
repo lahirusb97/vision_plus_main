@@ -111,31 +111,35 @@ export default function FactoryInvoiceForm() {
         date_of_birth: data.dob,
       },
       order: {
-        refraction: 3,
-        status: "pending",
-        sub_total: 740.0,
-        discount: 20.0,
-        total_price: 720.0,
-        remark: "ok",
-        sales_staff_code: 1,
+        refraction: id,
+        status:
+          subtotal <= parseInt(data.card || "0") + parseInt(data.cash || "0")
+            ? "completed"
+            : "pending",
+
+        sub_total: parseFloat(subtotal) || 0,
+        discount: parseFloat(discount) || 0,
+        total_price: parseFloat(grandTotal) || 0,
+        remark: data.remark,
+        sales_staff_code: data.sales_staff_code,
       },
       order_items: [
         ...Object.values(LenseInvoiceList).map((item) => ({
-          lense: item.id,
+          lens: item.id,
           quantity: item.buyQty,
-          price_per_unit: item.price,
-          subtotal: item.buyQty * item.price,
+          price_per_unit: parseFloat(item.price),
+          subtotal: item.buyQty * parseFloat(item.price),
         })),
 
         ...Object.values(FrameInvoiceList).map((item) => ({
           frame: item.id,
           quantity: item.buyQty,
           price_per_unit: item.price,
-          subtotal: item.buyQty * item.price,
+          subtotal: item.buyQty * parseFloat(item.price),
         })),
 
         ...Object.values(externalLenseInvoiceList).map((item) => {
-          const { external_lens_data = {}, lensNames, ...rest } = item; // Default to empty object if not available
+          const { external_lens_data = {}, lensNames, id, ...rest } = item; // Default to empty object if not available
 
           const powers = [
             {
@@ -173,7 +177,7 @@ export default function FactoryInvoiceForm() {
             ...rest,
             external_lens_data: {
               ...external_lens_data,
-              powers,
+              powers: powers.filter((item) => item.value !== null),
             }, // Send the rest of the object without `name`
           };
         }),
@@ -218,6 +222,7 @@ export default function FactoryInvoiceForm() {
           note: data.note,
           remark: data.remark,
         });
+
         // No refraction Data but have Refraction Number
         const responce = await axiosClient.post("/orders/", {
           ...postData,
@@ -275,19 +280,62 @@ export default function FactoryInvoiceForm() {
             <PationtDetails />
           </Box>
           <InvoiceTable />
+          <Box
+            sx={{
+              display: "flex",
+              width: "100%",
+              justifyContent: "center",
+              maxWidth: "1200px",
+              alignItems: "center",
+              gap: 1,
+              mt: 1,
+            }}
+          >
+            <TextField
+              {...methods.register("pd")}
+              sx={{ width: 100 }}
+              size="small"
+              type="number"
+              label="PD"
+              InputLabelProps={{
+                shrink: Boolean(methods.watch("pd")),
+              }}
+            />
+            <TextField
+              {...methods.register("h")}
+              sx={{ width: 100 }}
+              type="number"
+              size="small"
+              label="H"
+              InputLabelProps={{
+                shrink: Boolean(methods.watch("h")),
+              }}
+            />
+            <TextField
+              fullWidth
+              size="small"
+              {...methods.register("remark")}
+              sx={{ maxWidth: "1200px" }}
+              placeholder="remark"
+              multiline
+            />
+          </Box>
           <TextField
-            fullWidth
+            {...methods.register("note")}
+            sx={{ my: 1, maxWidth: "1200px", width: "100%" }}
             size="small"
-            {...methods.register("remark")}
-            sx={{ flexGrow: 1, maxWidth: "1200px", mt: 1 }}
-            placeholder="remark"
+            fullWidth
+            label="note"
             multiline
+            InputLabelProps={{
+              shrink: Boolean(methods.watch("note")),
+            }}
           />
           <Box
             sx={{
               display: "flex",
               gap: 1,
-              m: 2,
+              mb: 1,
               width: "100%",
               maxWidth: "1200px",
               justifyContent: "space-between",

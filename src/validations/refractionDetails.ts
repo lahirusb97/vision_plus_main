@@ -123,6 +123,19 @@ export const refractionValidationSchema = Yup.object().shape({
     .transform((value, originalValue) =>
       String(originalValue).trim() === "" ? null : value
     ),
-  remark: Yup.string(),
-  note: Yup.string(),
+  pd: Yup.string()
+    .nullable()
+    .strict()
+    .transform((value, originalValue) =>
+      String(originalValue).trim() === "" ? null : value
+    ),
+  h: Yup.string()
+    .nullable()
+    .strict()
+    .transform((value, originalValue) =>
+      String(originalValue).trim() === "" ? null : value
+    ),
+  shuger: Yup.boolean(),
+  remark: Yup.string().notRequired(),
+  note: Yup.string().notRequired(),
 });

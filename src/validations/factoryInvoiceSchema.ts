@@ -97,6 +97,17 @@ export const factoryInvoiceSchema = Yup.object().shape({
     .transform((value, originalValue) =>
       String(originalValue).trim() === "" ? null : value
     ),
+  h: Yup.string()
+    .nullable()
+    .transform((value, originalValue) =>
+      String(originalValue).trim() === "" ? null : value
+    ),
+  pd: Yup.string()
+    .nullable()
+    .transform((value, originalValue) =>
+      String(originalValue).trim() === "" ? null : value
+    ),
+  shuger: Yup.boolean().notRequired(),
   name: Yup.string().required("Patient Name is required"),
   nic: Yup.string(),
   phone_number: Yup.string()

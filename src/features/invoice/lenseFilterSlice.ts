@@ -1,12 +1,8 @@
 // features/counter/counterSlice.ts
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { LenseModel } from "../../model/LenseModel";
+import { LenseWithQty } from "../../model/LenseModel";
 
 // Extend LenseModel to include buyQty
-interface LenseWithQty extends LenseModel {
-  buyQty: number;
-  lenseSide: string;
-}
 
 // Define state interface
 interface LenseState {

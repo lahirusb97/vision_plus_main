@@ -20,6 +20,21 @@ const theme = createTheme({
       textTransform: "capitalize",
     },
   },
+  components: {
+    MuiOutlinedInput: {
+      styleOverrides: {
+        input: {
+          "&[type=number]": {
+            MozAppearance: "textfield", // Firefox
+            "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button": {
+              WebkitAppearance: "none",
+              margin: 0,
+            },
+          },
+        },
+      },
+    },
+  },
 });
 
 export default theme;

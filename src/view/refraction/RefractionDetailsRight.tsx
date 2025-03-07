@@ -1,5 +1,5 @@
 import { Box, Paper, TextField, Typography } from "@mui/material";
-import { purple } from "@mui/material/colors";
+import { grey } from "@mui/material/colors";
 import { useFormContext } from "react-hook-form";
 const widthInput = 160;
 
@@ -153,7 +153,7 @@ export default function RefractionDetailsRight() {
               sx={{
                 flexGrow: 2,
                 p: 1,
-                bgcolor: purple[500],
+                bgcolor: grey[800],
                 ml: 1,
                 color: "white",
               }}

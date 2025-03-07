@@ -7,6 +7,9 @@ import {
   Chip,
   InputAdornment,
   IconButton,
+  FormControl,
+  Checkbox,
+  FormControlLabel,
 } from "@mui/material";
 import { useFormContext } from "react-hook-form";
 import { useLocation } from "react-router";
@@ -167,6 +170,7 @@ export default function PationtDetails() {
           shrink: Boolean(watch("address")),
         }}
       />
+
       <Box sx={{ display: "flex", gap: 1 }}>
         <HidenNoteDialog />
 
@@ -198,6 +202,15 @@ export default function PationtDetails() {
         >
           None Stock Lense
         </Button>
+        <FormControlLabel
+          control={
+            <Checkbox
+              {...register("shuger")}
+              checked={watch("shuger") === true}
+            />
+          }
+          label="Sugar"
+        />
       </Box>
     </Box>
   );

@@ -1,6 +1,14 @@
 import { FormProvider, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Box, Button, Paper, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Checkbox,
+  FormControlLabel,
+  Paper,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { useLocation, useNavigate, useParams } from "react-router";
 import axiosClient from "../../axiosClient";
 import { grey } from "@mui/material/colors";
@@ -178,17 +186,49 @@ export default function RefractionEdit() {
               shrink: Boolean(methods.watch("note")),
             }}
           />
-          <TextField
-            {...methods.register("remark")}
-            sx={{ my: 0.5 }}
-            size="small"
-            fullWidth
-            label="remark"
-            multiline
-            InputLabelProps={{
-              shrink: Boolean(methods.watch("remark")),
-            }}
-          />
+          <Box sx={{ display: "flex", gap: 1 }}>
+            <TextField
+              {...methods.register("pd")}
+              sx={{ my: 0.5, width: 100 }}
+              size="small"
+              type="number"
+              label="PD"
+              InputLabelProps={{
+                shrink: Boolean(methods.watch("pd")),
+              }}
+            />
+            <TextField
+              {...methods.register("h")}
+              sx={{ my: 0.5, width: 100 }}
+              type="number"
+              size="small"
+              label="H"
+              InputLabelProps={{
+                shrink: Boolean(methods.watch("h")),
+              }}
+            />
+            <TextField
+              {...methods.register("remark")}
+              sx={{ my: 0.5 }}
+              size="small"
+              fullWidth
+              label="remark"
+              multiline
+              InputLabelProps={{
+                shrink: Boolean(methods.watch("remark")),
+              }}
+            />
+
+            <FormControlLabel
+              control={
+                <Checkbox
+                  {...methods.register("shuger")}
+                  checked={methods.watch("shuger") === true}
+                />
+              }
+              label="Sugar"
+            />
+          </Box>
 
           <Button
             sx={{ width: "100%" }}

@@ -49,6 +49,7 @@ export default function OrderEditFrom() {
       discount: 0,
     },
   });
+  console.log(invoiceDetail);
 
   useEffect(() => {
     return () => {
@@ -117,13 +118,56 @@ export default function OrderEditFrom() {
           <PationtDetails />
         </Box>
         <InvoiceTable />
+        <Box
+          sx={{
+            display: "flex",
+            width: "100%",
+            justifyContent: "center",
+            maxWidth: "1200px",
+            alignItems: "center",
+            gap: 1,
+            mt: 1,
+          }}
+        >
+          <TextField
+            {...methods.register("pd")}
+            sx={{ width: 100 }}
+            size="small"
+            type="number"
+            label="PD"
+            InputLabelProps={{
+              shrink: Boolean(methods.watch("pd")),
+            }}
+          />
+          <TextField
+            {...methods.register("h")}
+            sx={{ width: 100 }}
+            type="number"
+            size="small"
+            label="H"
+            InputLabelProps={{
+              shrink: Boolean(methods.watch("h")),
+            }}
+          />
+          <TextField
+            fullWidth
+            size="small"
+            {...methods.register("remark")}
+            sx={{ maxWidth: "1200px" }}
+            placeholder="remark"
+            multiline
+          />
+        </Box>
         <TextField
-          fullWidth
+          {...methods.register("note")}
+          sx={{ my: 1, maxWidth: "1200px", width: "100%" }}
           size="small"
-          {...methods.register("remark")}
-          sx={{ flexGrow: 1, maxWidth: "1200px", mt: 1 }}
-          placeholder="remark"
+          fullWidth
+          label="note"
           multiline
+          InputLabelProps={{
+            shrink: Boolean(methods.watch("note")),
+          }}
         />
         <Box
           sx={{

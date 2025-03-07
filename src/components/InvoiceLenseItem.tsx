@@ -2,11 +2,13 @@ import { Delete } from "@mui/icons-material";
 import { Paper, Typography, IconButton } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { removeLense } from "../features/invoice/lenseFilterSlice";
-import { LenseModel } from "../model/LenseModel";
+import { LenseModel, LenseWithQty } from "../model/LenseModel";
 import { blue, orange, purple, yellow } from "@mui/material/colors";
 
-export default function InvoiceLenseItem({ lense }: LenseModel) {
+export default function InvoiceLenseItem({ lense }: LenseWithQty) {
   const dispatch = useDispatch();
+  console.log(lense);
+
   return (
     <Paper
       elevation={3}

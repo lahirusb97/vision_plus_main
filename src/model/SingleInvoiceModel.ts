@@ -1,21 +1,30 @@
-interface CustomerDetails {
+import { PatientModel } from "./Patient";
+import { RefractionDetailCreate } from "./RefractionDetailCreate";
+interface LensDetail {
   id: number;
-  name: string;
-  date_of_birth: string; // ISO date format "YYYY-MM-DD"
-  phone_number: string;
-  address: string;
-  nic: string;
-  refraction_id: number;
+  type: number;
+  coating: number;
+  price: string;
+  brand: number;
+  brand_name: string;
+  type_name: string;
+  coating_name: string;
 }
 
-interface RefractionDetails {
+// Types for Frame Details
+interface FrameDetail {
   id: number;
-  customer_full_name: string;
-  nic: string;
-  customer_mobile: string;
-  refraction_number: string;
+  brand: number;
+  brand_name: string;
+  code: number;
+  code_name: string;
+  color: number;
+  color_name: string;
+  price: string;
+  size: string;
+  species: string;
+  image: string | null;
 }
-
 interface OrderItem {
   id: number;
   order: number;
@@ -27,6 +36,8 @@ interface OrderItem {
   quantity: number;
   price_per_unit: string; // Decimal as string
   subtotal: string; // Decimal as string
+  lens_detail: LensDetail | null;
+  frame_detail: FrameDetail | null;
 }
 
 interface OrderPayment {
@@ -60,14 +71,15 @@ interface Invoice {
   id: number;
   order: number;
   customer: number;
-  customer_details: CustomerDetails;
-  refraction_details: RefractionDetails;
+  customer_details: PatientModel;
+  refraction_details: RefractionDetailCreate;
   invoice_type: string; // Consider enum: 'factory' | 'retail' | 'wholesale'
   daily_invoice_no: number;
   invoice_date: string; // ISO datetime format
   order_details: OrderDetails;
   order_items: OrderItem[];
   order_payments: OrderPayment[];
+  lense_d;
 }
 
 export type { Invoice };
