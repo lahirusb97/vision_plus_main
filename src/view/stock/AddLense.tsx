@@ -19,6 +19,11 @@ import { useForm, Controller } from "react-hook-form";
 import toast from "react-hot-toast";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import {
+  bifocalID,
+  progresiveID,
+  singleVisionID,
+} from "../../data/staticVariables";
 const AddLens = () => {
   const { lenseTypes, lenseTypesLoading } = useGetLenseTypes();
   const { brands, brandsLoading } = useGetBrands({ brand_type: "lens" });
@@ -27,9 +32,6 @@ const AddLens = () => {
 
   //! Imporant Values can not be changed
   // Dropdown options
-  const bisocal = 3;
-  const Progresive = 2;
-  const single_vision = 1;
 
   //! Imporant Values can not be changed
 
@@ -50,17 +52,17 @@ const AddLens = () => {
       .required("Quantity is required"),
     sph: yup.number().required("SPH is required"),
     add: yup.number().when("lensType", {
-      is: Progresive || bisocal,
+      is: progresiveID || bifocalID,
       then: (schema) => schema.required("ADD is required"),
       otherwise: (schema) => schema.notRequired(),
     }),
     cyl: yup.number().when("lensType", {
-      is: single_vision,
-      then: (schema) => schema.required("CYL is required"),
+      is: singleVisionID,
+      then: (schema) => schema.notRequired(),
       otherwise: (schema) => schema.notRequired(),
     }),
     lenseSide: yup.string().when("lensType", {
-      is: Progresive,
+      is: progresiveID,
       then: (schema) => schema.required("Lens side is required"),
       otherwise: (schema) => schema.notRequired(),
     }),
@@ -144,14 +146,14 @@ const AddLens = () => {
         qty: quantity,
       },
       powers:
-        lensType === Progresive
+        lensType === progresiveID
           ? progresivePowers
-          : lensType === bisocal
+          : lensType === bifocalID
           ? bisocalPowers
           : singleVisionPowers,
     };
     try {
-      const data = await axiosClient.post("/lenses/", lense);
+      await axiosClient.post("/lenses/", lense);
       toast.success("Lense added successfully");
       reset();
     } catch (error) {
@@ -237,7 +239,7 @@ const AddLens = () => {
               helperText={errors.sph?.message}
             />
 
-            {[Progresive, bisocal].includes(lensTypeValue) && (
+            {[progresiveID, bifocalID].includes(lensTypeValue) && (
               <TextField
                 label="ADD"
                 type="number"
@@ -252,7 +254,7 @@ const AddLens = () => {
               />
             )}
 
-            {lensTypeValue === single_vision && (
+            {lensTypeValue === singleVisionID && (
               <TextField
                 label="CYL"
                 type="number"
@@ -270,7 +272,7 @@ const AddLens = () => {
         )}
       </Box>
 
-      {lensTypeValue === Progresive && (
+      {lensTypeValue === progresiveID && (
         <FormControl fullWidth margin="normal">
           <InputLabel>Lens Side</InputLabel>
           <Controller
@@ -292,9 +294,7 @@ const AddLens = () => {
       <TextField
         label="Price"
         type="number"
-        slotProps={{
-          min: 0, // Ensures only positive numbers are allowed
-        }}
+        inputProps={{ min: 0 }}
         fullWidth
         margin="normal"
         {...register("price", {

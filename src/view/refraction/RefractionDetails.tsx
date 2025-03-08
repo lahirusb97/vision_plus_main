@@ -59,6 +59,7 @@ export default function RefractionDetails() {
         style={{ display: "flex", gap: "10px", alignItems: "center" }}
       >
         <TextField
+          size="small"
           label="Search"
           variant="outlined"
           placeholder="Refraction Number"
@@ -67,7 +68,7 @@ export default function RefractionDetails() {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
-        <Button type="submit" variant="contained" sx={{ height: 50 }}>
+        <Button type="submit" variant="contained">
           Search
         </Button>
       </form>
@@ -98,8 +99,6 @@ export default function RefractionDetails() {
             <TableRow
               sx={{
                 backgroundColor: theme.palette.grey[200],
-
-                height: 50,
               }}
             >
               <TableCell sx={{ fontWeight: "bold" }}>Actions</TableCell>
@@ -134,7 +133,6 @@ export default function RefractionDetails() {
                 <TableRow
                   onClick={() => setSelectedRow(row)}
                   sx={{
-                    height: 40,
                     cursor: "pointer",
                     backgroundColor:
                       selectedRow?.id === row.id
@@ -148,6 +146,7 @@ export default function RefractionDetails() {
                 >
                   <TableCell sx={{ fontWeight: "bold" }}>
                     <IconButton
+                      size="small"
                       color="warning"
                       title="Edit"
                       onClick={() => {
@@ -160,7 +159,7 @@ export default function RefractionDetails() {
                         navigate(`update/${row.id}?${params.toString()}`);
                       }}
                     >
-                      <EditIcon />
+                      <EditIcon fontSize="small" />
                     </IconButton>
                   </TableCell>
 

@@ -1,6 +1,6 @@
 import { Box, TextField, Typography } from "@mui/material";
 const widthInput = 100;
-import { blue, lightBlue, yellow } from "@mui/material/colors";
+import { blue, lightBlue, yellow, grey } from "@mui/material/colors";
 import { useFormContext } from "react-hook-form";
 
 export default function LeftEyeTable() {
@@ -16,14 +16,14 @@ export default function LeftEyeTable() {
           display: "flex",
           flexDirection: "column",
           gap: 1,
-          backgroundColor: "#f5f5f5",/* chalani- backgroundcolor change*/
+          backgroundColor: "#f5f5f5" /* chalani- backgroundcolor change*/,
           p: 1,
         }}
       >
         <Box>
           <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
             <TextField
-              type="number"
+              type="text"
               inputProps={{ step: 0.25 }}
               {...register("hb_rx_left_dist")}
               error={!!errors.hb_rx_left_dist}
@@ -32,7 +32,7 @@ export default function LeftEyeTable() {
             />
             <TextField
               inputProps={{ step: 0.25 }}
-              type="number"
+              type="text"
               {...register("hb_rx_left_near")}
               error={!!errors.hb_rx_left_near}
               size="small"
@@ -40,7 +40,7 @@ export default function LeftEyeTable() {
             />
             <TextField
               inputProps={{ step: 0.25 }}
-              type="number"
+              type="text"
               {...register("auto_ref_left")}
               error={!!errors.auto_ref_left}
               size="small"
@@ -99,7 +99,7 @@ export default function LeftEyeTable() {
             sx={{
               flexGrow: 2,
               p: 1,
-              bgcolor: blue[500],
+              bgcolor: grey[800],
               ml: 1,
               color: "white",
             }}

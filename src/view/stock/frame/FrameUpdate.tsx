@@ -15,7 +15,7 @@ const FrameUpdate = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const { singleFrame, singleFrameLoading } = useGetSingleFrame(id ?? "");
+  const { singleFrame, singleFrameLoading } = useGetSingleFrame(id);
 
   const schema = yup.object().shape({
     alertLevel: yup
@@ -42,14 +42,9 @@ const FrameUpdate = () => {
       quantity: undefined,
     },
   });
-  console.log(singleFrame);
 
   const submiteData = async (data: Stock) => {
-    if (
-      !singleFrameLoading &&
-      singleFrame?.stock.initial_count &&
-      singleFrame?.stock.qty
-    ) {
+    if (!singleFrameLoading && singleFrame) {
       const { quantity, alertLevel } = data;
       const postDAta = {
         frame: id,
@@ -62,7 +57,7 @@ const FrameUpdate = () => {
         await axiosClient.put(`/frame-stocks/${id}/`, postDAta);
         toast.success("Frame added successfully");
         reset();
-        navigate("/stock/frame_store");
+        navigate(-1);
       } catch (error) {
         if (error instanceof AxiosError) {
           // Safely access error.response.data.message

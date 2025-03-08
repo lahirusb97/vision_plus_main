@@ -3,13 +3,14 @@ import frameFilterSlice from "../features/invoice/frameFilterSlice";
 import lenseFilterSlice from "../features/invoice/lenseFilterSlice";
 import stockDrawerSlice from "../features/invoice/stockDrawerSlice";
 import otherItemSlice from "../features/invoice/otherItemSlice";
-
+import externalLenseSlice from "../features/invoice/externalLenseSlice";
 export const store = configureStore({
   reducer: {
     invoice_frame_filer: frameFilterSlice,
     invoice_lense_filer: lenseFilterSlice,
     stock_drawer: stockDrawerSlice,
     invoice_other_Item: otherItemSlice,
+    invoice_external_lense: externalLenseSlice,
   },
 });
 

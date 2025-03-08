@@ -5,10 +5,9 @@ import { Close } from "@mui/icons-material";
 import { RootState } from "../../store/store";
 import { useDispatch, useSelector } from "react-redux";
 import { closeStockDrawer } from "../../features/invoice/stockDrawerSlice";
-import FrameStock from "../../view/transaction/factory_invoice/FrameStock";
-import LensStock from "../../view/transaction/factory_invoice/LensStock";
-import LensNoneStock from "../../view/transaction/factory_invoice/LensNoneStock";
-import OtherItem from "../../view/transaction/factory_invoice/OtherItem";
+import FrameStock from "../../view/transaction/factory_order/FrameStock";
+import LensStock from "../../view/transaction/factory_order/LensStock";
+import ExternalLense from "../../view/transaction/factory_order/ExternalLense";
 
 export default function DrawerStock() {
   const dispatch = useDispatch();
@@ -39,9 +38,9 @@ export default function DrawerStock() {
         ) : stockDrawerType === "lense" ? (
           <LensStock />
         ) : stockDrawerType === "none_stock_lense" ? (
-          <LensNoneStock />
+          <ExternalLense />
         ) : (
-          <OtherItem />
+          <>Error Refresh The Page</>
         )}
       </Box>
     </Box>

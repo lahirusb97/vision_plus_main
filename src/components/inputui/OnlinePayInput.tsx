@@ -1,6 +1,5 @@
 import React from "react";
 import { TextField, Box, Typography } from "@mui/material";
-import CreditCardIcon from "@mui/icons-material/CreditCard";
 import { useFormContext } from "react-hook-form";
 import LanguageIcon from "@mui/icons-material/Language";
 const OnlinePayInput: React.FC = () => {
@@ -16,7 +15,12 @@ const OnlinePayInput: React.FC = () => {
         <Typography>Online Payment</Typography>
       </Box>
       <TextField
-        {...register("online_transfer")}
+        {...register("online_transfer", {
+          valueAsNumber: true,
+          min: 0,
+          required: true,
+        })}
+        inputProps={{ min: 0 }}
         variant="outlined"
         size="small"
         placeholder="Enter Amount"
@@ -29,7 +33,7 @@ const OnlinePayInput: React.FC = () => {
         }}
         onBlur={(e) => {
           if (e.target.value === "") {
-            setValue("online_transfer", "0");
+            setValue("online_transfer", 0);
           }
         }}
         error={!!errors.card}

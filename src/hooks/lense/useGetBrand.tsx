@@ -5,7 +5,7 @@ import { handleError } from "../../utils/handleError";
 interface Brand {
   id: number;
   name: string;
-  brand_type: string;
+  brand_type: string; //lens,frame
 }
 
 interface UseGetBrandReturn {

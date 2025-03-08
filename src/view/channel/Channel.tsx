@@ -91,8 +91,8 @@ const Channel = () => {
     <Box
       sx={{
         width: "100%",
-        margin: 2,
-        padding: 3,
+        margin: 1,
+        padding: 2,
         boxShadow: 3,
         borderRadius: 2,
         bgcolor: "#fff",
@@ -100,7 +100,7 @@ const Channel = () => {
       }}
     >
       {/* Section Title */}
-      <Typography variant="h5" sx={{ mb: 3, fontWeight: "bold" }}>
+      <Typography variant="h5" sx={{ mb: 1, fontWeight: "bold" }}>
         Appointment Details
       </Typography>
 
@@ -109,6 +109,7 @@ const Channel = () => {
         {/* Doctor Name */}
 
         <Controller
+          
           name="doctor_id" // Field name in the form
           control={control} // Pass the control from useForm
           render={({ field }) => (
@@ -120,34 +121,35 @@ const Channel = () => {
               defaultId={undefined} // Optionally pass a default selected ID
             />
           )}
-        />
-
-        {/* Patient Name */}
+        /><Box sx={{ display: "flex", gap: 2, mt: 1 }}>
         <TextField
+          size="small"
           variant="outlined"
           fullWidth
           label="Patient Name"
           {...register("name")}
-          sx={{ mb: 1 }}
         />
-
-        {/* Patient Address */}
         <TextField
-          variant="outlined"
-          fullWidth
-          label="Patient Address"
-          {...register("address")}
-          sx={{ mb: 1 }}
-        />
-
-        {/* Patient Contact */}
-        <TextField
+          size="small"
           variant="outlined"
           fullWidth
           label="Patient Contact"
           {...register("contact_number")}
-          sx={{ mb: 1 }}
         />
+      </Box>
+
+        
+
+        {/* Patient Address */}
+        <TextField
+        size="small"
+          variant="outlined"
+          fullWidth
+          label="Patient Address"
+          {...register("address")}
+          sx={{ mt: 1, mb:1 }}
+        />
+
 
         {/* Date and Time Pickers (flex row) */}
 
@@ -162,6 +164,7 @@ const Channel = () => {
                   {...field}
                   label="Channel Date"
                   format="YYYY-MM-DD"
+                
                 />
               )}
             />
@@ -184,25 +187,25 @@ const Channel = () => {
         </Paper>
 
         <Paper sx={flexBoxStyle}>
-          <Typography variant="h6" sx={{ mt: 2 }}>
+          <Typography variant="body2" sx={{ mt: 1, gap:2, display:"flex", justifyContent:"space-between",py:0.5,px:1 }}>
             Channeling Fee
           </Typography>
 
-          <Input type="number" {...register("channeling_fee")} />
+          <Input type="number" sx={{ gap:1,  }} {...register("channeling_fee")} />
         </Paper>
 
         {/* First Payment */}
 
         <Paper sx={flexBoxStyle}>
-          <Typography variant="h6">First Payment</Typography>
-          <Typography variant="h6">{cashAmount + cardAmount}</Typography>
+          <Typography variant="body2" sx={{ gap:1, display:"flex", justifyContent:"space-between",py:0.5,px:1 }}>First Payment</Typography>
+          <Typography variant="body2">{cashAmount + cardAmount}</Typography>
         </Paper>
         {/* Balance */}
 
         <Paper sx={flexBoxStyle}>
-          <Typography variant="h6">Balance</Typography>
+          <Typography variant="body2" sx={{ gap:1, display:"flex", justifyContent:"space-between",py:0.5,px:1 }}>Balance</Typography>
 
-          <Typography variant="h6">
+          <Typography variant="body2">
             {channelingFee - (cashAmount + cardAmount)}
           </Typography>
         </Paper>
@@ -242,7 +245,8 @@ const Channel = () => {
           variant="contained"
           fullWidth
           type="submit"
-          sx={{ mt: 3 }}
+          size="small"
+          
         >
           {loading ? <CircularProgress size={24} /> : "OK"}
         </Button>
@@ -256,9 +260,7 @@ const flexBoxStyle = {
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
-  my: 2,
-  py: 1,
-  px: 2,
+  
 };
 interface ChannelData {
   doctor_id: number;
@@ -271,3 +273,5 @@ interface ChannelData {
   cash_amount: number;
   card_amount: number;
 }
+
+

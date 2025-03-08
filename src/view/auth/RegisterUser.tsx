@@ -22,9 +22,9 @@ interface RegisterInput {
 
 export default function RegisterUser() {
   const [registerInput, setRegisterInput] = useState<RegisterInput>({
-    username: "",
-    password: "",
-    email: "",
+    username: "admin",
+    password: "admin",
+    email: "admin",
   });
   const [loading, setLoading] = useState(false); // Loading state
   const navigate = useNavigate();

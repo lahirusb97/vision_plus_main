@@ -4,6 +4,7 @@ import { createBrowserRouter } from "react-router";
 import { refractionRoutes } from "./routelist/refraction.route";
 import { channelRoutes } from "./routelist/channel.route";
 import { transactionRoutes } from "./routelist/transaction.route";
+import { checkInRoutes } from "./routelist/checkin.route";
 import { stockRoutes } from "./routelist/stock.route";
 import { userRoutes } from "./routelist/user.route";
 import LoginProtectedRoute from "./LoginProtectedRoute";
@@ -25,7 +26,6 @@ export const router = createBrowserRouter([
 
       {
         path: "channel",
-
         element: <ProtectedChildRoute />,
 
         children: channelRoutes,
@@ -41,9 +41,9 @@ export const router = createBrowserRouter([
         children: stockRoutes,
       },
       {
-        path: "transaction",
+        path: "checkin",
         element: <ProtectedChildRoute />,
-        children: transactionRoutes,
+        children: checkInRoutes,
       },
       {
         path: "user",

@@ -217,7 +217,7 @@ const AddFrames = () => {
                   {...field}
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
-                  label="Shape"
+                  label="Size"
                   value={field.value || ""}
                 >
                   <MenuItem value={"Half"}>Half</MenuItem>

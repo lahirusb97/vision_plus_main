@@ -39,6 +39,7 @@ export const factoryInvoiceSchema = Yup.object().shape({
       String(originalValue).trim() === "" ? null : value
     ),
   right_eye_dist_sph: Yup.string()
+    .required("Right Sph is Required")
     .nullable()
     .strict()
     .transform((value, originalValue) =>
@@ -63,6 +64,7 @@ export const factoryInvoiceSchema = Yup.object().shape({
       String(originalValue).trim() === "" ? null : value
     ),
   left_eye_dist_sph: Yup.string()
+    .required("Left Sph is Required")
     .nullable()
     .strict()
     .transform((value, originalValue) =>
@@ -97,16 +99,27 @@ export const factoryInvoiceSchema = Yup.object().shape({
     .transform((value, originalValue) =>
       String(originalValue).trim() === "" ? null : value
     ),
+  h: Yup.string()
+    .nullable()
+    .transform((value, originalValue) =>
+      String(originalValue).trim() === "" ? null : value
+    ),
+  pd: Yup.string()
+    .nullable()
+    .transform((value, originalValue) =>
+      String(originalValue).trim() === "" ? null : value
+    ),
+  shuger: Yup.boolean().notRequired(),
   name: Yup.string().required("Patient Name is required"),
   nic: Yup.string(),
   phone_number: Yup.string()
     .required("Phone number is required")
     .min(10)
     .max(10),
-  address: Yup.string(),
+  address: Yup.string().notRequired(),
   dob: Yup.string(),
   discount: Yup.number().required("discount is required").min(0),
-  cash: Yup.number().required("payment Amount is required").min(0),
-  card: Yup.number().required("payment Amount is required").min(0),
   online_transfer: Yup.number().required("payment Amount is required").min(0),
+  credit_card: Yup.number().required("payment Amount is required").min(0),
+  cash: Yup.number().required("payment Amount is required").min(0),
 });

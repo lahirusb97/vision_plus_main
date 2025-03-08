@@ -1,6 +1,14 @@
 import { FormProvider, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Box, Button, Paper, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Checkbox,
+  FormControlLabel,
+  Paper,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { useLocation, useNavigate, useParams } from "react-router";
 import axiosClient from "../../axiosClient";
 import { grey } from "@mui/material/colors";
@@ -101,14 +109,14 @@ export default function RefractionEdit() {
 
   return (
     <FormProvider {...methods}>
-      <Box sx={{ minWidth: "1000px", padding: "10px" }}>
+      <Box sx={{ minWidth: "1000px" }}>
         <form onSubmit={methods.handleSubmit(onSubmit)}>
           <Paper
             sx={{
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-              padding: 1,
+              padding: 0.5,
               borderRadius: 2,
               boxShadow: 2,
               backgroundColor: "#f5f5f5",
@@ -134,7 +142,7 @@ export default function RefractionEdit() {
                   sx={{
                     bgcolor: grey[700],
                     color: "white",
-                    p: "4px 12px",
+                    p: "2px 6px",
                     borderRadius: 1,
                     minWidth: "40px",
                     textAlign: "center",
@@ -163,20 +171,40 @@ export default function RefractionEdit() {
             }}
           >
             <RefractionDetailsRight />
-
             <RefractionDetailsLeft />
           </Box>
+
+          {/* //TODO V2 */}
+          <TextField
+            {...methods.register("note")}
+            sx={{ my: 0.5 }}
+            size="small"
+            fullWidth
+            label="note"
+            multiline
+            InputLabelProps={{
+              shrink: Boolean(methods.watch("note")),
+            }}
+          />
           <Box sx={{ display: "flex", gap: 1 }}>
-            {/* //TODO V2 */}
             <TextField
-              {...methods.register("note")}
-              sx={{ my: 0.5 }}
+              {...methods.register("pd")}
+              sx={{ my: 0.5, width: 100 }}
               size="small"
-              fullWidth
-              label="note"
-              multiline
+              type="number"
+              label="PD"
               InputLabelProps={{
-                shrink: Boolean(methods.watch("note")),
+                shrink: Boolean(methods.watch("pd")),
+              }}
+            />
+            <TextField
+              {...methods.register("h")}
+              sx={{ my: 0.5, width: 100 }}
+              type="number"
+              size="small"
+              label="H"
+              InputLabelProps={{
+                shrink: Boolean(methods.watch("h")),
               }}
             />
             <TextField
@@ -190,17 +218,26 @@ export default function RefractionEdit() {
                 shrink: Boolean(methods.watch("remark")),
               }}
             />
-          </Box>
 
-          <Button
-            sx={{ width: "100%" }}
-            type="submit"
-            variant="contained"
-            color="primary"
-            disabled={refractionDetailLoading}
-          >
-            {refractionDetailExist ? "Update" : "Create"}
-          </Button>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  {...methods.register("shuger")}
+                  checked={methods.watch("shuger") === true}
+                />
+              }
+              label="Sugar"
+            />
+            <Button
+              sx={{ width: "200px" }}
+              type="submit"
+              variant="contained"
+              color="primary"
+              disabled={refractionDetailLoading}
+            >
+              {refractionDetailExist ? "Update" : "Create"}
+            </Button>
+          </Box>
         </form>
       </Box>
     </FormProvider>
