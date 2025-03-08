@@ -228,7 +228,7 @@ const RepaymentForm = () => {
         >
           <Typography sx={{ fontSize: 16 }}>Balance</Typography>
           <Typography sx={{ fontSize: 16 }}>
-            {safeParseFloat(invoiceDetail?.order_details.sub_total) -
+            {safeParseFloat(invoiceDetail?.order_details.total_price) -
               orderpaymentTotal(invoiceDetail?.order_details.order_payments)}
           </Typography>
         </Paper>
@@ -261,7 +261,7 @@ const RepaymentForm = () => {
         >
           <Typography sx={{ fontSize: 16 }}>Second Balance</Typography>
           <Typography sx={{ fontSize: 16 }}>
-            {safeParseFloat(invoiceDetail?.order_details.sub_total) -
+            {safeParseFloat(invoiceDetail?.order_details.total_price) -
               orderpaymentTotal(invoiceDetail?.order_details.order_payments) -
               (safeParseFloat(methods.watch("cash")) +
                 safeParseFloat(methods.watch("credit_card")) +
