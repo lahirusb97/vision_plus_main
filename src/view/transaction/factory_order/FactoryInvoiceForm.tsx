@@ -33,8 +33,6 @@ import PationtDetails from "../../../components/PationtDetails";
 import { convertEmptyStringsToNull } from "../../../utils/convertEmptyStringsToNull";
 import { calculateExternalLensTotal } from "../../../utils/calculateExternalLensTotal";
 import { clearexternalLense } from "../../../features/invoice/externalLenseSlice";
-import InvoiceView from "./InvoiceView";
-import { formatUserPayments } from "../../../utils/formatUserPayments";
 
 export default function FactoryInvoiceForm() {
   const { id } = useParams();
@@ -64,8 +62,9 @@ export default function FactoryInvoiceForm() {
   const methods = useForm({
     resolver: yupResolver(factoryInvoiceSchema),
     defaultValues: {
-      card: 0,
+      credit_card: 0,
       cash: 0,
+      online_transfer: 0,
       discount: 0,
     },
   });
@@ -94,6 +93,7 @@ export default function FactoryInvoiceForm() {
   );
 
   const subtotal = frameTotal + lenseTotal + ExtraTotal;
+  //Total  with discount
   const grandTotal = subtotal - discount;
   const { refractionDetail, refractionDetailLoading, refractionDetailExist } =
     useGetRefractionDetails(id);
@@ -108,6 +108,7 @@ export default function FactoryInvoiceForm() {
   }, []);
 
   useEffect(() => {
+    //SET VALUES TO REFRACTION INPUTS
     if (!refractionDetailLoading && refractionDetailExist) {
       Object.entries(refractionDetail as RefractionDetailModel).forEach(
         ([key, value]) => {
@@ -116,11 +117,9 @@ export default function FactoryInvoiceForm() {
       );
     }
   }, [refractionDetailLoading, refractionDetailExist]);
-  // console.log(methods.watch("note"));
 
   const submiteFromData = async (data: InvoiceInputModel) => {
-    //USER PAYMENT FORMATING
-
+    //HANDLE PAYMENT To REMOVE SENDING  0
     const userPayments = {
       credit_card: data.credit_card,
       cash: data.cash,
