@@ -17,18 +17,17 @@ export default function AddVariation() {
   const { colors, refresh: refreshColors } = useGetColors();
   const { codes, refresh: refreshCodes } = useGetCodes();
   const { lenseTypes, refresh: refreshLenseTypes } = useGetLenseTypes();
-  console.log(frameBrand);
 
   return (
     <Box sx={{ display: "flex", gap: 2 }}>
       <Paper variant="outlined" sx={{ width: "600px" }}>
-        <AddVariationComp
+        {/* <AddVariationComp
           textName="Lense Types"
           Urlpath="lense_type"
           dataList={lenseTypes}
           pathroute="lens-types"
           refresh={refreshLenseTypes}
-        />
+        /> */}
 
         <AddVariationComp
           textName="Lens Factory"

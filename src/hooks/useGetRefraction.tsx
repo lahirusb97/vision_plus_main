@@ -41,6 +41,7 @@ const useGetRefraction = () => {
   useEffect(() => {
     fetchData();
   }, [params]);
+  console.log("sss");
 
   const updateSearchParams = (search: string) => {
     setParams({ search: search });
