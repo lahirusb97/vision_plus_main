@@ -33,6 +33,7 @@ import PationtDetails from "../../../components/PationtDetails";
 import { convertEmptyStringsToNull } from "../../../utils/convertEmptyStringsToNull";
 import { calculateExternalLensTotal } from "../../../utils/calculateExternalLensTotal";
 import { clearexternalLense } from "../../../features/invoice/externalLenseSlice";
+import { formatUserPayments } from "../../../utils/formatUserPayments";
 
 export default function FactoryInvoiceForm() {
   const { id } = useParams();
