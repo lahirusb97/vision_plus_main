@@ -2,7 +2,7 @@ import Box from "@mui/material/Box";
 import { FormProvider, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router";
+import { useLocation, useNavigate, useParams } from "react-router";
 import { useEffect } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -33,11 +33,21 @@ import PationtDetails from "../../../components/PationtDetails";
 import { convertEmptyStringsToNull } from "../../../utils/convertEmptyStringsToNull";
 import { calculateExternalLensTotal } from "../../../utils/calculateExternalLensTotal";
 import { clearexternalLense } from "../../../features/invoice/externalLenseSlice";
+import InvoiceView from "./InvoiceView";
 
 export default function FactoryInvoiceForm() {
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  // GET QARY PARAM DATA
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+
+  const customerName = queryParams.get("customerName");
+  const mobileNumber = queryParams.get("mobileNumber");
+  const nic = queryParams.get("nic");
+  const refractionNumber = queryParams.get("refractionNumber");
+
   //Store Data
   const FrameInvoiceList = useSelector(
     (state: RootState) => state.invoice_frame_filer.selectedFrameList
@@ -60,6 +70,13 @@ export default function FactoryInvoiceForm() {
   });
   const discount = methods.watch("discount");
 
+  useEffect(() => {
+    if (customerName || mobileNumber) {
+      methods.setValue("name", customerName);
+      methods.setValue("phone_number", mobileNumber);
+      methods.setValue("nic", nic);
+    }
+  }, []);
   const calculateTotal = (list: any[]) => {
     return list.reduce((acc, row) => {
       const rowTotal = parseInt(row.price) * row.buyQty;
@@ -193,57 +210,68 @@ export default function FactoryInvoiceForm() {
           payment_method: "cash",
           transaction_status: "success",
         },
+        {
+          amount: data.online_transfer,
+          payment_method: "online_transfer",
+          transaction_status: "success",
+        },
       ],
     };
-    console.log(postData);
 
-    try {
-      if (refractionDetailExist && !refractionDetailLoading) {
-        const responce = await axiosClient.post("/orders/", postData);
-        toast.success("Order saved successfully");
-        const url = `?order_id=${encodeURIComponent(responce.data.id)}`;
-        navigate(`view/${url}`);
-      } else {
-        const refDetails = convertEmptyStringsToNull({
-          hb_rx_right_dist: data.hb_rx_right_dist,
-          hb_rx_left_dist: data.hb_rx_left_dist,
-          hb_rx_right_near: data.hb_rx_right_near,
-          hb_rx_left_near: data.hb_rx_left_near,
-          auto_ref_right: data.auto_ref_right,
-          auto_ref_left: data.auto_ref_left,
-          right_eye_dist_sph: data.right_eye_dist_sph,
-          right_eye_dist_cyl: data.right_eye_dist_cyl,
-          right_eye_dist_axis: data.right_eye_dist_axis,
-          right_eye_near_sph: data.right_eye_near_sph,
-          left_eye_dist_sph: data.left_eye_dist_sph,
-          left_eye_dist_cyl: data.left_eye_dist_cyl,
-          left_eye_dist_axis: data.left_eye_dist_axis,
-          left_eye_near_sph: data.left_eye_near_sph,
-          note: data.note,
-          remark: data.remark,
-        });
+    if (
+      Object.keys(externalLenseInvoiceList).length > 0 ||
+      Object.keys(LenseInvoiceList).length > 0 ||
+      Object.keys(FrameInvoiceList).length > 0
+    ) {
+      try {
+        if (refractionDetailExist && !refractionDetailLoading) {
+          const responce = await axiosClient.post("/orders/", postData);
+          toast.success("Order saved successfully");
+          const url = `?order_id=${encodeURIComponent(responce.data.id)}`;
+          navigate(`view/${url}`);
+        } else {
+          const refDetails = convertEmptyStringsToNull({
+            hb_rx_right_dist: data.hb_rx_right_dist,
+            hb_rx_left_dist: data.hb_rx_left_dist,
+            hb_rx_right_near: data.hb_rx_right_near,
+            hb_rx_left_near: data.hb_rx_left_near,
+            auto_ref_right: data.auto_ref_right,
+            auto_ref_left: data.auto_ref_left,
+            right_eye_dist_sph: data.right_eye_dist_sph,
+            right_eye_dist_cyl: data.right_eye_dist_cyl,
+            right_eye_dist_axis: data.right_eye_dist_axis,
+            right_eye_near_sph: data.right_eye_near_sph,
+            left_eye_dist_sph: data.left_eye_dist_sph,
+            left_eye_dist_cyl: data.left_eye_dist_cyl,
+            left_eye_dist_axis: data.left_eye_dist_axis,
+            left_eye_near_sph: data.left_eye_near_sph,
+            note: data.note,
+            remark: data.remark,
+          });
 
-        // No refraction Data but have Refraction Number
-        const responce = await axiosClient.post("/orders/", {
-          ...postData,
-          refraction_details: {
-            ...refDetails,
-            is_manual: 1,
-            refraction: id,
-          },
-        });
-        toast.success("Order & Refraction Details saved successfully");
-        const url = `?order_id=${encodeURIComponent(responce.data.id)}`;
+          // No refraction Data but have Refraction Number
+          const responce = await axiosClient.post("/orders/", {
+            ...postData,
+            refraction_details: {
+              ...refDetails,
+              is_manual: 1,
+              refraction: id,
+            },
+          });
+          toast.success("Order & Refraction Details saved successfully");
+          const url = `?order_id=${encodeURIComponent(responce.data.id)}`;
 
-        navigate(`view/${url}`);
+          navigate(`view/${url}`);
+        }
+      } catch (err) {
+        if (axios.isAxiosError(err)) {
+          toast.error(err.response?.data?.error || "Failed to save Order data");
+        } else {
+          toast.error("An unexpected error occurred Failed to save Order data");
+        }
       }
-    } catch (err) {
-      if (axios.isAxiosError(err)) {
-        toast.error(err.response?.data?.message || "Failed to save Order data");
-        console.log(err);
-      } else {
-        toast.error("An unexpected error occurred Failed to save Order data");
-      }
+    } else {
+      toast.error("No Items ware added");
     }
   };
 
@@ -278,7 +306,11 @@ export default function FactoryInvoiceForm() {
             <LeftEyeTable />
 
             {/* Passing The Note DAta to show in tthe dialog */}
-            <PationtDetails />
+            <PationtDetails
+              refractionNumber={refractionNumber}
+              DetailExist={refractionDetailExist}
+              loading={refractionDetailLoading}
+            />
           </Box>
           <InvoiceTable />
           <Box
@@ -289,7 +321,7 @@ export default function FactoryInvoiceForm() {
               maxWidth: "1200px",
               alignItems: "center",
               gap: 1,
-              mt: 1,
+              my: 1,
             }}
           >
             <TextField
@@ -321,7 +353,7 @@ export default function FactoryInvoiceForm() {
               multiline
             />
           </Box>
-          <TextField
+          {/* <TextField
             {...methods.register("note")}
             sx={{ my: 1, maxWidth: "1200px", width: "100%" }}
             size="small"
@@ -331,30 +363,26 @@ export default function FactoryInvoiceForm() {
             InputLabelProps={{
               shrink: Boolean(methods.watch("note")),
             }}
-          />
+          /> */}
           <Box
             sx={{
               display: "flex",
-              gap: 1,
+              gap: 2,
               mb: 1,
               width: "100%",
               maxWidth: "1200px",
               justifyContent: "space-between",
             }}
           >
-            <CashInput />
-            <CardInput />
             <OnlinePayInput />
+            <CardInput />
+            <CashInput />
+
+            <Button size="small" variant="contained" fullWidth type="submit">
+              Submit
+            </Button>
           </Box>
           <DrawerStock />
-          <Button
-            sx={{ width: "100%", maxWidth: "1200px" }}
-            variant="contained"
-            fullWidth
-            type="submit"
-          >
-            Submit
-          </Button>
         </Box>
       )}
     </FormProvider>

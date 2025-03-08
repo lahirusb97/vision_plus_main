@@ -23,14 +23,11 @@ import { getBirthdateFromNIC } from "../utils/NictoBirthday";
 import HidenNoteDialog from "./HidenNoteDialog";
 import { SearchSharp } from "@mui/icons-material";
 import { birthdayToAge } from "../utils/BirthdayToAge";
-export default function PationtDetails() {
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-
-  const customerName = queryParams.get("customerName");
-  const mobileNumber = queryParams.get("mobileNumber");
-  const nic = queryParams.get("nic");
-  const refractionNumber = queryParams.get("refractionNumber");
+export default function PationtDetails({
+  DetailExist,
+  loading,
+  refractionNumber,
+}) {
   const [openSearchDialog, setOpenSearchDialog] = useState({
     open: false,
     searchType: "",
@@ -43,13 +40,7 @@ export default function PationtDetails() {
     watch,
     formState: { errors },
   } = useFormContext();
-  useEffect(() => {
-    if (customerName || mobileNumber) {
-      setValue("name", customerName);
-      setValue("phone_number", mobileNumber);
-      setValue("nic", nic);
-    }
-  }, []);
+
   useEffect(() => {
     if (watch("nic")?.length >= 10) {
       const birthdate = getBirthdateFromNIC(watch("nic"));
@@ -58,7 +49,7 @@ export default function PationtDetails() {
         setValue("dob", birthdate);
       }, 0); // Add a slight delay
     }
-  }, [nic, watch("nic")]);
+  }, [watch("nic")]);
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
       <FilterPatient
@@ -70,8 +61,24 @@ export default function PationtDetails() {
         {/* <Button color="info" variant="contained">
           <History />
         </Button> */}
-        <Paper sx={{ p: 1, flexGrow: 2 }}>
-          <Typography>R.N0: {refractionNumber}</Typography>
+        <Paper
+          sx={{
+            p: 1,
+            flexGrow: 2,
+            display: "flex",
+            justifyContent: "space-between",
+          }}
+        >
+          <Typography fontWeight={"bolder"}>
+            R.N0: {refractionNumber}
+          </Typography>
+          <Typography fontWeight={"bolder"} color="error">
+            {!loading && DetailExist
+              ? "Internal "
+              : !loading && !DetailExist
+              ? "Internal "
+              : ""}{" "}
+          </Typography>
         </Paper>
         <Paper>
           <Typography sx={{ p: 1 }}>

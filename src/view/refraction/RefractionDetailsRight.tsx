@@ -101,7 +101,7 @@ export default function RefractionDetailsRight() {
               />
 
               <TextField
-                inputProps={{ step: 0.25 }}
+                inputProps={{ step: 0.25, max: 0 }}
                 type="number"
                 {...register("right_eye_dist_cyl")}
                 placeholder=" cyl"

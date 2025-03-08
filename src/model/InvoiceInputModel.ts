@@ -24,5 +24,6 @@ interface InvoiceInputModel {
   cash: number;
   discount: number;
   card: number;
+  online_transfer: number;
 }
 export type { InvoiceInputModel };

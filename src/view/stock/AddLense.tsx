@@ -58,7 +58,7 @@ const AddLens = () => {
     }),
     cyl: yup.number().when("lensType", {
       is: singleVisionID,
-      then: (schema) => schema.required("CYL is required"),
+      then: (schema) => schema.notRequired(),
       otherwise: (schema) => schema.notRequired(),
     }),
     lenseSide: yup.string().when("lensType", {

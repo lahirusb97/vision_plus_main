@@ -16,7 +16,11 @@ const CardInput: React.FC = () => {
         <Typography>Card</Typography>
       </Box>
       <TextField
-        {...register("card", { valueAsNumber: true, min: 0, required: true })}
+        {...register("credit_card", {
+          valueAsNumber: true,
+          min: 0,
+          required: true,
+        })}
         inputProps={{ min: 0 }}
         variant="outlined"
         size="small"
@@ -25,12 +29,12 @@ const CardInput: React.FC = () => {
         type="number"
         onFocus={(e) => {
           if (e.target.value === "0") {
-            setValue("card", "");
+            setValue("credit_card", "");
           }
         }}
         onBlur={(e) => {
           if (e.target.value === "") {
-            setValue("card", 0);
+            setValue("credit_card", 0);
           }
         }}
         error={!!errors.card}

@@ -228,17 +228,16 @@ export default function RefractionEdit() {
               }
               label="Sugar"
             />
+            <Button
+              sx={{ width: "200px" }}
+              type="submit"
+              variant="contained"
+              color="primary"
+              disabled={refractionDetailLoading}
+            >
+              {refractionDetailExist ? "Update" : "Create"}
+            </Button>
           </Box>
-
-          <Button
-            sx={{ width: "100%" }}
-            type="submit"
-            variant="contained"
-            color="primary"
-            disabled={refractionDetailLoading}
-          >
-            {refractionDetailExist ? "Update" : "Create"}
-          </Button>
         </form>
       </Box>
     </FormProvider>

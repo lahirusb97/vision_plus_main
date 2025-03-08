@@ -25,12 +25,19 @@ interface FrameDetail {
   species: string;
   image: string | null;
 }
+interface External_Lens_Powers {
+  external_lens: number;
+  id: number;
+  power: number;
+  side: string;
+  value: string;
+}
 interface OrderItem {
   id: number;
   order: number;
   lens: number | null;
   lens_cleaner: number | null;
-  lense_name?: string;
+  lens_name?: string;
   frame_name?: string;
   frame: number | null;
   quantity: number;
@@ -38,6 +45,15 @@ interface OrderItem {
   subtotal: string; // Decimal as string
   lens_detail: LensDetail | null;
   frame_detail: FrameDetail | null;
+  external_lens: number | null;
+  external_lens_name: string | null;
+  external_lens_powers: External_Lens_Powers[];
+  brand_id: string;
+  brand_name: string;
+  coating_id: number;
+  coating_name: string;
+  type_name: string;
+  type_id: string;
 }
 
 interface OrderPayment {
@@ -79,7 +95,6 @@ interface Invoice {
   order_details: OrderDetails;
   order_items: OrderItem[];
   order_payments: OrderPayment[];
-  lense_d;
 }
 
 export type { Invoice };

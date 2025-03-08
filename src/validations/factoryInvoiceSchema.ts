@@ -116,10 +116,10 @@ export const factoryInvoiceSchema = Yup.object().shape({
     .required("Phone number is required")
     .min(10)
     .max(10),
-  address: Yup.string(),
+  address: Yup.string().notRequired(),
   dob: Yup.string(),
   discount: Yup.number().required("discount is required").min(0),
-  cash: Yup.number().required("payment Amount is required").min(0),
-  card: Yup.number().required("payment Amount is required").min(0),
   online_transfer: Yup.number().required("payment Amount is required").min(0),
+  credit_card: Yup.number().required("payment Amount is required").min(0),
+  cash: Yup.number().required("payment Amount is required").min(0),
 });

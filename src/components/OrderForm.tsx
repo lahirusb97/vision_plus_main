@@ -218,6 +218,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ invoiceDetail }) => {
                         fontWeight: "bold",
                         fontSize: "1em",
                       }}
+                      he
                     >
                       {RefractionDetails?.right_eye_near_sph}
                     </TableCell>
@@ -263,7 +264,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ invoiceDetail }) => {
                   variant="body2"
                   sx={{ fontWeight: "bold", color: "black" }}
                 >
-                  {invoiceDetail?.order}
+                  {invoiceDetail?.id}
                 </Typography>
               </Box>
             </Box>
@@ -284,7 +285,15 @@ const OrderForm: React.FC<OrderFormProps> = ({ invoiceDetail }) => {
                 sx={{ mt: 1, height: 40, backgroundColor: "white" }}
                 variant="body2"
               >
-                {RefractionDetails?.remark}
+                <span
+                  style={{
+                    color: "black",
+                    padding: " 2rem 1rem",
+                    fontSize: "1rem",
+                  }}
+                >
+                  {RefractionDetails?.remark}
+                </span>
               </Typography>
             </Box>
 
@@ -297,8 +306,11 @@ const OrderForm: React.FC<OrderFormProps> = ({ invoiceDetail }) => {
                 Full Amount - Rs. {invoiceDetail?.order_details.sub_total}
               </Typography>
               <Typography variant="body2">
-                1st Payment - Rs.{" "}
-                {invoiceDetail?.order_details.order_payments[0].amount}
+                Total Payment - Rs.{" "}
+                {invoiceDetail.order_details.order_payments.reduce(
+                  (acc, payment) => acc + parseFloat(payment.amount),
+                  0
+                )}
               </Typography>
               <Typography variant="body2">
                 Balance - Rs.
@@ -330,7 +342,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ invoiceDetail }) => {
                   padding: 1,
                 }}
               >
-                {invoiceDetail?.order}
+                {invoiceDetail?.id}
               </Typography>
               <Typography variant="body2" sx={{ fontWeight: "bold", mt: 2 }}>
                 Name: {invoiceDetail?.customer_details.name}
@@ -367,15 +379,18 @@ const OrderForm: React.FC<OrderFormProps> = ({ invoiceDetail }) => {
                   </>
                 ))}
 
-              <Typography variant="body2" sx={{ fontWeight: "bold", mt: 2 }}>
-                Lens:
-              </Typography>
               {invoiceDetail?.order_details.order_items
                 .filter((items) => items.lens !== null)
                 .map(
                   (item) =>
                     item.lens_detail && (
                       <>
+                        <Typography
+                          variant="body2"
+                          sx={{ fontWeight: "bold", mt: 2 }}
+                        >
+                          Lens:
+                        </Typography>
                         <Typography variant="body2">
                           -{item.lens_detail.brand_name}
                         </Typography>
@@ -388,24 +403,28 @@ const OrderForm: React.FC<OrderFormProps> = ({ invoiceDetail }) => {
                       </>
                     )
                 )}
-              <Typography variant="body2" sx={{ fontWeight: "bold", mt: 2 }}>
-                External Lens:
-              </Typography>
+
               {invoiceDetail?.order_details.order_items
                 .filter((items) => items.external_lens !== null)
                 .map(
                   (item) =>
                     item.external_lens && (
                       <>
-                        <Typography variant="body2">
-                          -{item.external_lens_name}
+                        <Typography
+                          variant="body2"
+                          sx={{ fontWeight: "bold", mt: 2 }}
+                        >
+                          External Lens:
                         </Typography>
-                        {/* <Typography variant="body2">
-                          -{item.lens_detail.coating_name}
+                        <Typography variant="body2">
+                          -{item.type_name}
                         </Typography>
                         <Typography variant="body2">
-                          -{item.lens_detail.type_name}
-                        </Typography> */}
+                          -{item.brand_name}
+                        </Typography>
+                        <Typography variant="body2">
+                          -{item.coating_name}
+                        </Typography>
                       </>
                     )
                 )}

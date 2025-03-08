@@ -118,12 +118,12 @@ export default function PowerToLenseFilter() {
           add_right: rightPowers.right_eye_near_sph,
         };
         const normal = {
-          sph: rightPowers.right_eye_dist_sph,
-          cyl: rightPowers.right_eye_dist_cyl,
+          sph_right: rightPowers.right_eye_dist_sph,
+          cyl_right: rightPowers.right_eye_dist_cyl,
         };
         const bifocal = {
-          sph: rightPowers.right_eye_dist_sph,
-          add: rightPowers.right_eye_near_sph,
+          sph_right: rightPowers.right_eye_dist_sph,
+          add_right: rightPowers.right_eye_near_sph,
         };
 
         try {
@@ -148,7 +148,7 @@ export default function PowerToLenseFilter() {
 
           setSelectedLenseRight({ ...lenseObj, ...stockObj });
           setRightPrice(lenseObj?.price || 0);
-          toast.success("Exact Lens Mach Found");
+          toast.success("Sujested Lens Match Found Plese Check Lense Powers");
         } catch (error) {
           if (error instanceof AxiosError) {
             // Safely access error.response.data.message
@@ -172,12 +172,12 @@ export default function PowerToLenseFilter() {
           add_left: leftPowers.left_eye_near_sph,
         };
         const normal = {
-          sph: leftPowers.left_eye_dist_sph,
-          cyl: leftPowers.left_eye_dist_cyl,
+          sph_left: leftPowers.left_eye_dist_sph,
+          cyl_left: leftPowers.left_eye_dist_cyl,
         };
         const bifocal = {
-          sph: leftPowers.left_eye_dist_sph,
-          add: leftPowers.left_eye_near_sph,
+          sph_left: leftPowers.left_eye_dist_sph,
+          add_left: leftPowers.left_eye_near_sph,
         };
 
         try {
@@ -199,8 +199,15 @@ export default function PowerToLenseFilter() {
           const stockObj = responce.data.stock;
           setSelectedLenseLeft({ ...lenseObj, ...stockObj });
           setLeftPrice(lenseObj?.price || 0);
+          toast.success("Sujested Lens Match Found Plese Check Lense Powers");
         } catch (error) {
-          console.log(error);
+          if (error instanceof AxiosError) {
+            // Safely access error.response.data.message
+            toast.error(
+              error.response?.data?.message ||
+                "Faile to Search Something went wrong"
+            );
+          }
         }
       }
     }
