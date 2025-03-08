@@ -4,7 +4,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { Invoice } from "../model/SingleInvoiceModel";
 interface UseGetInvoiceDetailReturn {
-  invoiceDetail: Invoice;
+  invoiceDetail: Invoice | null;
   invoiceDetailLoading: boolean;
   invoiceDetailError: boolean;
   refresh: () => void;

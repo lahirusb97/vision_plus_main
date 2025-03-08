@@ -32,7 +32,6 @@ import {
   clearexternalLense,
   setexternalLense,
 } from "../../../features/invoice/externalLenseSlice";
-import { RefractionDetailModel } from "../../../model/RefractionDetailModel";
 import { RefractionDetailCreate } from "../../../model/RefractionDetailCreate";
 import { PatientModel } from "../../../model/Patient";
 import axiosClient from "../../../axiosClient";
@@ -361,24 +360,16 @@ export default function OrderEditFrom() {
             note: data.note,
             remark: data.remark,
           });
-          console.log({
-            ...postData,
-            refraction_details: {
-              ...refDetails,
-              is_manual: 1,
-              refraction: invoiceDetail.customer_details.refraction_id,
-            },
-          });
 
           // No refraction Data but have Refraction Number
           const responce = await axiosClient.put(
-            `/orders/${invoiceDetail.order}/`,
+            `/orders/${invoiceDetail?.order}/`,
             {
               ...postData,
               refraction_details: {
                 ...refDetails,
                 is_manual: 1,
-                refraction: invoiceDetail.customer_details.refraction_id,
+                refraction: invoiceDetail?.customer_details.refraction_id,
               },
             }
           );
@@ -386,7 +377,7 @@ export default function OrderEditFrom() {
           const url = `?order_id=${encodeURIComponent(responce.data.id)}`;
 
           navigate(
-            `/transaction/factory_order/create/${invoiceDetail.customer_details.refraction_id}/view/${url}`
+            `/transaction/factory_order/create/${invoiceDetail?.customer_details.refraction_id}/view/${url}`
           );
         }
       } catch (err) {
@@ -430,8 +421,8 @@ export default function OrderEditFrom() {
 
           {/* Passing The Note DAta to show in tthe dialog */}
           <PationtDetails
-            refractionNumber={invoiceDetail.customer_details.refraction_id - 1}
-            DetailExist={invoiceDetail.invoice_type === "factory"}
+            refractionNumber={invoiceDetail?.customer_details.refraction_number}
+            DetailExist={invoiceDetail?.invoice_type === "factory"}
             loading={true}
           />
         </Box>
