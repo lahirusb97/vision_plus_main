@@ -34,6 +34,7 @@ import { convertEmptyStringsToNull } from "../../../utils/convertEmptyStringsToN
 import { calculateExternalLensTotal } from "../../../utils/calculateExternalLensTotal";
 import { clearexternalLense } from "../../../features/invoice/externalLenseSlice";
 import InvoiceView from "./InvoiceView";
+import { formatUserPayments } from "../../../utils/formatUserPayments";
 
 export default function FactoryInvoiceForm() {
   const { id } = useParams();
@@ -118,6 +119,13 @@ export default function FactoryInvoiceForm() {
   // console.log(methods.watch("note"));
 
   const submiteFromData = async (data: InvoiceInputModel) => {
+    //USER PAYMENT FORMATING
+
+    const userPayments = {
+      credit_card: data.credit_card,
+      cash: data.cash,
+      online_transfer: data.online_transfer,
+    };
     const postData = {
       patient: {
         refraction_id: id,
@@ -202,23 +210,7 @@ export default function FactoryInvoiceForm() {
           };
         }),
       ],
-      order_payments: [
-        {
-          amount: data.credit_card,
-          payment_method: "credit_card",
-          transaction_status: "success",
-        },
-        {
-          amount: data.cash,
-          payment_method: "cash",
-          transaction_status: "success",
-        },
-        {
-          amount: data.online_transfer,
-          payment_method: "online_transfer",
-          transaction_status: "success",
-        },
-      ],
+      order_payments: formatUserPayments(userPayments),
     };
 
     if (

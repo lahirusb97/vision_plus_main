@@ -33,7 +33,6 @@ const RepaymentForm = () => {
     useGetInvoicePayments(parseInt(id ?? ""));
   const { invoiceDetail, invoiceDetailLoading, invoiceDetailError } =
     useGetSingleInvoiceDetail(parseInt(id ?? ""));
-  console.log(invoiceDetail);
 
   const [secondPayment, setSecondPayment] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
@@ -56,6 +55,7 @@ const RepaymentForm = () => {
       })
     ),
   });
+  console.log(invoiceDetail);
 
   const handleSecondPaymentChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSecondPayment(event.target.value);
