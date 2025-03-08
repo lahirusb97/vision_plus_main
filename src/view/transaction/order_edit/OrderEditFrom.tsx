@@ -197,14 +197,12 @@ export default function OrderEditFrom() {
           }
           totals[method] += amount;
         });
-        console.log(totals);
 
         // Set the calculated totals in the specific method's input field
         Object.keys(totals).forEach((method) => {
           methods.setValue(method, totals[method]); // Ensure decimal format
         });
-
-        console.log(totals);
+        methods.setValue("discount", parseFloat(orderDetails.discount));
       }
     }
   }, [invoiceDetail, invoiceDetailLoading]);
