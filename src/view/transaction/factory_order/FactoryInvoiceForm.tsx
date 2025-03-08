@@ -130,7 +130,10 @@ export default function FactoryInvoiceForm() {
       order: {
         refraction: id,
         status:
-          subtotal <= parseInt(data.card || "0") + parseInt(data.cash || "0")
+          grandTotal <=
+          parseInt(data.credit_card || "0") +
+            parseInt(data.cash || "0") +
+            parseInt(data.online_transfer || "0")
             ? "completed"
             : "pending",
 

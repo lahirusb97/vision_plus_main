@@ -121,9 +121,9 @@ const RepaymentForm = () => {
           <Typography sx={{ fontSize: 16 }}>
             Name : {invoiceDetail?.customer_details.name}
           </Typography>
-          {/* <Typography sx={{ fontSize: 16 }}>
-            Rs. {invoiceDetail?.order_details.sub_total}
-          </Typography> */}
+          <Typography sx={{ fontSize: 16 }}>
+            status: {invoiceDetail?.order_details.status}
+          </Typography>
           <Button
             onClick={() => {
               const url = `?order_id=${encodeURIComponent(
@@ -165,7 +165,7 @@ const RepaymentForm = () => {
             Full Amount
           </Typography>
           <Typography sx={{ fontSize: 16, fontWeight: "bold" }}>
-            {invoiceDetail?.order_details.total_price}
+            {invoiceDetail?.order_details.sub_total}
           </Typography>
         </Paper>
 
