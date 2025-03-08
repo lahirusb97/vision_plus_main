@@ -201,7 +201,7 @@ export default function FactoryInvoiceForm() {
       ],
       order_payments: [
         {
-          amount: data.card,
+          amount: data.credit_card,
           payment_method: "credit_card",
           transaction_status: "success",
         },

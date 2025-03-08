@@ -312,7 +312,7 @@ export default function OrderEditFrom() {
       ],
       order_payments: [
         {
-          amount: data.card,
+          amount: data.credit_card,
           payment_method: "credit_card",
           transaction_status: "success",
         },
@@ -476,17 +476,7 @@ export default function OrderEditFrom() {
             multiline
           />
         </Box>
-        <TextField
-          {...methods.register("note")}
-          sx={{ my: 1, maxWidth: "1200px", width: "100%" }}
-          size="small"
-          fullWidth
-          label="note"
-          multiline
-          InputLabelProps={{
-            shrink: Boolean(methods.watch("note")),
-          }}
-        />
+
         <Box
           sx={{
             display: "flex",

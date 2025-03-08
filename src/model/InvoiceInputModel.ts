@@ -23,7 +23,7 @@ interface InvoiceInputModel {
   dob: string;
   cash: number;
   discount: number;
-  card: number;
+  credit_card: number;
   online_transfer: number;
 }
 export type { InvoiceInputModel };
