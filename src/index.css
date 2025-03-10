@@ -2,3 +2,16 @@
   margin: 0;
   padding: 0;
 }
+@font-face {
+  font-family: "Algerian";
+  src: url("/fonts/ALGER.TTF") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "fm-emanee";
+  src: url("/fonts/FM-Emanee.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
