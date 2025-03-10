@@ -4,6 +4,8 @@ import {
   Button,
   CircularProgress,
   Paper,
+  Grid,
+  Grid2,
 } from "@mui/material";
 import { useLocation } from "react-router";
 import { useRef } from "react";
@@ -12,6 +14,8 @@ import useGetSingleInvoiceDetail from "../../../hooks/useGetSingleInvoiceDetail"
 import log from "../../../assets/defalt/Rectangle 522.png";
 import OrderForm from "../../../components/OrderForm";
 import EastIcon from "@mui/icons-material/East";
+import { dateAndTimeFormat } from "../../../utils/dateAndTimeFormat";
+import { numberWithCommas } from "../../../utils/NumberWithCommas";
 
 const InvoiceView = () => {
   const location = useLocation();
@@ -27,9 +31,6 @@ const InvoiceView = () => {
       year: "numeric",
       month: "2-digit",
       day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
     });
   };
 
@@ -60,37 +61,39 @@ const InvoiceView = () => {
       {/* A5 Paper Size Container */}
       <Box
         sx={{
-          p: 4,
-          width: "210mm", // A5 width
-          minHeight: "148mm", // A5 height
-          margin: "0 auto",
+          padding: "4mm",
+          minwidth: "7cm", // A5 width
+          minHeight: "10.5mc", // A5 height
           border: "1px solid #000",
           fontFamily: "Arial, sans-serif",
           "@media print": {
-            width: "210mm",
-            minHeight: "148mm",
+            minWidth: "14cm",
+            minHeight: "21cm",
             border: "none",
             margin: "0",
-            padding: "2mm",
           },
         }}
         ref={componentRef}
       >
         {/* Logo and Header */}
-        <Box
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          mb={"2mm"}
-        >
-          <img src={log} alt="Vision Plus Logo" style={{ height: "8mm" }} />
+        <Box display="flex" justifyContent="center" alignItems="center">
+          <img
+            src={log}
+            alt="Vision Plus Logo"
+            style={{ height: "8mm", margin: "0 -4mm" }}
+          />
+          <Typography
+            sx={{ fontFamily: "Algerian", fontSize: "6mm" }}
+            variant="h6"
+            align="center"
+            fontWeight="bold"
+          >
+            VISION PLUS OPTICIANS & EYE - CLINIC (PVT) LTD
+          </Typography>
         </Box>
 
-        <Typography variant="h6" align="center" fontWeight="bold">
-          VISION PLUS OPTICIANS (PVT) LTD
-        </Typography>
         <Typography variant="body2" align="center">
-          Tel: 034 2247354 / 077 7854695
+          Tel: 034 2247466 / 071 7513639
         </Typography>
         <Typography variant="body2" align="center">
           Date: {DateView(invoiceDetail.invoice_date)}
@@ -100,14 +103,38 @@ const InvoiceView = () => {
           sx={{
             display: "flex",
             justifyContent: "space-between",
-            mt: "2mm",
-            mb: "2mm",
+            alignItems: "baseline",
           }}
         >
+          <Box sx={{ alignSelf: "flex-end" }}>
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: "15mm 1fr",
+                gridTemplateRows: "repeat(3, 1fr)", // 3 equal columns
+              }}
+            >
+              <Typography variant="body2">Name</Typography>
+              <Typography sx={{}} variant="body2">
+                <span style={{ margin: "0 1mm", fontWeight: "bold" }}>:</span>
+                {invoiceDetail?.customer_details?.name}
+              </Typography>
+              <Typography variant="body2">Address</Typography>
+              <Typography sx={{}} variant="body2">
+                <span style={{ margin: "0 1mm", fontWeight: "bold" }}>:</span>
+                {invoiceDetail?.customer_details?.address}
+              </Typography>
+              <Typography variant="body2">Contact</Typography>
+              <Typography sx={{}} variant="body2">
+                <span style={{ margin: "0 1mm", fontWeight: "bold" }}>:</span>
+                {invoiceDetail?.customer_details?.phone_number}
+              </Typography>
+            </Box>
+          </Box>
           <Box sx={{ textAlign: "left" }}>
             <Typography variant="body2">
-              <span style={{ fontSize: "20px" }}>
-                Order No: {invoiceDetail.order}{" "}
+              <span style={{ fontWeight: "bold", fontSize: "20px" }}>
+                INVOICE NO : MATA000{invoiceDetail.id}{" "}
                 {/* //!Order ID as Invoice Number */}
               </span>
             </Typography>
@@ -115,32 +142,15 @@ const InvoiceView = () => {
             <Typography variant="body2">Mathugama</Typography>
             <Typography variant="body2">Sri Lanka</Typography>
           </Box>
-          <Box>
-            <Typography variant="body2">
-              <span style={{ fontWeight: "bold", fontSize: "20px" }}>
-                Invoice No: {invoiceDetail.id}{" "}
-                {/* //!Order ID as Invoice Number */}
-              </span>
-            </Typography>
-            <Typography variant="body2">
-              Customer Name: {invoiceDetail?.customer_details?.name}
-            </Typography>
-            <Typography variant="body2">
-              Address: {invoiceDetail?.customer_details?.address}
-            </Typography>
-            <Typography variant="body2">
-              Phone Number: {invoiceDetail?.customer_details?.phone_number}
-            </Typography>
-          </Box>
         </Box>
 
         {/* Table using CSS Grid */}
         <Box
           sx={{
             display: "grid",
-            gridTemplateColumns: "2fr 1fr 150px 150px",
+            gridTemplateColumns: "2fr 1fr 21mm 21mm",
             gap: "1px",
-            backgroundColor: "#000",
+
             border: "2px solid #000",
             mt: "2mm",
           }}
@@ -150,14 +160,15 @@ const InvoiceView = () => {
             sx={{
               gridColumn: "1 / -1",
               display: "grid",
-              gridTemplateColumns: "2fr 1fr 150px 150px",
-              backgroundColor: "#f0f0f0",
+              gridTemplateColumns: "2fr 24mm 21mm 21mm",
+
               fontWeight: "bold",
-              padding: "8px",
+              paddingY: "8px",
+              paddingX: "2mm",
               borderBottom: "1px solid #000",
             }}
           >
-            <Box>Item Name</Box>
+            <Box sx={{ marginLeft: "2mm" }}>Item Name</Box>
             <Box sx={{ textAlign: "left" }}>Qty</Box>
             <Box sx={{ textAlign: "left" }}>Unit</Box>
             <Box sx={{ textAlign: "right" }}>Value</Box>
@@ -174,19 +185,25 @@ const InvoiceView = () => {
                     sx={{
                       gridColumn: "1 / -1",
                       display: "grid",
-                      gridTemplateColumns: "2fr 1fr 150px 150px",
+                      gridTemplateColumns: "2fr 21mm 21mm 21mm",
                       backgroundColor: "#fff",
-                      padding: "1mm",
+                      paddingY: "1mm",
+                      paddingX: "2mm",
                       borderBottom: "1px solid #000",
                     }}
                   >
                     <Box sx={{ textAlign: "left", fontSize: ".9rem" }}>
-                      {item.lens_detail.brand_name}/{item.lens_detail.type_name}
-                      /{item.lens_detail.coating_name}
+                      {item.lens_detail.brand_name}/
+                      {item.lens_detail.coating_name}/
+                      {item.lens_detail.type_name}
                     </Box>
                     <Box sx={{ textAlign: "left" }}>{item.quantity}</Box>
-                    <Box sx={{ textAlign: "left" }}>{item.price_per_unit}</Box>
-                    <Box sx={{ textAlign: "right" }}>{item.subtotal}</Box>
+                    <Box sx={{ textAlign: "left" }}>
+                      {numberWithCommas(item.price_per_unit)}
+                    </Box>
+                    <Box sx={{ textAlign: "right" }}>
+                      {numberWithCommas(item.subtotal)}
+                    </Box>
                   </Box>
                 )
             )}
@@ -200,9 +217,10 @@ const InvoiceView = () => {
                     sx={{
                       gridColumn: "1 / -1",
                       display: "grid",
-                      gridTemplateColumns: "2fr 1fr 150px 150px",
+                      gridTemplateColumns: "2fr 21mm 21mm 21mm",
                       backgroundColor: "#fff",
-                      padding: "1mm",
+                      paddingY: "1mm",
+                      paddingX: "2mm",
                       borderBottom: "1px solid #000",
                     }}
                   >
@@ -212,8 +230,12 @@ const InvoiceView = () => {
                       {item.frame_detail.color_name}
                     </Box>
                     <Box sx={{ textAlign: "left" }}>{item.quantity}</Box>
-                    <Box sx={{ textAlign: "left" }}>{item.price_per_unit}</Box>
-                    <Box sx={{ textAlign: "right" }}>{item.subtotal}</Box>
+                    <Box sx={{ textAlign: "left" }}>
+                      {numberWithCommas(item.price_per_unit)}
+                    </Box>
+                    <Box sx={{ textAlign: "right" }}>
+                      {numberWithCommas(item.subtotal)}
+                    </Box>
                   </Box>
                 )
             )}
@@ -227,18 +249,25 @@ const InvoiceView = () => {
                     sx={{
                       gridColumn: "1 / -1",
                       display: "grid",
-                      gridTemplateColumns: "2fr 1fr 150px 150px",
+                      gridTemplateColumns: "2fr 21mm 21mm 21mm",
+
                       backgroundColor: "#fff",
-                      padding: "1mm",
+                      paddingY: "1mm",
+                      paddingX: "2mm",
                       borderBottom: "1px solid #000",
                     }}
                   >
                     <Box sx={{ textAlign: "left", fontSize: ".9rem" }}>
                       {`${item.brand_name} / ${item.coating_name} / ${item.type_name}`}
+                      ss
                     </Box>
                     <Box sx={{ textAlign: "left" }}>{item.quantity}</Box>
-                    <Box sx={{ textAlign: "left" }}>{item.price_per_unit}</Box>
-                    <Box sx={{ textAlign: "right" }}>{item.subtotal}</Box>
+                    <Box sx={{ textAlign: "left" }}>
+                      {numberWithCommas(item.price_per_unit)}
+                    </Box>
+                    <Box sx={{ textAlign: "right" }}>
+                      {numberWithCommas(item.subtotal)}
+                    </Box>
                   </Box>
                 )
             )}
@@ -248,42 +277,70 @@ const InvoiceView = () => {
             sx={{
               gridColumn: "1 / -1",
               display: "grid",
-              gridTemplateColumns: "2fr 1fr 150px 150px ",
+              gridTemplateColumns: "2fr 1fr 24mm 21mm ",
               backgroundColor: "#fff",
-              padding: "1mm",
-              borderBottom: "1px solid #000",
             }}
           >
-            <Box sx={{ gridColumn: "3/4" }}>Subtotal</Box>
-            <Box sx={{ textAlign: "right", gridColumn: "4 / 6" }}>
-              {invoiceDetail.order_details.sub_total}
+            <Box
+              sx={{
+                gridColumn: "3/4",
+                padding: "1mm",
+
+                borderBottom: "1px solid #000",
+                borderLeft: "1px solid #000",
+              }}
+            >
+              Subtotal
+            </Box>
+
+            <Box
+              sx={{
+                textAlign: "right",
+                gridColumn: "4 / 6",
+                padding: "1mm",
+                borderBottom: "1px solid #000",
+              }}
+            >
+              {numberWithCommas(invoiceDetail.order_details.sub_total)}
             </Box>
           </Box>
           <Box
             sx={{
               gridColumn: "1 / -1",
               display: "grid",
-              gridTemplateColumns: "2fr 1fr 150px 150px ",
-              borderBottom: "1px solid #000",
-
+              gridTemplateColumns: "2fr 1fr 24mm 21mm ",
               backgroundColor: "#fff",
-              padding: "1mm",
             }}
           >
-            <Box sx={{ gridColumn: "3 / 4" }}>Discounts</Box>
-            <Box sx={{ textAlign: "right", gridColumn: "4 / 6" }}>
-              {invoiceDetail.order_details.discount}
+            <Box
+              sx={{
+                gridColumn: "3 / 4",
+                padding: "1mm",
+                borderBottom: "1px solid #000",
+
+                paddingLeft: "1mm",
+                borderLeft: "1px solid #000",
+              }}
+            >
+              Discounts
+            </Box>
+            <Box
+              sx={{
+                textAlign: "right",
+                gridColumn: "4 / 6",
+                padding: "1mm",
+                borderBottom: "1px solid #000",
+              }}
+            >
+              {numberWithCommas(invoiceDetail.order_details.discount)}
             </Box>
           </Box>
           <Box
             sx={{
               gridColumn: "1 / -1",
               display: "grid",
-              gridTemplateColumns: "2fr 1fr 150px 150px ",
-              borderBottom: "1px solid #000",
-
+              gridTemplateColumns: "2fr 1fr 24mm 21mm ",
               backgroundColor: "#fff",
-              padding: "1mm",
             }}
           >
             <Box
@@ -291,81 +348,138 @@ const InvoiceView = () => {
                 gridColumn: "3 / 4",
                 fontWeight: "bold",
                 textAlign: "left",
+                padding: "1mm",
+
+                borderBottom: "1px solid #000",
+
+                paddingLeft: "1mm",
+                borderLeft: "1px solid #000",
               }}
             >
               Total
             </Box>
-            <Box sx={{ textAlign: "right", gridColumn: "4 / 6" }}>
-              <strong>{invoiceDetail.order_details.total_price}</strong>
+            <Box
+              sx={{
+                textAlign: "right",
+                gridColumn: "4 / 6",
+                padding: "1mm",
+
+                borderBottom: "1px solid #000",
+              }}
+            >
+              <strong>
+                {numberWithCommas(invoiceDetail.order_details.total_price)}
+              </strong>
             </Box>
           </Box>
           <Box
             sx={{
               gridColumn: "1 / -1",
               display: "grid",
-              gridTemplateColumns: "2fr 1fr 150px 150px",
+              gridTemplateColumns: "2fr 1fr 24mm 21mm",
               backgroundColor: "#fff",
-              padding: "1mm",
-              borderBottom: "1px solid #000",
             }}
           >
-            <Box sx={{ gridColumn: "3 / 4" }}>Payment</Box>
-            <Box sx={{ textAlign: "right", gridColumn: "4 / 6" }}>
-              {invoiceDetail.order_details.order_payments.reduce(
-                (acc, payment) => acc + parseFloat(payment.amount),
-                0
-              )}
-              .00
+            <Box
+              sx={{
+                gridColumn: "3 / 4",
+
+                borderBottom: "1px solid #000",
+                paddingLeft: "1mm",
+                borderLeft: "1px solid #000",
+              }}
+            >
+              Payment
             </Box>
-          </Box>
-          <Box
-            sx={{
-              gridColumn: "1 / -1",
-              display: "grid",
-              gridTemplateColumns: "2fr 1fr 150px 150px",
-              backgroundColor: "#fff",
-              padding: "1mm",
-              borderBottom: "1px solid #000",
-            }}
-          >
-            <Box sx={{ gridColumn: "3 / 4" }}>Balance</Box>
-            <Box sx={{ textAlign: "right", gridColumn: "4 / 6" }}>
-              {parseFloat(invoiceDetail?.order_details?.total_price) -
+            <Box
+              sx={{
+                textAlign: "right",
+                gridColumn: "4 / 6",
+                padding: "1mm",
+
+                borderBottom: "1px solid #000",
+              }}
+            >
+              {numberWithCommas(
                 invoiceDetail.order_details.order_payments.reduce(
                   (acc, payment) => acc + parseFloat(payment.amount),
                   0
-                )}
-              .00
+                )
+              )}
+            </Box>
+          </Box>
+          <Box
+            sx={{
+              gridColumn: "1 / -1",
+              display: "grid",
+              gridTemplateColumns: "2fr 1fr 24mm 21mm",
+              backgroundColor: "#fff",
+            }}
+          >
+            <Box
+              sx={{
+                gridColumn: "3 / 4",
+                fontWeight: "bold",
+                paddingLeft: "1mm",
+                borderLeft: "1px solid #000",
+              }}
+            >
+              Balance
+            </Box>
+            <Box
+              sx={{
+                textAlign: "right",
+                gridColumn: "4 / 6",
+                fontWeight: "bold",
+                padding: "1mm",
+              }}
+            >
+              {numberWithCommas(
+                parseFloat(invoiceDetail?.order_details?.total_price) -
+                  invoiceDetail.order_details.order_payments.reduce(
+                    (acc, payment) => acc + parseFloat(payment.amount),
+                    0
+                  )
+              )}
             </Box>
           </Box>
         </Box>
 
         {/* Branches Section */}
-
-        <Box
-          sx={{ mt: "2mm", display: "flex", justifyContent: "space-between" }}
-        >
-          <Typography
-            sx={{ fontWeight: "bold", display: "flex", alignItems: "center" }}
-            variant="body2"
-          >
-            <span>Our Branches</span>
-          </Typography>
-          <Typography variant="body1">Mathugama - 0342247354</Typography>
-          <Typography variant="body1">Aluthgama - 0342275268</Typography>
-        </Box>
-
-        {/* Footer Note */}
         <Typography
           variant="body2"
           align="center"
-          sx={{ mt: "2mm", fontWeight: "bold" }}
+          sx={{ marginTop: "2mm", fontWeight: "bolder" }}
         >
-          We will not be responsible for any uncollected orders after 3 months *
-          Non-refundable
+          <span style={{ color: "red", fontSize: "4mm" }}>* </span>We will not
+          be responsible for any uncollected orders after 3 months.
+          Non-refundable.
         </Typography>
+        <Typography
+          variant="body2"
+          align="center"
+          sx={{ fontWeight: "bold", fontFamily: "fm-emanee" }}
+        >
+          {`udi  03la blaujQ weKjqï  ms<sn|j j.lshkq fkd,efí' ì,am;a i|yd f.jQ uqo,a kej; f.jkq fkd,efí' `}
+        </Typography>
+        <Box sx={{ mt: "2mm", display: "flex", justifyContent: "center" }}>
+          <Typography variant="body1">
+            Branches
+            <span style={{ margin: "0 1mm", fontWeight: "bold" }}>:</span>
+          </Typography>
+          <Typography variant="body1">
+            Mathugama - 034 2247466
+            <span style={{ margin: "0 2mm", fontWeight: "bold" }}>|</span>
+          </Typography>
+          <Typography variant="body1">Aluthgama - 034 2275268</Typography>
+        </Box>
+
+        {/* Footer Note */}
+
         <Typography variant="body2" align="center" sx={{ fontSize: "12px" }}>
-          Software developed by Furigen technology
+          Bill Printed On{" "}
+          <span style={{ margin: "0 1mm", fontWeight: "bold" }}>:</span>{" "}
+          {dateAndTimeFormat(new Date().toISOString())}
         </Typography>
       </Box>
       <Button
