@@ -189,9 +189,11 @@ const InvoiceView = () => {
             sx={{
               gridColumn: "1 / -1",
               display: "grid",
-              gridTemplateColumns: "2fr 21mm 21mm 21mm",
+              gridTemplateColumns: "2fr 21mm 22mm 21mm",
               backgroundColor: "#fff",
               paddingX: "2mm",
+              borderBottom:
+                instockLenseTotal.subtotal > 0 ? "1px solid #000" : "none",
             }}
           >
             {invoiceDetail?.order_details.order_items
@@ -204,8 +206,6 @@ const InvoiceView = () => {
                         textAlign: "left",
                         fontSize: ".9rem",
                         paddingY: "1mm",
-
-                        borderBottom: "1px solid #000",
                       }}
                     >
                       {item.lens_detail.brand_name}/
@@ -218,16 +218,79 @@ const InvoiceView = () => {
               (items) => items.lens !== null
             ).length > 0 && (
               <>
-                <Box sx={{ textAlign: "left", borderBottom: "1px solid #000" }}>
+                <Box sx={{ textAlign: "left" }}>
                   {instockLenseTotal.quantity}
                 </Box>
-                <Box sx={{ textAlign: "left", borderBottom: "1px solid #000" }}>
+                <Box sx={{ textAlign: "left" }}>
                   {numberWithCommas(instockLenseTotal.price_per_unit)}
                 </Box>
                 <Box
-                  sx={{ textAlign: "right", borderBottom: "1px solid #000" }}
+                  sx={{
+                    textAlign: "right",
+
+                    paddingLeft: "2mm",
+                  }}
                 >
                   {numberWithCommas(instockLenseTotal.subtotal)}
+                </Box>
+              </>
+            )}
+          </Box>
+          <Box
+            sx={{
+              gridColumn: "1 / -1",
+              display: "grid",
+              gridTemplateColumns: "2fr 21mm 22mm 21mm",
+              backgroundColor: "#fff",
+              paddingX: "1mm",
+              borderBottom:
+                externalLenseTotal.subtotal > 0 ? "1px solid #000" : "none",
+            }}
+          >
+            {invoiceDetail?.order_details.order_items
+              .filter((items) => items.external_lens !== null)
+              .slice(0, 1)
+              .map(
+                (item, index) =>
+                  item.external_lens && (
+                    <>
+                      <Box
+                        sx={{
+                          textAlign: "left",
+                          fontSize: ".9rem",
+                          paddingY: "1mm",
+                        }}
+                      >
+                        {`${item.brand_name} / ${item.coating_name} / ${item.type_name}`}
+                      </Box>
+                    </>
+                  )
+              )}
+
+            {invoiceDetail.order_details.order_items.filter(
+              (items) => items.external_lens !== null
+            ).length > 0 && (
+              <>
+                <Box
+                  sx={{
+                    textAlign: "left",
+                  }}
+                >
+                  {externalLenseTotal.quantity}
+                </Box>
+                <Box
+                  sx={{
+                    textAlign: "left",
+                  }}
+                >
+                  {numberWithCommas(externalLenseTotal.price_per_unit)}
+                </Box>
+                <Box
+                  sx={{
+                    textAlign: "right",
+                  }}
+                >
+                  {numberWithCommas(externalLenseTotal.subtotal)}
                 </Box>
               </>
             )}
@@ -245,7 +308,7 @@ const InvoiceView = () => {
                       gridTemplateColumns: "2fr 21mm 21mm 21mm",
                       backgroundColor: "#fff",
                       paddingY: "1mm",
-                      paddingX: "2mm",
+                      paddingX: "1mm",
                       borderBottom: "1px solid #000",
                     }}
                   >
@@ -264,55 +327,6 @@ const InvoiceView = () => {
                   </Box>
                 )
             )}
-          <Box
-            sx={{
-              gridColumn: "1 / -1",
-              display: "grid",
-              gridTemplateColumns: "2fr 21mm 21mm 21mm",
-              paddingX: "2mm",
-
-              backgroundColor: "#fff",
-            }}
-          >
-            {invoiceDetail?.order_details.order_items
-              .filter((items) => items.external_lens !== null)
-              .slice(0, 1)
-              .map(
-                (item, index) =>
-                  item.external_lens && (
-                    <>
-                      <Box
-                        sx={{
-                          textAlign: "left",
-                          fontSize: ".9rem",
-                          paddingY: "1mm",
-                          borderBottom: "1px solid #000",
-                        }}
-                      >
-                        {`${item.brand_name} / ${item.coating_name} / ${item.type_name}`}
-                      </Box>
-                    </>
-                  )
-              )}
-
-            {invoiceDetail.order_details.order_items.filter(
-              (items) => items.external_lens !== null
-            ).length > 0 && (
-              <>
-                <Box sx={{ textAlign: "left", borderBottom: "1px solid #000" }}>
-                  {externalLenseTotal.quantity}
-                </Box>
-                <Box sx={{ textAlign: "left", borderBottom: "1px solid #000" }}>
-                  {numberWithCommas(externalLenseTotal.price_per_unit)}
-                </Box>
-                <Box
-                  sx={{ textAlign: "right", borderBottom: "1px solid #000" }}
-                >
-                  {numberWithCommas(externalLenseTotal.subtotal)}
-                </Box>
-              </>
-            )}
-          </Box>
 
           {/* Summary Section */}
           <Box
