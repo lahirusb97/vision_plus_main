@@ -16,6 +16,7 @@ import OrderForm from "../../../components/OrderForm";
 import EastIcon from "@mui/icons-material/East";
 import { dateAndTimeFormat } from "../../../utils/dateAndTimeFormat";
 import { numberWithCommas } from "../../../utils/NumberWithCommas";
+import { calculateTotals } from "../../../utils/calculations";
 
 const InvoiceView = () => {
   const location = useLocation();
@@ -54,7 +55,17 @@ const InvoiceView = () => {
       </Typography>
     );
   }
-  console.log(invoiceDetail);
+
+  const externalLenseTotal = calculateTotals(
+    invoiceDetail?.order_details.order_items.filter(
+      (items) => items.external_lens !== null
+    )
+  );
+  const instockLenseTotal = calculateTotals(
+    invoiceDetail?.order_details.order_items.filter(
+      (items) => items.lens !== null
+    )
+  );
 
   return (
     <div>
@@ -174,39 +185,53 @@ const InvoiceView = () => {
             <Box sx={{ textAlign: "right" }}>Value</Box>
           </Box>
           {/* Item List */}
+          <Box
+            sx={{
+              gridColumn: "1 / -1",
+              display: "grid",
+              gridTemplateColumns: "2fr 21mm 21mm 21mm",
+              backgroundColor: "#fff",
+              paddingX: "2mm",
+            }}
+          >
+            {invoiceDetail?.order_details.order_items
+              .filter((items) => items.lens !== null)
+              .map(
+                (item, index) =>
+                  item.lens_detail && (
+                    <Box
+                      sx={{
+                        textAlign: "left",
+                        fontSize: ".9rem",
+                        paddingY: "1mm",
 
-          {invoiceDetail?.order_details.order_items
-            .filter((items) => items.lens !== null)
-            .map(
-              (item, index) =>
-                item.lens_detail && (
-                  <Box
-                    key={index}
-                    sx={{
-                      gridColumn: "1 / -1",
-                      display: "grid",
-                      gridTemplateColumns: "2fr 21mm 21mm 21mm",
-                      backgroundColor: "#fff",
-                      paddingY: "1mm",
-                      paddingX: "2mm",
-                      borderBottom: "1px solid #000",
-                    }}
-                  >
-                    <Box sx={{ textAlign: "left", fontSize: ".9rem" }}>
+                        borderBottom: "1px solid #000",
+                      }}
+                    >
                       {item.lens_detail.brand_name}/
                       {item.lens_detail.coating_name}/
                       {item.lens_detail.type_name}
                     </Box>
-                    <Box sx={{ textAlign: "left" }}>{item.quantity}</Box>
-                    <Box sx={{ textAlign: "left" }}>
-                      {numberWithCommas(item.price_per_unit)}
-                    </Box>
-                    <Box sx={{ textAlign: "right" }}>
-                      {numberWithCommas(item.subtotal)}
-                    </Box>
-                  </Box>
-                )
+                  )
+              )}
+            {invoiceDetail.order_details.order_items.filter(
+              (items) => items.lens !== null
+            ).length > 0 && (
+              <>
+                <Box sx={{ textAlign: "left", borderBottom: "1px solid #000" }}>
+                  {instockLenseTotal.quantity}
+                </Box>
+                <Box sx={{ textAlign: "left", borderBottom: "1px solid #000" }}>
+                  {numberWithCommas(instockLenseTotal.price_per_unit)}
+                </Box>
+                <Box
+                  sx={{ textAlign: "right", borderBottom: "1px solid #000" }}
+                >
+                  {numberWithCommas(instockLenseTotal.subtotal)}
+                </Box>
+              </>
             )}
+          </Box>
           {invoiceDetail?.order_details.order_items
             .filter((items) => items.frame !== null)
             .map(
@@ -239,38 +264,55 @@ const InvoiceView = () => {
                   </Box>
                 )
             )}
-          {invoiceDetail?.order_details.order_items
-            .filter((items) => items.external_lens !== null)
-            .map(
-              (item, index) =>
-                item.external_lens && (
-                  <Box
-                    key={index}
-                    sx={{
-                      gridColumn: "1 / -1",
-                      display: "grid",
-                      gridTemplateColumns: "2fr 21mm 21mm 21mm",
+          <Box
+            sx={{
+              gridColumn: "1 / -1",
+              display: "grid",
+              gridTemplateColumns: "2fr 21mm 21mm 21mm",
+              paddingX: "2mm",
 
-                      backgroundColor: "#fff",
-                      paddingY: "1mm",
-                      paddingX: "2mm",
-                      borderBottom: "1px solid #000",
-                    }}
-                  >
-                    <Box sx={{ textAlign: "left", fontSize: ".9rem" }}>
-                      {`${item.brand_name} / ${item.coating_name} / ${item.type_name}`}
-                      ss
-                    </Box>
-                    <Box sx={{ textAlign: "left" }}>{item.quantity}</Box>
-                    <Box sx={{ textAlign: "left" }}>
-                      {numberWithCommas(item.price_per_unit)}
-                    </Box>
-                    <Box sx={{ textAlign: "right" }}>
-                      {numberWithCommas(item.subtotal)}
-                    </Box>
-                  </Box>
-                )
+              backgroundColor: "#fff",
+            }}
+          >
+            {invoiceDetail?.order_details.order_items
+              .filter((items) => items.external_lens !== null)
+              .slice(0, 1)
+              .map(
+                (item, index) =>
+                  item.external_lens && (
+                    <>
+                      <Box
+                        sx={{
+                          textAlign: "left",
+                          fontSize: ".9rem",
+                          paddingY: "1mm",
+                          borderBottom: "1px solid #000",
+                        }}
+                      >
+                        {`${item.brand_name} / ${item.coating_name} / ${item.type_name}`}
+                      </Box>
+                    </>
+                  )
+              )}
+
+            {invoiceDetail.order_details.order_items.filter(
+              (items) => items.external_lens !== null
+            ).length > 0 && (
+              <>
+                <Box sx={{ textAlign: "left", borderBottom: "1px solid #000" }}>
+                  {externalLenseTotal.quantity}
+                </Box>
+                <Box sx={{ textAlign: "left", borderBottom: "1px solid #000" }}>
+                  {numberWithCommas(externalLenseTotal.price_per_unit)}
+                </Box>
+                <Box
+                  sx={{ textAlign: "right", borderBottom: "1px solid #000" }}
+                >
+                  {numberWithCommas(externalLenseTotal.subtotal)}
+                </Box>
+              </>
             )}
+          </Box>
 
           {/* Summary Section */}
           <Box
