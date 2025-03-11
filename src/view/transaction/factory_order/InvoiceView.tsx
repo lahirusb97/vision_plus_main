@@ -15,7 +15,7 @@ import log from "../../../assets/defalt/Rectangle 522.png";
 import OrderForm from "../../../components/OrderForm";
 import EastIcon from "@mui/icons-material/East";
 import { dateAndTimeFormat } from "../../../utils/dateAndTimeFormat";
-import { numberWithCommas } from "../../../utils/NumberWithCommas";
+import { numberWithCommas } from "../../../utils/numberWithCommas";
 import { calculateTotals } from "../../../utils/calculations";
 
 const InvoiceView = () => {
