@@ -179,7 +179,7 @@ const InvoiceView = () => {
               borderBottom: "1px solid #000",
             }}
           >
-            <Box sx={{ marginLeft: "2mm" }}>Item Name</Box>
+            <Box sx={{ marginLeft: "" }}>Item Name</Box>
             <Box sx={{ textAlign: "left" }}>Qty</Box>
             <Box sx={{ textAlign: "left" }}>Unit</Box>
             <Box sx={{ textAlign: "right" }}>Value</Box>
@@ -305,7 +305,7 @@ const InvoiceView = () => {
                     sx={{
                       gridColumn: "1 / -1",
                       display: "grid",
-                      gridTemplateColumns: "2fr 22mm 21mm 21mm",
+                      gridTemplateColumns: "2fr 23mm 21mm 21mm",
                       backgroundColor: "#fff",
                       paddingY: "1mm",
                       paddingX: "1mm",
