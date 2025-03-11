@@ -305,7 +305,7 @@ const InvoiceView = () => {
                     sx={{
                       gridColumn: "1 / -1",
                       display: "grid",
-                      gridTemplateColumns: "2fr 21mm 21mm 21mm",
+                      gridTemplateColumns: "2fr 22mm 21mm 21mm",
                       backgroundColor: "#fff",
                       paddingY: "1mm",
                       paddingX: "1mm",
