@@ -14,12 +14,11 @@ import UserIcon from "../../assets/icons/navbar/User.png";
 import RefractionNav from "../refraction/RefractionNav";
 import { Paper } from "@mui/material";
 import ChannelNav from "../channel/ChannelNav";
-
 import TransactionNav from "../transaction/TransactionNav";
 import StockNav from "../stock/StockNav";
 import { LogoutOutlined } from "@mui/icons-material";
 import { useAuthContext } from "../../context/AuthContext";
-import { useLocation } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import UserNav from "../user/UserNav";
 import CheckInNav from "../checkin/CheckInNav";
 
@@ -55,13 +54,13 @@ function TabPanel(props: {
 export default function NavBar() {
   const tabs = [
     {
-      path: "refraction",
+      path: "",
       icon: RefractionIcon,
       label: "Refraction",
       nav: RefractionNav,
     },
     {
-      path: "transaction",
+      path: "transaction/factory_order",
       icon: TransationIcon,
       label: "Transaction",
       nav: TransactionNav,
@@ -73,7 +72,12 @@ export default function NavBar() {
       label: "Account",
       nav: RefractionNav,
     },
-    { path: "stock", icon: StockIcon, label: "Stock", nav: StockNav },
+    {
+      path: "stock/add_frames",
+      icon: StockIcon,
+      label: "Stock",
+      nav: StockNav,
+    },
     { path: "channel", icon: ChanneltIcon, label: "Channel", nav: ChannelNav },
     {
       path: "reports",
@@ -99,13 +103,14 @@ export default function NavBar() {
 
   const [value, setValue] = React.useState(getTabIndexFromPath(firstSegment));
   const { clearToken } = useAuthContext();
-
+  const navigate = useNavigate();
   // Handle Tab Change
   const handleChange = (
     _event: React.SyntheticEvent<Element, Event>,
     newValue: number
   ) => {
     setValue(newValue);
+    navigate(`/${tabs[newValue].path}`);
   };
 
   // Array of Icons and Labels (dynamically derived)

@@ -4,8 +4,7 @@ import FrameStore from "../../view/stock/FrameStore";
 import AddLense from "../../view/stock/AddLense";
 import LenseStore from "../../view/stock/LenseStore";
 import AddVariation from "../../view/stock/AddVariation";
-import AddOtherItem from "../../view/stock/AddOtherItem";
-import OtherItemStock from "../../view/stock/OtherItemStock";
+import OtherItemStore from "../../view/stock/otherItem/OtherItemStore";
 import ProtectedChildRoute from "../ProtectedChildRoute";
 import LenseHistory from "../../view/stock/lense/LenseHistory";
 import LenseEdit from "../../view/stock/lense/LenseEdit";
@@ -14,8 +13,8 @@ import FrameUpdate from "../../view/stock/frame/FrameUpdate";
 import FrameHIstory from "../../view/stock/frame/FrameHIstory";
 import LenseUpdate from "../../view/stock/lense/LenseUpdate";
 import OtherItemHistory from "../../view/stock/OtherItemHistory";
-import OtherItemUpdate from "../../view/stock/OtherItemUpdate";
-import OtherItemEdit from "../../view/stock/OtherItemEdit";
+import OtherItemQtyUpdate from "../../view/stock/otherItem/OtherItemQtyUpdate";
+import OtherItemEdit from "../../view/stock/otherItem/OtherItemEdit";
 import LenseTypeAdd from "../../view/stock/lense/LenseTypeAdd";
 import LenseTypeEdit from "../../view/stock/lense/LenseTypeEdit";
 import LenseBrandAdd from "../../view/stock/lense/LenseBrandAdd";
@@ -28,6 +27,7 @@ import ColorsAdd from "../../view/stock/frame/ColorsAdd";
 import ColorsEdit from "../../view/stock/frame/ColorsEdit";
 import FrameCodeEdit from "../../view/stock/frame/FrameCodeEdit";
 import FrameCodeAdd from "../../view/stock/frame/FrameCodeAdd";
+import OtherItemCreate from "../../view/stock/otherItem/OtherItemCreate";
 
 export const stockRoutes: RouteObject[] = [
   {
@@ -182,7 +182,7 @@ export const stockRoutes: RouteObject[] = [
     children: [
       {
         index: true,
-        element: <OtherItemStock />,
+        element: <OtherItemStore />,
       },
 
       {
@@ -191,7 +191,7 @@ export const stockRoutes: RouteObject[] = [
       },
       {
         path: "update/:id",
-        element: <OtherItemUpdate />,
+        element: <OtherItemQtyUpdate />,
       },
       {
         path: "history/:id",
@@ -201,6 +201,6 @@ export const stockRoutes: RouteObject[] = [
   },
   {
     path: "add_other_item",
-    element: <AddOtherItem />,
+    element: <OtherItemCreate />,
   },
 ];

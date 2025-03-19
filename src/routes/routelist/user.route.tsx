@@ -1,20 +1,27 @@
-import RefractionDetails from "../../view/refraction/RefractionDetails";
 import { RouteObject } from "react-router";
-import RefractionNumber from "../../view/refraction/RefractionNumber";
-
-import { lazy, Suspense } from "react";
 import UserIndex from "../../view/user/UserIndex";
-import UserAdd from "../../view/user/UserAdd";
-const RefractionEdit = lazy(
-  () => import("../../view/refraction/RefractionEdit")
-);
+import UserCreate from "../../view/user/UserCreate";
+import BranchIndex from "../../view/user/BranchIndex";
+import BranchCreate from "../../view/user/BranchCreate";
 export const userRoutes: RouteObject[] = [
   {
     path: "",
     element: <UserIndex />,
   },
   {
-    path: "add/",
-    element: <UserAdd />,
+    path: "create/",
+    element: <UserCreate />,
+  },
+  {
+    path: ":user/edit/",
+    element: <UserCreate />,
+  },
+  {
+    path: "branch/",
+    element: <BranchIndex />,
+  },
+  {
+    path: "branch/create/",
+    element: <BranchCreate />,
   },
 ];
