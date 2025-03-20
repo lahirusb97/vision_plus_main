@@ -3,9 +3,10 @@ import NavButton from "../../components/NavButton";
 export default function AccountNav() {
   return (
     <>
-      <NavButton name="AccountNav Index" path="/account" />
-      {/* <NavButton name="AccountNav" path="/account/yourpath" />// add path from account.route.ts example path="/account/yourpath"
-       */}
+      {/* Pass unique onClick handlers */}
+      <NavButton name="Account" path={"/account"} />
+      <NavButton name="Expence" path={"account/expence/"} />
+      <NavButton name="Add Catagory" path={"account/add_catagory/"} />
     </>
   );
 }
