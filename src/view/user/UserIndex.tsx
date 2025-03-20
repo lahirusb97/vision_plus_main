@@ -18,7 +18,7 @@ export default function UserIndex() {
   const navigate = useNavigate();
   const { users, usersLoading } = useGetUsers();
   const handleEdit = (id: number) => {
-    navigate(`${id}/edit/`);
+    navigate(`${id}/update/`);
   };
   return (
     <Box>

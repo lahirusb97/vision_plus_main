@@ -3,6 +3,7 @@ import UserIndex from "../../view/user/UserIndex";
 import UserCreate from "../../view/user/UserCreate";
 import BranchIndex from "../../view/user/BranchIndex";
 import BranchCreate from "../../view/user/BranchCreate";
+import UserUpdate from "../../view/user/UserUpdate";
 export const userRoutes: RouteObject[] = [
   {
     path: "",
@@ -13,8 +14,8 @@ export const userRoutes: RouteObject[] = [
     element: <UserCreate />,
   },
   {
-    path: ":user/edit/",
-    element: <UserCreate />,
+    path: ":user_id/update/",
+    element: <UserUpdate />,
   },
   {
     path: "branch/",

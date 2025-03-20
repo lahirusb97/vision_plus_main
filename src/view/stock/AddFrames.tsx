@@ -21,6 +21,14 @@ import toast from "react-hot-toast";
 import axiosClient from "../../axiosClient";
 import { AxiosError } from "axios";
 import { CodeModel } from "../../model/CodeModel";
+import {
+  frameSizeFull,
+  frameSizeHalf,
+  frameSizeRimless,
+  frameSpeciesMetal,
+  frameSpeciesMetalPlastic,
+  frameSpeciesPlastic,
+} from "../../data/staticVariables";
 const AddFrames = () => {
   const { brands, brandsLoading } = useGetBrands({
     brand_type: "frame",
@@ -212,7 +220,7 @@ const AddFrames = () => {
             control={control}
             render={({ field }) => (
               <FormControl fullWidth error={!!errors.size}>
-                <InputLabel id="demo-simple-select-label">Shape</InputLabel>
+                <InputLabel id="demo-simple-select-label">Size</InputLabel>
                 <Select
                   {...field}
                   labelId="demo-simple-select-label"
@@ -220,9 +228,9 @@ const AddFrames = () => {
                   label="Size"
                   value={field.value || ""}
                 >
-                  <MenuItem value={"Half"}>Half</MenuItem>
-                  <MenuItem value={"Full"}>Full</MenuItem>
-                  <MenuItem value={"Rimless"}>Rimless</MenuItem>
+                  <MenuItem value={frameSizeHalf}>Half</MenuItem>
+                  <MenuItem value={frameSizeFull}>Full</MenuItem>
+                  <MenuItem value={frameSizeRimless}>Rimless</MenuItem>
                 </Select>
               </FormControl>
             )}
@@ -245,9 +253,11 @@ const AddFrames = () => {
                   label="species"
                   value={field.value || ""}
                 >
-                  <MenuItem value={"Metal"}>Metal</MenuItem>
-                  <MenuItem value={"Plastic"}>Plastic</MenuItem>
-                  <MenuItem value={"Metal/Plastic"}>Metal/Plastic</MenuItem>
+                  <MenuItem value={frameSpeciesMetal}>Metal</MenuItem>
+                  <MenuItem value={frameSpeciesPlastic}>Plastic</MenuItem>
+                  <MenuItem value={frameSpeciesMetalPlastic}>
+                    Metal/Plastic
+                  </MenuItem>
                 </Select>
               </FormControl>
             )}

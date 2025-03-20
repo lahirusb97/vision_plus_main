@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
 import { UserModel } from "../model/UserModel";
-import { PaginatedResponse } from "../model/PaginatedResponse";
 import { extractErrorMessage } from "../utils/extractErrorMessage";
 import axiosClient from "../axiosClient";
 

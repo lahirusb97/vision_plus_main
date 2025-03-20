@@ -6,7 +6,7 @@ interface SaveButton {
 }
 export default function SaveButton({ btnText, loading }: SaveButton) {
   return (
-    <Button variant="contained" fullWidth disabled={loading}>
+    <Button type="submit" variant="contained" fullWidth disabled={loading}>
       {loading ? <CircularProgress /> : btnText}
     </Button>
   );
