@@ -1,13 +1,16 @@
 import React from "react";
 import { Navigate, Outlet } from "react-router";
 import NavBar from "../view/navbar/NavBar";
-import { useAuthContext } from "../context/AuthContext";
 import { Paper, Box } from "@mui/material";
+import { getUserAuth, getUserCurentBranch } from "../utils/authDataConver";
 
 const LoginProtectedRoute: React.FC = () => {
-  const { token } = useAuthContext();
+  const user = getUserAuth();
 
-  return token ? (
+  const curentBranch = getUserCurentBranch();
+  console.log(curentBranch);
+
+  return user && curentBranch ? (
     <Paper
       sx={{
         minHeight: "100vh",
@@ -17,7 +20,7 @@ const LoginProtectedRoute: React.FC = () => {
         alignItems: "center",
       }}
     >
-      <NavBar />
+      {curentBranch && <NavBar />}
       <Box
         sx={{
           flex: 1, // Take remaining space
@@ -31,6 +34,8 @@ const LoginProtectedRoute: React.FC = () => {
         <Outlet />
       </Box>
     </Paper>
+  ) : user && !curentBranch ? (
+    <Navigate to="/branch_selection" replace />
   ) : (
     <Navigate to="/login" replace />
   );

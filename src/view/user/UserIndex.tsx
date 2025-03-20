@@ -25,11 +25,12 @@ export default function UserIndex() {
       <TableContainer sx={{ p: 1 }} component={Paper}>
         <Typography variant="h4">Users</Typography>
 
-        <Table size="small" sx={{ minWidth: 400 }} aria-label="simple table">
+        <Table size="small" sx={{ minWidth: 400 }}>
           <TableHead>
             <TableRow>
               <TableCell>Action</TableCell>
               <TableCell>Name</TableCell>
+              <TableCell>Acess Branches</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -47,7 +48,7 @@ export default function UserIndex() {
             ) : (
               users?.map((row) => (
                 <TableRow
-                  key={row.user}
+                  key={row.id}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
                   <TableCell>
@@ -62,14 +63,17 @@ export default function UserIndex() {
                       size="small"
                       color="warning"
                       title="Edit"
-                      onClick={() => handleEdit(row.user)}
+                      onClick={() => handleEdit(row.id)}
                     >
                       <Edit />
                     </IconButton>
                   </TableCell>
 
                   <TableCell component="th" scope="row">
-                    {row.user_username}
+                    {row.username}
+                  </TableCell>
+                  <TableCell component="th" scope="row">
+                    {row.branches.map((b) => b.branch_name).join("/ ")}
                   </TableCell>
                 </TableRow>
               ))

@@ -12,15 +12,16 @@ import StockIcon from "../../assets/icons/navbar/Stock.png";
 import TransationIcon from "../../assets/icons/navbar/Transation.png";
 import UserIcon from "../../assets/icons/navbar/User.png";
 import RefractionNav from "../refraction/RefractionNav";
-import { Paper } from "@mui/material";
+import { Button, Paper } from "@mui/material";
 import ChannelNav from "../channel/ChannelNav";
 import TransactionNav from "../transaction/TransactionNav";
 import StockNav from "../stock/StockNav";
 import { LogoutOutlined } from "@mui/icons-material";
-import { useAuthContext } from "../../context/AuthContext";
+
 import { useLocation, useNavigate } from "react-router";
 import UserNav from "../user/UserNav";
 import CheckInNav from "../checkin/CheckInNav";
+import { deleteUserData } from "../../utils/authDataConver";
 
 // TabPanel Component
 
@@ -102,7 +103,7 @@ export default function NavBar() {
   };
 
   const [value, setValue] = React.useState(getTabIndexFromPath(firstSegment));
-  const { clearToken } = useAuthContext();
+
   const navigate = useNavigate();
   // Handle Tab Change
   const handleChange = (
@@ -111,12 +112,14 @@ export default function NavBar() {
   ) => {
     setValue(newValue);
     navigate(`/${tabs[newValue].path}`);
+    console.log(tabs[newValue].path);
   };
 
   // Array of Icons and Labels (dynamically derived)
 
   const deleteCookie = () => {
-    clearToken();
+    deleteUserData();
+    navigate("/login");
   };
   return (
     <Paper sx={{ width: "100%" }}>
@@ -142,14 +145,10 @@ export default function NavBar() {
             }}
           />
         ))}
-        <Tab
-          icon={<LogoutOutlined />}
-          label={"LogOut"}
-          onClick={deleteCookie}
-          sx={{
-            textTransform: "capitalize", // Capitalizes the first letter of each word
-          }}
-        />
+
+        <Button onClick={deleteCookie}>
+          <LogoutOutlined />
+        </Button>
       </Tabs>
 
       {/* Tab Panels */}

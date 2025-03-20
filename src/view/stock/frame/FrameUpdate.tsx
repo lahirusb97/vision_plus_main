@@ -1,61 +1,61 @@
-import { Box, Button, Chip, TextField, Typography, Paper } from "@mui/material";
+import { Box, Chip, TextField, Typography, Paper } from "@mui/material";
 import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
-import axiosClient from "../../../axiosClient";
+
 import { useNavigate, useParams } from "react-router";
 import toast from "react-hot-toast";
 import { AxiosError } from "axios";
 import useGetSingleFrame from "../../../hooks/lense/useGetSingleFrame";
-interface Stock {
-  alertLevel: number;
-  quantity: number;
-}
+import { FrameFormModel, schemaFrame } from "../../../validations/schemaFrame";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { getUserCurentBranch } from "../../../utils/authDataConver";
+import SaveButton from "../../../components/SaveButton";
+import { useAxiosPut } from "../../../hooks/useAxiosPut";
+
 const FrameUpdate = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
   const { singleFrame, singleFrameLoading } = useGetSingleFrame(id);
-
-  const schema = yup.object().shape({
-    alertLevel: yup
-      .number()
-      .positive()
-      .min(0.01, "Alert Level must be positive")
-      .required("Alert Level is required"),
-    quantity: yup
-      .number()
-      .positive()
-      .integer()
-      .min(1)
-      .required("Quantity is required"),
-  });
+  const { putHandler, putHandlerloading } = useAxiosPut();
   const {
     handleSubmit,
     formState: { errors },
     register,
     reset,
-  } = useForm({
-    resolver: yupResolver(schema),
+  } = useForm<
+    Pick<FrameFormModel, "qty" | "initial_count" | "limit" | "branch_id">
+  >({
+    resolver: zodResolver(
+      schemaFrame.pick({
+        qty: true,
+        initial_count: true,
+        limit: true,
+        branch_id: true,
+      })
+    ),
     defaultValues: {
-      alertLevel: undefined,
-      quantity: undefined,
+      limit: undefined,
+      qty: undefined,
     },
   });
 
-  const submiteData = async (data: Stock) => {
+  const submiteData = async (
+    data: Pick<FrameFormModel, "qty" | "initial_count" | "limit" | "branch_id">
+  ) => {
     if (!singleFrameLoading && singleFrame) {
-      const { quantity, alertLevel } = data;
+      const { qty, limit, branch_id } = data;
       const postDAta = {
         frame: id,
-        initial_count: singleFrame.stock.initial_count + quantity,
-        qty: singleFrame.stock.qty + quantity,
-        limit: alertLevel,
+        initial_count: singleFrame.stock[0].initial_count + qty,
+        qty: singleFrame.stock[0].qty + qty,
+        limit: limit,
+        branch_id: branch_id,
       };
 
       try {
-        await axiosClient.put(`/frame-stocks/${id}/`, postDAta);
-        toast.success("Frame added successfully");
+        // await axiosClient.put(`/frame-stocks/${id}/`, postDAta);
+        await putHandler(`/frame-stocks/${id}/`, postDAta);
+        toast.success("Frame Stock Updated successfully");
         reset();
         navigate(-1);
       } catch (error) {
@@ -90,17 +90,17 @@ const FrameUpdate = () => {
 
         <Box sx={{ marginY: 2 }}>
           <Chip
-            label={`${singleFrame?.brand}`}
+            label={`${singleFrame?.brand_name}`}
             color="primary"
             sx={{ marginX: 0.5, backgroundColor: "#237ADE", color: "white" }}
           />
           <Chip
-            label={`${singleFrame?.code}`}
+            label={`${singleFrame?.code_name}`}
             color="primary"
             sx={{ marginX: 0.5, backgroundColor: "#237ADE", color: "white" }}
           />
           <Chip
-            label={`${singleFrame?.color}`}
+            label={`${singleFrame?.color_name}`}
             color="primary"
             sx={{ marginX: 0.5, backgroundColor: "#237ADE", color: "white" }}
           />
@@ -112,11 +112,11 @@ const FrameUpdate = () => {
           variant="outlined"
           inputProps={{ min: 0 }}
           type="number"
-          {...register("quantity", {
+          {...register("qty", {
             setValueAs: (value) => (value === "" ? undefined : Number(value)),
           })}
-          error={!!errors.quantity}
-          helperText={errors.quantity?.message}
+          error={!!errors.qty}
+          helperText={errors.qty?.message}
           sx={{ marginBottom: 2 }}
         />
         <TextField
@@ -125,17 +125,31 @@ const FrameUpdate = () => {
           label="Alert Level"
           inputProps={{ min: 0 }}
           variant="outlined"
-          {...register("alertLevel", {
+          {...register("limit", {
             setValueAs: (value) => (value === "" ? undefined : Number(value)),
           })}
-          error={!!errors.alertLevel}
-          helperText={errors.alertLevel?.message}
+          error={!!errors.limit}
+          helperText={errors.limit?.message}
           sx={{ marginBottom: 2 }}
         />
-
-        <Button type="submit" variant="contained" fullWidth>
-          SAVE
-        </Button>
+        <TextField
+          sx={{ display: "none" }}
+          inputProps={{
+            min: 0,
+          }}
+          {...register("branch_id", {
+            setValueAs: (value) => (value === "" ? undefined : Number(value)),
+          })}
+          label="Branch Id"
+          type="number"
+          fullWidth
+          margin="normal"
+          variant="outlined"
+          error={!!errors.branch_id}
+          helperText={errors.branch_id?.message}
+          defaultValue={getUserCurentBranch()?.id}
+        />
+        <SaveButton btnText="Save" loading={putHandlerloading} />
       </Paper>
     </Box>
   );

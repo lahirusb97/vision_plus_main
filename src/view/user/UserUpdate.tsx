@@ -16,15 +16,18 @@ import { useGetBranch } from "../../hooks/useGetBranch";
 
 import { extractErrorMessage } from "../../utils/extractErrorMessage";
 import toast from "react-hot-toast";
-import { useState } from "react";
+import { useEffect } from "react";
 import { useParams } from "react-router";
 import SaveButton from "../../components/SaveButton";
 import { useAxiosPut } from "../../hooks/useAxiosPut";
+import useGetSingleUser from "../../hooks/useGetSingleUser";
+import LoadingAnimation from "../../components/LoadingAnimation";
 
 export default function UserUpdate() {
   const { user_id } = useParams();
   const { putHandler, putHandlerloading } = useAxiosPut();
-  const [userRole, setUserRole] = useState("");
+  // const [userRole, setUserRole] = useState("");
+  const { singleuser, singleuserLoading } = useGetSingleUser(user_id);
 
   const {
     register,
@@ -39,8 +42,6 @@ export default function UserUpdate() {
   const { brancheData } = useGetBranch();
 
   const onSubmit = async (data: UserFormModel) => {
-    console.log(data);
-
     try {
       await putHandler(`users/update/${user_id}/`, data);
 
@@ -49,7 +50,26 @@ export default function UserUpdate() {
       extractErrorMessage(error);
     }
   };
+  useEffect(() => {
+    if (singleuser) {
+      Object.entries(singleuser).forEach(([key, value]) => {
+        if (schemaUser.shape[key as keyof UserFormModel]) {
+          setValue(key as keyof UserFormModel, value);
+        }
+      });
 
+      // ✅ Ensure branch_ids is correctly set
+      if (singleuser.branches) {
+        setValue(
+          "branch_ids",
+          singleuser.branches.map((b) => b.id) // Extracting only branch IDs
+        );
+      }
+    }
+  }, [singleuser, setValue]); // Runs when singleuser changes
+  if (singleuserLoading) {
+    return <LoadingAnimation loadingMsg="Loading Employee Data" />;
+  }
   return (
     <div>
       <Box
@@ -70,7 +90,7 @@ export default function UserUpdate() {
         <Typography variant="h6" gutterBottom>
           Update Employee Profile
         </Typography>
-        <FormControl fullWidth>
+        {/* <FormControl fullWidth>
           <InputLabel id="demo-simple-select-label">Acess Level</InputLabel>
           <Select
             size="small"
@@ -92,7 +112,7 @@ export default function UserUpdate() {
             <MenuItem value={"user"}>User</MenuItem>
             <MenuItem value={"admin"}>Manager</MenuItem>
           </Select>
-        </FormControl>
+        </FormControl> */}
         <TextField
           size="small"
           label="First Name"
@@ -100,6 +120,9 @@ export default function UserUpdate() {
           {...register("first_name")}
           error={!!errors.first_name}
           helperText={errors.first_name?.message}
+          InputLabelProps={{
+            shrink: Boolean(watch("first_name")),
+          }}
         />
 
         <TextField
@@ -109,6 +132,9 @@ export default function UserUpdate() {
           {...register("last_name")}
           error={!!errors.last_name}
           helperText={errors.last_name?.message}
+          InputLabelProps={{
+            shrink: Boolean(watch("last_name")),
+          }}
         />
         <TextField
           size="small"
@@ -117,6 +143,9 @@ export default function UserUpdate() {
           {...register("username")}
           error={!!errors.username}
           helperText={errors.username?.message}
+          InputLabelProps={{
+            shrink: Boolean(watch("username")),
+          }}
         />
 
         <TextField
@@ -127,6 +156,9 @@ export default function UserUpdate() {
           {...register("email")}
           error={!!errors.email}
           helperText={errors.email?.message}
+          InputLabelProps={{
+            shrink: Boolean(watch("email")),
+          }}
         />
 
         <TextField
@@ -137,6 +169,9 @@ export default function UserUpdate() {
           {...register("password")}
           error={!!errors.password}
           helperText={errors.password?.message}
+          InputLabelProps={{
+            shrink: Boolean(watch("password")),
+          }}
         />
 
         <TextField
@@ -144,6 +179,9 @@ export default function UserUpdate() {
           label="User Code"
           fullWidth
           {...register("user_code")}
+          InputLabelProps={{
+            shrink: Boolean(watch("user_code")),
+          }}
         />
 
         <TextField
@@ -153,40 +191,42 @@ export default function UserUpdate() {
           {...register("mobile")}
           error={!!errors.mobile}
           helperText={errors.mobile?.message}
+          InputLabelProps={{
+            shrink: Boolean(watch("mobile")),
+          }}
         />
 
         <Typography m={0} variant="h6" gutterBottom>
-          {userRole === "user" && "Branch Acess Permission"}
+          {"Branch Acess Permission"}
         </Typography>
         <Box>
-          {userRole === "user" &&
-            brancheData?.map((branch) => (
-              <Controller
-                key={branch.id}
-                name="branch_ids"
-                control={control}
-                render={() => (
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={watch("branch_ids", []).includes(branch.id)}
-                        onChange={(e) =>
-                          setValue(
-                            "branch_ids",
-                            e.target.checked
-                              ? [...watch("branch_ids", []), branch.id]
-                              : watch("branch_ids", []).filter(
-                                  (id) => id !== branch.id
-                                )
-                          )
-                        }
-                      />
-                    }
-                    label={branch.branch_name}
-                  />
-                )}
-              />
-            ))}
+          {brancheData?.map((branch) => (
+            <Controller
+              key={branch.id}
+              name="branch_ids"
+              control={control}
+              render={() => (
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={watch("branch_ids", []).includes(branch.id)}
+                      onChange={(e) =>
+                        setValue(
+                          "branch_ids",
+                          e.target.checked
+                            ? [...watch("branch_ids", []), branch.id]
+                            : watch("branch_ids", []).filter(
+                                (id) => id !== branch.id
+                              )
+                        )
+                      }
+                    />
+                  }
+                  label={branch.branch_name}
+                />
+              )}
+            />
+          ))}
         </Box>
         <Typography color="error" variant="body2" gutterBottom>
           {errors.branch_ids && errors.branch_ids?.message}

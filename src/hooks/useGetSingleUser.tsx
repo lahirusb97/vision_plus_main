@@ -11,7 +11,7 @@ export default function useGetSingleUser(id: string | undefined) {
   const loadData = useCallback(async () => {
     if (id) {
       try {
-        const response = await axiosClient.get(`users/${id}/`);
+        const response = await axiosClient.get(`users/get/${id}/`);
         setSingleUser(response.data);
       } catch (error) {
         extractErrorMessage(error);

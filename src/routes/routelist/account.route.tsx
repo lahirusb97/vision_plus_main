@@ -11,10 +11,10 @@ export const accountRoutes: RouteObject[] = [
         index: true,
         element: <AccountIndex />,
       },
-      {
-        path: "/yourpatsh here", // you can add paths al you need for the UI
-        element: <>UI here</>, // create UI inside view/account folder then import to here
-      },
+      // {
+      //   path: "/yourpatsh here", // you can add paths al you need for the UI
+      //   element: <>UI here</>, // create UI inside view/account folder then import to here
+      // },
       // {
       //   path: "/yourpatsh here", // you can add paths al you need for the UI
       //   element: <>UI here</>, // create UI inside view/account folder then import to here

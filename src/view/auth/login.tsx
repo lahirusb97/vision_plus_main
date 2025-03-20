@@ -13,7 +13,9 @@ import {
 import logo from "../../assets/defalt/logo.png";
 import axiosClient from "../../axiosClient";
 import { useNavigate } from "react-router";
-import { useAuthContext } from "../../context/AuthContext";
+import { saveUserAuth } from "../../utils/authDataConver";
+import { extractErrorMessage } from "../../utils/extractErrorMessage";
+import toast from "react-hot-toast";
 
 interface LoginInput {
   username: string;
@@ -21,7 +23,6 @@ interface LoginInput {
 }
 
 export default function Login() {
-  const { setUser, setUserToken } = useAuthContext();
   const [loginInput, setLoginInput] = useState<LoginInput>({
     username: "admin",
     password: "admin",
@@ -34,19 +35,11 @@ export default function Login() {
     setLoading(true);
     try {
       const data = await axiosClient.post("/login/", loginInput);
-
-      const userData: LoginResponse = {
-        username: data.data.username,
-        is_staff: data.data.is_staff,
-        is_superuser: data.data.is_superuser,
-        token: data.data.token,
-        message: data.data.message,
-      };
-      setUser(userData);
-      setUserToken(data.data.token);
-      navigate("/");
+      saveUserAuth(data.data);
+      navigate("/branch_selection");
+      toast.success("Login Successfull");
     } catch (error) {
-      console.error(error);
+      extractErrorMessage(error);
     } finally {
       setLoading(false);
     }
@@ -218,11 +211,3 @@ export default function Login() {
     </Box>
   );
 }
-
-type LoginResponse = {
-  message: string;
-  token: string;
-  username: string;
-  is_staff: boolean;
-  is_superuser: boolean;
-};

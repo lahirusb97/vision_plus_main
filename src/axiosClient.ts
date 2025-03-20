@@ -4,7 +4,7 @@ import axios, {
   AxiosError,
   InternalAxiosRequestConfig,
 } from "axios";
-import { getTokenFromLocalStorage } from "./utils/geAuthToken";
+import { getUserAuth } from "./utils/authDataConver";
 
 // Create an Axios instance with a base URL
 const axiosClient: AxiosInstance = axios.create({
@@ -16,7 +16,7 @@ const axiosClient: AxiosInstance = axios.create({
 
 // Request interceptor to add Authorization header
 axiosClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-  const token = getTokenFromLocalStorage();
+  const token = getUserAuth()?.token;
 
   if (
     token &&

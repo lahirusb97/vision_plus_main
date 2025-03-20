@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 import {
-  Button,
-  CircularProgress,
   FormControl,
   InputLabel,
   MenuItem,
@@ -17,8 +15,7 @@ import useGetColors from "../../hooks/lense/useGetColors";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
-import axiosClient from "../../axiosClient";
-import { AxiosError } from "axios";
+
 import { CodeModel } from "../../model/CodeModel";
 import {
   frameSizeFull,
@@ -29,14 +26,17 @@ import {
   frameSpeciesPlastic,
 } from "../../data/staticVariables";
 import { FrameFormModel, schemaFrame } from "../../validations/schemaFrame";
+import { getUserCurentBranch } from "../../utils/authDataConver";
+import { useAxiosPost } from "../../hooks/useAxiosPost";
+import { extractErrorMessage } from "../../utils/extractErrorMessage";
+import SaveButton from "../../components/SaveButton";
 const AddFrames = () => {
+  const { postHandler, postHandlerloading } = useAxiosPost();
   const { brands, brandsLoading } = useGetBrands({
     brand_type: "frame",
   });
   const { codes, codesLoading } = useGetCodes();
   const { colors, colorsLoading } = useGetColors();
-  const [loading, setLoading] = useState(false);
-  // Dropdown options
 
   const {
     register,
@@ -60,7 +60,8 @@ const AddFrames = () => {
 
   // Submit handler
   const submitData = async (frameData: FrameFormModel) => {
-    setLoading(true);
+    console.log(frameData);
+
     const postData = {
       frame: {
         brand: frameData.brand,
@@ -71,43 +72,30 @@ const AddFrames = () => {
         species: frameData.species,
         qty: frameData.qty,
       },
-      stock: {
-        initial_count: frameData.qty,
-        qty: frameData.qty,
-      },
+      stock: [
+        {
+          initial_count: frameData.qty,
+          qty: frameData.qty,
+          branch_id: frameData.branch_id,
+          limit: frameData.limit,
+        },
+      ],
     };
     try {
-      await axiosClient.post("/frames/", postData);
+      await postHandler("frames/", postData);
       toast.success("Frame added successfully");
       reset();
     } catch (error) {
-      // Check if the error is an AxiosError
-      if (error instanceof AxiosError) {
-        // Safely access error.response.data.message
-        toast.error(error.response?.data?.message || "Something went wrong");
-      } else {
-        // Handle non-Axios errors (e.g., network errors, syntax errors, etc.)
-        toast.error("Something went wrong");
-      }
-    } finally {
-      setLoading(false);
+      extractErrorMessage(error);
     }
   };
 
   return (
     <div>
-      <Typography
-        sx={{ marginBottom: 2, fontWeight: "bold" }}
-        variant="h4"
-        gutterBottom
-      >
-        Create Frame
-      </Typography>
-
       <Paper
         sx={{
           width: "600px",
-          padding: 4,
+          padding: 2,
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
@@ -115,11 +103,18 @@ const AddFrames = () => {
           gap: 2,
         }}
       >
+        <Typography
+          sx={{ marginBottom: 1, fontWeight: "bold" }}
+          variant="h4"
+          gutterBottom
+        >
+          Frame Create
+        </Typography>
         <form
           style={{
             display: "flex",
             flexDirection: "column",
-            gap: 16,
+            gap: 10,
             width: "100%",
           }}
           onSubmit={handleSubmit(submitData)}
@@ -264,17 +259,41 @@ const AddFrames = () => {
             error={!!errors.qty}
             helperText={errors.qty?.message}
           />
+          <TextField
+            inputProps={{
+              min: 0,
+            }}
+            {...register("limit", {
+              setValueAs: (value) => (value === "" ? undefined : Number(value)),
+            })}
+            label="Alert limit"
+            type="number"
+            fullWidth
+            margin="normal"
+            variant="outlined"
+            error={!!errors.limit}
+            helperText={errors.limit?.message}
+          />
+          <TextField
+            sx={{ display: "none" }}
+            inputProps={{
+              min: 0,
+            }}
+            {...register("branch_id", {
+              setValueAs: (value) => (value === "" ? undefined : Number(value)),
+            })}
+            label="Branch Id"
+            type="number"
+            fullWidth
+            margin="normal"
+            variant="outlined"
+            error={!!errors.branch_id}
+            helperText={errors.branch_id?.message}
+            defaultValue={getUserCurentBranch()?.id}
+          />
 
           {/* Submit Button */}
-          <Button
-            disabled={loading}
-            variant="contained"
-            color="primary"
-            fullWidth
-            type="submit"
-          >
-            {loading ? <CircularProgress size={24} /> : "Submit"}
-          </Button>
+          <SaveButton btnText="Save" loading={postHandlerloading} />
         </form>
       </Paper>
     </div>
