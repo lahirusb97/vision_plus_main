@@ -1,5 +1,5 @@
-export type SizeType = "Metal" | "Plastic" | "Metal/Plastic";
-export type SpeciesType = "Half" | "Full" | "Rimless";
+export type SpeciesType = "Metal" | "Plastic" | "Metal/Plastic";
+export type SizeType = "Half" | "Full" | "Rimless";
 interface StockModel {
   id: number; // Unique stock ID
   frame: number; // Reference to the associated frame ID

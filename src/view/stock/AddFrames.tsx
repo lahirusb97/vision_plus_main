@@ -15,8 +15,7 @@ import useGetBrands from "../../hooks/lense/useGetBrand";
 import useGetCodes from "../../hooks/lense/useGetCode";
 import useGetColors from "../../hooks/lense/useGetColors";
 import { Controller, useForm } from "react-hook-form";
-import * as Yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
+import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
 import axiosClient from "../../axiosClient";
 import { AxiosError } from "axios";
@@ -29,6 +28,7 @@ import {
   frameSpeciesMetalPlastic,
   frameSpeciesPlastic,
 } from "../../data/staticVariables";
+import { FrameFormModel, schemaFrame } from "../../validations/schemaFrame";
 const AddFrames = () => {
   const { brands, brandsLoading } = useGetBrands({
     brand_type: "frame",
@@ -38,23 +38,6 @@ const AddFrames = () => {
   const [loading, setLoading] = useState(false);
   // Dropdown options
 
-  const validationSchema = Yup.object().shape({
-    brand: Yup.number().required("Brand Name is required"),
-    code: Yup.number().required("Code is required"),
-    color: Yup.number().required("Color is required"),
-    price: Yup.number()
-      .positive()
-      .min(0.01, "Price must be positive")
-      .required("Price is required"),
-    size: Yup.string().required("Frame Size is required"),
-    species: Yup.string().required("species is required"),
-    image: Yup.string(),
-    qty: Yup.number()
-      .positive()
-      .integer()
-      .min(1)
-      .required("Quantity is required"),
-  });
   const {
     register,
     handleSubmit,
@@ -62,8 +45,8 @@ const AddFrames = () => {
     formState: { errors },
     reset,
     watch,
-  } = useForm({
-    resolver: yupResolver(validationSchema),
+  } = useForm<FrameFormModel>({
+    resolver: zodResolver(schemaFrame),
   });
   const [avilableCodes, setAvilableCodes] = useState<CodeModel[]>([]);
 
@@ -76,7 +59,7 @@ const AddFrames = () => {
   }, [watch("brand")]);
 
   // Submit handler
-  const submitData = async (frameData) => {
+  const submitData = async (frameData: FrameFormModel) => {
     setLoading(true);
     const postData = {
       frame: {
@@ -86,7 +69,6 @@ const AddFrames = () => {
         price: frameData.price,
         size: frameData.size,
         species: frameData.species,
-        image: frameData.image,
         qty: frameData.qty,
       },
       stock: {
