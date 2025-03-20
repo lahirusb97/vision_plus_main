@@ -21,6 +21,7 @@ import { LogoutOutlined } from "@mui/icons-material";
 import { useLocation, useNavigate } from "react-router";
 import UserNav from "../user/UserNav";
 import CheckInNav from "../checkin/CheckInNav";
+import AccountNav from "../account/AccountNav";
 import { deleteUserData } from "../../utils/authDataConver";
 
 // TabPanel Component
@@ -71,7 +72,7 @@ export default function NavBar() {
       path: "account",
       icon: AccountIcon,
       label: "Account",
-      nav: RefractionNav,
+      nav: AccountNav,
     },
     {
       path: "stock/add_frames",
