@@ -4,9 +4,9 @@ export default function CheckInNav() {
   return (
     <>
       {/* Pass unique onClick handlers */}
-      <NavButton name="Status Number" path={"/checkin"} />
-      <NavButton name="Transfer" path={"/checkin/transfer"} />
-      <NavButton name="Send Order" path={"/checkin/send_order"} />
+      <NavButton name="Job Search" path={"/checkin"} />
+      <NavButton name="Job Progress" path={"/checkin/transfer"} />
+      <NavButton name="Send External Order" path={"/checkin/send_order"} />
     </>
   );
 }
