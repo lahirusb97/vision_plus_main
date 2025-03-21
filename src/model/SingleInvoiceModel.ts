@@ -1,5 +1,5 @@
 import { PatientModel } from "./Patient";
-import { RefractionDetailCreate } from "./RefractionDetailCreate";
+import { RefractionDetailCreate } from "./RefractionDetailModel";
 interface LensDetail {
   id: number;
   type: number;

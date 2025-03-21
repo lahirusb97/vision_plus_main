@@ -17,10 +17,10 @@ export const useAxiosPost = () => {
     setpostHandlerError(false);
 
     try {
-      await axiosClient.post(url, data);
+      const response = await axiosClient.post(url, data);
+      return response;
     } catch (error) {
       setpostHandlerError(true);
-
       throw error;
     } finally {
       setPostHandlerLoading(false);

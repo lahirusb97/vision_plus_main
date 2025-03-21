@@ -8,6 +8,7 @@ import {
 } from "../../../validations/schemaOtherItem";
 import { extractErrorMessage } from "../../../utils/extractErrorMessage";
 import { useAxiosPost } from "../../../hooks/useAxiosPost";
+import { getUserCurentBranch } from "../../../utils/authDataConver";
 
 const OtherItemCreate = () => {
   const { postHandler, postHandlerloading } = useAxiosPost();
@@ -29,6 +30,7 @@ const OtherItemCreate = () => {
       stock: {
         qty: data.qty,
         initial_count: data.qty,
+        branch_id: data.branch_id,
       },
     };
 
@@ -98,6 +100,23 @@ const OtherItemCreate = () => {
             min: 0,
           }}
           {...register("price", { valueAsNumber: true })}
+        />
+        <TextField
+          sx={{ display: "none" }}
+          inputProps={{
+            min: 0,
+          }}
+          {...register("branch_id", {
+            setValueAs: (value) => (value === "" ? undefined : Number(value)),
+          })}
+          label="Branch Id"
+          type="number"
+          fullWidth
+          margin="normal"
+          variant="outlined"
+          error={!!errors.branch_id}
+          helperText={errors.branch_id?.message}
+          defaultValue={getUserCurentBranch()?.id}
         />
         <Button
           disabled={postHandlerloading}

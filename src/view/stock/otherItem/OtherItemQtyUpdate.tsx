@@ -19,6 +19,7 @@ import useGetSingleOtherItem from "../../../hooks/useGetSingleOtherItem";
 import { extractErrorMessage } from "../../../utils/extractErrorMessage";
 import LoadingAnimation from "../../../components/LoadingAnimation";
 import { useAxiosPatch } from "../../../hooks/useAxiosPatch";
+import { getUserCurentBranch } from "../../../utils/authDataConver";
 
 const OtherItemQtyUpdate = () => {
   const { id } = useParams();
@@ -31,21 +32,24 @@ const OtherItemQtyUpdate = () => {
     formState: { errors },
     register,
     reset,
-  } = useForm<Pick<OtherItemFormModel, "qty" | "initial_count">>({
+  } = useForm<Pick<OtherItemFormModel, "qty" | "initial_count" | "branch_id">>({
     resolver: zodResolver(
-      schemaOtherItem.pick({ qty: true, initial_count: true })
+      schemaOtherItem.pick({ qty: true, initial_count: true, branch_id: true })
     ),
   });
 
   //TODO alert levels Upgrade
   const submiteData = async (
-    data: Pick<OtherItemFormModel, "qty" | "initial_count">
+    data: Pick<OtherItemFormModel, "qty" | "initial_count" | "branch_id">
   ) => {
     if (singleotherItem) {
       const postDAta = {
         qty: singleotherItem?.stock[0]?.qty + data.qty,
         initial_count: singleotherItem?.stock[0]?.qty + data.qty,
+        branch_id: data.branch_id,
       };
+      console.log(postDAta);
+
       try {
         patchHandler(`/other-items/${id}/`, { stock: postDAta });
         toast.success(
@@ -104,7 +108,23 @@ const OtherItemQtyUpdate = () => {
           helperText={errors.qty?.message}
           sx={{ marginBottom: 2 }}
         />
-
+        <TextField
+          sx={{ display: "none" }}
+          inputProps={{
+            min: 0,
+          }}
+          {...register("branch_id", {
+            valueAsNumber: true,
+          })}
+          label="Branch Id"
+          type="number"
+          fullWidth
+          margin="normal"
+          variant="outlined"
+          error={!!errors.branch_id}
+          helperText={errors.branch_id?.message}
+          defaultValue={getUserCurentBranch()?.id}
+        />
         <Button
           disabled={patchHandlerloading}
           type="submit"

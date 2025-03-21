@@ -16,21 +16,21 @@ import {
   Skeleton,
 } from "@mui/material";
 import { useNavigate } from "react-router";
-import { Delete, Refresh } from "@mui/icons-material";
+import { Refresh } from "@mui/icons-material";
 import useGetRefraction from "../../hooks/useGetRefraction";
-import { RefractionModel } from "../../model/RefractionModel";
 import EditIcon from "@mui/icons-material/Edit";
+
 // import { useDeleteDialog } from "../../context/DeleteDialogContext";
 
-export default function RefractionDetails() {
+export default function RefractionTable() {
   const theme = useTheme();
   const navigate = useNavigate();
   // const { openDialog } = useDeleteDialog();
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedRow, setSelectedRow] = useState<RefractionModel | null>(null);
+  const [selectedRow, setSelectedRow] = useState<number | null>(null);
 
-  const { data, isLoading, updateSearchParams, pageNavigation, refresh } =
+  const { data, isLoading, updateSearchParams, pageNavigation } =
     useGetRefraction();
   // Safely access data and meta-information
 
@@ -42,13 +42,7 @@ export default function RefractionDetails() {
 
   const handleInternalOrder = async () => {
     if (selectedRow) {
-      const params = new URLSearchParams({
-        customerName: selectedRow.customer_full_name,
-        nic: selectedRow.nic,
-        mobileNumber: selectedRow.customer_mobile,
-        refraction_number: selectedRow.refraction_number,
-      });
-      navigate(`/refraction/${selectedRow.id}?${params.toString()}`);
+      navigate(`/refraction/${selectedRow}/`);
     }
   };
   return (
@@ -129,13 +123,13 @@ export default function RefractionDetails() {
                 </TableRow>
               ))
             ) : data.results.length > 0 ? (
-              data.results.map((row: RefractionModel) => (
+              data.results.map((row) => (
                 <TableRow
-                  onClick={() => setSelectedRow(row)}
+                  onClick={() => setSelectedRow(row.id)}
                   sx={{
                     cursor: "pointer",
                     backgroundColor:
-                      selectedRow?.id === row.id
+                      selectedRow === row.id
                         ? theme.palette.grey[600]
                         : "inherit",
                     "&:hover": {
@@ -150,13 +144,7 @@ export default function RefractionDetails() {
                       color="warning"
                       title="Edit"
                       onClick={() => {
-                        // update/:id
-                        const params = new URLSearchParams({
-                          customer_full_name: row.customer_full_name,
-                          nic: row.nic,
-                          customer_mobile: row.customer_mobile,
-                        });
-                        navigate(`update/${row.id}?${params.toString()}`);
+                        navigate(`update/${row.id}/`);
                       }}
                     >
                       <EditIcon fontSize="small" />

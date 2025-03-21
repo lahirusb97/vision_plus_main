@@ -1,4 +1,4 @@
-import RefractionDetails from "../../view/refraction/RefractionDetails";
+import RefractionTable from "../../view/refraction/RefractionTable";
 import { RouteObject } from "react-router";
 import RefractionNumber from "../../view/refraction/RefractionNumber";
 
@@ -30,7 +30,7 @@ export const refractionRoutes: RouteObject[] = [
   },
   {
     path: "refraction/details",
-    element: <RefractionDetails />,
+    element: <RefractionTable />,
   },
   {
     path: "refraction/:id",

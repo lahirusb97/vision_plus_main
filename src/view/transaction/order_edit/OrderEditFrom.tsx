@@ -32,7 +32,7 @@ import {
   clearexternalLense,
   setexternalLense,
 } from "../../../features/invoice/externalLenseSlice";
-import { RefractionDetailCreate } from "../../../model/RefractionDetailCreate";
+import { RefractionDetailCreate } from "../../../model/RefractionDetailModel";
 import { PatientModel } from "../../../model/Patient";
 import axiosClient from "../../../axiosClient";
 import { RootState } from "../../../store/store";

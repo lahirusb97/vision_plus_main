@@ -1,60 +1,82 @@
 import { FormProvider, useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Box,
-  Button,
   Checkbox,
   FormControlLabel,
   Paper,
   TextField,
   Typography,
 } from "@mui/material";
-import { useLocation, useNavigate, useParams } from "react-router";
-import axiosClient from "../../axiosClient";
+import { useNavigate, useParams } from "react-router";
 import { grey } from "@mui/material/colors";
 import RefractionDetailsRight from "./RefractionDetailsRight";
 import RefractionDetailsLeft from "./RefractionDetailsLeft";
-import { refractionValidationSchema } from "../../validations/refractionDetails";
+import {
+  RefractionDetailsFormModel,
+  schemaRefractionDetails,
+} from "../../validations/refractionDetails";
 import toast from "react-hot-toast";
 import axios from "axios";
 import useGetRefractionDetails from "../../hooks/useGetRefractionDetails";
 import { useEffect } from "react";
-import { RefractionDetailCreate } from "../../model/RefractionDetailCreate";
+import useGetSingleRefractionNumber from "../../hooks/useGetSingleRefractionNumber";
+import { extractErrorMessage } from "../../utils/extractErrorMessage";
+import { useAxiosPost } from "../../hooks/useAxiosPost";
+import { useAxiosPut } from "../../hooks/useAxiosPut";
+import SaveButton from "../../components/SaveButton";
+import LoadingAnimation from "../../components/LoadingAnimation";
 
 export default function RefractionEdit() {
-  const location = useLocation();
   const navigate = useNavigate();
-  const searchParams = new URLSearchParams(location.search);
-  const customerName = searchParams.get("customerName") || "";
-  const nic = searchParams.get("nic") || "";
-  const mobileNumber = searchParams.get("mobileNumber") || "";
-  const refraction_number = searchParams.get("refraction_number") || "";
   const { id } = useParams();
-  const methods = useForm({
-    resolver: yupResolver(refractionValidationSchema),
+  const { singlerefractionNumber, singlerefractionNumberLoading } =
+    useGetSingleRefractionNumber(id);
+  const { postHandler, postHandlerloading } = useAxiosPost();
+  const { putHandler, putHandlerloading } = useAxiosPut();
+  const methods = useForm<RefractionDetailsFormModel>({
+    resolver: zodResolver(schemaRefractionDetails),
+    defaultValues: {
+      hb_rx_right_dist: null,
+      hb_rx_left_dist: null,
+      hb_rx_right_near: null,
+      hb_rx_left_near: null,
+      auto_ref_right: null,
+      auto_ref_left: null,
+      ntc_right: null,
+      ntc_left: null,
+      va_without_glass_right: null,
+      va_without_glass_left: null,
+      va_without_ph_right: null,
+      va_without_ph_left: null,
+      va_with_glass_right: null,
+      va_with_glass_left: null,
+      right_eye_dist_sph: null,
+      right_eye_dist_cyl: null,
+      right_eye_dist_axis: null,
+      right_eye_near_sph: null,
+      left_eye_dist_sph: null,
+      left_eye_dist_cyl: null,
+      left_eye_dist_axis: null,
+      left_eye_near_sph: null,
+      pd: null,
+      h: null,
+      shuger: false,
+      remark: null,
+      note: null,
+    },
   });
   const { refractionDetail, refractionDetailLoading, refractionDetailExist } =
     useGetRefractionDetails(id);
 
-  const convertEmptyStringsToNull = (data: RefractionDetailCreate) => {
-    return Object.fromEntries(
-      Object.entries(data).map(([key, value]) => [
-        key,
-        value === "" || value === undefined || value === null ? null : value,
-      ])
-    );
-  };
-  const onSubmit = async (data: unknown) => {
-    const convertedData = convertEmptyStringsToNull(
-      data as RefractionDetailCreate
-    );
+  const onSubmit = async (data: RefractionDetailsFormModel) => {
     // console.log(convertedData);
 
     if (id !== undefined && id !== null) {
       if (refractionDetailExist) {
         try {
-          await axiosClient.put(`/refractions/${id}/`, {
-            ...convertedData,
+          await putHandler(`/refractions/${id}/`, {
+            ...data,
             refraction: refractionDetail.refraction,
             is_manual: refractionDetail.is_manual,
           });
@@ -62,21 +84,12 @@ export default function RefractionEdit() {
           methods.reset();
           navigate(-1);
         } catch (err) {
-          console.log(err);
-
-          if (axios.isAxiosError(err)) {
-            toast.error(
-              err.response?.data?.refraction[0] ||
-                "Failed to save Reraction details"
-            );
-          } else {
-            toast.error("An unexpected error occurred Refrsh the page");
-          }
+          extractErrorMessage(err);
         }
       } else {
         try {
-          await axiosClient.post(`/refraction-details/create/`, {
-            ...convertedData,
+          await postHandler(`/refraction-details/create/`, {
+            ...data,
             refraction: parseInt(id),
           });
           toast.success("Refraction saved successfully");
@@ -97,15 +110,71 @@ export default function RefractionEdit() {
       }
     }
   };
+  const visionTypeStringToNumber = (vision: string | null) => {
+    if (typeof vision === "string") {
+      return parseFloat(vision);
+    } else if (typeof vision === "number") {
+      return vision;
+    } else {
+      return null;
+    }
+  };
+
   useEffect(() => {
     if (!refractionDetailLoading && refractionDetailExist) {
-      Object.entries(refractionDetail).forEach(([key, value]) => {
-        if (key in methods.getValues()) {
-          methods.setValue(key as keyof RefractionDetailCreate, value || null);
-        }
+      methods.reset({
+        hb_rx_right_dist: refractionDetail.hb_rx_right_dist,
+        hb_rx_left_dist: refractionDetail.hb_rx_left_dist,
+        hb_rx_right_near: refractionDetail.hb_rx_right_near,
+        hb_rx_left_near: refractionDetail.hb_rx_left_near,
+        auto_ref_right: refractionDetail.auto_ref_right,
+        auto_ref_left: refractionDetail.auto_ref_left,
+        ntc_right: refractionDetail.ntc_right,
+        ntc_left: refractionDetail.ntc_left,
+        va_without_glass_right: refractionDetail.va_without_glass_right,
+        va_without_glass_left: refractionDetail.va_without_glass_left,
+        va_without_ph_right: refractionDetail.va_without_ph_right,
+        va_without_ph_left: refractionDetail.va_without_ph_left,
+        va_with_glass_right: refractionDetail.va_with_glass_right,
+        va_with_glass_left: refractionDetail.va_with_glass_left,
+        right_eye_dist_sph: visionTypeStringToNumber(
+          refractionDetail.right_eye_dist_sph
+        ),
+        right_eye_dist_cyl: visionTypeStringToNumber(
+          refractionDetail.right_eye_dist_cyl
+        ),
+        right_eye_dist_axis: visionTypeStringToNumber(
+          refractionDetail.right_eye_dist_axis
+        ),
+        right_eye_near_sph: visionTypeStringToNumber(
+          refractionDetail.right_eye_near_sph
+        ),
+        left_eye_dist_sph: visionTypeStringToNumber(
+          refractionDetail.left_eye_dist_sph
+        ),
+        left_eye_dist_cyl: visionTypeStringToNumber(
+          refractionDetail.left_eye_dist_cyl
+        ),
+        left_eye_dist_axis: visionTypeStringToNumber(
+          refractionDetail.left_eye_dist_axis
+        ),
+        left_eye_near_sph: visionTypeStringToNumber(
+          refractionDetail.left_eye_near_sph
+        ),
+        pd: visionTypeStringToNumber(refractionDetail.pd),
+        h: visionTypeStringToNumber(refractionDetail.h),
+        shuger: false,
+        remark: null,
+        note: null,
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refractionDetailLoading, refractionDetailExist]);
+  if (refractionDetailLoading && singlerefractionNumberLoading) {
+    return (
+      <LoadingAnimation loadingMsg="Checking Refraction Details History" />
+    );
+  }
 
   return (
     <FormProvider {...methods}>
@@ -123,10 +192,19 @@ export default function RefractionEdit() {
             }}
           >
             {[
-              { label: "Name", value: customerName },
-              { label: "NIC", value: nic },
-              { label: "Refraction No.", value: refraction_number },
-              { label: "Mobile", value: mobileNumber },
+              {
+                label: "Name",
+                value: singlerefractionNumber?.customer_full_name,
+              },
+              { label: "NIC", value: singlerefractionNumber?.nic },
+              {
+                label: "Refraction No.",
+                value: singlerefractionNumber?.refraction_number,
+              },
+              {
+                label: "Mobile",
+                value: singlerefractionNumber?.customer_mobile,
+              },
             ].map((item, index) => (
               <Box
                 key={index}
@@ -188,7 +266,7 @@ export default function RefractionEdit() {
           />
           <Box sx={{ display: "flex", gap: 1 }}>
             <TextField
-              {...methods.register("pd")}
+              {...methods.register("pd", { valueAsNumber: true })}
               sx={{ my: 0.5, width: 100 }}
               size="small"
               type="number"
@@ -198,7 +276,7 @@ export default function RefractionEdit() {
               }}
             />
             <TextField
-              {...methods.register("h")}
+              {...methods.register("h", { valueAsNumber: true })}
               sx={{ my: 0.5, width: 100 }}
               type="number"
               size="small"
@@ -228,15 +306,16 @@ export default function RefractionEdit() {
               }
               label="Sugar"
             />
-            <Button
-              sx={{ width: "200px" }}
-              type="submit"
-              variant="contained"
-              color="primary"
-              disabled={refractionDetailLoading}
-            >
-              {refractionDetailExist ? "Update" : "Create"}
-            </Button>
+            <SaveButton
+              btnText={
+                refractionDetailExist
+                  ? "Change Refraction Details"
+                  : "Create New Refraction Details"
+              }
+              loading={
+                refractionDetailExist ? putHandlerloading : postHandlerloading
+              }
+            />
           </Box>
         </form>
       </Box>

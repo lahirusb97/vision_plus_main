@@ -1,40 +1,32 @@
-import React, { useState } from "react";
-import {
-  Paper,
-  TextField,
-  Button,
-  Box,
-  Typography,
-  CircularProgress,
-} from "@mui/material";
-import axiosClient from "../../axiosClient";
-import { AxiosError } from "axios";
-import toast from "react-hot-toast";
+import { Paper, TextField, Box, Typography } from "@mui/material";
 import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router";
-import { RefractionModel } from "../../model/RefractionModel";
+import {
+  RefractionNumberFormModel,
+  schemaRefractionNumber,
+} from "../../validations/schemaRefractionNumber";
+import { useAxiosPost } from "../../hooks/useAxiosPost";
+import { extractErrorMessage } from "../../utils/extractErrorMessage";
+import SaveButton from "../../components/SaveButton";
 export default function RefractionNumber() {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
-  const schema = yup.object({
-    customer_full_name: yup.string().required("Full Name is required"),
-    nic: yup.string().notRequired(),
-    customer_mobile: yup
-      .string()
-      .required("User Name is required")
-      .max(10)
-      .min(10),
-  });
 
-  const { register, handleSubmit, reset } = useForm({
-    resolver: yupResolver(schema),
+  //API CALLS
+  const { postHandler, postHandlerloading } = useAxiosPost();
+  //API CALLS
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<RefractionNumberFormModel>({
+    resolver: zodResolver(schemaRefractionNumber),
   });
-  const shandleSubmit = async (data) => {
+  const shandleSubmit = async (data: RefractionNumberFormModel) => {
     try {
-      setLoading(true);
-      const responseData = await axiosClient.post("/refractions/create/", data);
+      const responseData = await postHandler("/refractions/create/", data);
       const params = new URLSearchParams({
         customer_full_name: responseData.data.data.customer_full_name,
         nic: responseData.data.data.nic,
@@ -44,12 +36,7 @@ export default function RefractionNumber() {
       reset();
       navigate(`success?${params.toString()}`);
     } catch (error) {
-      console.log(error);
-      if (error instanceof AxiosError) {
-        toast.error(error.response?.data?.message || "Something went wrong");
-      }
-    } finally {
-      setLoading(false);
+      extractErrorMessage(error);
     }
   };
 
@@ -81,6 +68,8 @@ export default function RefractionNumber() {
             variant="outlined"
             margin="normal"
             required
+            error={!!errors.customer_full_name}
+            helperText={errors.customer_full_name?.message}
           />
           <TextField
             {...register(
@@ -90,6 +79,8 @@ export default function RefractionNumber() {
             label="NIC"
             variant="outlined"
             margin="normal"
+            error={!!errors.nic}
+            helperText={errors.nic?.message}
           />
           <TextField
             {...register("customer_mobile")}
@@ -99,22 +90,30 @@ export default function RefractionNumber() {
             margin="normal"
             required
             type="tel"
-            inputProps={{
-              pattern: "[0-9]{10}",
-              title: "Please enter a valid 10-digit phone number",
-            }}
+            error={!!errors.customer_mobile}
+            helperText={errors.customer_mobile?.message}
           />
-          <Button
-            fullWidth
-            type="submit"
-            variant="contained"
-            sx={{
-              marginTop: 2,
-            }}
-            disabled={loading}
-          >
-            {loading ? <CircularProgress /> : "Create"}
-          </Button>
+          {/* <TextField
+                    sx={{ display: "none" }}
+                    inputProps={{
+                      min: 0,
+                    }}
+                    {...register("branch_id", {
+                      setValueAs: (value) => (value === "" ? undefined : Number(value)),
+                    })}
+                    label="Branch Id"
+                    type="number"
+                    fullWidth
+                    margin="normal"
+                    variant="outlined"
+                    error={!!errors.branch_id}
+                    helperText={errors.branch_id?.message}
+                    defaultValue={getUserCurentBranch()?.id}
+                  /> */}
+          <SaveButton
+            btnText="Genarate New Refraction Number"
+            loading={postHandlerloading}
+          />
         </form>
       </Paper>
     </Box>

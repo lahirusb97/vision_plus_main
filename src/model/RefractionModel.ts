@@ -1,4 +1,4 @@
-interface RefractionModel {
+interface RefractionNumberModel {
   id: number;
   customer_full_name: string;
   customer_mobile: string;
@@ -6,11 +6,4 @@ interface RefractionModel {
   refraction_number: string;
 }
 
-interface RefractionResponseModel {
-  count: number;
-  next: string | null;
-  previous: string | null;
-  results: RefractionModel[];
-}
-
-export type { RefractionModel, RefractionResponseModel };
+export type { RefractionNumberModel };

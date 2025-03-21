@@ -2,10 +2,11 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import axiosClient from "../axiosClient";
 import toast from "react-hot-toast";
-import { RefractionResponseModel } from "../model/RefractionModel";
+import { PaginatedResponse } from "../model/PaginatedResponse";
+import { RefractionNumberModel } from "../model/RefractionModel";
 
 const useGetRefraction = () => {
-  const [data, setData] = useState<RefractionResponseModel>({
+  const [data, setData] = useState<PaginatedResponse<RefractionNumberModel>>({
     count: 0,
     next: null,
     previous: null,
@@ -41,7 +42,6 @@ const useGetRefraction = () => {
   useEffect(() => {
     fetchData();
   }, [params]);
-  console.log("sss");
 
   const updateSearchParams = (search: string) => {
     setParams({ search: search });

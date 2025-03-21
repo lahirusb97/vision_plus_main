@@ -24,6 +24,7 @@ export default function SelectBrancheIndex() {
           <Button
             onClick={() => {
               const currentBranch = saveUserCurentBranch(branch);
+
               if (currentBranch) {
                 navigate("/");
               }
