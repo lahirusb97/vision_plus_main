@@ -1,6 +1,6 @@
 import NavButton from "../../components/NavButton";
 
-export default function RefractionNav() {
+export default function ReportsNav() {
   return (
     <>
       {/* Pass unique onClick handlers */}

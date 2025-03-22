@@ -23,6 +23,7 @@ import UserNav from "../user/UserNav";
 import CheckInNav from "../checkin/CheckInNav";
 import AccountNav from "../account/AccountNav";
 import { deleteUserData } from "../../utils/authDataConver";
+import ReportsNav from "../reports/ReportsNav";
 
 // TabPanel Component
 
@@ -85,7 +86,7 @@ export default function NavBar() {
       path: "reports",
       icon: ReportsIcon,
       label: "Reports",
-      nav: RefractionNav,
+      nav: ReportsNav,
     },
     {
       path: "messenger",
