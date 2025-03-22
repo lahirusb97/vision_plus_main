@@ -42,6 +42,8 @@ export default function UserUpdate() {
   const { brancheData } = useGetBranch();
 
   const onSubmit = async (data: UserFormModel) => {
+    console.log(data);
+
     try {
       await putHandler(`users/update/${user_id}/`, data);
 

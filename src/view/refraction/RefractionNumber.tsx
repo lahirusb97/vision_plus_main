@@ -9,12 +9,23 @@ import {
 import { useAxiosPost } from "../../hooks/useAxiosPost";
 import { extractErrorMessage } from "../../utils/extractErrorMessage";
 import SaveButton from "../../components/SaveButton";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  clearValidationData,
+  openValidationDialog,
+} from "../../features/validationDialogSlice";
+import toast from "react-hot-toast";
+import { useEffect, useState } from "react";
+import { RootState } from "../../store/store";
 export default function RefractionNumber() {
   const navigate = useNavigate();
-
+  const dispatch = useDispatch();
   //API CALLS
   const { postHandler, postHandlerloading } = useAxiosPost();
   //API CALLS
+  const Validationconfirmed = useSelector(
+    (state: RootState) => state.validation_dialog.Validationconfirmed
+  );
 
   const {
     register,
@@ -25,21 +36,35 @@ export default function RefractionNumber() {
     resolver: zodResolver(schemaRefractionNumber),
   });
   const shandleSubmit = async (data: RefractionNumberFormModel) => {
-    try {
-      const responseData = await postHandler("/refractions/create/", data);
-      const params = new URLSearchParams({
-        customer_full_name: responseData.data.data.customer_full_name,
-        nic: responseData.data.data.nic,
-        customer_mobile: responseData.data.data.customer_mobile,
-        refraction_number: responseData.data.data.refraction_number,
-      });
-      reset();
-      navigate(`success?${params.toString()}`);
-    } catch (error) {
-      extractErrorMessage(error);
+    if (Validationconfirmed) {
+      try {
+        const responseData = await postHandler("/refractions/create/", data);
+        const params = new URLSearchParams({
+          customer_full_name: responseData.data.data.customer_full_name,
+          nic: responseData.data.data.nic,
+          customer_mobile: responseData.data.data.customer_mobile,
+          refraction_number: responseData.data.data.refraction_number,
+        });
+        reset();
+        toast.success("Refraction created successfully");
+        dispatch(clearValidationData());
+        navigate(`success?${params.toString()}`);
+      } catch (error) {
+        extractErrorMessage(error);
+      }
+    } else {
+      dispatch(
+        openValidationDialog({
+          validationType: "admin",
+        })
+      );
     }
   };
-
+  useEffect(() => {
+    return () => {
+      dispatch(clearValidationData()); // Reset Redux state when component unmounts
+    };
+  }, [dispatch]);
   return (
     <Box
       sx={{
@@ -89,7 +114,7 @@ export default function RefractionNumber() {
             variant="outlined"
             margin="normal"
             required
-            type="tel"
+            type="number"
             error={!!errors.customer_mobile}
             helperText={errors.customer_mobile?.message}
           />
