@@ -13,6 +13,7 @@ import PublicRoute from "./PublicRoute";
 import ComingSoon from "../ComingSoon";
 import { accountRoutes } from "./routelist/account.route";
 import SelectBrancheIndex from "../view/SelectBrancheIndex";
+import { reportRoutes } from "./routelist/reports.route";
 
 const Login = lazy(() => import("../view/auth/login"));
 const RegisterUser = lazy(() => import("../view/auth/RegisterUser"));
@@ -56,8 +57,8 @@ export const router = createBrowserRouter([
       },
       {
         path: "reports",
-        element: <ComingSoon />,
-        // children: userRoutes,
+        element: <ProtectedChildRoute />,
+        children: reportRoutes,
       },
       {
         path: "messenger",
