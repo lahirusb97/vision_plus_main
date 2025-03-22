@@ -15,13 +15,13 @@ import {
 } from '@mui/material';
 import CircleIcon from '@mui/icons-material/Circle';
 
-const ReportsIndex = () => {
+const Lense = () => {
   const [fromDate, setFromDate] = useState('2025-03-23');
   const [toDate, setToDate] = useState('2025-03-23');
 
   // Sample invoice data
   const invoiceData = [
-    { invoice: 1457, date: '25/02/2025', time: '10:02 PM', amount: 100000, paymentMethod: 'Cash' },
+    { date: '25/02/2025', lensetype: 'Single Vision', coating: 'Blucut', lensebrand: 'Lanca Potic', quantity: 75 },
   ];
 
   return (
@@ -29,16 +29,15 @@ const ReportsIndex = () => {
       {/* Order Type Selection with CircleIcons */}
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, my: 2 }}>
         <CircleIcon sx={{ color: 'gray' }} />
-        <Typography>Factory order</Typography>
+        <Typography>Stock Lense</Typography>
         <CircleIcon sx={{ color: 'blue' }} />
-        <Typography>Normal order</Typography>
-        <CircleIcon sx={{ color: 'gray' }} />
-        <Typography>Channel</Typography>
+        <Typography>Non-Stock Lense</Typography>
+        
       </Box>
 
-      {/* Revenue & Invoice Count */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', my: 2, gap:20}}>
-       
+      {/* Revenue & Invoice Count  */}
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', my: 2, gap:20 }}>
+        
         <Box p={2} sx={{ border: '1px solid gray', borderRadius: 2 }}>
           <Typography variant="h6">Total Revenue: <strong>78,584</strong></Typography>
           <Typography variant="h6">Invoice Count: <strong>457</strong></Typography>
@@ -68,21 +67,21 @@ const ReportsIndex = () => {
         <Table>
           <TableHead>
             <TableRow sx={{ backgroundColor: '#1e3a8a' }}>
-              <TableCell sx={{ color: 'white' }}>Invoice</TableCell>
               <TableCell sx={{ color: 'white' }}>Date</TableCell>
-              <TableCell sx={{ color: 'white' }}>Time</TableCell>
-              <TableCell sx={{ color: 'white' }}>Amount</TableCell>
-              <TableCell sx={{ color: 'white' }}>Payment Method</TableCell>
+              <TableCell sx={{ color: 'white' }}>Lens Type</TableCell>
+              <TableCell sx={{ color: 'white' }}>Coating</TableCell>
+              <TableCell sx={{ color: 'white' }}>Lense Brand</TableCell>
+              <TableCell sx={{ color: 'white' }}>Quantity</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {invoiceData.map((row) => (
-              <TableRow key={row.invoice}>
-                <TableCell>{row.invoice}</TableCell>
+              <TableRow key={row.date}>
                 <TableCell>{row.date}</TableCell>
-                <TableCell>{row.time}</TableCell>
-                <TableCell>{row.amount}</TableCell>
-                <TableCell>{row.paymentMethod}</TableCell>
+                <TableCell>{row.lensetype}</TableCell>
+                <TableCell>{row.coating}</TableCell>
+                <TableCell>{row.lensebrand}</TableCell>
+                <TableCell>{row.quantity}</TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -97,4 +96,4 @@ const ReportsIndex = () => {
   );
 };
 
-export default ReportsIndex;
+export default Lense;

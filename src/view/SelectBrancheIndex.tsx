@@ -6,6 +6,7 @@ import { useNavigate } from "react-router";
 export default function SelectBrancheIndex() {
   const userAuth = getUserAuth();
   const navigate = useNavigate();
+  
   return (
     <Box
       sx={{

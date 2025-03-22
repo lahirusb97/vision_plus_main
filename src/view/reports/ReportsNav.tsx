@@ -4,8 +4,10 @@ export default function ReportsNav() {
   return (
     <>
       {/* Pass unique onClick handlers */}
-      <NavButton name="Report" path={"/"} />
-      {/* add button & conect paths from  reports.route.tsfile as you need for the UI  */}
+      <NavButton name="Invoices" path={"/reports"} />
+      <NavButton name="Frames" path={"reports/frames/"} />
+      <NavButton name="Lense" path={"reports/lense/"} />
+      
     </>
   );
 }
