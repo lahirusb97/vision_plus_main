@@ -8,7 +8,6 @@ import {
 } from "../../validations/schemaRefractionNumber";
 import { useAxiosPost } from "../../hooks/useAxiosPost";
 import { extractErrorMessage } from "../../utils/extractErrorMessage";
-import SaveButton from "../../components/SaveButton";
 import { useDispatch, useSelector } from "react-redux";
 import {
   clearValidationData,
@@ -17,12 +16,21 @@ import {
 import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
 import { RootState } from "../../store/store";
+import VarificationBtn from "../../components/VarificationBtn";
+import { useAxiosApiSend } from "../../hooks/useAxiosApiSend";
+import { useValidationState } from "../../hooks/validations/useValidationState";
+import VarificationDialog from "../../components/VarificationDialog";
+
 export default function RefractionNumber() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   //API CALLS
   const { postHandler, postHandlerloading } = useAxiosPost();
+  const { apiSendHandler, apiSendHandlerloading } = useAxiosApiSend();
+  const { setValidationState, resetValidation, validationState } =
+    useValidationState();
   //API CALLS
+
   const Validationconfirmed = useSelector(
     (state: RootState) => state.validation_dialog.Validationconfirmed
   );
@@ -35,36 +43,36 @@ export default function RefractionNumber() {
   } = useForm<RefractionNumberFormModel>({
     resolver: zodResolver(schemaRefractionNumber),
   });
-  const shandleSubmit = async (data: RefractionNumberFormModel) => {
-    if (Validationconfirmed) {
-      try {
-        const responseData = await postHandler("/refractions/create/", data);
-        const params = new URLSearchParams({
-          customer_full_name: responseData.data.data.customer_full_name,
-          nic: responseData.data.data.nic,
-          customer_mobile: responseData.data.data.customer_mobile,
-          refraction_number: responseData.data.data.refraction_number,
-        });
-        reset();
-        toast.success("Refraction created successfully");
-        dispatch(clearValidationData());
-        navigate(`success?${params.toString()}`);
-      } catch (error) {
-        extractErrorMessage(error);
-      }
-    } else {
-      dispatch(
-        openValidationDialog({
-          validationType: "admin",
-        })
+
+  const sendRefractionData = async (data) => {
+    try {
+      const responseData = await apiSendHandler(
+        "post",
+        "refractions/create/",
+        data
       );
+      const params = new URLSearchParams({
+        customer_full_name: responseData.data.customer_full_name,
+        nic: responseData.data.nic,
+        customer_mobile: responseData.data.customer_mobile,
+        refraction_number: responseData.data.refraction_number,
+      });
+      reset();
+      toast.success("Refraction created successfully");
+      dispatch(clearValidationData()); //!! Important
+      navigate(`success?${params.toString()}`);
+    } catch (error) {
+      extractErrorMessage(error);
     }
   };
-  useEffect(() => {
-    return () => {
-      dispatch(clearValidationData()); // Reset Redux state when component unmounts
-    };
-  }, [dispatch]);
+  const shandleSubmit = async (data: RefractionNumberFormModel) => {
+    setValidationState({
+      openValidationDialog: true,
+      validationType: "admin",
+      apiCallFunction: () => sendRefractionData(data),
+    });
+  };
+
   return (
     <Box
       sx={{
@@ -78,7 +86,7 @@ export default function RefractionNumber() {
         sx={{
           padding: 3,
           width: "100%",
-          maxWidth: 400,
+          maxWidth: 500,
           borderRadius: 2,
         }}
       >
@@ -135,11 +143,16 @@ export default function RefractionNumber() {
                     helperText={errors.branch_id?.message}
                     defaultValue={getUserCurentBranch()?.id}
                   /> */}
-          <SaveButton
-            btnText="Genarate New Refraction Number"
-            loading={postHandlerloading}
+          <VarificationBtn
+            btnText={`Generate New Refraction Number`}
+            loading={apiSendHandlerloading}
+            isVerified={Validationconfirmed}
           />
         </form>
+        <VarificationDialog
+          validationState={validationState}
+          resetValidation={resetValidation}
+        />
       </Paper>
     </Box>
   );

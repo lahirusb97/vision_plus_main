@@ -26,10 +26,23 @@ import { useAxiosPost } from "../../hooks/useAxiosPost";
 import { useAxiosPut } from "../../hooks/useAxiosPut";
 import SaveButton from "../../components/SaveButton";
 import LoadingAnimation from "../../components/LoadingAnimation";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../store/store";
+import VarificationBtn from "../../components/VarificationBtn";
+
+import {
+  clearValidationData,
+  openValidationDialog,
+} from "../../features/validationDialogSlice";
 
 export default function RefractionEdit() {
   const navigate = useNavigate();
   const { id } = useParams();
+  const dispatch = useDispatch();
+
+  const Validationconfirmed = useSelector(
+    (state: RootState) => state.validation_dialog.Validationconfirmed
+  );
   const { singlerefractionNumber, singlerefractionNumberLoading } =
     useGetSingleRefractionNumber(id);
   const { postHandler, postHandlerloading } = useAxiosPost();
@@ -74,38 +87,47 @@ export default function RefractionEdit() {
 
     if (id !== undefined && id !== null) {
       if (refractionDetailExist) {
-        try {
-          await putHandler(`/refractions/${id}/`, {
-            ...data,
-            refraction: refractionDetail.refraction,
-            is_manual: refractionDetail.is_manual,
-          });
-          toast.success("Refraction saved successfully");
-          methods.reset();
-          navigate(-1);
-        } catch (err) {
-          extractErrorMessage(err);
+        if (Validationconfirmed) {
+          try {
+            await putHandler(`/refractions/${id}/`, {
+              ...data,
+              refraction: refractionDetail.refraction,
+              is_manual: refractionDetail.is_manual,
+            });
+            toast.success("Refraction saved successfully");
+            methods.reset();
+            dispatch(clearValidationData()); //!! Important
+            navigate(-1);
+          } catch (err) {
+            extractErrorMessage(err);
+          }
+        } else {
+          dispatch(
+            openValidationDialog({
+              validationType: "admin",
+            })
+          );
         }
       } else {
-        try {
-          await postHandler(`/refraction-details/create/`, {
-            ...data,
-            refraction: parseInt(id),
-          });
-          toast.success("Refraction saved successfully");
-          methods.reset();
-          navigate(-1);
-        } catch (err) {
-          console.log(err);
-
-          if (axios.isAxiosError(err)) {
-            toast.error(
-              err.response?.data?.refraction[0] ||
-                "Failed to save Reraction details"
-            );
-          } else {
-            toast.error("An unexpected error occurred Refrsh the page");
+        if (Validationconfirmed) {
+          try {
+            await postHandler(`/refraction-details/create/`, {
+              ...data,
+              refraction: parseInt(id),
+            });
+            toast.success("Refraction saved successfully");
+            methods.reset();
+            dispatch(clearValidationData()); //!! Important
+            navigate(-1);
+          } catch (err) {
+            extractErrorMessage(err);
           }
+        } else {
+          dispatch(
+            openValidationDialog({
+              validationType: "user",
+            })
+          );
         }
       }
     }
@@ -306,15 +328,15 @@ export default function RefractionEdit() {
               }
               label="Sugar"
             />
-            <SaveButton
+
+            <VarificationBtn
               btnText={
                 refractionDetailExist
                   ? "Change Refraction Details"
                   : "Create New Refraction Details"
               }
-              loading={
-                refractionDetailExist ? putHandlerloading : postHandlerloading
-              }
+              loading={postHandlerloading}
+              isVerified={Validationconfirmed}
             />
           </Box>
         </form>

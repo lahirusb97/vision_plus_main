@@ -3,19 +3,14 @@ import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import {
+  Box,
   Button,
   IconButton,
   Paper,
   TextField,
   Typography,
 } from "@mui/material";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../store/store";
-import {
-  adminConfirmed,
-  colseValidationDialog,
-  userConfirmed,
-} from "../features/validationDialogSlice";
+
 import { useForm } from "react-hook-form";
 import {
   schemaUserValidation,
@@ -26,113 +21,56 @@ import SaveButton from "./SaveButton";
 import { useAxiosPost } from "../hooks/useAxiosPost";
 import { extractErrorMessage } from "../utils/extractErrorMessage";
 import { Close } from "@mui/icons-material";
+import { ValidationStateModel } from "../hooks/validations/useValidationState";
+import axiosClient from "../axiosClient";
 
-interface UserResponse {
-  id: number;
-  username: string;
+interface ConfimationState {
+  userID: number | null;
+  adminID: number | null;
+  userName: string | null;
+  adminName: string | null;
 }
-interface AdminResponse {
-  id: number;
-  username: string;
-  role: "admin" | "user";
+interface DialogProps {
+  validationState: ValidationStateModel;
+  resetValidation: () => void;
 }
 
-export default function VarificationDialog() {
-  const { postHandler, postHandlerloading } = useAxiosPost();
-  const dispatch = useDispatch();
-  const dialogOpen = useSelector(
-    (state: RootState) => state.validation_dialog.openDialog
-  );
-  const userId = useSelector(
-    (state: RootState) => state.validation_dialog.userId
-  );
-  const userName = useSelector(
-    (state: RootState) => state.validation_dialog.userName
-  );
-  const adminName = useSelector(
-    (state: RootState) => state.validation_dialog.adminName
-  );
-  const adminId = useSelector(
-    (state: RootState) => state.validation_dialog.adminId
-  );
-  const validationType = useSelector(
-    (state: RootState) => state.validation_dialog.validationType
-  );
-  const Validationconfirmed = useSelector(
-    (state: RootState) => state.validation_dialog.Validationconfirmed
-  );
+export default function VarificationDialog({
+  validationState,
+  resetValidation,
+}: DialogProps) {
+  const [confimationState, setConfimationState] =
+    React.useState<ConfimationState>({
+      userID: null,
+      adminID: null,
+      userName: null,
+      adminName: null,
+    });
   const handleClose = () => {
-    dispatch(colseValidationDialog());
+    setConfimationState({
+      userID: null,
+      adminID: null,
+      userName: null,
+      adminName: null,
+    });
+    resetValidation();
   };
-  const { register, handleSubmit, reset } = useForm<UserValidationFormModel>({
-    resolver: zodResolver(schemaUserValidation),
-    defaultValues: {
-      user_code: "",
-    },
-  });
-  console.log(userId);
 
-  const userValidationSubmit = async (data: UserValidationFormModel) => {
-    if (validationType === "user") {
-      try {
-        if (!userId) {
-          const responce: { data: UserResponse } = await postHandler(
-            "user/check-code/",
-            data
-          );
-          dispatch(
-            userConfirmed({
-              userName: responce.data.username,
-              userId: responce.data.id,
-            })
-          );
-
-          reset();
-        }
-      } catch (error) {
-        extractErrorMessage(error);
-        reset();
+  const handleSubmite = async () => {
+    try {
+      if (validationState.apiCallFunction) {
+        await validationState.apiCallFunction();
       }
-    } else if (validationType === "admin") {
-      try {
-        if (!userId) {
-          const responce: { data: UserResponse } = await postHandler(
-            "user/check-code/",
-            data
-          );
-          dispatch(
-            userConfirmed({
-              userName: responce.data.username,
-              userId: responce.data.id,
-            })
-          );
-
-          reset();
-        } else if (userId && !adminId) {
-          console.log(data);
-
-          const responce: { data: AdminResponse } = await postHandler(
-            "admin/check-code/",
-            data
-          );
-          dispatch(
-            adminConfirmed({
-              adminName: responce.data.username,
-              adminId: responce.data.id,
-            })
-          );
-          reset();
-        }
-      } catch (error) {
-        extractErrorMessage(error);
-        reset();
-      }
+      resetValidation();
+    } catch (error) {
+      extractErrorMessage(error);
     }
   };
+
   return (
     <React.Fragment>
       <Dialog
-        open={dialogOpen}
+        open={validationState.openValidationDialog}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
         onClose={handleClose}
@@ -152,96 +90,177 @@ export default function VarificationDialog() {
             <Close />
           </IconButton>
         </DialogTitle>
-        <DialogContent>
-          <Paper
-            sx={{
-              p: 2,
-              width: 400,
-              minHeight: 100,
-            }}
-          >
-            <Typography variant="h6" gutterBottom>
-              {validationType === "user" &&
-                !userId &&
-                "User Varification Required"}
-              {validationType === "admin" &&
-                !userId &&
-                "User Varification Required"}
-              {validationType === "admin" &&
-                userId &&
-                !adminId &&
-                "Admin Varification Required"}
-            </Typography>
-
-            {!Validationconfirmed && (
-              <form
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "1rem",
-                }}
-                onSubmit={handleSubmit(userValidationSubmit)}
-              >
-                {validationType === "admin" ? (
-                  <>
-                    <TextField
-                      fullWidth
-                      label={
-                        !userId && !adminId
-                          ? "User Code"
-                          : userId && !adminId
-                          ? "Admin Code"
-                          : ""
-                      }
-                      type="text"
-                      {...register("user_code")}
-                    />
-                    <TextField fullWidth label="Password" type="password" />
-                  </>
-                ) : (
-                  <>
-                    <TextField
-                      fullWidth
-                      label="User Code"
-                      type="text"
-                      {...register("user_code")}
-                    />
-                    <TextField fullWidth label="Password " type="password" />
-                  </>
-                )}
-
-                <SaveButton btnText="Varify" loading={postHandlerloading} />
-              </form>
-            )}
-            {Validationconfirmed && (
-              <>
-                <Typography
-                  fontWeight={"bold"}
-                  textAlign={"center"}
-                  variant="h6"
-                  gutterBottom
-                >
-                  {"Varified"}
-                </Typography>
-                <Typography variant="subtitle1" gutterBottom>
-                  {userId && `Varified User Name - ${userName} `}
-                </Typography>
-                <Typography variant="subtitle1" gutterBottom>
-                  {adminId && `Varified Admin Name - ${adminName}`}
-                </Typography>
-                <Button
-                  onClick={handleClose}
-                  fullWidth
-                  variant="contained"
-                  color="success"
-                >
-                  Close
+        <Paper
+          sx={{
+            p: 2,
+            width: 400,
+          }}
+        >
+          <Box>
+            {(validationState.validationType === "user" ||
+              validationState.validationType === "both") &&
+              !confimationState.userID && (
+                <UserForm
+                  onValidationSuccess={(userID, userName) =>
+                    setConfimationState((prev) => ({
+                      ...prev,
+                      userID,
+                      userName,
+                    }))
+                  }
+                />
+              )}
+            {(validationState.validationType === "both" &&
+              !confimationState.adminID) ||
+              (validationState.validationType === "admin" &&
+                !confimationState.adminID && (
+                  <AdminForm
+                    onValidationSuccess={(adminID, adminName) =>
+                      setConfimationState((prev) => ({
+                        ...prev,
+                        adminID,
+                        adminName,
+                      }))
+                    }
+                  />
+                ))}
+            {validationState.validationType === "both" &&
+              confimationState.userID &&
+              confimationState.adminID && (
+                <Button variant="contained" fullWidth onClick={handleSubmite}>
+                  Save
                 </Button>
-              </>
-            )}
-          </Paper>
-        </DialogContent>
+              )}
+            {validationState.validationType === "user" &&
+              confimationState.userID && (
+                <Button variant="contained" fullWidth onClick={handleSubmite}>
+                  Save
+                </Button>
+              )}
+            {validationState.validationType === "admin" &&
+              confimationState.adminID && (
+                <Button variant="contained" fullWidth onClick={handleSubmite}>
+                  Save
+                </Button>
+              )}
+          </Box>
+        </Paper>
+        <DialogContent></DialogContent>
       </Dialog>
     </React.Fragment>
   );
+}
+
+function AdminForm({
+  onValidationSuccess,
+}: {
+  onValidationSuccess: (adminID: number, adminName: string) => void;
+}) {
+  const { postHandler, postHandlerloading } = useAxiosPost();
+
+  const { register, handleSubmit, reset } = useForm<UserValidationFormModel>({
+    resolver: zodResolver(schemaUserValidation),
+    defaultValues: {
+      user_code: "",
+    },
+  });
+  const userValidationSubmit = async (data: UserValidationFormModel) => {
+    try {
+      const response: { data: AdminResponse } = await postHandler(
+        "admin/check-code/",
+        data
+      );
+      onValidationSuccess(response.data.id, response.data.username);
+
+      reset();
+    } catch (error) {
+      extractErrorMessage(error);
+    }
+  };
+  return (
+    <div>
+      <form
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "1rem",
+        }}
+        onSubmit={handleSubmit(userValidationSubmit)}
+      >
+        <>
+          <TextField
+            fullWidth
+            label="Admin Code"
+            type="text"
+            {...register("user_code")}
+          />
+          <TextField fullWidth label="Password " type="password" />
+        </>
+
+        <SaveButton btnText="Varify" loading={postHandlerloading} />
+      </form>
+    </div>
+  );
+}
+
+//! USER FORM
+function UserForm({
+  onValidationSuccess,
+}: {
+  onValidationSuccess: (userID: number, userName: string) => void;
+}) {
+  const { postHandler, postHandlerloading } = useAxiosPost();
+
+  const { register, handleSubmit, reset } = useForm<UserValidationFormModel>({
+    resolver: zodResolver(schemaUserValidation),
+    defaultValues: {
+      user_code: "",
+    },
+  });
+  const userValidationSubmit = async (data: UserValidationFormModel) => {
+    try {
+      const response: { data: UserResponse } = await postHandler(
+        "user/check-code/",
+        data
+      );
+
+      onValidationSuccess(response.data.id, response.data.username);
+      reset();
+    } catch (error) {
+      extractErrorMessage(error);
+    }
+  };
+  return (
+    <div>
+      <form
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "1rem",
+        }}
+        onSubmit={handleSubmit(userValidationSubmit)}
+      >
+        <>
+          <TextField
+            fullWidth
+            label="User Code"
+            type="text"
+            {...register("user_code")}
+          />
+          <TextField fullWidth label="Password " type="password" />
+        </>
+
+        <SaveButton btnText="Varify" loading={postHandlerloading} />
+      </form>
+    </div>
+  );
+}
+interface UserResponse {
+  id: number;
+  username: string;
+}
+interface AdminResponse {
+  id: number;
+  username: string;
+  role: "admin" | "user";
 }
