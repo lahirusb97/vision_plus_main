@@ -2,8 +2,12 @@ import React from 'react';
 import { TextField } from '@mui/material';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-
-const Datepicker = ({ label, value, onChange }) => {
+interface BranchModel {
+  label: string | null;
+  branch_name: string;
+ 
+}
+const Datepicker = ({ label, value, onChange }):BranchModel => {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <DatePicker
