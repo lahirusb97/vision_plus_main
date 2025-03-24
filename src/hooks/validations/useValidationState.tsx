@@ -1,7 +1,5 @@
 import { useState } from "react";
-import toast from "react-hot-toast";
 type validationTypes = "admin" | "user" | "both" | null;
-type AxiosMethod = "post" | "put" | "patch" | null;
 
 export interface ValidationStateModel {
   validationType: validationTypes;

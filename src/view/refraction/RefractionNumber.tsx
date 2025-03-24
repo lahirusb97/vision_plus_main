@@ -8,32 +8,19 @@ import {
 } from "../../validations/schemaRefractionNumber";
 import { useAxiosPost } from "../../hooks/useAxiosPost";
 import { extractErrorMessage } from "../../utils/extractErrorMessage";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  clearValidationData,
-  openValidationDialog,
-} from "../../features/validationDialogSlice";
 import toast from "react-hot-toast";
-import { useEffect, useState } from "react";
-import { RootState } from "../../store/store";
-import VarificationBtn from "../../components/VarificationBtn";
-import { useAxiosApiSend } from "../../hooks/useAxiosApiSend";
 import { useValidationState } from "../../hooks/validations/useValidationState";
 import VarificationDialog from "../../components/VarificationDialog";
+import SaveButton from "../../components/SaveButton";
+import { RefractionNumberModel } from "../../model/RefractionModel";
 
 export default function RefractionNumber() {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   //API CALLS
-  const { postHandler, postHandlerloading } = useAxiosPost();
-  const { apiSendHandler, apiSendHandlerloading } = useAxiosApiSend();
+  const { postHandler } = useAxiosPost();
   const { setValidationState, resetValidation, validationState } =
     useValidationState();
   //API CALLS
-
-  const Validationconfirmed = useSelector(
-    (state: RootState) => state.validation_dialog.Validationconfirmed
-  );
 
   const {
     register,
@@ -44,23 +31,16 @@ export default function RefractionNumber() {
     resolver: zodResolver(schemaRefractionNumber),
   });
 
-  const sendRefractionData = async (data) => {
+  const sendRefractionData = async (data: RefractionNumberFormModel) => {
     try {
-      const responseData = await apiSendHandler(
-        "post",
-        "refractions/create/",
-        data
+      const responseData: { data: { data: RefractionNumberModel } } =
+        await postHandler("refractions/create/", data);
+
+      toast.success(
+        `Refraction created for ${responseData.data.data.customer_full_name}`
       );
-      const params = new URLSearchParams({
-        customer_full_name: responseData.data.customer_full_name,
-        nic: responseData.data.nic,
-        customer_mobile: responseData.data.customer_mobile,
-        refraction_number: responseData.data.refraction_number,
-      });
       reset();
-      toast.success("Refraction created successfully");
-      dispatch(clearValidationData()); //!! Important
-      navigate(`success?${params.toString()}`);
+      navigate(`${responseData.data.data.id}/success/`);
     } catch (error) {
       extractErrorMessage(error);
     }
@@ -143,11 +123,7 @@ export default function RefractionNumber() {
                     helperText={errors.branch_id?.message}
                     defaultValue={getUserCurentBranch()?.id}
                   /> */}
-          <VarificationBtn
-            btnText={`Generate New Refraction Number`}
-            loading={apiSendHandlerloading}
-            isVerified={Validationconfirmed}
-          />
+          <SaveButton btnText="Genarate Refraction Number" loading={false} />
         </form>
         <VarificationDialog
           validationState={validationState}

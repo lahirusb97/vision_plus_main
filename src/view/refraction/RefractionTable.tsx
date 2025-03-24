@@ -178,7 +178,7 @@ export default function RefractionTable() {
       >
         <Pagination
           count={Math.ceil(data.count / 10)}
-          onChange={(e: ChangeEvent<unknown>, value: number) => {
+          onChange={(_e: ChangeEvent<unknown>, value: number) => {
             pageNavigation(value);
           }}
         ></Pagination>

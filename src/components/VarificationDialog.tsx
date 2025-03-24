@@ -22,7 +22,6 @@ import { useAxiosPost } from "../hooks/useAxiosPost";
 import { extractErrorMessage } from "../utils/extractErrorMessage";
 import { Close } from "@mui/icons-material";
 import { ValidationStateModel } from "../hooks/validations/useValidationState";
-import axiosClient from "../axiosClient";
 
 interface ConfimationState {
   userID: number | null;
@@ -73,7 +72,7 @@ export default function VarificationDialog({
         open={validationState.openValidationDialog}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
-        onClose={handleClose}
+        // onClose={handleClose}
       >
         <DialogTitle
           sx={{
@@ -90,62 +89,93 @@ export default function VarificationDialog({
             <Close />
           </IconButton>
         </DialogTitle>
-        <Paper
-          sx={{
-            p: 2,
-            width: 400,
-          }}
-        >
-          <Box>
-            {(validationState.validationType === "user" ||
-              validationState.validationType === "both") &&
-              !confimationState.userID && (
-                <UserForm
-                  onValidationSuccess={(userID, userName) =>
-                    setConfimationState((prev) => ({
-                      ...prev,
-                      userID,
-                      userName,
-                    }))
-                  }
-                />
-              )}
-            {(validationState.validationType === "both" &&
-              !confimationState.adminID) ||
-              (validationState.validationType === "admin" &&
-                !confimationState.adminID && (
-                  <AdminForm
-                    onValidationSuccess={(adminID, adminName) =>
+        <DialogContent>
+          <Paper
+            sx={{
+              p: 2,
+              width: 400,
+            }}
+          >
+            <Box>
+              {(validationState.validationType === "user" ||
+                validationState.validationType === "both") &&
+                !confimationState.userID && (
+                  <UserForm
+                    onValidationSuccess={(userID, userName) =>
                       setConfimationState((prev) => ({
                         ...prev,
-                        adminID,
-                        adminName,
+                        userID,
+                        userName,
                       }))
                     }
                   />
-                ))}
-            {validationState.validationType === "both" &&
-              confimationState.userID &&
-              confimationState.adminID && (
-                <Button variant="contained" fullWidth onClick={handleSubmite}>
-                  Save
-                </Button>
-              )}
-            {validationState.validationType === "user" &&
-              confimationState.userID && (
-                <Button variant="contained" fullWidth onClick={handleSubmite}>
-                  Save
-                </Button>
-              )}
-            {validationState.validationType === "admin" &&
-              confimationState.adminID && (
-                <Button variant="contained" fullWidth onClick={handleSubmite}>
-                  Save
-                </Button>
-              )}
-          </Box>
-        </Paper>
-        <DialogContent></DialogContent>
+                )}
+              {(validationState.validationType === "both" &&
+                !confimationState.adminID) ||
+                (validationState.validationType === "admin" &&
+                  !confimationState.adminID && (
+                    <AdminForm
+                      onValidationSuccess={(adminID, adminName) =>
+                        setConfimationState((prev) => ({
+                          ...prev,
+                          adminID,
+                          adminName,
+                        }))
+                      }
+                    />
+                  ))}
+              {validationState.validationType === "both" &&
+                confimationState.userID &&
+                confimationState.adminID && (
+                  <>
+                    <Typography sx={{ mb: 2 }} variant="body1">
+                      Varified User Name: {confimationState.userName}
+                    </Typography>
+                    <Typography sx={{ mb: 2 }} variant="body1">
+                      Varified Admin Name: {confimationState.adminName}
+                    </Typography>
+                    <Button
+                      variant="contained"
+                      fullWidth
+                      onClick={handleSubmite}
+                    >
+                      Save
+                    </Button>
+                  </>
+                )}
+              {validationState.validationType === "user" &&
+                confimationState.userID && (
+                  <>
+                    <Typography sx={{ mb: 2 }} variant="body1">
+                      Varified User Name: {confimationState.userName}
+                    </Typography>
+                    <Button
+                      variant="contained"
+                      fullWidth
+                      onClick={handleSubmite}
+                    >
+                      Save
+                    </Button>
+                  </>
+                )}
+              {validationState.validationType === "admin" &&
+                confimationState.adminID && (
+                  <>
+                    <Typography sx={{ mb: 2 }} variant="body1">
+                      Varified Admin Name: {confimationState.adminName}
+                    </Typography>
+                    <Button
+                      variant="contained"
+                      fullWidth
+                      onClick={handleSubmite}
+                    >
+                      Save
+                    </Button>
+                  </>
+                )}
+            </Box>
+          </Paper>
+        </DialogContent>
       </Dialog>
     </React.Fragment>
   );
@@ -188,6 +218,7 @@ function AdminForm({
         onSubmit={handleSubmit(userValidationSubmit)}
       >
         <>
+          <Typography variant="h6">Admin Varification Required</Typography>
           <TextField
             fullWidth
             label="Admin Code"
@@ -241,6 +272,8 @@ function UserForm({
         onSubmit={handleSubmit(userValidationSubmit)}
       >
         <>
+          <Typography variant="h6">User Varification Required</Typography>
+
           <TextField
             fullWidth
             label="User Code"

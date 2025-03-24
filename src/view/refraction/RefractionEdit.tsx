@@ -17,7 +17,7 @@ import {
   schemaRefractionDetails,
 } from "../../validations/refractionDetails";
 import toast from "react-hot-toast";
-import axios from "axios";
+
 import useGetRefractionDetails from "../../hooks/useGetRefractionDetails";
 import { useEffect } from "react";
 import useGetSingleRefractionNumber from "../../hooks/useGetSingleRefractionNumber";
@@ -26,27 +26,16 @@ import { useAxiosPost } from "../../hooks/useAxiosPost";
 import { useAxiosPut } from "../../hooks/useAxiosPut";
 import SaveButton from "../../components/SaveButton";
 import LoadingAnimation from "../../components/LoadingAnimation";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../store/store";
-import VarificationBtn from "../../components/VarificationBtn";
-
-import {
-  clearValidationData,
-  openValidationDialog,
-} from "../../features/validationDialogSlice";
-
 export default function RefractionEdit() {
   const navigate = useNavigate();
-  const { id } = useParams();
-  const dispatch = useDispatch();
+  const { refraction_id } = useParams();
 
-  const Validationconfirmed = useSelector(
-    (state: RootState) => state.validation_dialog.Validationconfirmed
-  );
   const { singlerefractionNumber, singlerefractionNumberLoading } =
-    useGetSingleRefractionNumber(id);
-  const { postHandler, postHandlerloading } = useAxiosPost();
-  const { putHandler, putHandlerloading } = useAxiosPut();
+    useGetSingleRefractionNumber(refraction_id);
+  const { refractionDetail, refractionDetailLoading, refractionDetailExist } =
+    useGetRefractionDetails(refraction_id);
+  const { postHandler } = useAxiosPost();
+  const { putHandler } = useAxiosPut();
   const methods = useForm<RefractionDetailsFormModel>({
     resolver: zodResolver(schemaRefractionDetails),
     defaultValues: {
@@ -72,62 +61,43 @@ export default function RefractionEdit() {
       left_eye_dist_cyl: null,
       left_eye_dist_axis: null,
       left_eye_near_sph: null,
-      pd: null,
-      h: null,
       shuger: false,
-      remark: null,
+      refraction_remark: null,
+      prescription: false,
       note: null,
     },
   });
-  const { refractionDetail, refractionDetailLoading, refractionDetailExist } =
-    useGetRefractionDetails(id);
 
   const onSubmit = async (data: RefractionDetailsFormModel) => {
     // console.log(convertedData);
 
-    if (id !== undefined && id !== null) {
+    if (refraction_id !== undefined && refraction_id !== null) {
       if (refractionDetailExist) {
-        if (Validationconfirmed) {
-          try {
-            await putHandler(`/refractions/${id}/`, {
-              ...data,
-              refraction: refractionDetail.refraction,
-              is_manual: refractionDetail.is_manual,
-            });
-            toast.success("Refraction saved successfully");
-            methods.reset();
-            dispatch(clearValidationData()); //!! Important
-            navigate(-1);
-          } catch (err) {
-            extractErrorMessage(err);
-          }
-        } else {
-          dispatch(
-            openValidationDialog({
-              validationType: "admin",
-            })
-          );
+        try {
+          await putHandler(`/refractions-details/${refraction_id}/`, {
+            ...data,
+            refraction: refractionDetail.refraction,
+            is_manual: refractionDetail.is_manual,
+          });
+          toast.success("Refraction saved successfully");
+          methods.reset();
+
+          navigate(-1);
+        } catch (err) {
+          extractErrorMessage(err);
         }
       } else {
-        if (Validationconfirmed) {
-          try {
-            await postHandler(`/refraction-details/create/`, {
-              ...data,
-              refraction: parseInt(id),
-            });
-            toast.success("Refraction saved successfully");
-            methods.reset();
-            dispatch(clearValidationData()); //!! Important
-            navigate(-1);
-          } catch (err) {
-            extractErrorMessage(err);
-          }
-        } else {
-          dispatch(
-            openValidationDialog({
-              validationType: "user",
-            })
-          );
+        try {
+          await postHandler(`/refraction-details/create/`, {
+            ...data,
+            refraction: parseInt(refraction_id),
+          });
+          toast.success("Refraction saved successfully");
+          methods.reset();
+
+          navigate(-1);
+        } catch (err) {
+          extractErrorMessage(err);
         }
       }
     }
@@ -183,11 +153,10 @@ export default function RefractionEdit() {
         left_eye_near_sph: visionTypeStringToNumber(
           refractionDetail.left_eye_near_sph
         ),
-        pd: visionTypeStringToNumber(refractionDetail.pd),
-        h: visionTypeStringToNumber(refractionDetail.h),
-        shuger: false,
-        remark: null,
-        note: null,
+        shuger: refractionDetail.shuger,
+        refraction_remark: refractionDetail.refraction_remark,
+        prescription: refractionDetail.prescription,
+        note: refractionDetail.note,
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -287,7 +256,7 @@ export default function RefractionEdit() {
             }}
           />
           <Box sx={{ display: "flex", gap: 1 }}>
-            <TextField
+            {/* <TextField
               {...methods.register("pd", { valueAsNumber: true })}
               sx={{ my: 0.5, width: 100 }}
               size="small"
@@ -306,16 +275,16 @@ export default function RefractionEdit() {
               InputLabelProps={{
                 shrink: Boolean(methods.watch("h")),
               }}
-            />
+            /> */}
             <TextField
-              {...methods.register("remark")}
+              {...methods.register("refraction_remark")}
               sx={{ my: 0.5 }}
               size="small"
               fullWidth
-              label="remark"
+              label="Refraction remark"
               multiline
               InputLabelProps={{
-                shrink: Boolean(methods.watch("remark")),
+                shrink: Boolean(methods.watch("refraction_remark")),
               }}
             />
 
@@ -328,16 +297,16 @@ export default function RefractionEdit() {
               }
               label="Sugar"
             />
-
-            <VarificationBtn
-              btnText={
-                refractionDetailExist
-                  ? "Change Refraction Details"
-                  : "Create New Refraction Details"
+            <FormControlLabel
+              control={
+                <Checkbox
+                  {...methods.register("prescription")}
+                  checked={methods.watch("prescription") === true}
+                />
               }
-              loading={postHandlerloading}
-              isVerified={Validationconfirmed}
+              label="Prescription"
             />
+            <SaveButton btnText="Save" loading={false} />
           </Box>
         </form>
       </Box>
