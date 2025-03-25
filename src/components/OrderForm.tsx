@@ -16,6 +16,7 @@ import {
 import { useReactToPrint } from "react-to-print";
 import { Invoice } from "../model/SingleInvoiceModel";
 import { dateAndTimeFormat } from "../utils/dateAndTimeFormat";
+import RefractionNumber from "../view/refraction/RefractionNumber";
 
 interface OrderFormProps {
   invoiceDetail: Invoice | null;
@@ -23,6 +24,8 @@ interface OrderFormProps {
 
 const OrderForm: React.FC<OrderFormProps> = ({ invoiceDetail }) => {
   const componentRef = useRef<HTMLDivElement | null>(null);
+  const RefractionDetails = invoiceDetail?.refraction_details;
+ 
   const reactToPrintFn = useReactToPrint({
     content: () => componentRef.current,
   });
@@ -75,50 +78,194 @@ const OrderForm: React.FC<OrderFormProps> = ({ invoiceDetail }) => {
                 </Box>
                 <Box sx={{ border: "1px solid black", padding: "0.2cm", fontFamily:"Alger" }}>
                   <Typography variant="body1">Invoice No:</Typography>
-                  <Typography variant="body1">
-                    <strong>ALUA0001</strong>
-                  </Typography>
+                  {invoiceDetail?.id}
                 </Box>
               </Box>
 
               {/* Table Section */}
-              <TableContainer component={Paper}>
-                <Table size="small" sx={{ marginTop: "0.4cm" }}>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell align="center" colSpan={3} sx={{ border: "1px solid black", fontWeight: "bold", fontSize: "1.3em" }}>
-                        Right Eye
-                      </TableCell>
-                      <TableCell align="center" colSpan={3} sx={{ border: "1px solid black", fontWeight: "bold", fontSize: "1.3em" }}>
-                        Left Eye
-                      </TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell sx={{ border: "1px solid black", fontWeight: "bold" }}>SPH</TableCell>
-                      <TableCell sx={{ border: "1px solid black", fontWeight: "bold" }}>CYL</TableCell>
-                      <TableCell sx={{ border: "1px solid black", fontWeight: "bold" }}>AXIS</TableCell>
-                      <TableCell sx={{ border: "1px solid black", fontWeight: "bold" }}>SPH</TableCell>
-                      <TableCell sx={{ border: "1px solid black", fontWeight: "bold" }}>CYL</TableCell>
-                      <TableCell sx={{ border: "1px solid black", fontWeight: "bold" }}>AXIS</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    <TableRow>
-                      <TableCell sx={{ border: "1px solid black", fontWeight: "bold", fontSize: "1em" }}>1</TableCell>
-                      <TableCell sx={{ border: "1px solid black", fontWeight: "bold", fontSize: "1em" }}>-1</TableCell>
-                      <TableCell sx={{ border: "1px solid black", fontWeight: "bold", fontSize: "1em" }}>1</TableCell>
-                      <TableCell sx={{ border: "1px solid black", fontWeight: "bold", fontSize: "1em" }}>1</TableCell>
-                      <TableCell sx={{ border: "1px solid black", fontWeight: "bold", fontSize: "1em" }}>-1</TableCell>
-                      <TableCell sx={{ border: "1px solid black", fontWeight: "bold", fontSize: "1em" }}>1</TableCell>
-                    </TableRow>
-                    <TableRow sx={{ border: "1px solid black" }}>
-                      <TableCell sx={{ border: "1px solid black", fontWeight: "bold", fontSize: "1em" }}>1</TableCell>
-                      <TableCell colSpan={2} sx={{ border: "1px solid black" }} />
-                      <TableCell sx={{ border: "1px solid black", fontWeight: "bold", fontSize: "1em" }}>1</TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
-              </TableContainer>
+              <TableContainer
+              component={Paper}
+              sx={{ marginTop:"0.4cm", width:"14cm"}}
+            >
+              <Table size="small" sx={{ border:"1px solid black", }}>
+                <TableHead>
+                  <TableRow>
+                    <TableCell
+                      align="center"
+                      colSpan={3}
+                      sx={{
+                        border:"1px solid black",
+                        fontWeight: "bold",
+                        fontSize: "1.3em", // Right Eye border
+                      }}
+                    >
+                      Right Eye
+                    </TableCell>
+                    <TableCell
+                      align="center"
+                      colSpan={3}
+                      sx={{
+                        border:"1px solid black",
+                        fontWeight: "bold",
+                        fontSize: "1.3em", // Left Eye border
+                      }}
+                    >
+                      Left Eye
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    {/* Right Eye Columns */}
+                    <TableCell
+                      sx={{
+                        border:"1px solid black",
+                        fontWeight: "bold",
+                        fontSize: "1.1em",
+                      }}
+                    >
+                      SPH
+                    </TableCell>
+                    <TableCell
+                      sx={{
+                        border:"1px solid black",
+                        fontWeight: "bold",
+                        fontSize: "1.1em",
+                      }}
+                    >
+                      CYL
+                    </TableCell>
+                    <TableCell
+                      sx={{
+                        border:"1px solid black",
+                        fontWeight: "bold",
+                        fontSize: "1.1em",
+                      }}
+                    >
+                      AXIS
+                    </TableCell>
+
+                    {/* Left Eye Columns */}
+                    <TableCell
+                      sx={{
+                        border:"1px solid black",
+                        fontWeight: "bold",
+                        fontSize: "1.1em",
+                      }}
+                    >
+                      SPH
+                    </TableCell>
+                    <TableCell
+                      sx={{
+                        border:"1px solid black",
+                        fontWeight: "bold",
+                        fontSize: "1.1em",
+                      }}
+                    >
+                      CYL
+                    </TableCell>
+                    <TableCell
+                      sx={{
+                        border:"1px solid black",
+                        fontWeight: "bold",
+                        fontSize: "1.1em",
+                      }}
+                    >
+                      AXIS
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  <TableRow>
+                    {/* Right Eye Data */}
+                    <TableCell
+                      sx={{
+                        border: "1px solid black",
+                        fontWeight: "bold",
+                        fontSize: "1em",
+                      }}
+                    >
+                      {RefractionDetails?.right_eye_dist_sph} {/* sph */}
+                    </TableCell>
+
+                    <TableCell
+                      sx={{
+                        border: "1px solid black",
+                        fontWeight: "bold",
+                        fontSize: "1em",
+                      }}
+                    >
+                      {RefractionDetails?.right_eye_dist_cyl} {/* cyl */}
+                    </TableCell>
+
+                    <TableCell
+                      sx={{
+                        border: "1px solid black",
+                        fontWeight: "bold",
+                        fontSize: "1em",
+                      }}
+                    >
+                      {RefractionDetails?.right_eye_dist_axis} {/* axis */}
+                    </TableCell>
+
+                    {/* Left Eye Data */}
+                    <TableCell
+                      sx={{
+                        border: "1px solid black",
+                        fontWeight: "bold",
+                        fontSize: "1em",
+                      }}
+                    >
+                      {RefractionDetails?.left_eye_dist_sph}
+                      {/* sph */}
+                    </TableCell>
+                    <TableCell
+                      sx={{
+                        border: "1px solid black",
+                        fontWeight: "bold",
+                        fontSize: "1em",
+                      }}
+                    >
+                      {RefractionDetails?.left_eye_dist_axis} {/* cyl */}
+                    </TableCell>
+                    <TableCell
+                      sx={{
+                        border: "1px solid black",
+                        fontWeight: "bold",
+                        fontSize: "1em",
+                      }}
+                    >
+                      {RefractionDetails?.left_eye_dist_axis}
+                      {/* axis */}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell
+                      sx={{
+                        border: "1px solid black",
+                        fontWeight: "bold",
+                        fontSize: "1em",
+                      }}
+                      
+                    >
+                      {RefractionDetails?.right_eye_near_sph}
+                    </TableCell>
+                    <TableCell
+                      colSpan={2}
+                      sx={{ border: "1px solid black" }}
+                    ></TableCell>
+                    <TableCell
+                      sx={{
+                        border: "1px solid black",
+                        fontWeight: "bold",
+                        fontSize: "1em",
+                      }}
+                    >
+                      {RefractionDetails?.left_eye_near_sph}
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </TableContainer>
+
 
               <Box sx={{ marginTop: "0.2cm" }}>
                 <Typography variant="body2">
@@ -127,9 +274,14 @@ const OrderForm: React.FC<OrderFormProps> = ({ invoiceDetail }) => {
                 <Typography variant="body2">
                   LPD: 87 / LH:10 / shuger/cataract
                 </Typography>
-                <Typography variant="body2" fontWeight="bold">
-                  Remark: factory invoice remark required
-                </Typography>
+                <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+                Remark:
+              </Typography>
+             
+                  {RefractionDetails?.remark}
+            
+            
+        
                 <Typography variant="body2" fontWeight="bold">
                   Refraction remark: Refraction related remark
                 </Typography>
@@ -150,32 +302,111 @@ const OrderForm: React.FC<OrderFormProps> = ({ invoiceDetail }) => {
             </Box>
 
             {/* Right Section (On Hold / Fitting on collection) */}
-            <Box sx={{ flex: 1, border: "1px solid gray", padding: "0.5cm", width: "7cm" }}>
+            <Box sx={{ flex: 1, border: "1px solid gray", padding: "0.2cm", width: "7cm" }}>
               <Typography variant="body2" sx={{ fontFamily: "Alger", border:"1px solid black", textAlign:"center" }}>
                 <strong>On Hold / Fitting on collection</strong>
               </Typography>
-              <Typography variant="body2">Refraction : Mr. Plumf / Prescription</Typography>
-              <Typography variant="body2">Refraction No : ALU001</Typography>
-              <Typography variant="body2">Staff Member : Mr. Rukshan</Typography>
-              <hr></hr>
-              <Typography variant="body2">Name : Mr. Ruwan Jayakodi</Typography>
-              <hr></hr>
-              <Typography variant="body2" sx={{ marginTop: "0.5cm", fontWeight: "bold" }}>
-                Frame :
-              </Typography>
-              <Typography variant="body2">Ray Ban</Typography>
-              <Typography variant="body2">DC5893</Typography>
-              <Typography variant="body2">Black</Typography>
-              <Typography variant="body2">Plastic</Typography>
-
-              <Typography variant="body2" sx={{ marginTop: "0.5cm", fontWeight: "bold" }}>
-                Lense :
-              </Typography>
-              <Typography variant="body2">Lens Type</Typography>
-              <Typography variant="body2">Coating</Typography>
-              <Typography variant="body2">Lens Factory</Typography>
-            </Box>
-          </Box>
+               <Box sx={4}>
+                          <Paper
+                            sx={{
+                              padding: "0.2cm",
+                              boxShadow:"none",
+                              
+                            }}
+                          > 
+                            <Typography variant="body2" sx={{ fontWeight: "bold", marginTop: "0.2cm"}}>
+                              Refraction: {invoiceDetail?.refraction_details.customer_full_name}
+                            </Typography>
+                            <Typography variant="body2" sx={{ fontWeight: "bold", marginTop:"0.2cm" }}>
+                              Refraction No: {invoiceDetail?.refraction_details.refraction_number}
+                            </Typography>
+                            <Typography variant="body2" sx={{ fontWeight: "bold", marginTop:"0.2cm" }}>
+                              Staff Member:
+                            </Typography>
+                            <hr></hr>
+                            <Typography variant="body2" sx={{ fontWeight: "bold", marginTop:"0.2cm" }}>
+                              Name:
+                            </Typography>
+                            <hr></hr>
+                            <Typography variant="body2" sx={{ fontWeight: "bold",marginTop:"0.2cm" }}>
+                              Frame:
+                            </Typography>
+                            {invoiceDetail?.order_details.order_items
+                              .filter((items) => items.frame !== null)
+                              .map((item) => (
+                                <>
+                                  <Typography variant="body2">
+                                    -{item.frame_detail?.brand_name}
+                                  </Typography>
+                                  <Typography variant="body2">
+                                    -{item.frame_detail?.code_name}
+                                  </Typography>
+                                  <Typography variant="body2">
+                                    -{item.frame_detail?.color_name}
+                                  </Typography>
+                                  <Typography variant="body2">
+                                    -{item.frame_detail?.size}
+                                  </Typography>
+                                  <Typography variant="body2">
+                                    -{item.frame_detail?.species}
+                                  </Typography>
+                                </>
+                              ))}
+              
+                            {invoiceDetail?.order_details.order_items
+                              .filter((items) => items.lens !== null)
+                              .map(
+                                (item) =>
+                                  item.lens_detail && (
+                                    <>
+                                      <Typography
+                                        variant="body2"
+                                        sx={{ fontWeight: "bold", marginTop:"0.2cm" }}
+                                      >
+                                        Lens:
+                                      </Typography>
+                                      <Typography variant="body2">
+                                        -{item.lens_detail.brand_name}
+                                      </Typography>
+                                      <Typography variant="body2">
+                                        -{item.lens_detail.coating_name}
+                                      </Typography>
+                                      <Typography variant="body2">
+                                        -{item.lens_detail.type_name}
+                                      </Typography>
+                                    </>
+                                  )
+                              )}
+              
+                            {invoiceDetail?.order_details.order_items
+                              .filter((items) => items.external_lens !== null)
+                              .map(
+                                (item) =>
+                                  item.external_lens && (
+                                    <>
+                                      <Typography
+                                        variant="body2"
+                                        sx={{ fontWeight: "bold", marginTop:"0.2cm"}}
+                                      >
+                                        External Lens:
+                                      </Typography>
+                                      <Typography variant="body2">
+                                        -{item.type_name}
+                                      </Typography>
+                                      <Typography variant="body2">
+                                        -{item.brand_name}
+                                      </Typography>
+                                      <Typography variant="body2">
+                                        -{item.coating_name}
+                                      </Typography>
+                                    </>
+                                  )
+                              )}
+                          </Paper>
+                          </Box>
+                    </Box>
+                        </Box>
+                
 
           {/* Payment Section */}
           <Box
@@ -188,15 +419,29 @@ const OrderForm: React.FC<OrderFormProps> = ({ invoiceDetail }) => {
               marginTop: "0.2cm",
             }}
           >
-            {/* Payment Details */}
-            <Box sx={{ flex: 1, padding: "0.2cm"}}>
+            <Box sx={{ mt: 1 }}>
               <Typography variant="body2" sx={{ fontWeight: "bold" }}>
                 Payment Details:
               </Typography>
-              <Typography variant="body2">Full Amount - Rs. 10000.00</Typography>
-              <Typography variant="body2">Total Payment - Rs. 5000.00</Typography>
-              <Typography variant="body2">Balance - Rs. 5000.00</Typography>
-            </Box>
+              <Typography variant="body2">
+                Full Amount - Rs. {invoiceDetail?.order_details.sub_total}
+              </Typography>
+              <Typography variant="body2">
+                Total Payment - Rs.{" "}
+                {invoiceDetail.order_details.order_payments.reduce(
+                  (acc, payment) => acc + parseFloat(payment.amount),
+                  0
+                )}
+              </Typography>
+              <Typography variant="body2">
+                Balance - Rs.
+                {parseFloat(invoiceDetail?.order_details?.total_price) -
+                  invoiceDetail.order_details.order_payments.reduce(
+                    (acc, payment) => acc + parseFloat(payment.amount),
+                    0
+                  )}
+              </Typography>
+              </Box>
 
             {/* Empty Box */}
             <Box
