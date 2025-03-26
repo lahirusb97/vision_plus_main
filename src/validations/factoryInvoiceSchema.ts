@@ -140,6 +140,8 @@ const OrderSchema = z.object({
   total_price: z.number().nonnegative(),
   order_remark: z.string().optional(),
   sales_staff_code: z.number(),
+  fitting_on_collection: z.boolean(),
+  on_hold: z.boolean(),
 });
 
 const externalLensSchema = z.object({
@@ -147,6 +149,7 @@ const externalLensSchema = z.object({
   coating: z.number(),
   brand: z.number(),
   price: z.number().nonnegative(),
+  branch_id: z.number(),
 });
 
 const externalPowerSchema = z.array(

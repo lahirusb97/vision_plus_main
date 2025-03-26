@@ -4,7 +4,7 @@ import Typography from "@mui/material/Typography";
 import { Badge, Box, IconButton, Paper } from "@mui/material";
 import { Close } from "@mui/icons-material";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import { RefractionDetailModel } from "../model/RefractionDetailModel";
+import { useFactoryOrderContext } from "../context/FactoryOrderContext";
 
 export interface SimpleDialogProps {
   open: boolean;
@@ -48,11 +48,11 @@ function SimpleDialog(props: SimpleDialogProps) {
     </Dialog>
   );
 }
-type NoteOnly = Pick<RefractionDetailModel, "note">;
 
-export default function HidenNoteDialog({ note }: NoteOnly) {
+export default function HidenNoteDialog() {
+  const { refractionDetail } = useFactoryOrderContext();
   const [open, setOpen] = React.useState(false);
-
+  const note = refractionDetail?.note || null;
   const handleClickOpen = () => {
     setOpen(true);
   };

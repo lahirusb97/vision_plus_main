@@ -33,26 +33,14 @@ import {
 } from "../data/staticVariables";
 import { AxiosError } from "axios";
 import { RefractionDetailModel } from "../model/RefractionDetailModel";
+import { useFactoryOrderContext } from "../context/FactoryOrderContext";
 interface LenseWithQty extends LenseModel {
   buyQty: number;
   lenseSide: string;
 }
-interface RefractionDetailProps {
-  refractionDetail: Pick<
-    RefractionDetailModel,
-    | "right_eye_dist_sph"
-    | "right_eye_dist_cyl"
-    | "right_eye_dist_axis"
-    | "right_eye_near_sph"
-    | "left_eye_dist_sph"
-    | "left_eye_dist_cyl"
-    | "left_eye_dist_axis"
-    | "left_eye_near_sph"
-  > | null;
-}
-export default function PowerToLenseFilter({
-  refractionDetail,
-}: RefractionDetailProps) {
+export default function PowerToLenseFilter() {
+  const { refractionDetail } = useFactoryOrderContext();
+
   const dispatch = useDispatch();
   const [leftPowers, setLeftPowers] = useState<
     Pick<

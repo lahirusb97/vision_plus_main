@@ -3,7 +3,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router";
-import { useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import {
@@ -44,18 +44,22 @@ import useGetSingleRefractionNumber from "../../../hooks/useGetSingleRefractionN
 import StockDrawerBtn from "../../../components/StockDrawerBtn";
 import HidenNoteDialog from "../../../components/HidenNoteDialog";
 import { extractErrorMessage } from "../../../utils/extractErrorMessage";
+import {
+  FactoryOrderProvider,
+  useFactoryOrderContext,
+} from "../../../context/FactoryOrderContext";
 
 export default function FactoryInvoiceForm() {
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   //HOOKS
-  const { singlerefractionNumber, singlerefractionNumberLoading } =
-    useGetSingleRefractionNumber(id);
+  const { singlerefractionNumber } = useFactoryOrderContext();
   const { refractionDetail, refractionDetailLoading, refractionDetailExist } =
     useGetRefractionDetails(id);
 
   //Store Data
+
   const FrameInvoiceList = useSelector(
     (state: RootState) => state.invoice_frame_filer.selectedFrameList
   );
@@ -112,7 +116,6 @@ export default function FactoryInvoiceForm() {
       dispatch(clearexternalLense());
     };
   }, []);
-  console.log(methods.formState.errors);
 
   const submiteFromData = async (data: InvoiceInputModel) => {
     //HANDLE PAYMENT To REMOVE SENDING  0
@@ -232,123 +235,119 @@ export default function FactoryInvoiceForm() {
   };
 
   return (
-    <FormProvider {...methods}>
-      {refractionDetailLoading ? (
-        <LoadingAnimation
-          loadingMsg={"Checking for existing refraction records..."}
-        />
-      ) : (
-        <Box
-          component={"form"}
-          onSubmit={methods.handleSubmit(submiteFromData)}
-          sx={{
-            width: "100vw", // Ensure the parent takes full width
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center", // Centers the child horizontally
-          }}
-        >
+    <>
+      <FormProvider {...methods}>
+        {refractionDetailLoading ? (
+          <LoadingAnimation
+            loadingMsg={"Checking for existing refraction records..."}
+          />
+        ) : (
           <Box
+            component={"form"}
+            onSubmit={methods.handleSubmit(submiteFromData)}
             sx={{
+              width: "100vw", // Ensure the parent takes full width
               display: "flex",
-              justifyContent: "space-between",
-              maxWidth: "1200px",
-              width: "100%",
-              margin: "0 auto", // Centers it
+              flexDirection: "column",
+              alignItems: "center", // Centers the child horizontally
             }}
           >
             <Box
               sx={{
-                mr: 1,
+                display: "flex",
+                justifyContent: "space-between",
+                maxWidth: "1200px",
+                width: "100%",
+                margin: "0 auto", // Centers it
               }}
             >
               <Box
                 sx={{
-                  display: "flex",
+                  mr: 1,
                 }}
               >
-                <RightEyeTable refractionDetail={refractionDetail} />
-
-                <LeftEyeTable refractionDetail={refractionDetail} />
+                <Box
+                  sx={{
+                    display: "flex",
+                  }}
+                >
+                  <RightEyeTable />
+                  <LeftEyeTable />
+                </Box>
+                <Typography
+                  sx={{ border: "1px solid gray", px: 1, mx: 1, mb: 1 }}
+                >
+                  Refraction Remark - {refractionDetail?.note}
+                </Typography>
               </Box>
-              <Typography
-                sx={{ border: "1px solid gray", px: 1, mx: 1, mb: 1 }}
-              >
-                Refraction Remark - {refractionDetail?.note}
-              </Typography>
+
+              {/* Passing The Note DAta to show in tthe dialog */}
+              <PationtDetails />
+            </Box>
+            <Box
+              sx={{
+                maxWidth: "1200px",
+                width: "100%",
+                margin: "0 auto",
+                display: "flex",
+              }}
+            >
+              <FormControlLabel
+                control={<Checkbox {...methods.register("on_hold")} />}
+                label=" On Hold"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox {...methods.register("fitting_on_collection")} />
+                }
+                label="Fiting on Collection"
+              />
+              <HidenNoteDialog />
+              <StockDrawerBtn />
             </Box>
 
-            {/* Passing The Note DAta to show in tthe dialog */}
-            <PationtDetails
-              refractionNumber={singlerefractionNumber?.refraction_number}
-              prescription={refractionDetail?.prescription}
-              loading={refractionDetailLoading}
-            />
-          </Box>
-          <Box
-            sx={{
-              maxWidth: "1200px",
-              width: "100%",
-              margin: "0 auto",
-              display: "flex",
-            }}
-          >
-            <FormControlLabel
-              control={<Checkbox {...methods.register("on_hold")} />}
-              label=" On Hold"
-            />
-            <FormControlLabel
-              control={
-                <Checkbox {...methods.register("fiting_on_collection")} />
-              }
-              label="Fiting on Collection"
-            />
-            <HidenNoteDialog note={refractionDetail?.note ?? ""} />
-            <StockDrawerBtn />
-          </Box>
-
-          <InvoiceTable />
-          <Box
-            sx={{
-              display: "flex",
-              width: "100%",
-              justifyContent: "center",
-              maxWidth: "1200px",
-              alignItems: "center",
-              gap: 1,
-              my: 1,
-            }}
-          >
-            <TextField
-              {...methods.register("pd")}
-              sx={{ width: 100 }}
-              size="small"
-              type="number"
-              label="PD"
-              InputLabelProps={{
-                shrink: Boolean(methods.watch("pd")),
+            <InvoiceTable />
+            <Box
+              sx={{
+                display: "flex",
+                width: "100%",
+                justifyContent: "center",
+                maxWidth: "1200px",
+                alignItems: "center",
+                gap: 1,
+                my: 1,
               }}
-            />
-            <TextField
-              {...methods.register("h")}
-              sx={{ width: 100 }}
-              type="number"
-              size="small"
-              label="H"
-              InputLabelProps={{
-                shrink: Boolean(methods.watch("h")),
-              }}
-            />
-            <TextField
-              fullWidth
-              size="small"
-              {...methods.register("remark")}
-              sx={{ maxWidth: "1200px" }}
-              placeholder="remark"
-              multiline
-            />
-          </Box>
-          {/* <TextField
+            >
+              <TextField
+                {...methods.register("pd")}
+                sx={{ width: 100 }}
+                size="small"
+                type="number"
+                label="PD"
+                InputLabelProps={{
+                  shrink: Boolean(methods.watch("pd")),
+                }}
+              />
+              <TextField
+                {...methods.register("h")}
+                sx={{ width: 100 }}
+                type="number"
+                size="small"
+                label="H"
+                InputLabelProps={{
+                  shrink: Boolean(methods.watch("h")),
+                }}
+              />
+              <TextField
+                fullWidth
+                size="small"
+                {...methods.register("remark")}
+                sx={{ maxWidth: "1200px" }}
+                placeholder="remark"
+                multiline
+              />
+            </Box>
+            {/* <TextField
             {...methods.register("note")}
             sx={{ my: 1, maxWidth: "1200px", width: "100%" }}
             size="small"
@@ -359,32 +358,33 @@ export default function FactoryInvoiceForm() {
               shrink: Boolean(methods.watch("note")),
             }}
           /> */}
-          <Box
-            sx={{
-              display: "flex",
-              gap: 2,
-              mb: 1,
-              width: "100%",
-              maxWidth: "1200px",
-              justifyContent: "space-between",
-            }}
-          >
-            <OnlinePayInput />
-            <CardInput />
-            <CashInput />
-
-            <Button
-              sx={{ width: "400px" }}
-              size="small"
-              variant="contained"
-              type="submit"
+            <Box
+              sx={{
+                display: "flex",
+                gap: 2,
+                mb: 1,
+                width: "100%",
+                maxWidth: "1200px",
+                justifyContent: "space-between",
+              }}
             >
-              Submit
-            </Button>
+              <OnlinePayInput />
+              <CardInput />
+              <CashInput />
+
+              <Button
+                sx={{ width: "400px" }}
+                size="small"
+                variant="contained"
+                type="submit"
+              >
+                Submit
+              </Button>
+            </Box>
           </Box>
-          <DrawerStock refractionDetail={refractionDetail} />
-        </Box>
-      )}
-    </FormProvider>
+        )}
+      </FormProvider>
+      <DrawerStock />
+    </>
   );
 }

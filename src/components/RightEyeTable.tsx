@@ -1,30 +1,27 @@
 import { Box, TextField, Typography } from "@mui/material";
 const widthInput = 100;
 import { grey } from "@mui/material/colors";
-import { RefractionDetailModel } from "../model/RefractionDetailModel";
-interface RightEyeTableProps {
-  refractionDetail: Pick<
-    RefractionDetailModel,
-    | "hb_rx_right_dist"
-    | "hb_rx_right_near"
-    | "auto_ref_right"
-    | "right_eye_dist_sph"
-    | "right_eye_dist_cyl"
-    | "right_eye_dist_axis"
-    | "right_eye_near_sph"
-  >;
-}
+import { useFactoryOrderContext } from "../context/FactoryOrderContext";
 
-export default function RightEyeTable({
-  refractionDetail,
-}: RightEyeTableProps) {
-  const showDashEmptyVisionValues = (visionValue: string | null) => {
+export default function RightEyeTable() {
+  const { refractionDetail, refractionDetailLoading } =
+    useFactoryOrderContext();
+  const showDashEmptyVisionValues = (
+    visionValue: string | null | undefined
+  ) => {
     if (visionValue) {
       return visionValue;
     } else {
       return "__";
     }
   };
+  if (!refractionDetail && refractionDetailLoading) {
+    return <Typography></Typography>;
+  }
+  if (!refractionDetail && !refractionDetailLoading) {
+    return <Typography></Typography>;
+  }
+
   return (
     <div>
       <Box

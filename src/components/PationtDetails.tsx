@@ -1,39 +1,31 @@
 import {
   TextField,
   Box,
-  Button,
   Paper,
   Typography,
   Chip,
   InputAdornment,
   IconButton,
-  FormControl,
-  Checkbox,
-  FormControlLabel,
 } from "@mui/material";
 import { useFormContext } from "react-hook-form";
-import { useLocation } from "react-router";
-import { useDispatch } from "react-redux";
-import { openStockDrawer } from "../features/invoice/stockDrawerSlice";
+
 import { useEffect, useState } from "react";
 import DateInput from "./inputui/DateInput";
 import FilterPatient from "./FilterPatient";
 import { getBirthdateFromNIC } from "../utils/NictoBirthday";
 
-import HidenNoteDialog from "./HidenNoteDialog";
 import { SearchSharp } from "@mui/icons-material";
 import { birthdayToAge } from "../utils/BirthdayToAge";
-export default function PationtDetails({
-  prescription,
-  loading,
-  refractionNumber,
-}) {
+import { useFactoryOrderContext } from "../context/FactoryOrderContext";
+export default function PationtDetails() {
+  const { refractionDetail, singlerefractionNumber, refractionDetailLoading } =
+    useFactoryOrderContext();
+
   const [openSearchDialog, setOpenSearchDialog] = useState({
     open: false,
     searchType: "",
   });
 
-  const dispatch = useDispatch();
   const {
     register,
     setValue,
@@ -49,6 +41,7 @@ export default function PationtDetails({
         setValue("dob", birthdate);
       }, 0); // Add a slight delay
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [watch("nic")]);
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
@@ -70,12 +63,12 @@ export default function PationtDetails({
           }}
         >
           <Typography fontWeight={"bolder"}>
-            R.N0: {refractionNumber}
+            R.N0: {singlerefractionNumber?.refraction_number}
           </Typography>
           <Typography fontWeight={"bolder"} color="error">
-            {!loading && prescription
+            {!refractionDetailLoading && refractionDetail?.prescription
               ? "Prescription "
-              : !loading && !prescription
+              : !refractionDetailLoading && !refractionDetail?.prescription
               ? " "
               : ""}{" "}
           </Typography>
@@ -118,13 +111,7 @@ export default function PationtDetails({
           }}
         />
         <DateInput />
-        {/* <TextField
-          {...register("dob")}
-          error={!!errors.dob}
-          sx={{ width: 80 }}
-          size="small"
-          label="Age"
-        /> */}
+
         <Chip
           sx={{ p: 1, fontWeight: "bold" }}
           label={birthdayToAge(watch("dob"))}
