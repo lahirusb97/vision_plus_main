@@ -110,20 +110,31 @@ export default function VarificationDialog({
                     }
                   />
                 )}
-              {(validationState.validationType === "both" &&
-                !confimationState.adminID) ||
-                (validationState.validationType === "admin" &&
-                  !confimationState.adminID && (
-                    <AdminForm
-                      onValidationSuccess={(adminID, adminName) =>
-                        setConfimationState((prev) => ({
-                          ...prev,
-                          adminID,
-                          adminName,
-                        }))
-                      }
-                    />
-                  ))}
+              {validationState.validationType === "both" &&
+                confimationState.userID &&
+                !confimationState.adminID && (
+                  <AdminForm
+                    onValidationSuccess={(adminID, adminName) =>
+                      setConfimationState((prev) => ({
+                        ...prev,
+                        adminID,
+                        adminName,
+                      }))
+                    }
+                  />
+                )}
+              {validationState.validationType === "admin" &&
+                !confimationState.adminID && (
+                  <AdminForm
+                    onValidationSuccess={(adminID, adminName) =>
+                      setConfimationState((prev) => ({
+                        ...prev,
+                        adminID,
+                        adminName,
+                      }))
+                    }
+                  />
+                )}
               {validationState.validationType === "both" &&
                 confimationState.userID &&
                 confimationState.adminID && (
@@ -143,6 +154,7 @@ export default function VarificationDialog({
                     </Button>
                   </>
                 )}
+
               {validationState.validationType === "user" &&
                 confimationState.userID && (
                   <>

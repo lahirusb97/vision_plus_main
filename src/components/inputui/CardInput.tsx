@@ -25,7 +25,7 @@ const CardInput: React.FC = () => {
         variant="outlined"
         size="small"
         placeholder="Enter Amount"
-        sx={{ width: 200 }}
+        sx={{ width: 120 }}
         type="number"
         onFocus={(e) => {
           if (e.target.value === "0") {

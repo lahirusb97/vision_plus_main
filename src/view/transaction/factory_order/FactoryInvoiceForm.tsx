@@ -2,11 +2,17 @@ import Box from "@mui/material/Box";
 import { FormProvider, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useNavigate, useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { useEffect } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { Button, TextField } from "@mui/material";
+import {
+  Button,
+  Checkbox,
+  FormControlLabel,
+  TextField,
+  Typography,
+} from "@mui/material";
 // Hooks
 import useGetRefractionDetails from "../../../hooks/useGetRefractionDetails";
 //Models
@@ -34,19 +40,20 @@ import { convertEmptyStringsToNull } from "../../../utils/convertEmptyStringsToN
 import { calculateExternalLensTotal } from "../../../utils/calculateExternalLensTotal";
 import { clearexternalLense } from "../../../features/invoice/externalLenseSlice";
 import { formatUserPayments } from "../../../utils/formatUserPayments";
+import useGetSingleRefractionNumber from "../../../hooks/useGetSingleRefractionNumber";
+import StockDrawerBtn from "../../../components/StockDrawerBtn";
+import HidenNoteDialog from "../../../components/HidenNoteDialog";
+import { extractErrorMessage } from "../../../utils/extractErrorMessage";
 
 export default function FactoryInvoiceForm() {
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  // GET QARY PARAM DATA
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-
-  const customerName = queryParams.get("customerName");
-  const mobileNumber = queryParams.get("mobileNumber");
-  const nic = queryParams.get("nic");
-  const refractionNumber = queryParams.get("refractionNumber");
+  //HOOKS
+  const { singlerefractionNumber, singlerefractionNumberLoading } =
+    useGetSingleRefractionNumber(id);
+  const { refractionDetail, refractionDetailLoading, refractionDetailExist } =
+    useGetRefractionDetails(id);
 
   //Store Data
   const FrameInvoiceList = useSelector(
@@ -72,12 +79,12 @@ export default function FactoryInvoiceForm() {
   const discount = methods.watch("discount");
 
   useEffect(() => {
-    if (customerName || mobileNumber) {
-      methods.setValue("name", customerName);
-      methods.setValue("phone_number", mobileNumber);
-      methods.setValue("nic", nic);
+    if (singlerefractionNumber) {
+      methods.setValue("name", singlerefractionNumber.customer_full_name);
+      methods.setValue("phone_number", singlerefractionNumber.customer_mobile);
+      methods.setValue("nic", singlerefractionNumber.nic);
     }
-  }, []);
+  }, [singlerefractionNumber]);
   const calculateTotal = (list: any[]) => {
     return list.reduce((acc, row) => {
       const rowTotal = parseInt(row.price) * row.buyQty;
@@ -96,8 +103,6 @@ export default function FactoryInvoiceForm() {
   const subtotal = frameTotal + lenseTotal + ExtraTotal;
   //Total  with discount
   const grandTotal = subtotal - discount;
-  const { refractionDetail, refractionDetailLoading, refractionDetailExist } =
-    useGetRefractionDetails(id);
 
   useEffect(() => {
     return () => {
@@ -107,17 +112,7 @@ export default function FactoryInvoiceForm() {
       dispatch(clearexternalLense());
     };
   }, []);
-
-  useEffect(() => {
-    //SET VALUES TO REFRACTION INPUTS
-    if (!refractionDetailLoading && refractionDetailExist) {
-      Object.entries(refractionDetail as RefractionDetailModel).forEach(
-        ([key, value]) => {
-          methods.setValue(key as keyof InvoiceInputModel, value || null);
-        }
-      );
-    }
-  }, [refractionDetailLoading, refractionDetailExist]);
+  console.log(methods.formState.errors);
 
   const submiteFromData = async (data: InvoiceInputModel) => {
     //HANDLE PAYMENT To REMOVE SENDING  0
@@ -220,50 +215,16 @@ export default function FactoryInvoiceForm() {
     ) {
       try {
         if (refractionDetailExist && !refractionDetailLoading) {
+          //TODO USE THIS AND CREATE THE SYSTEM ALL GOOD TO DO IF NO REFRACTION DETAILS NO DETAIL CREATINS
           const responce = await axiosClient.post("/orders/", postData);
           toast.success("Order saved successfully");
           const url = `?order_id=${encodeURIComponent(responce.data.id)}`;
           navigate(`view/${url}`);
         } else {
-          const refDetails = convertEmptyStringsToNull({
-            hb_rx_right_dist: data.hb_rx_right_dist,
-            hb_rx_left_dist: data.hb_rx_left_dist,
-            hb_rx_right_near: data.hb_rx_right_near,
-            hb_rx_left_near: data.hb_rx_left_near,
-            auto_ref_right: data.auto_ref_right,
-            auto_ref_left: data.auto_ref_left,
-            right_eye_dist_sph: data.right_eye_dist_sph,
-            right_eye_dist_cyl: data.right_eye_dist_cyl,
-            right_eye_dist_axis: data.right_eye_dist_axis,
-            right_eye_near_sph: data.right_eye_near_sph,
-            left_eye_dist_sph: data.left_eye_dist_sph,
-            left_eye_dist_cyl: data.left_eye_dist_cyl,
-            left_eye_dist_axis: data.left_eye_dist_axis,
-            left_eye_near_sph: data.left_eye_near_sph,
-            note: data.note,
-            remark: data.remark,
-          });
-
-          // No refraction Data but have Refraction Number
-          const responce = await axiosClient.post("/orders/", {
-            ...postData,
-            refraction_details: {
-              ...refDetails,
-              is_manual: 1,
-              refraction: id,
-            },
-          });
-          toast.success("Order & Refraction Details saved successfully");
-          const url = `?order_id=${encodeURIComponent(responce.data.id)}`;
-
-          navigate(`view/${url}`);
+          toast.error("Refraction Detail Not Found");
         }
       } catch (err) {
-        if (axios.isAxiosError(err)) {
-          toast.error(err.response?.data?.error || "Failed to save Order data");
-        } else {
-          toast.error("An unexpected error occurred Failed to save Order data");
-        }
+        extractErrorMessage(err);
       }
     } else {
       toast.error("No Items ware added");
@@ -296,17 +257,56 @@ export default function FactoryInvoiceForm() {
               margin: "0 auto", // Centers it
             }}
           >
-            <RightEyeTable />
+            <Box
+              sx={{
+                mr: 1,
+              }}
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                }}
+              >
+                <RightEyeTable refractionDetail={refractionDetail} />
 
-            <LeftEyeTable />
+                <LeftEyeTable refractionDetail={refractionDetail} />
+              </Box>
+              <Typography
+                sx={{ border: "1px solid gray", px: 1, mx: 1, mb: 1 }}
+              >
+                Refraction Remark - {refractionDetail?.note}
+              </Typography>
+            </Box>
 
             {/* Passing The Note DAta to show in tthe dialog */}
             <PationtDetails
-              refractionNumber={refractionNumber}
-              DetailExist={refractionDetailExist}
+              refractionNumber={singlerefractionNumber?.refraction_number}
+              prescription={refractionDetail?.prescription}
               loading={refractionDetailLoading}
             />
           </Box>
+          <Box
+            sx={{
+              maxWidth: "1200px",
+              width: "100%",
+              margin: "0 auto",
+              display: "flex",
+            }}
+          >
+            <FormControlLabel
+              control={<Checkbox {...methods.register("on_hold")} />}
+              label=" On Hold"
+            />
+            <FormControlLabel
+              control={
+                <Checkbox {...methods.register("fiting_on_collection")} />
+              }
+              label="Fiting on Collection"
+            />
+            <HidenNoteDialog note={refractionDetail?.note ?? ""} />
+            <StockDrawerBtn />
+          </Box>
+
           <InvoiceTable />
           <Box
             sx={{
@@ -373,11 +373,16 @@ export default function FactoryInvoiceForm() {
             <CardInput />
             <CashInput />
 
-            <Button size="small" variant="contained" fullWidth type="submit">
+            <Button
+              sx={{ width: "400px" }}
+              size="small"
+              variant="contained"
+              type="submit"
+            >
               Submit
             </Button>
           </Box>
-          <DrawerStock />
+          <DrawerStock refractionDetail={refractionDetail} />
         </Box>
       )}
     </FormProvider>

@@ -4,8 +4,8 @@ import useGetBrands from "../../hooks/lense/useGetBrand";
 import useGetColors from "../../hooks/lense/useGetColors";
 import useGetCodes from "../../hooks/lense/useGetCode";
 import CodeCRUD from "./CodeCRUD";
-import { Box, Grid2, Paper } from "@mui/material";
-import useGetLenseTypes from "../../hooks/lense/useGetLenseType";
+import { Box, Paper } from "@mui/material";
+// import useGetLenseTypes from "../../hooks/lense/useGetLenseType";
 export default function AddVariation() {
   const { coatings, refresh: refreshCoatings } = useGetCoatings();
   const { brands: lenseBrand, refresh: refreshLenseBrand } = useGetBrands({
@@ -16,7 +16,7 @@ export default function AddVariation() {
   });
   const { colors, refresh: refreshColors } = useGetColors();
   const { codes, refresh: refreshCodes } = useGetCodes();
-  const { lenseTypes, refresh: refreshLenseTypes } = useGetLenseTypes();
+  // const { lenseTypes, refresh: refreshLenseTypes } = useGetLenseTypes();
 
   return (
     <Box sx={{ display: "flex", gap: 2 }}>

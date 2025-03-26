@@ -123,3 +123,95 @@ export const factoryInvoiceSchema = Yup.object().shape({
   credit_card: Yup.number().required("payment Amount is required").min(0),
   cash: Yup.number().required("payment Amount is required").min(0),
 });
+
+import z from "zod";
+import { schemaPatientFormModel } from "./schemaPartient";
+// Define a new schema that extends schemaPatientFormModel
+const schemaFactoryOrderPatient = schemaPatientFormModel
+  .omit({ patient_note: true }) // Remove `patient_note`
+  .extend({ refraction_id: z.number() }); // Add `refraction_id`
+
+//Order related Data status
+const OrderSchema = z.object({
+  refraction: z.number(),
+  status: z.enum(["pending", "completed", "cancelled"]),
+  sub_total: z.number().nonnegative(),
+  discount: z.number().nonnegative(),
+  total_price: z.number().nonnegative(),
+  order_remark: z.string().optional(),
+  sales_staff_code: z.number(),
+});
+
+const externalLensSchema = z.object({
+  type: z.number(),
+  coating: z.number(),
+  brand: z.number(),
+  price: z.number().nonnegative(),
+});
+
+const externalPowerSchema = z.array(
+  z.object({
+    power: z.number(),
+    value: z.number(),
+    side: z.union([z.enum(["left", "right"]), z.null()]),
+  })
+);
+const schemaOrderExternalLenseFormModel = z.object({
+  lens: externalLensSchema, // add here ,
+  powers: externalPowerSchema,
+  quantity: z.number().int().positive(),
+  price_per_unit: z.number().nonnegative(),
+  subtotal: z.number().nonnegative(),
+  is_non_stock: z.boolean(),
+  external_lens_data: z
+    .object({
+      lens: z.object({
+        type: z.number(),
+        coating: z.number(),
+        brand: z.number(),
+        price: z.number().nonnegative(),
+      }),
+      powers: z.array(
+        z.object({
+          power: z.number(),
+          value: z.number(),
+          side: z.enum(["left", "right"]),
+        })
+      ),
+    })
+    .optional(),
+});
+
+const schemaOrderLenseFormModel = z.object({
+  lens: z.number(), //ID
+  quantity: z.number().int().positive(),
+  price_per_unit: z.number().int().positive(),
+  subtotal: z.number().int().positive(),
+});
+const schemaOrderFrameFormModel = z.object({
+  frame: z.number(), //ID
+  quantity: z.number().int().positive(),
+  price_per_unit: z.number().int().positive(),
+  subtotal: z.number().int().positive(),
+});
+
+const OrderPaymentSchema = z.object({
+  amount: z.number().nonnegative(),
+  payment_method: z.enum(["online_transfer", "credit_card", "cash"]),
+  transaction_status: z.enum(["success", "failed", "pending"]),
+});
+const schemaOrderItem = z.union([
+  schemaOrderLenseFormModel, // Stock Lens Order
+  schemaOrderFrameFormModel, // Frame Order
+  schemaOrderExternalLenseFormModel, // External Lens Order
+]);
+export const schemaFactoryOrderFormModel = z.object({
+  patient: schemaFactoryOrderPatient,
+  order: OrderSchema,
+  order_items: z.array(schemaOrderItem),
+  order_payments: z.array(OrderPaymentSchema),
+});
+
+export type FactoryFullOrderFormModel = z.infer<
+  typeof schemaFactoryOrderFormModel
+>;

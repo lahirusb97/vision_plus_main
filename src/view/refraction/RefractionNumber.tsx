@@ -48,7 +48,7 @@ export default function RefractionNumber() {
   const shandleSubmit = async (data: RefractionNumberFormModel) => {
     setValidationState({
       openValidationDialog: true,
-      validationType: "admin",
+      validationType: "user",
       apiCallFunction: () => sendRefractionData(data),
     });
   };

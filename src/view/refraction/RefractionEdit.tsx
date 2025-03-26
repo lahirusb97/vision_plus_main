@@ -26,10 +26,16 @@ import { useAxiosPost } from "../../hooks/useAxiosPost";
 import { useAxiosPut } from "../../hooks/useAxiosPut";
 import SaveButton from "../../components/SaveButton";
 import LoadingAnimation from "../../components/LoadingAnimation";
+import { useValidationState } from "../../hooks/validations/useValidationState";
+import VarificationDialog from "../../components/VarificationDialog";
 export default function RefractionEdit() {
+  //USER VALIDATION HOOKS
+  const { setValidationState, resetValidation, validationState } =
+    useValidationState();
+  //API CALLS
+  //USER VALIDATION HOOKS
   const navigate = useNavigate();
   const { refraction_id } = useParams();
-
   const { singlerefractionNumber, singlerefractionNumberLoading } =
     useGetSingleRefractionNumber(refraction_id);
   const { refractionDetail, refractionDetailLoading, refractionDetailExist } =
@@ -73,35 +79,63 @@ export default function RefractionEdit() {
 
     if (refraction_id !== undefined && refraction_id !== null) {
       if (refractionDetailExist) {
-        try {
-          await putHandler(`/refractions-details/${refraction_id}/`, {
-            ...data,
-            refraction: refractionDetail.refraction,
-            is_manual: refractionDetail.is_manual,
-          });
-          toast.success("Refraction saved successfully");
-          methods.reset();
-
-          navigate(-1);
-        } catch (err) {
-          extractErrorMessage(err);
-        }
+        //update
+        setValidationState({
+          openValidationDialog: true,
+          validationType: "both",
+          apiCallFunction: () => handleRefractionDetailUpdate(data),
+        });
       } else {
-        try {
-          await postHandler(`/refraction-details/create/`, {
-            ...data,
-            refraction: parseInt(refraction_id),
-          });
-          toast.success("Refraction saved successfully");
-          methods.reset();
-
-          navigate(-1);
-        } catch (err) {
-          extractErrorMessage(err);
-        }
+        //  create
+        setValidationState({
+          openValidationDialog: true,
+          validationType: "user",
+          apiCallFunction: () => handleRefractionDetailCreate(data),
+        });
       }
     }
   };
+
+  //SEND DATA API CALLS
+  const handleRefractionDetailUpdate = async (
+    data: RefractionDetailsFormModel
+  ) => {
+    try {
+      await putHandler(`/refraction-details/${refraction_id}/`, {
+        ...data,
+        refraction: refractionDetail.refraction,
+        is_manual: refractionDetail.is_manual,
+      });
+      toast.success("Refraction saved successfully");
+      methods.reset();
+
+      navigate(-1);
+    } catch (err) {
+      extractErrorMessage(err);
+    }
+  };
+  const handleRefractionDetailCreate = async (
+    data: RefractionDetailsFormModel
+  ) => {
+    if (refraction_id !== undefined && refraction_id !== null) {
+      try {
+        await postHandler(`/refraction-details/create/`, {
+          ...data,
+          refraction: parseInt(refraction_id),
+        });
+        toast.success("Refraction saved successfully");
+        methods.reset();
+
+        navigate(-1);
+      } catch (err) {
+        extractErrorMessage(err);
+      }
+    } else {
+      toast.error("Critical Error Refraction ID missing");
+    }
+  };
+  //SEND DATA API CALLS
+
   const visionTypeStringToNumber = (vision: string | null) => {
     if (typeof vision === "string") {
       return parseFloat(vision);
@@ -168,95 +202,96 @@ export default function RefractionEdit() {
   }
 
   return (
-    <FormProvider {...methods}>
-      <Box sx={{ minWidth: "1000px" }}>
-        <form onSubmit={methods.handleSubmit(onSubmit)}>
-          <Paper
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              padding: 0.5,
-              borderRadius: 2,
-              boxShadow: 2,
-              backgroundColor: "#f5f5f5",
-            }}
-          >
-            {[
-              {
-                label: "Name",
-                value: singlerefractionNumber?.customer_full_name,
-              },
-              { label: "NIC", value: singlerefractionNumber?.nic },
-              {
-                label: "Refraction No.",
-                value: singlerefractionNumber?.refraction_number,
-              },
-              {
-                label: "Mobile",
-                value: singlerefractionNumber?.customer_mobile,
-              },
-            ].map((item, index) => (
-              <Box
-                key={index}
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 1,
-                  minWidth: "20%",
-                }}
-              >
-                <Typography
-                  variant="body1"
+    <>
+      <FormProvider {...methods}>
+        <Box sx={{ minWidth: "1000px" }}>
+          <form onSubmit={methods.handleSubmit(onSubmit)}>
+            <Paper
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                padding: 0.5,
+                borderRadius: 2,
+                boxShadow: 2,
+                backgroundColor: "#f5f5f5",
+              }}
+            >
+              {[
+                {
+                  label: "Name",
+                  value: singlerefractionNumber?.customer_full_name,
+                },
+                { label: "NIC", value: singlerefractionNumber?.nic },
+                {
+                  label: "Refraction No.",
+                  value: singlerefractionNumber?.refraction_number,
+                },
+                {
+                  label: "Mobile",
+                  value: singlerefractionNumber?.customer_mobile,
+                },
+              ].map((item, index) => (
+                <Box
+                  key={index}
                   sx={{
-                    bgcolor: grey[700],
-                    color: "white",
-                    p: "2px 6px",
-                    borderRadius: 1,
-                    minWidth: "40px",
-                    textAlign: "center",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1,
+                    minWidth: "20%",
                   }}
                 >
-                  {item.label}
-                </Typography>
-                <Typography
-                  variant="body1"
-                  fontWeight={500}
-                  color="textSecondary"
-                >
-                  {item.value}
-                </Typography>
-              </Box>
-            ))}
-          </Paper>
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      bgcolor: grey[700],
+                      color: "white",
+                      p: "2px 6px",
+                      borderRadius: 1,
+                      minWidth: "40px",
+                      textAlign: "center",
+                    }}
+                  >
+                    {item.label}
+                  </Typography>
+                  <Typography
+                    variant="body1"
+                    fontWeight={500}
+                    color="textSecondary"
+                  >
+                    {item.value}
+                  </Typography>
+                </Box>
+              ))}
+            </Paper>
 
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "space-between",
-              gap: 1,
-              p: 1,
-            }}
-          >
-            <RefractionDetailsRight />
-            <RefractionDetailsLeft />
-          </Box>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-between",
+                gap: 1,
+                p: 1,
+              }}
+            >
+              <RefractionDetailsRight />
+              <RefractionDetailsLeft />
+            </Box>
 
-          {/* //TODO V2 */}
-          <TextField
-            {...methods.register("note")}
-            sx={{ my: 0.5 }}
-            size="small"
-            fullWidth
-            label="note"
-            multiline
-            InputLabelProps={{
-              shrink: Boolean(methods.watch("note")),
-            }}
-          />
-          <Box sx={{ display: "flex", gap: 1 }}>
-            {/* <TextField
+            {/* //TODO V2 */}
+            <TextField
+              {...methods.register("note")}
+              sx={{ my: 0.5 }}
+              size="small"
+              fullWidth
+              label="note"
+              multiline
+              InputLabelProps={{
+                shrink: Boolean(methods.watch("note")),
+              }}
+            />
+            <Box sx={{ display: "flex", gap: 1 }}>
+              {/* <TextField
               {...methods.register("pd", { valueAsNumber: true })}
               sx={{ my: 0.5, width: 100 }}
               size="small"
@@ -276,40 +311,45 @@ export default function RefractionEdit() {
                 shrink: Boolean(methods.watch("h")),
               }}
             /> */}
-            <TextField
-              {...methods.register("refraction_remark")}
-              sx={{ my: 0.5 }}
-              size="small"
-              fullWidth
-              label="Refraction remark"
-              multiline
-              InputLabelProps={{
-                shrink: Boolean(methods.watch("refraction_remark")),
-              }}
-            />
+              <TextField
+                {...methods.register("refraction_remark")}
+                sx={{ my: 0.5 }}
+                size="small"
+                fullWidth
+                label="Refraction remark"
+                multiline
+                InputLabelProps={{
+                  shrink: Boolean(methods.watch("refraction_remark")),
+                }}
+              />
 
-            <FormControlLabel
-              control={
-                <Checkbox
-                  {...methods.register("shuger")}
-                  checked={methods.watch("shuger") === true}
-                />
-              }
-              label="Sugar"
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  {...methods.register("prescription")}
-                  checked={methods.watch("prescription") === true}
-                />
-              }
-              label="Prescription"
-            />
-            <SaveButton btnText="Save" loading={false} />
-          </Box>
-        </form>
-      </Box>
-    </FormProvider>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    {...methods.register("shuger")}
+                    checked={methods.watch("shuger") === true}
+                  />
+                }
+                label="Sugar"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    {...methods.register("prescription")}
+                    checked={methods.watch("prescription") === true}
+                  />
+                }
+                label="Prescription"
+              />
+              <SaveButton btnText="Save" loading={false} />
+            </Box>
+          </form>
+        </Box>
+      </FormProvider>
+      <VarificationDialog
+        validationState={validationState}
+        resetValidation={resetValidation}
+      />
+    </>
   );
 }

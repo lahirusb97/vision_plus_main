@@ -413,9 +413,9 @@ export default function OrderEditFrom() {
             margin: "0 auto", // Centers it
           }}
         >
-          <RightEyeTable />
+          {/* <RightEyeTable />
 
-          <LeftEyeTable />
+          <LeftEyeTable /> */}
 
           {/* Passing The Note DAta to show in tthe dialog */}
           <PationtDetails
