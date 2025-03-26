@@ -1,6 +1,6 @@
 export interface RefractionDetailModel {
   id: number;
-  refraction: number;
+  refraction: number; //ID
   patient: number;
   hb_rx_right_dist: string | null;
   hb_rx_left_dist: string | null;
@@ -24,10 +24,9 @@ export interface RefractionDetailModel {
   left_eye_dist_cyl: string | null;
   left_eye_dist_axis: string | null;
   left_eye_near_sph: string | null;
-  pd: string;
-  h: string;
+  prescription: boolean;
   shuger: boolean;
-  remark: string | null;
+  refraction_remark: string | null;
   note: string | null;
   is_manual: boolean;
 }

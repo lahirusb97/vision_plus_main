@@ -1,12 +1,12 @@
 import { useState, useEffect, useCallback } from "react";
 import axiosClient from "../../axiosClient";
-import { AxiosError } from "axios";
 import { LenseModel } from "../../model/LenseModel";
+import { extractErrorMessage } from "../../utils/extractErrorMessage";
 
 interface UseGetSingleLenseReturn {
   singleLense: LenseModel | null;
   singleLenseLoading: boolean;
-  singleLenseError: string | null;
+  singleLenseError: boolean;
   refresh: () => Promise<void>;
 }
 
@@ -16,7 +16,7 @@ const useGetSingleLense = (
   const [state, setState] = useState<Omit<UseGetSingleLenseReturn, "refresh">>({
     singleLense: null,
     singleLenseLoading: true,
-    singleLenseError: null,
+    singleLenseError: false,
   });
 
   const fetchSingleLense = useCallback(async () => {
@@ -25,7 +25,7 @@ const useGetSingleLense = (
         setState((prev) => ({
           ...prev,
           singleLenseLoading: true,
-          singleLenseError: null,
+          singleLenseError: false,
         }));
 
         const response = await axiosClient.get<LenseModel>(
@@ -35,21 +35,18 @@ const useGetSingleLense = (
         setState({
           singleLense: response.data,
           singleLenseLoading: false,
-          singleLenseError: null,
+          singleLenseError: false,
         });
       } catch (err) {
-        const error = err as AxiosError;
-        const errorMessage =
-          error.response?.data?.message || "Failed to fetch the singleLense.";
-
-        setState((prev) => ({
-          ...prev,
+        extractErrorMessage(err);
+        setState({
+          singleLense: null,
           singleLenseLoading: false,
-          singleLenseError: errorMessage,
-        }));
+          singleLenseError: true,
+        });
       }
     }
-  }, []);
+  }, [singleLenseId]);
 
   useEffect(() => {
     fetchSingleLense();

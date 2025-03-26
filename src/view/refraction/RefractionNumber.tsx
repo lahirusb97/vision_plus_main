@@ -8,12 +8,18 @@ import {
 } from "../../validations/schemaRefractionNumber";
 import { useAxiosPost } from "../../hooks/useAxiosPost";
 import { extractErrorMessage } from "../../utils/extractErrorMessage";
+import toast from "react-hot-toast";
+import { useValidationState } from "../../hooks/validations/useValidationState";
+import VarificationDialog from "../../components/VarificationDialog";
 import SaveButton from "../../components/SaveButton";
+import { RefractionNumberModel } from "../../model/RefractionModel";
+
 export default function RefractionNumber() {
   const navigate = useNavigate();
-
   //API CALLS
-  const { postHandler, postHandlerloading } = useAxiosPost();
+  const { postHandler } = useAxiosPost();
+  const { setValidationState, resetValidation, validationState } =
+    useValidationState();
   //API CALLS
 
   const {
@@ -24,20 +30,27 @@ export default function RefractionNumber() {
   } = useForm<RefractionNumberFormModel>({
     resolver: zodResolver(schemaRefractionNumber),
   });
-  const shandleSubmit = async (data: RefractionNumberFormModel) => {
+
+  const sendRefractionData = async (data: RefractionNumberFormModel) => {
     try {
-      const responseData = await postHandler("/refractions/create/", data);
-      const params = new URLSearchParams({
-        customer_full_name: responseData.data.data.customer_full_name,
-        nic: responseData.data.data.nic,
-        customer_mobile: responseData.data.data.customer_mobile,
-        refraction_number: responseData.data.data.refraction_number,
-      });
+      const responseData: { data: { data: RefractionNumberModel } } =
+        await postHandler("refractions/create/", data);
+
+      toast.success(
+        `Refraction created for ${responseData.data.data.customer_full_name}`
+      );
       reset();
-      navigate(`success?${params.toString()}`);
+      navigate(`${responseData.data.data.id}/success/`);
     } catch (error) {
       extractErrorMessage(error);
     }
+  };
+  const shandleSubmit = async (data: RefractionNumberFormModel) => {
+    setValidationState({
+      openValidationDialog: true,
+      validationType: "user",
+      apiCallFunction: () => sendRefractionData(data),
+    });
   };
 
   return (
@@ -53,7 +66,7 @@ export default function RefractionNumber() {
         sx={{
           padding: 3,
           width: "100%",
-          maxWidth: 400,
+          maxWidth: 500,
           borderRadius: 2,
         }}
       >
@@ -89,7 +102,7 @@ export default function RefractionNumber() {
             variant="outlined"
             margin="normal"
             required
-            type="tel"
+            type="number"
             error={!!errors.customer_mobile}
             helperText={errors.customer_mobile?.message}
           />
@@ -110,11 +123,12 @@ export default function RefractionNumber() {
                     helperText={errors.branch_id?.message}
                     defaultValue={getUserCurentBranch()?.id}
                   /> */}
-          <SaveButton
-            btnText="Genarate New Refraction Number"
-            loading={postHandlerloading}
-          />
+          <SaveButton btnText="Genarate Refraction Number" loading={false} />
         </form>
+        <VarificationDialog
+          validationState={validationState}
+          resetValidation={resetValidation}
+        />
       </Paper>
     </Box>
   );

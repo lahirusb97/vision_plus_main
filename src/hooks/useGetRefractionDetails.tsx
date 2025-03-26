@@ -31,7 +31,7 @@ const useGetRefractionDetails = (
 
     try {
       const response = await axiosClient.get<RefractionDetailModel>(
-        `/refractions/${refraction_id}/`
+        `/refraction-details/${refraction_id}/`
       );
       setrefractionDetail(response.data);
       setrefractionDetailExist(true);

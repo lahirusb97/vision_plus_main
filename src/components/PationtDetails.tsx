@@ -24,7 +24,7 @@ import HidenNoteDialog from "./HidenNoteDialog";
 import { SearchSharp } from "@mui/icons-material";
 import { birthdayToAge } from "../utils/BirthdayToAge";
 export default function PationtDetails({
-  DetailExist,
+  prescription,
   loading,
   refractionNumber,
 }) {
@@ -73,10 +73,10 @@ export default function PationtDetails({
             R.N0: {refractionNumber}
           </Typography>
           <Typography fontWeight={"bolder"} color="error">
-            {!loading && DetailExist
-              ? "Internal "
-              : !loading && !DetailExist
-              ? "Internal "
+            {!loading && prescription
+              ? "Prescription "
+              : !loading && !prescription
+              ? " "
               : ""}{" "}
           </Typography>
         </Paper>
@@ -166,6 +166,19 @@ export default function PationtDetails({
           InputLabelProps={{
             shrink: Boolean(watch("nic")),
           }}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  onClick={() =>
+                    setOpenSearchDialog({ open: true, searchType: "nic" })
+                  }
+                >
+                  <SearchSharp />
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
         />
       </Box>
       <TextField
@@ -177,48 +190,6 @@ export default function PationtDetails({
           shrink: Boolean(watch("address")),
         }}
       />
-
-      <Box sx={{ display: "flex", gap: 1 }}>
-        <HidenNoteDialog />
-
-        <Button
-          onClick={() => dispatch(openStockDrawer("frame"))}
-          color="primary"
-          variant="contained"
-        >
-          Frames
-        </Button>
-        <Button
-          onClick={() => dispatch(openStockDrawer("lense"))}
-          color="primary"
-          variant="contained"
-        >
-          Lense
-        </Button>
-        {/* <Button
-            onClick={() => dispatch(openStockDrawer("none_stock_lense"))}
-            color="secondary"
-            variant="contained"
-          >
-            None Stock Lense
-          </Button> */}
-        <Button
-          onClick={() => dispatch(openStockDrawer("none_stock_lense"))}
-          color="secondary"
-          variant="contained"
-        >
-          None Stock Lense
-        </Button>
-        <FormControlLabel
-          control={
-            <Checkbox
-              {...register("shuger")}
-              checked={watch("shuger") === true}
-            />
-          }
-          label="Sugar"
-        />
-      </Box>
     </Box>
   );
 }

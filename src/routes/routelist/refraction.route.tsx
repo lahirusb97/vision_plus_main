@@ -19,7 +19,7 @@ export const refractionRoutes: RouteObject[] = [
         element: <RefractionNumber />,
       },
       {
-        path: "success/",
+        path: ":refraction_id/success/",
         element: <RefractionGenarated />,
       },
       {
@@ -33,7 +33,7 @@ export const refractionRoutes: RouteObject[] = [
     element: <RefractionTable />,
   },
   {
-    path: "refraction/:id",
+    path: "refraction/:refraction_id",
     element: (
       <Suspense fallback={<div>Loading..</div>}>
         <RefractionEdit />

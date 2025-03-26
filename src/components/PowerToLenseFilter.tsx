@@ -32,23 +32,50 @@ import {
   singleVisionID,
 } from "../data/staticVariables";
 import { AxiosError } from "axios";
+import { RefractionDetailModel } from "../model/RefractionDetailModel";
 interface LenseWithQty extends LenseModel {
   buyQty: number;
   lenseSide: string;
 }
-export default function PowerToLenseFilter() {
+interface RefractionDetailProps {
+  refractionDetail: Pick<
+    RefractionDetailModel,
+    | "right_eye_dist_sph"
+    | "right_eye_dist_cyl"
+    | "right_eye_dist_axis"
+    | "right_eye_near_sph"
+    | "left_eye_dist_sph"
+    | "left_eye_dist_cyl"
+    | "left_eye_dist_axis"
+    | "left_eye_near_sph"
+  > | null;
+}
+export default function PowerToLenseFilter({
+  refractionDetail,
+}: RefractionDetailProps) {
   const dispatch = useDispatch();
-  const [leftPowers, setLeftPowers] = useState({
-    left_eye_dist_sph: "",
-    left_eye_dist_cyl: "",
-    left_eye_near_sph: "",
+  const [leftPowers, setLeftPowers] = useState<
+    Pick<
+      RefractionDetailModel,
+      "left_eye_dist_sph" | "left_eye_dist_cyl" | "left_eye_near_sph"
+    >
+  >({
+    left_eye_dist_sph: null,
+    left_eye_dist_cyl: null,
+    left_eye_near_sph: null,
   });
-  const [rightPowers, setRightPowers] = useState({
-    right_eye_dist_sph: "",
-    right_eye_dist_cyl: "",
-    right_eye_near_sph: "",
+
+  const [rightPowers, setRightPowers] = useState<
+    Pick<
+      RefractionDetailModel,
+      "right_eye_dist_sph" | "right_eye_dist_cyl" | "right_eye_near_sph"
+    >
+  >({
+    right_eye_dist_sph: null,
+    right_eye_dist_cyl: null,
+    right_eye_near_sph: null,
   });
-  const { watch } = useFormContext();
+
   const { brands, brandsLoading } = useGetBrands({
     brand_type: "lens",
   });
@@ -73,18 +100,20 @@ export default function PowerToLenseFilter() {
     coating: null,
     brand: null,
   });
+  console.log("selectedLenseList", refractionDetail);
+
   useEffect(() => {
     setLeftPowers({
-      left_eye_dist_sph: watch("left_eye_dist_sph"),
-      left_eye_dist_cyl: watch("left_eye_dist_cyl"),
-      left_eye_near_sph: watch("left_eye_near_sph"),
+      left_eye_dist_sph: refractionDetail?.left_eye_dist_sph ?? null,
+      left_eye_dist_cyl: refractionDetail?.left_eye_dist_cyl ?? null,
+      left_eye_near_sph: refractionDetail?.left_eye_near_sph ?? null,
     });
     setRightPowers({
-      right_eye_dist_sph: watch("right_eye_dist_sph"),
-      right_eye_dist_cyl: watch("right_eye_dist_cyl"),
-      right_eye_near_sph: watch("right_eye_near_sph"),
+      right_eye_dist_sph: refractionDetail?.right_eye_dist_sph ?? null,
+      right_eye_dist_cyl: refractionDetail?.right_eye_dist_cyl ?? null,
+      right_eye_near_sph: refractionDetail?.right_eye_near_sph ?? null,
     });
-  }, [watch]);
+  }, [refractionDetail]);
 
   const addRightLense = () => {
     if (selectedLenseRight) {

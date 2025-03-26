@@ -6,10 +6,16 @@ import { RootState } from "../../store/store";
 import { useDispatch, useSelector } from "react-redux";
 import { closeStockDrawer } from "../../features/invoice/stockDrawerSlice";
 import FrameStock from "../../view/transaction/factory_order/FrameStock";
-import LensStock from "../../view/transaction/factory_order/LensStock";
 import ExternalLense from "../../view/transaction/factory_order/ExternalLense";
+import PowerToLenseFilter from "../PowerToLenseFilter";
+import { RefractionDetailModel } from "../../model/RefractionDetailModel";
+interface RefractionDetailProps {
+  refractionDetail: RefractionDetailModel | null;
+}
 
-export default function DrawerStock() {
+export default function DrawerStock({
+  refractionDetail,
+}: RefractionDetailProps) {
   const dispatch = useDispatch();
   const stockDrawerType = useSelector(
     (state: RootState) => state.stock_drawer.stockDrawerType
@@ -36,7 +42,7 @@ export default function DrawerStock() {
         {stockDrawerType === "frame" ? (
           <FrameStock />
         ) : stockDrawerType === "lense" ? (
-          <LensStock />
+          <PowerToLenseFilter refractionDetail={refractionDetail} />
         ) : stockDrawerType === "none_stock_lense" ? (
           <ExternalLense />
         ) : (

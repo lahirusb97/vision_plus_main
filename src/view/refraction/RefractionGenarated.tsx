@@ -1,16 +1,19 @@
 import React from "react";
 import { Paper, Typography, Button, Box, Divider } from "@mui/material";
-import { useLocation, useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
+import useGetSingleRefractionNumber from "../../hooks/useGetSingleRefractionNumber";
+import LoadingAnimation from "../../components/LoadingAnimation";
 
 export default function RefractionGenerated() {
   const navigate = useNavigate();
-  const location = useLocation();
+  const { refraction_id } = useParams();
+  const { singlerefractionNumber, singlerefractionNumberLoading } =
+    useGetSingleRefractionNumber(refraction_id);
 
   // Parse query parameters
-  const searchParams = new URLSearchParams(location.search);
-  const refraction_number = searchParams.get("refraction_number");
-  const customer_full_name = searchParams.get("customer_full_name");
-  const customer_mobile = searchParams.get("customer_mobile");
+  if (singlerefractionNumberLoading) {
+    return <LoadingAnimation loadingMsg="Refraction Number Details Loading" />;
+  }
 
   return (
     <Box
@@ -41,7 +44,7 @@ export default function RefractionGenerated() {
               <strong>Refraction Number</strong>
             </Typography>
             <Typography variant="body1" gutterBottom>
-              {refraction_number}
+              {singlerefractionNumber?.refraction_number}
             </Typography>
           </Box>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
@@ -49,7 +52,7 @@ export default function RefractionGenerated() {
               <strong>Customer Number</strong>
             </Typography>
             <Typography variant="body1" gutterBottom>
-              {customer_full_name}
+              {singlerefractionNumber?.customer_full_name}
             </Typography>
           </Box>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
@@ -57,13 +60,20 @@ export default function RefractionGenerated() {
               <strong>Mobile </strong>
             </Typography>
             <Typography variant="body1" gutterBottom>
-              {customer_mobile}
+              {singlerefractionNumber?.customer_mobile}
+            </Typography>
+          </Box>
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            <Typography variant="body1" gutterBottom>
+              <strong>Nice </strong>
+            </Typography>
+            <Typography variant="body1" gutterBottom>
+              {singlerefractionNumber?.nic}
             </Typography>
           </Box>
         </Box>
 
         <Divider sx={{ my: 2 }} />
-
         <Button
           variant="contained"
           fullWidth

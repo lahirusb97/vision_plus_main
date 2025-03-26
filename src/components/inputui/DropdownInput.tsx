@@ -45,6 +45,7 @@ const AutocompleteInputField: React.FC<AutocompleteInputFieldProps> = ({
 
   return (
     <Autocomplete
+      size="small"
       fullWidth
       disabled={loading}
       value={selectedOption}

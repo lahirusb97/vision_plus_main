@@ -14,7 +14,7 @@ import {
   Skeleton,
   TextField,
 } from "@mui/material";
-import { Delete, Edit, History, Loop } from "@mui/icons-material";
+import { Delete, Edit, Loop } from "@mui/icons-material";
 import { useNavigate } from "react-router";
 import { OtherItemModel } from "../../../model/OtherItemModel";
 import { useDeleteDialog } from "../../../context/DeleteDialogContext";

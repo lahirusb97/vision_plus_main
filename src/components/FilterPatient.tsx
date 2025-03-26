@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import {
   Button,
   Table,
@@ -16,6 +16,7 @@ import {
   IconButton,
   Typography,
   TextField,
+  Pagination,
 } from "@mui/material";
 import { useFormContext } from "react-hook-form";
 import axiosClient from "../axiosClient";
@@ -25,7 +26,8 @@ import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 import CloseIcon from "@mui/icons-material/Close";
 import toast from "react-hot-toast";
-import { AxiosError } from "axios";
+import { extractErrorMessage } from "../utils/extractErrorMessage";
+import useGetAllPatient from "../hooks/useGetAllPatient";
 
 export default function FilterPatient({
   open,
@@ -36,40 +38,40 @@ export default function FilterPatient({
   searchType: string;
   handleClose: () => void;
 }) {
-  const [patients, setPatients] = useState<PatientModel[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [fetchpatientData, setfetchPatientData] = useState<boolean>(false);
+  const {
+    patientLimit,
+    patientsList,
+    patientLoading,
+    totalPatientCount,
+    handlePatientSearch,
+    patientPageNavigation,
+    refreshPatientList,
+  } = useGetAllPatient({ open: fetchpatientData });
+
   const { setValue, watch } = useFormContext();
   const [editMode, setEditMode] = useState<number | null>(null);
   const [editedPatient, setEditedPatient] = useState<Partial<PatientModel>>({});
 
   useEffect(() => {
     if (open) {
-      const fetchPatients = async () => {
-        setLoading(true);
-        try {
-          const response = await axiosClient.get(
-            `patients/?search=${
-              searchType === "phone_number"
-                ? watch("phone_number")
-                : watch("name")
-            }`
-          );
-          setPatients(response.data.results);
-        } catch (error) {
-          console.error("Error fetching patients:", error);
-          toast.error("Network Error check your internet Connection");
-        } finally {
-          setLoading(false);
-        }
-      };
-      fetchPatients();
+      if (searchType === "phone_number") {
+        handlePatientSearch(watch("phone_number"));
+        setfetchPatientData(true);
+      } else if (searchType === "name") {
+        handlePatientSearch(watch("name"));
+        setfetchPatientData(true);
+      } else if (searchType === "nic") {
+        handlePatientSearch(watch("nic"));
+        setfetchPatientData(true);
+      }
     } else {
-      setPatients([]);
-      setLoading(false);
       setEditedPatient({});
       setEditMode(null);
+      setfetchPatientData(false);
     }
-  }, [open]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, searchType]);
 
   const handleEditClick = (patient: PatientModel) => {
     setEditMode(patient.id);
@@ -90,19 +92,17 @@ export default function FilterPatient({
 
   const handleSave = async (id: number) => {
     try {
-      const response = await axiosClient.put(`patients/${id}/`, editedPatient);
-      setPatients((prevPatients) =>
-        prevPatients.map((p) => (p.id === id ? response.data : p))
+      const response: { data: PatientModel } = await axiosClient.put(
+        `patients/${id}/`,
+        editedPatient
       );
+      setEditedPatient({});
+      setfetchPatientData(true);
+      refreshPatientList();
       setEditMode(null);
-      toast.success("Patient updated successfully");
+      toast.success(`Patient ${response.data.name} new changes saved`);
     } catch (error) {
-      if (error instanceof AxiosError) {
-        toast.error(
-          error.response?.data?.message ||
-            "Patient updated Failed check your internet"
-        );
-      }
+      extractErrorMessage(error);
     }
   };
 
@@ -110,7 +110,7 @@ export default function FilterPatient({
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
       <DialogTitle>Search Patient</DialogTitle>
       <DialogContent>
-        {loading ? (
+        {patientLoading ? (
           <CircularProgress />
         ) : (
           <TableContainer component={Paper}>
@@ -118,14 +118,16 @@ export default function FilterPatient({
               <TableHead>
                 <TableRow>
                   <TableCell>Add</TableCell>
+                  <TableCell>Edit</TableCell>
                   <TableCell>Name</TableCell>
                   <TableCell>Phone</TableCell>
                   <TableCell>NIC</TableCell>
-                  <TableCell>Edit</TableCell>
+                  <TableCell>address</TableCell>
+                  <TableCell>Peatint Note</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {patients.map((patient: PatientModel) => (
+                {patientsList.map((patient: PatientModel) => (
                   <TableRow key={patient.id}>
                     {/* Select Button */}
                     <TableCell>
@@ -136,13 +138,35 @@ export default function FilterPatient({
                           setValue("name", patient.name);
                           setValue("phone_number", patient.phone_number);
                           setValue("nic", patient.nic);
+                          setValue("address", patient.address);
                           handleClose();
                         }}
                       >
                         <AddCircleIcon />
                       </IconButton>
                     </TableCell>
-
+                    <TableCell>
+                      {editMode === patient.id ? (
+                        <>
+                          <IconButton
+                            color="success"
+                            onClick={() => handleSave(patient.id)}
+                          >
+                            <SaveIcon />
+                          </IconButton>
+                          <IconButton color="error" onClick={handleCancelEdit}>
+                            <CloseIcon />
+                          </IconButton>
+                        </>
+                      ) : (
+                        <IconButton
+                          color="primary"
+                          onClick={() => handleEditClick(patient)}
+                        >
+                          <EditIcon />
+                        </IconButton>
+                      )}
+                    </TableCell>
                     {/* Editable Name Field */}
                     <TableCell>
                       {editMode === patient.id ? (
@@ -184,41 +208,55 @@ export default function FilterPatient({
                         patient.nic
                       )}
                     </TableCell>
-
-                    {/* Edit Actions */}
                     <TableCell>
                       {editMode === patient.id ? (
-                        <>
-                          <IconButton
-                            color="success"
-                            onClick={() => handleSave(patient.id)}
-                          >
-                            <SaveIcon />
-                          </IconButton>
-                          <IconButton color="error" onClick={handleCancelEdit}>
-                            <CloseIcon />
-                          </IconButton>
-                        </>
+                        <TextField
+                          name="address"
+                          value={editedPatient.address || ""}
+                          onChange={handleChange}
+                          size="small"
+                        />
                       ) : (
-                        <IconButton
-                          color="primary"
-                          onClick={() => handleEditClick(patient)}
-                        >
-                          <EditIcon />
-                        </IconButton>
+                        patient.address
                       )}
                     </TableCell>
+                    <TableCell>
+                      {editMode === patient.id ? (
+                        <TextField
+                          name="patient_note"
+                          value={editedPatient.patient_note || ""}
+                          onChange={handleChange}
+                          size="small"
+                        />
+                      ) : (
+                        patient.patient_note
+                      )}
+                    </TableCell>
+
+                    {/* Edit Actions */}
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
+            <Pagination
+              count={Math.ceil(totalPatientCount / patientLimit)}
+              onChange={(_e: ChangeEvent<unknown>, value: number) => {
+                patientPageNavigation(value);
+              }}
+            ></Pagination>
           </TableContainer>
         )}
 
-        {patients.length === 0 && !loading && (
+        {patientsList.length === 0 && !patientLoading && (
           <Typography p={1} textAlign={"center"} color="error">
-            No patients found for Name: {watch("name")} & Mobile Number:{" "}
-            {watch("phone_number")}
+            No patients information found for{" "}
+            {`${searchType === "nic" ? "NIC - " + watch("nic") : ""} ${
+              searchType === "name" ? "Name - " + watch("name") : ""
+            } ${
+              searchType === "phone_number"
+                ? "Phone Number - " + watch("phone_number")
+                : ""
+            }`}
           </Typography>
         )}
       </DialogContent>

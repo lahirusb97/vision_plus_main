@@ -1,25 +1,22 @@
 import * as React from "react";
-import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import Typography from "@mui/material/Typography";
-import { useFormContext } from "react-hook-form";
-import { Box, IconButton, Paper } from "@mui/material";
+import { Badge, Box, IconButton, Paper } from "@mui/material";
 import { Close } from "@mui/icons-material";
-
-const emails = ["username@gmail.com", "user02@gmail.com"];
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import { RefractionDetailModel } from "../model/RefractionDetailModel";
 
 export interface SimpleDialogProps {
   open: boolean;
-  selectedValue: string;
-  onClose: (value: string) => void;
+  note: string | null;
+  onClose: () => void;
 }
 
 function SimpleDialog(props: SimpleDialogProps) {
-  const { onClose, selectedValue, open } = props;
-  const { watch } = useFormContext();
+  const { onClose, note, open } = props;
 
   const handleClose = () => {
-    onClose(selectedValue);
+    onClose();
   };
 
   return (
@@ -44,37 +41,35 @@ function SimpleDialog(props: SimpleDialogProps) {
             fontWeight={"bold"}
             textAlign={"center"}
           >
-            {watch("note") && watch("note")}
+            {note ? note : ""}
           </Typography>
         </Paper>
       </Paper>
     </Dialog>
   );
 }
+type NoteOnly = Pick<RefractionDetailModel, "note">;
 
-export default function HidenNoteDialog() {
+export default function HidenNoteDialog({ note }: NoteOnly) {
   const [open, setOpen] = React.useState(false);
-  const [selectedValue, setSelectedValue] = React.useState(emails[1]);
 
   const handleClickOpen = () => {
     setOpen(true);
   };
 
-  const handleClose = (value: string) => {
+  const handleClose = () => {
     setOpen(false);
-    setSelectedValue(value);
   };
 
   return (
     <div>
-      <Button onClick={handleClickOpen} color="error" variant="contained">
-        Note
-      </Button>
-      <SimpleDialog
-        selectedValue={selectedValue}
-        open={open}
-        onClose={handleClose}
-      />
+      <IconButton onClick={handleClickOpen}>
+        <Badge badgeContent={note ? 1 : 0} color="error">
+          <NotificationsIcon color="action" />
+        </Badge>
+      </IconButton>
+
+      <SimpleDialog note={note} open={open} onClose={handleClose} />
     </div>
   );
 }
