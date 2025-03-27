@@ -36,7 +36,9 @@ const OtherItemEdit = () => {
   const submiteData = async (data: Pick<OtherItemFormModel, "price">) => {
     if (singleotherItem) {
       const postDAta = {
-        price: data.price,
+        item: {
+          price: data.price,
+        },
       };
       try {
         patchHandler(`/other-items/${id}/`, postDAta);

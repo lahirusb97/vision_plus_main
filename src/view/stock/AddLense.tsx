@@ -45,6 +45,19 @@ const AddLens = () => {
     reset,
   } = useForm<LenseFormModel>({
     resolver: zodResolver(schemaLens),
+    defaultValues: {
+      lensType: undefined,
+      brand: undefined,
+      coating: undefined,
+      price: undefined,
+      qty: undefined,
+      sph: undefined,
+      cyl: undefined,
+      add: undefined,
+      side: null,
+      branch_id: getUserCurentBranch()?.id,
+      limit: undefined,
+    },
   });
   const lensTypeValue = watch("lensType");
 
@@ -109,6 +122,7 @@ const AddLens = () => {
       ],
       powers: powersList.filter((power) => power.value !== null),
     };
+    console.log(lense);
     try {
       await postHandler("lenses/", lense);
       reset();

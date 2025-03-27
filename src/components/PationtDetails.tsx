@@ -16,11 +16,16 @@ import { getBirthdateFromNIC } from "../utils/NictoBirthday";
 
 import { SearchSharp } from "@mui/icons-material";
 import { birthdayToAge } from "../utils/BirthdayToAge";
-import { useFactoryOrderContext } from "../context/FactoryOrderContext";
-export default function PationtDetails() {
-  const { refractionDetail, singlerefractionNumber, refractionDetailLoading } =
-    useFactoryOrderContext();
-
+interface PationtDetailsProps {
+  prescription: string;
+  refractionDetailLoading: boolean;
+  refractionNumber: string | null | undefined;
+}
+export default function PationtDetails({
+  prescription,
+  refractionDetailLoading,
+  refractionNumber,
+}: PationtDetailsProps) {
   const [openSearchDialog, setOpenSearchDialog] = useState({
     open: false,
     searchType: "",
@@ -63,12 +68,12 @@ export default function PationtDetails() {
           }}
         >
           <Typography fontWeight={"bolder"}>
-            R.N0: {singlerefractionNumber?.refraction_number}
+            R.N0: {refractionNumber ? refractionNumber : ""}
           </Typography>
           <Typography fontWeight={"bolder"} color="error">
-            {!refractionDetailLoading && refractionDetail?.prescription
+            {!refractionDetailLoading && prescription
               ? "Prescription "
-              : !refractionDetailLoading && !refractionDetail?.prescription
+              : !refractionDetailLoading && prescription
               ? " "
               : ""}{" "}
           </Typography>

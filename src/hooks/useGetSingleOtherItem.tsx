@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { OtherItemModel } from "../model/OtherItemModel";
 import { extractErrorMessage } from "../utils/extractErrorMessage";
 import axiosClient from "../axiosClient";
+import { getUserCurentBranch } from "../utils/authDataConver";
 
 export default function useGetSingleOtherItem(id: string | undefined) {
   const [singleotherItem, setSingleOtherItem] = useState<OtherItemModel | null>(
@@ -13,7 +14,11 @@ export default function useGetSingleOtherItem(id: string | undefined) {
   const loadData = useCallback(async () => {
     if (id) {
       try {
-        const response = await axiosClient.get(`other-items/${id}/`);
+        const response = await axiosClient.get(`other-items/${id}/`, {
+          params: {
+            branch_id: getUserCurentBranch()?.id,
+          },
+        });
         setSingleOtherItem(response.data);
       } catch (error) {
         extractErrorMessage(error);

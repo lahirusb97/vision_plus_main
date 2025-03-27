@@ -32,26 +32,50 @@ const OtherItemQtyUpdate = () => {
     formState: { errors },
     register,
     reset,
-  } = useForm<Pick<OtherItemFormModel, "qty" | "initial_count" | "branch_id">>({
+  } = useForm<
+    Pick<OtherItemFormModel, "qty" | "initial_count" | "branch_id" | "limit">
+  >({
     resolver: zodResolver(
-      schemaOtherItem.pick({ qty: true, initial_count: true, branch_id: true })
+      schemaOtherItem.pick({
+        qty: true,
+        initial_count: true,
+        branch_id: true,
+        limit: true,
+      })
     ),
+    defaultValues: {
+      qty: undefined,
+      initial_count: undefined,
+      branch_id: getUserCurentBranch()?.id,
+      limit: undefined,
+    },
   });
 
   //TODO alert levels Upgrade
   const submiteData = async (
-    data: Pick<OtherItemFormModel, "qty" | "initial_count" | "branch_id">
+    data: Pick<
+      OtherItemFormModel,
+      "qty" | "initial_count" | "branch_id" | "limit"
+    >
   ) => {
-    if (singleotherItem) {
+    if (singleotherItem && !singleotherItemLoading) {
       const postDAta = {
-        qty: singleotherItem?.stock[0]?.qty + data.qty,
-        initial_count: singleotherItem?.stock[0]?.qty + data.qty,
-        branch_id: data.branch_id,
+        stock: [
+          {
+            other_item_id: singleotherItem.item.id,
+            qty: (singleotherItem.stock[0]?.qty || 0) + data.qty,
+            initial_count: (singleotherItem.stock[0]?.qty || 0) + data.qty,
+            branch_id: data.branch_id,
+            limit: data.limit,
+          },
+        ],
       };
       console.log(postDAta);
 
       try {
-        patchHandler(`/other-items/${id}/`, { stock: postDAta });
+        const responce = await patchHandler(`/other-items/${id}/`, postDAta);
+        console.log(responce);
+
         toast.success(
           `${singleotherItem?.item.name} Quantity Updated Successfully`
         );
@@ -91,7 +115,7 @@ const OtherItemQtyUpdate = () => {
             sx={{ marginX: 0.5, backgroundColor: "#237ADE", color: "white" }}
           />
           <Chip
-            label={`Avilabal Quantity - ${singleotherItem?.stock[0]?.qty}`}
+            label={`Avilabal Quantity - ${singleotherItem?.stock[0]?.qty || 0}`}
             color="primary"
             sx={{ marginX: 0.5, backgroundColor: "#237ADE", color: "white" }}
           />
@@ -106,6 +130,21 @@ const OtherItemQtyUpdate = () => {
           {...register("qty", { valueAsNumber: true, min: 0, required: true })}
           error={!!errors.qty}
           helperText={errors.qty?.message}
+          sx={{ marginBottom: 2 }}
+        />
+        <TextField
+          fullWidth
+          label="Enter Alert  Amount"
+          variant="outlined"
+          inputProps={{ min: 0 }}
+          type="number"
+          {...register("limit", {
+            valueAsNumber: true,
+            min: 0,
+            required: true,
+          })}
+          error={!!errors.limit}
+          helperText={errors.limit?.message}
           sx={{ marginBottom: 2 }}
         />
         <TextField

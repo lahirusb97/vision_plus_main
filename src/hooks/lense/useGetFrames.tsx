@@ -2,6 +2,8 @@ import { useState, useEffect, useCallback } from "react";
 import axiosClient from "../../axiosClient";
 import { FrameModel } from "../../model/FrameModel";
 import { handleError } from "../../utils/handleError";
+import { getUserCurentBranch } from "../../utils/authDataConver";
+import { extractErrorMessage } from "../../utils/extractErrorMessage";
 
 interface UseGetFrameReturn {
   frames: FrameModel[];
@@ -20,10 +22,14 @@ const useGetFrames = (): UseGetFrameReturn => {
     setFramesError(null);
 
     try {
-      const response = await axiosClient.get<FrameModel[]>("/frames/");
+      const response = await axiosClient.get<FrameModel[]>("/frames/", {
+        params: {
+          branch_id: getUserCurentBranch()?.id,
+        },
+      });
       setFrames(response.data);
     } catch (err) {
-      handleError(err, "Failed to recive frames");
+      extractErrorMessage(err);
     } finally {
       setFramesLoading(false);
     }

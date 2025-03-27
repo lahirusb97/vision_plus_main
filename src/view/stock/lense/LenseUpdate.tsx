@@ -30,6 +30,8 @@ const LenseUpdate = () => {
       branch_id: getUserCurentBranch()?.id,
     },
   });
+  console.log(errors);
+
   const submiteData = async (
     data: Pick<LenseFormModel, "limit" | "qty" | "branch_id">
   ) => {
@@ -37,8 +39,8 @@ const LenseUpdate = () => {
       const { qty, limit } = data;
       const postDAta = {
         lens: id,
-        initial_count: singleLense.stock[0].qty + qty,
-        qty: singleLense.stock[0].qty + qty,
+        initial_count: (singleLense.stock[0]?.qty || 0) + qty,
+        qty: (singleLense.stock[0]?.qty || 0) + qty,
         limit: limit,
         branch_id: data.branch_id,
       };
@@ -99,7 +101,7 @@ const LenseUpdate = () => {
           fontWeight="bold"
           paddingLeft="9px"
         >
-          Curently Avilable Quantity - {singleLense?.stock[0].qty}
+          Curently Avilable Quantity - {singleLense?.stock[0]?.qty || 0}
         </Typography>
         <TextField
           fullWidth

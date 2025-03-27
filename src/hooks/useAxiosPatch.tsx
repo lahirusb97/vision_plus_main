@@ -18,7 +18,8 @@ export const useAxiosPatch = () => {
     setpatchHandlerError(false);
 
     try {
-      await axiosClient.patch(url, data);
+      const responce = await axiosClient.patch(url, data);
+      return responce;
     } catch (error) {
       setpatchHandlerError(true);
 

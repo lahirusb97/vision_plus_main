@@ -75,7 +75,7 @@ const LenseEdit = () => {
         elevation={3}
       >
         <Typography variant="h6" fontWeight="bold" paddingLeft="9px">
-          Lense Edit
+          Lense Price Update
         </Typography>
 
         <Box sx={{ marginY: 2, display: "flex", flexWrap: "wrap", gap: 1 }}>
@@ -85,7 +85,7 @@ const LenseEdit = () => {
             sx={{ marginX: 0.5, backgroundColor: "#237ADE", color: "white" }}
           />
           <Chip
-            label={`Brand - ${singleLense?.brand_name}`}
+            label={`Factory - ${singleLense?.brand_name}`}
             color="primary"
             sx={{ marginX: 0.5, backgroundColor: "#237ADE", color: "white" }}
           />

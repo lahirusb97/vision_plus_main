@@ -36,27 +36,21 @@ import LeftEyeTable from "../../../components/LeftEyeTable";
 import DrawerStock from "../../../components/inputui/DrawerStock";
 import axiosClient from "../../../axiosClient";
 import PationtDetails from "../../../components/PationtDetails";
-import { convertEmptyStringsToNull } from "../../../utils/convertEmptyStringsToNull";
 import { calculateExternalLensTotal } from "../../../utils/calculateExternalLensTotal";
 import { clearexternalLense } from "../../../features/invoice/externalLenseSlice";
 import { formatUserPayments } from "../../../utils/formatUserPayments";
-import useGetSingleRefractionNumber from "../../../hooks/useGetSingleRefractionNumber";
 import StockDrawerBtn from "../../../components/StockDrawerBtn";
 import HidenNoteDialog from "../../../components/HidenNoteDialog";
 import { extractErrorMessage } from "../../../utils/extractErrorMessage";
-import {
-  FactoryOrderProvider,
-  useFactoryOrderContext,
-} from "../../../context/FactoryOrderContext";
+import { useFactoryOrderContext } from "../../../context/FactoryOrderContext";
 
 export default function FactoryInvoiceForm() {
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   //HOOKS
-  const { singlerefractionNumber } = useFactoryOrderContext();
-  const { refractionDetail, refractionDetailLoading, refractionDetailExist } =
-    useGetRefractionDetails(id);
+  const { singlerefractionNumber, refractionDetail, refractionDetailLoading } =
+    useFactoryOrderContext();
 
   //Store Data
 
@@ -163,39 +157,38 @@ export default function FactoryInvoiceForm() {
           price_per_unit: item.price,
           subtotal: item.buyQty * parseFloat(item.price),
         })),
-
         ...Object.values(externalLenseInvoiceList).map((item) => {
           const { external_lens_data = {}, lensNames, id, ...rest } = item; // Default to empty object if not available
 
           const powers = [
             {
               power: 1,
-              value: methods.watch("right_eye_dist_sph") || null,
+              value: refractionDetail?.right_eye_dist_sph,
               side: "left",
             },
             {
               power: 2,
-              value: methods.watch("right_eye_dist_cyl") || null,
+              value: refractionDetail?.right_eye_dist_cyl,
               side: "left",
             },
             {
               power: 3,
-              value: methods.watch("right_eye_near_sph") || null,
+              value: refractionDetail?.right_eye_near_sph,
               side: "left",
             },
             {
               power: 1,
-              value: methods.watch("left_eye_dist_sph") || null,
+              value: refractionDetail?.left_eye_dist_sph,
               side: "right",
             },
             {
               power: 2,
-              value: methods.watch("left_eye_dist_cyl") || null,
+              value: refractionDetail?.left_eye_dist_cyl,
               side: "right",
             },
             {
               power: 3,
-              value: methods.watch("left_eye_near_sph") || null,
+              value: refractionDetail?.left_eye_near_sph,
               side: "right",
             },
           ];
@@ -217,7 +210,7 @@ export default function FactoryInvoiceForm() {
       Object.keys(FrameInvoiceList).length > 0
     ) {
       try {
-        if (refractionDetailExist && !refractionDetailLoading) {
+        if (refractionDetail && !refractionDetailLoading) {
           //TODO USE THIS AND CREATE THE SYSTEM ALL GOOD TO DO IF NO REFRACTION DETAILS NO DETAIL CREATINS
           const responce = await axiosClient.post("/orders/", postData);
           toast.success("Order saved successfully");
@@ -271,8 +264,8 @@ export default function FactoryInvoiceForm() {
                     display: "flex",
                   }}
                 >
-                  <RightEyeTable />
-                  <LeftEyeTable />
+                  <RightEyeTable refractionDetail={refractionDetail} />
+                  <LeftEyeTable refractionDetail={refractionDetail} />
                 </Box>
                 <Typography
                   sx={{ border: "1px solid gray", px: 1, mx: 1, mb: 1 }}
@@ -282,7 +275,15 @@ export default function FactoryInvoiceForm() {
               </Box>
 
               {/* Passing The Note DAta to show in tthe dialog */}
-              <PationtDetails />
+              <PationtDetails
+                prescription={
+                  !refractionDetailLoading && refractionDetail?.prescription
+                    ? "Prescription "
+                    : ""
+                }
+                refractionDetailLoading={refractionDetailLoading}
+                refractionNumber={singlerefractionNumber?.refraction_number}
+              />
             </Box>
             <Box
               sx={{
@@ -384,7 +385,7 @@ export default function FactoryInvoiceForm() {
           </Box>
         )}
       </FormProvider>
-      <DrawerStock />
+      <DrawerStock refractionDetail={refractionDetail} />
     </>
   );
 }

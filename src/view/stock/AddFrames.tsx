@@ -180,15 +180,13 @@ const AddFrames = () => {
           {/* Price Field */}
           <TextField
             label="Price"
+            size="small"
             type="number"
             fullWidth
-            margin="normal"
             variant="outlined"
             error={!!errors.price}
             helperText={errors.price?.message}
-            {...register("price", {
-              setValueAs: (value) => (value === "" ? undefined : Number(value)),
-            })}
+            {...register("price", { valueAsNumber: true })}
           />
 
           {/* Species Dropdown */}
@@ -204,6 +202,7 @@ const AddFrames = () => {
                   id="demo-simple-select"
                   label="Size"
                   value={field.value || ""}
+                  size="small"
                 >
                   <MenuItem value={frameSizeHalf}>Half</MenuItem>
                   <MenuItem value={frameSizeFull}>Full</MenuItem>
@@ -224,6 +223,7 @@ const AddFrames = () => {
               <FormControl fullWidth error={!!errors.species}>
                 <InputLabel id="demo-simple-select-label">Species</InputLabel>
                 <Select
+                  size="small"
                   {...field}
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
@@ -245,47 +245,41 @@ const AddFrames = () => {
 
           {/* Quantity Field */}
           <TextField
+            size="small"
             inputProps={{
               min: 0,
             }}
-            {...register("qty", {
-              setValueAs: (value) => (value === "" ? undefined : Number(value)),
-            })}
+            {...register("qty", { valueAsNumber: true })}
             label="Quantity"
             type="number"
             fullWidth
-            margin="normal"
             variant="outlined"
             error={!!errors.qty}
             helperText={errors.qty?.message}
           />
           <TextField
+            size="small"
             inputProps={{
               min: 0,
             }}
-            {...register("limit", {
-              setValueAs: (value) => (value === "" ? undefined : Number(value)),
-            })}
+            {...register("limit", { valueAsNumber: true })}
             label="Alert limit"
             type="number"
             fullWidth
-            margin="normal"
             variant="outlined"
             error={!!errors.limit}
             helperText={errors.limit?.message}
           />
           <TextField
+            size="small"
             sx={{ display: "none" }}
             inputProps={{
               min: 0,
             }}
-            {...register("branch_id", {
-              setValueAs: (value) => (value === "" ? undefined : Number(value)),
-            })}
+            {...register("branch_id", { valueAsNumber: true })}
             label="Branch Id"
             type="number"
             fullWidth
-            margin="normal"
             variant="outlined"
             error={!!errors.branch_id}
             helperText={errors.branch_id?.message}

@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import axiosClient from "../../axiosClient";
 import { AxiosError } from "axios";
 import { FrameModel } from "../../model/FrameModel";
+import { getUserCurentBranch } from "../../utils/authDataConver";
 
 interface UseGetSingleFrameReturn {
   singleFrame: FrameModel | null;
@@ -29,7 +30,12 @@ const useGetSingleFrame = (
         });
 
         const response = await axiosClient.get<FrameModel>(
-          `/frames/${singleFrameId}/`
+          `/frames/${singleFrameId}/`,
+          {
+            params: {
+              branch_id: getUserCurentBranch()?.id,
+            },
+          }
         );
 
         setState({

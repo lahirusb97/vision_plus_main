@@ -36,6 +36,7 @@ const FrameUpdate = () => {
     defaultValues: {
       limit: undefined,
       qty: undefined,
+      branch_id: getUserCurentBranch()?.id,
     },
   });
 
@@ -46,8 +47,8 @@ const FrameUpdate = () => {
       const { qty, limit, branch_id } = data;
       const postDAta = {
         frame: id,
-        initial_count: singleFrame.stock[0].initial_count + qty,
-        qty: singleFrame.stock[0].qty + qty,
+        initial_count: (singleFrame.stock[0]?.initial_count || 0) + qty,
+        qty: (singleFrame.stock[0]?.qty || 0) + qty,
         limit: limit,
         branch_id: branch_id,
       };
@@ -90,22 +91,29 @@ const FrameUpdate = () => {
 
         <Box sx={{ marginY: 2 }}>
           <Chip
-            label={`${singleFrame?.brand_name}`}
+            label={`Brand - ${singleFrame?.brand_name}`}
             color="primary"
             sx={{ marginX: 0.5, backgroundColor: "#237ADE", color: "white" }}
           />
           <Chip
-            label={`${singleFrame?.code_name}`}
+            label={`Code - ${singleFrame?.code_name}`}
             color="primary"
             sx={{ marginX: 0.5, backgroundColor: "#237ADE", color: "white" }}
           />
           <Chip
-            label={`${singleFrame?.color_name}`}
+            label={`Color - ${singleFrame?.color_name}`}
             color="primary"
             sx={{ marginX: 0.5, backgroundColor: "#237ADE", color: "white" }}
           />
         </Box>
-
+        <Typography
+          marginY={1}
+          variant="body1"
+          fontWeight="bold"
+          paddingLeft="9px"
+        >
+          Curently Avilable Quantity - {singleFrame?.stock[0]?.qty || 0}
+        </Typography>
         <TextField
           fullWidth
           label="Quantity"

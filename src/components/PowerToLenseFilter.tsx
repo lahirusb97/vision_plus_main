@@ -33,14 +33,16 @@ import {
 } from "../data/staticVariables";
 import { AxiosError } from "axios";
 import { RefractionDetailModel } from "../model/RefractionDetailModel";
-import { useFactoryOrderContext } from "../context/FactoryOrderContext";
 interface LenseWithQty extends LenseModel {
   buyQty: number;
   lenseSide: string;
 }
-export default function PowerToLenseFilter() {
-  const { refractionDetail } = useFactoryOrderContext();
-
+interface RefractionDetailsProps {
+  refractionDetail: RefractionDetailModel | null;
+}
+export default function PowerToLenseFilter({
+  refractionDetail,
+}: RefractionDetailsProps) {
   const dispatch = useDispatch();
   const [leftPowers, setLeftPowers] = useState<
     Pick<
@@ -88,7 +90,6 @@ export default function PowerToLenseFilter() {
     coating: null,
     brand: null,
   });
-  console.log("selectedLenseList", refractionDetail);
 
   useEffect(() => {
     setLeftPowers({

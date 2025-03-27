@@ -12,7 +12,7 @@ import StockIcon from "../../assets/icons/navbar/Stock.png";
 import TransationIcon from "../../assets/icons/navbar/Transation.png";
 import UserIcon from "../../assets/icons/navbar/User.png";
 import RefractionNav from "../refraction/RefractionNav";
-import { Button, Paper } from "@mui/material";
+import { Box, Button, Paper, Typography } from "@mui/material";
 import ChannelNav from "../channel/ChannelNav";
 import TransactionNav from "../transaction/TransactionNav";
 import StockNav from "../stock/StockNav";
@@ -22,7 +22,11 @@ import { useLocation, useNavigate } from "react-router";
 import UserNav from "../user/UserNav";
 import CheckInNav from "../checkin/CheckInNav";
 import AccountNav from "../account/AccountNav";
-import { deleteUserData } from "../../utils/authDataConver";
+import {
+  deleteUserData,
+  getUserAuth,
+  getUserCurentBranch,
+} from "../../utils/authDataConver";
 import ReportsNav from "../reports/ReportsNav";
 
 // TabPanel Component
@@ -151,6 +155,23 @@ export default function NavBar() {
         <Button onClick={deleteCookie}>
           <LogoutOutlined />
         </Button>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            mx: 1,
+          }}
+        >
+          <Typography textTransform={"capitalize"} variant="body2">
+            <strong>{getUserCurentBranch()?.branch_name} Branch</strong>
+          </Typography>
+          <Typography variant="body2">
+            <strong>
+              {getUserAuth()?.is_superuser ? "Admin" : "User"} login
+            </strong>
+          </Typography>
+        </Box>
       </Tabs>
 
       {/* Tab Panels */}

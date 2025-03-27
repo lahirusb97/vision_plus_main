@@ -11,6 +11,7 @@ export const schemaOtherItem = z.object({
     .optional(),
   qty: z.number({ invalid_type_error: "Quantity is required" }),
   branch_id: z.number({ invalid_type_error: "Branch is required" }),
+  limit: z.number({ invalid_type_error: "Alert Level is required" }),
 });
 
 export type OtherItemFormModel = z.infer<typeof schemaOtherItem>;

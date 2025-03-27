@@ -31,6 +31,7 @@ const OtherItemCreate = () => {
         qty: data.qty,
         initial_count: data.qty,
         branch_id: data.branch_id,
+        limit: data.limit,
       },
     };
 
@@ -53,12 +54,13 @@ const OtherItemCreate = () => {
           borderRadius: 3,
           width: "400px",
           display: "flex",
+          gap: 2,
           flexDirection: "column",
         }}
       >
         <Typography
           sx={{ marginBottom: 2, fontWeight: "bold" }}
-          variant="h4"
+          variant="h5"
           gutterBottom
         >
           Create Other Item
@@ -69,7 +71,6 @@ const OtherItemCreate = () => {
           label="Product Name"
           type="text"
           fullWidth
-          margin="normal"
           variant="outlined"
           error={!!errors.name}
           helperText={errors.name?.message}
@@ -82,17 +83,28 @@ const OtherItemCreate = () => {
           }}
           type="number"
           fullWidth
-          margin="normal"
           variant="outlined"
           error={!!errors.qty}
           helperText={errors.qty?.message}
         />
-
+        <TextField
+          fullWidth
+          label="Enter Alert  Amount"
+          variant="outlined"
+          inputProps={{ min: 0 }}
+          type="number"
+          {...register("limit", {
+            valueAsNumber: true,
+            min: 0,
+            required: true,
+          })}
+          error={!!errors.limit}
+          helperText={errors.limit?.message}
+        />
         <TextField
           label="Price"
           type="number"
           fullWidth
-          margin="normal"
           variant="outlined"
           error={!!errors.price}
           helperText={errors.price?.message}
@@ -106,13 +118,10 @@ const OtherItemCreate = () => {
           inputProps={{
             min: 0,
           }}
-          {...register("branch_id", {
-            setValueAs: (value) => (value === "" ? undefined : Number(value)),
-          })}
+          {...register("branch_id", { valueAsNumber: true })}
           label="Branch Id"
           type="number"
           fullWidth
-          margin="normal"
           variant="outlined"
           error={!!errors.branch_id}
           helperText={errors.branch_id?.message}

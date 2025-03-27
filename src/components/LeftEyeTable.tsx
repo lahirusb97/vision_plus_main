@@ -1,13 +1,23 @@
 import { Box, TextField, Typography } from "@mui/material";
 const widthInput = 100;
 import { grey } from "@mui/material/colors";
-
-import { useFactoryOrderContext } from "../context/FactoryOrderContext";
-
-export default function LeftEyeTable() {
-  const { refractionDetail, refractionDetailLoading } =
-    useFactoryOrderContext();
-
+import { RefractionDetailModel } from "../model/RefractionDetailModel";
+interface LeftEyeTableProps {
+  refractionDetail: Pick<
+    RefractionDetailModel,
+    | "hb_rx_left_dist"
+    | "hb_rx_left_near"
+    | "auto_ref_left"
+    | "left_eye_dist_sph"
+    | "left_eye_dist_cyl"
+    | "left_eye_dist_axis"
+    | "left_eye_near_sph"
+  > | null;
+}
+export default function LeftEyeTable({ refractionDetail }: LeftEyeTableProps) {
+  if (!refractionDetail) {
+    return <p>No refraction details available</p>;
+  }
   const showDashEmptyVisionValues = (
     visionValue: string | null | undefined
   ) => {
@@ -17,12 +27,6 @@ export default function LeftEyeTable() {
       return "__";
     }
   };
-  if (!refractionDetail && refractionDetailLoading) {
-    return <Typography>Loading...</Typography>;
-  }
-  if (!refractionDetail && !refractionDetailLoading) {
-    return <Typography width={"100%"}>No Refraction Details</Typography>;
-  }
   return (
     <div>
       <Box

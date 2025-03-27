@@ -6,7 +6,13 @@ import { redirect, useNavigate, useParams } from "react-router";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { Button, TextField, Typography } from "@mui/material";
+import {
+  Button,
+  Checkbox,
+  FormControlLabel,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { factoryInvoiceSchema } from "../../../validations/factoryInvoiceSchema";
 import useGetSingleInvoiceDetail from "../../../hooks/useGetSingleInvoiceDetail";
 import LeftEyeTable from "../../../components/LeftEyeTable";
@@ -38,15 +44,25 @@ import axiosClient from "../../../axiosClient";
 import { RootState } from "../../../store/store";
 import { calculateExternalLensTotal } from "../../../utils/calculateExternalLensTotal";
 import { convertEmptyStringsToNull } from "../../../utils/convertEmptyStringsToNull";
+import { extractErrorMessage } from "../../../utils/extractErrorMessage";
+import { CheckBox } from "@mui/icons-material";
+import HidenNoteDialog from "../../../components/HidenNoteDialog";
+import StockDrawerBtn from "../../../components/StockDrawerBtn";
+import { useFactoryOrderUpdateContext } from "../../../context/FactoryOrderUpdateContext";
 
 export default function OrderEditFrom() {
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   // SET VALUES FOR PATIENT TABLE
-  const { invoiceDetail, invoiceDetailLoading, invoiceDetailError } =
-    useGetSingleInvoiceDetail(parseInt(id ?? ""));
 
+  const {
+    invoiceDetail,
+    invoiceDetailLoading,
+    refractionDetail,
+    refractionDetailLoading,
+    invoiceDetailError,
+  } = useFactoryOrderUpdateContext();
   const FrameInvoiceList = useSelector(
     (state: RootState) => state.invoice_frame_filer.selectedFrameList
   );
@@ -68,7 +84,6 @@ export default function OrderEditFrom() {
       return acc + rowTotal;
     }, 0);
   };
-  //test this function
 
   const frameTotal = calculateTotal(Object.values(FrameInvoiceList));
   const lenseTotal = calculateTotal(Object.values(LenseInvoiceList));
@@ -228,7 +243,7 @@ export default function OrderEditFrom() {
     //  ! Custoome rID Tep solution
     const postData = {
       patient: {
-        refraction_id: invoiceDetail.customer_details.refraction_id,
+        refraction_id: invoiceDetail?.customer_details.refraction_id,
         name: data.name,
         nic: data.nic,
         address: data.address,
@@ -236,7 +251,7 @@ export default function OrderEditFrom() {
         date_of_birth: data.dob,
       },
       order: {
-        refraction: invoiceDetail.customer_details.refraction_id,
+        refraction: invoiceDetail?.customer_details.refraction_id,
         status:
           subtotal <= parseInt(data.card || "0") + parseInt(data.cash || "0")
             ? "completed"
@@ -332,60 +347,19 @@ export default function OrderEditFrom() {
       Object.keys(FrameInvoiceList).length > 0
     ) {
       try {
-        if (false) {
-          const responce = await axiosClient.put(
-            `/orders/${invoiceDetail.order}`,
-            postData
-          );
-          toast.success("Order saved successfully");
-          navigate(`view/${url}`);
-        } else {
-          const refDetails = convertEmptyStringsToNull({
-            hb_rx_right_dist: data.hb_rx_right_dist,
-            hb_rx_left_dist: data.hb_rx_left_dist,
-            hb_rx_right_near: data.hb_rx_right_near,
-            hb_rx_left_near: data.hb_rx_left_near,
-            auto_ref_right: data.auto_ref_right,
-            auto_ref_left: data.auto_ref_left,
-            right_eye_dist_sph: data.right_eye_dist_sph,
-            right_eye_dist_cyl: data.right_eye_dist_cyl,
-            right_eye_dist_axis: data.right_eye_dist_axis,
-            right_eye_near_sph: data.right_eye_near_sph,
-            left_eye_dist_sph: data.left_eye_dist_sph,
-            left_eye_dist_cyl: data.left_eye_dist_cyl,
-            left_eye_dist_axis: data.left_eye_dist_axis,
-            left_eye_near_sph: data.left_eye_near_sph,
-            note: data.note,
-            remark: data.remark,
-          });
+        // No refraction Data but have Refraction Number
+        const responce = await axiosClient.put(
+          `/orders/${invoiceDetail?.order}/`,
+          postData
+        );
+        toast.success("Order & Refraction Details saved successfully");
+        const url = `?order_id=${encodeURIComponent(responce.data.id)}`;
 
-          // No refraction Data but have Refraction Number
-          const responce = await axiosClient.put(
-            `/orders/${invoiceDetail?.order}/`,
-            {
-              ...postData,
-              refraction_details: {
-                ...refDetails,
-                is_manual: 1,
-                refraction: invoiceDetail?.customer_details.refraction_id,
-              },
-            }
-          );
-          toast.success("Order & Refraction Details saved successfully");
-          const url = `?order_id=${encodeURIComponent(responce.data.id)}`;
-
-          navigate(
-            `/transaction/factory_order/create/${invoiceDetail?.customer_details.refraction_id}/view/${url}`
-          );
-        }
+        navigate(
+          `/transaction/factory_order/create/${invoiceDetail?.customer_details.refraction_id}/view/${url}`
+        );
       } catch (err) {
-        console.log(err);
-
-        if (axios.isAxiosError(err)) {
-          toast.error(err.response?.data?.error || "Failed to save Order data");
-        } else {
-          toast.error("An unexpected error occurred Failed to save Order data");
-        }
+        extractErrorMessage(err);
       }
     } else {
       toast.error("No Items ware added");
@@ -413,16 +387,57 @@ export default function OrderEditFrom() {
             margin: "0 auto", // Centers it
           }}
         >
-          {/* <RightEyeTable />
+          <Box
+            sx={{
+              mr: 1,
+            }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+              }}
+            >
+              <RightEyeTable refractionDetail={refractionDetail} />
+              <LeftEyeTable refractionDetail={refractionDetail} />
+            </Box>
+            <Typography sx={{ border: "1px solid gray", px: 1, mx: 1, mb: 1 }}>
+              Refraction Remark - {refractionDetail?.note}
+            </Typography>
+          </Box>
 
-          <LeftEyeTable /> */}
-
-          {/* Passing The Note DAta to show in tthe dialog */}
+          {/* sending data trugh invoide details with usefrom hook */}
           <PationtDetails
-            refractionNumber={invoiceDetail?.customer_details.refraction_number}
-            DetailExist={invoiceDetail?.invoice_type === "factory"}
-            loading={true}
+            prescription={
+              !refractionDetailLoading && refractionDetail?.prescription
+                ? "Prescription "
+                : ""
+            }
+            refractionDetailLoading={refractionDetailLoading}
+            refractionNumber={
+              invoiceDetail?.customer_details?.refraction_number
+            }
           />
+        </Box>
+        <Box
+          sx={{
+            maxWidth: "1200px",
+            width: "100%",
+            margin: "0 auto",
+            display: "flex",
+          }}
+        >
+          <FormControlLabel
+            control={<Checkbox {...methods.register("on_hold")} />}
+            label=" On Hold"
+          />
+          <FormControlLabel
+            control={
+              <Checkbox {...methods.register("fitting_on_collection")} />
+            }
+            label="Fiting on Collection"
+          />
+          <HidenNoteDialog />
+          <StockDrawerBtn />
         </Box>
         <InvoiceTable />
         <Box
@@ -480,15 +495,15 @@ export default function OrderEditFrom() {
           <CardInput />
           <CashInput />
           <Button
-            sx={{ width: "100%", maxWidth: "1200px" }}
+            sx={{ width: "400px" }}
+            size="small"
             variant="contained"
-            fullWidth
             type="submit"
           >
             Submit
           </Button>
         </Box>
-        <DrawerStock />
+        <DrawerStock refractionDetail={refractionDetail} />
       </Box>
     </FormProvider>
   );

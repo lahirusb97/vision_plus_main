@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import axiosClient from "../../axiosClient";
 import { LenseModel } from "../../model/LenseModel";
 import { extractErrorMessage } from "../../utils/extractErrorMessage";
+import { getUserCurentBranch } from "../../utils/authDataConver";
 
 interface UseGetSingleLenseReturn {
   singleLense: LenseModel | null;
@@ -29,7 +30,12 @@ const useGetSingleLense = (
         }));
 
         const response = await axiosClient.get<LenseModel>(
-          `/lenses/${singleLenseId}/`
+          `/lenses/${singleLenseId}/`,
+          {
+            params: {
+              branch_id: getUserCurentBranch()?.id,
+            },
+          }
         );
 
         setState({

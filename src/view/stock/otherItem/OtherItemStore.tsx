@@ -25,6 +25,8 @@ const OtherItemStore = () => {
   const {
     otherItem,
     otherItemLoading,
+    otherItemLimit,
+    totalOtherItemCount,
     pageNavigationByNumber,
     searchOtherItem,
     OtherItemDataRefresh,
@@ -110,7 +112,7 @@ const OtherItemStore = () => {
               </TableCell>
             </TableRow>
           ) : (
-            otherItem?.results.map((row) => (
+            otherItem.map((row) => (
               <TableRow
                 key={row.item.id}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -149,7 +151,7 @@ const OtherItemStore = () => {
                 <TableCell component="th" scope="row">
                   {row.item.name}
                 </TableCell>
-                <TableCell align="right">{row.stock[0]?.qty}</TableCell>
+                <TableCell align="right">{row.stock[0]?.qty || 0}</TableCell>
                 <TableCell align="right">{row.item.price}</TableCell>
               </TableRow>
             ))
@@ -157,7 +159,7 @@ const OtherItemStore = () => {
         </TableBody>
       </Table>
       <Pagination
-        count={Math.ceil((otherItem?.count || 0) / 10)}
+        count={Math.ceil(totalOtherItemCount / otherItemLimit)}
         onChange={(_e: React.ChangeEvent<unknown>, value: number) => {
           pageNavigationByNumber(value);
         }}

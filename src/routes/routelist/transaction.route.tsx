@@ -8,6 +8,7 @@ import OrderEditIndex from "../../view/transaction/OrderEditIndex";
 import RePaymentIndex from "../../view/transaction/RePaymentIndex";
 import RepaymentForm from "../../view/transaction/RepaymentForm";
 import FactoryOrder from "../../view/transaction/factory_order/FactoryOrder";
+import FactoryOrderUpdate from "../../view/transaction/factory_order/FactoryOrderUpdate";
 
 export const transactionRoutes: RouteObject[] = [
   {
@@ -62,7 +63,7 @@ export const transactionRoutes: RouteObject[] = [
       },
       {
         path: ":id",
-        element: <OrderEditFrom />,
+        element: <FactoryOrderUpdate />,
       },
     ],
   },

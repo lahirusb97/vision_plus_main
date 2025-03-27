@@ -28,19 +28,23 @@ export default function UserCreate() {
     register,
     setValue,
     control,
+    reset,
     watch,
     handleSubmit,
     formState: { errors },
   } = useForm<UserFormModel>({
     resolver: zodResolver(schemaUser),
   });
+  //!BRAND ID MUST BE INCLUDED WHEN RESET TO DEFALT
   const { brancheData } = useGetBranch();
   const onSubmit = async (data: UserFormModel) => {
     try {
       if (userRole === "admin") {
         await postHandler("register/admin/", data);
+        reset();
       } else {
         await postHandler("users/create/", data);
+        reset();
       }
       toast.success("User created successfully");
     } catch (error) {
