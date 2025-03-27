@@ -46,7 +46,7 @@ const LenseUpdate = () => {
       };
 
       try {
-        await axiosClient.patch(`/lens-stocks/${id}/`, postDAta);
+        await axiosClient.patch(`/lenses/${id}/`, postDAta);
         toast.success("Lense Updated Successfully");
         reset();
         refresh();

@@ -12,7 +12,6 @@ import { useDeleteDialog } from "../../context/DeleteDialogContext";
 const FrameStore = () => {
   const { frames, framesLoading, refresh } = useGetFrames();
   const { openDialog } = useDeleteDialog();
-  console.log(frames);
 
   // Define columns
   const columns = useMemo(

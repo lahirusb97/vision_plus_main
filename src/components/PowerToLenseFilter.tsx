@@ -33,6 +33,7 @@ import {
 } from "../data/staticVariables";
 import { AxiosError } from "axios";
 import { RefractionDetailModel } from "../model/RefractionDetailModel";
+import { getUserCurentBranch } from "../utils/authDataConver";
 interface LenseWithQty extends LenseModel {
   buyQty: number;
   lenseSide: string;
@@ -157,6 +158,7 @@ export default function PowerToLenseFilter({
                 : selectLense.lenseType === bifocalID
                 ? bifocal
                 : null),
+              branch_id: getUserCurentBranch()?.id,
             },
           });
 
@@ -403,7 +405,9 @@ export default function PowerToLenseFilter({
               }}
             >
               <Typography>
-                {selectedLenseRight ? selectedLenseRight?.qty : "N/A"}
+                {selectedLenseRight
+                  ? selectedLenseRight?.stock[0]?.qty || 0
+                  : "N/A"}
               </Typography>
             </Paper>
             <Button
@@ -492,7 +496,9 @@ export default function PowerToLenseFilter({
               }}
             >
               <Typography>
-                {selectedLenseLeft ? selectedLenseLeft?.qty : "N/A"}
+                {selectedLenseLeft
+                  ? selectedLenseLeft?.stock[0]?.qty || 0
+                  : "N/A"}
               </Typography>
             </Paper>
             <Button

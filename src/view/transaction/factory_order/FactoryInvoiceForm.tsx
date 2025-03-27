@@ -270,7 +270,7 @@ export default function FactoryInvoiceForm() {
                 <Typography
                   sx={{ border: "1px solid gray", px: 1, mx: 1, mb: 1 }}
                 >
-                  Refraction Remark - {refractionDetail?.note}
+                  Refraction Remark - {refractionDetail?.refraction_remark}
                 </Typography>
               </Box>
 
@@ -384,8 +384,8 @@ export default function FactoryInvoiceForm() {
             </Box>
           </Box>
         )}
+        <DrawerStock refractionDetail={refractionDetail} />
       </FormProvider>
-      <DrawerStock refractionDetail={refractionDetail} />
     </>
   );
 }

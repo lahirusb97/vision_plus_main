@@ -55,7 +55,7 @@ const FrameUpdate = () => {
 
       try {
         // await axiosClient.put(`/frame-stocks/${id}/`, postDAta);
-        await putHandler(`/frame-stocks/${id}/`, postDAta);
+        await putHandler(`/frames/${id}/`, postDAta);
         toast.success("Frame Stock Updated successfully");
         reset();
         navigate(-1);

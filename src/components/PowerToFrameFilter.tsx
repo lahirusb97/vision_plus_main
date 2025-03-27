@@ -216,9 +216,7 @@ export default function PowerToFrameFilter() {
           onChange={(e) => setPrice(parseInt(e.target.value))}
           inputProps={{ min: 0 }}
         />
-        <Paper sx={{ p: 1 }}>
-          {selectedFrame ? selectedFrame?.stock[0].qty : ""}
-        </Paper>
+        <Paper sx={{ p: 1 }}>{selectedFrame?.stock[0]?.qty || 0}</Paper>
 
         {/* <Button color="info" onClick={findFrame} variant="contained">
           <Search />
