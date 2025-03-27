@@ -45,9 +45,9 @@ export default function UserUpdate() {
     console.log(data);
 
     try {
-      await putHandler(`branches/update/${branch_id}/`, data);
+      await putHandler(`branches/${branch_id}/`, data);
 
-      toast.success(`Employee ${data.branch_name} updated successfully`);
+      toast.success(`Branch updated successfully`);
     } catch (error) {
       extractErrorMessage(error);
     }
@@ -111,7 +111,7 @@ export default function UserUpdate() {
         </FormControl> */}
         <TextField
           size="small"
-          label="First Name"
+          label="Branch Name"
           fullWidth
           {...register("branch_name")}
           error={!!errors.branch_name}
@@ -123,7 +123,7 @@ export default function UserUpdate() {
 
         <TextField
           size="small"
-          label="Last Name"
+          label="Location Name"
           fullWidth
           {...register("location")}
           error={!!errors.location}
