@@ -127,25 +127,41 @@ export default function PowerToLenseFilter({
       toast.error("No Lense Selected");
     }
   };
+  function removeInvalidValues(obj) {
+    return Object.fromEntries(
+      Object.entries(obj).filter(
+        ([_, value]) =>
+          value !== "" &&
+          value !== null &&
+          value !== undefined &&
+          !Number.isNaN(value)
+      )
+    );
+  }
+
   const handleSearchRight = async () => {
     if (selectLense.brand && selectLense.coating && selectLense.lenseType) {
       if (
-        (rightPowers.right_eye_near_sph && rightPowers.right_eye_dist_cyl) ||
+        rightPowers.right_eye_near_sph ||
+        rightPowers.right_eye_dist_cyl ||
         rightPowers.right_eye_dist_sph
       ) {
+        console.log("ss");
+
         const progresive = {
-          sph_right: rightPowers.right_eye_dist_sph,
-          add_right: rightPowers.right_eye_near_sph,
+          sph: rightPowers.right_eye_dist_sph,
+          add: rightPowers.right_eye_near_sph,
         };
         const normal = {
-          sph_right: rightPowers.right_eye_dist_sph,
-          cyl_right: rightPowers.right_eye_dist_cyl,
+          sph: rightPowers.right_eye_dist_sph,
+          cyl: rightPowers.right_eye_dist_cyl,
         };
         const bifocal = {
-          sph_right: rightPowers.right_eye_dist_sph,
-          add_right: rightPowers.right_eye_near_sph,
+          sph: rightPowers.right_eye_dist_sph,
+          add: rightPowers.right_eye_near_sph,
         };
 
+        //Validated
         try {
           const responce = await axiosClient.get("/lenses/search/", {
             params: {
@@ -153,11 +169,11 @@ export default function PowerToLenseFilter({
               type_id: selectLense.lenseType,
               coating_id: selectLense.coating,
               ...(selectLense.lenseType === progresiveID
-                ? progresive
+                ? removeInvalidValues(progresive)
                 : selectLense.lenseType === singleVisionID
-                ? normal
+                ? removeInvalidValues(normal)
                 : selectLense.lenseType === bifocalID
-                ? bifocal
+                ? removeInvalidValues(bifocal)
                 : null),
               branch_id: getUserCurentBranch()?.id,
             },
@@ -180,7 +196,8 @@ export default function PowerToLenseFilter({
   const handleSearchLeft = async () => {
     if (selectLense.brand && selectLense.coating && selectLense.lenseType) {
       if (
-        (leftPowers.left_eye_near_sph && leftPowers.left_eye_dist_cyl) ||
+        leftPowers.left_eye_near_sph ||
+        leftPowers.left_eye_dist_cyl ||
         leftPowers.left_eye_dist_sph
       ) {
         const progresive = {
@@ -202,13 +219,14 @@ export default function PowerToLenseFilter({
               brand_id: selectLense.brand,
               type_id: selectLense.lenseType,
               coating_id: selectLense.coating,
-              ...(selectLense.lenseType.toString() === "3"
-                ? progresive
-                : selectLense.lenseType.toString() === "1"
-                ? normal
-                : selectLense.lenseType.toString() === "2"
-                ? bifocal
+              ...(selectLense.lenseType === progresiveID
+                ? removeInvalidValues(progresive)
+                : selectLense.lenseType === singleVisionID
+                ? removeInvalidValues(normal)
+                : selectLense.lenseType === bifocalID
+                ? removeInvalidValues(bifocal)
                 : null),
+              branch_id: getUserCurentBranch()?.id,
             },
           });
           const lenseObj = responce.data.lens;
@@ -249,6 +267,7 @@ export default function PowerToLenseFilter({
       toast.error("No Lense Selected");
     }
   };
+
   return (
     <Paper variant="elevation" sx={{ padding: 2, m: 2 }}>
       <Typography variant="h6">Select Lense </Typography>
@@ -402,7 +421,7 @@ export default function PowerToLenseFilter({
             >
               <Typography>
                 {selectedLenseRight
-                  ? selectedLenseRight?.stock[0]?.qty || 0
+                  ? selectedLenseRight?.stock?.qty || 0
                   : "N/A"}
               </Typography>
             </Paper>

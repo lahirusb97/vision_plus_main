@@ -17,9 +17,10 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router";
 import { Refresh } from "@mui/icons-material";
-import { RefractionModel } from "../../model/RefractionModel";
+
 import useGetRefraction from "../../hooks/useGetRefraction";
 import EditIcon from "@mui/icons-material/Edit";
+import { RefractionNumberModel } from "../../model/RefractionModel";
 
 // Interface for Refraction Data
 
@@ -28,10 +29,18 @@ export default function FactoryTable() {
   const navigate = useNavigate();
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedRow, setSelectedRow] = useState<RefractionModel | null>(null);
+  const [selectedRow, setSelectedRow] = useState<RefractionNumberModel | null>(
+    null
+  );
 
-  const { data, isLoading, updateSearchParams, pageNavigation } =
-    useGetRefraction();
+  const {
+    refractionsList,
+    refractionLoading,
+    refractionPageNavigation,
+    handleRefractionSearch,
+    totalRefractionCount,
+    refractionLimit,
+  } = useGetRefraction();
   // Safely access data and meta-information
 
   // Filtered rows based on the search query
@@ -66,7 +75,7 @@ export default function FactoryTable() {
         }}
         onSubmit={(e) => {
           e.preventDefault();
-          updateSearchParams(searchQuery);
+          handleRefractionSearch(searchQuery);
         }}
       >
         <TextField
@@ -115,7 +124,7 @@ export default function FactoryTable() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {isLoading ? (
+            {refractionLoading ? (
               [...Array(10)].map((_, index) => (
                 <TableRow key={index}>
                   <TableCell>
@@ -129,8 +138,8 @@ export default function FactoryTable() {
                   </TableCell>
                 </TableRow>
               ))
-            ) : data.results.length > 0 ? (
-              data.results.map((row: RefractionModel) => (
+            ) : refractionsList.length > 0 ? (
+              refractionsList.map((row: RefractionNumberModel) => (
                 <TableRow
                   onClick={() => setSelectedRow(row)}
                   sx={{
@@ -194,15 +203,15 @@ export default function FactoryTable() {
         }}
       >
         <Pagination
-          count={Math.ceil(data.count / 10)}
+          count={Math.ceil(totalRefractionCount / refractionLimit)}
           onChange={(_e: ChangeEvent<unknown>, value: number) => {
-            pageNavigation(value);
+            refractionPageNavigation(value);
           }}
         ></Pagination>
         <IconButton
           color="info"
           onClick={() => {
-            pageNavigation(1);
+            refractionPageNavigation(1);
           }}
         >
           <Refresh />

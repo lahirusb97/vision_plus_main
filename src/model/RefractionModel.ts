@@ -4,6 +4,7 @@ interface RefractionNumberModel {
   customer_mobile: string;
   nic: string;
   refraction_number: string;
+  branch_id: number;
 }
 
 export type { RefractionNumberModel };

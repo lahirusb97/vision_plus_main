@@ -47,6 +47,16 @@ const AddFrames = () => {
     watch,
   } = useForm<FrameFormModel>({
     resolver: zodResolver(schemaFrame),
+    defaultValues: {
+      brand: undefined,
+      code: undefined,
+      color: undefined,
+      price: undefined,
+      size: undefined,
+      species: undefined,
+      qty: undefined,
+      branch_id: getUserCurentBranch()?.id,
+    },
   });
   const [avilableCodes, setAvilableCodes] = useState<CodeModel[]>([]);
 
@@ -84,7 +94,16 @@ const AddFrames = () => {
     try {
       await postHandler("frames/", postData);
       toast.success("Frame added successfully");
-      reset();
+      reset({
+        brand: undefined,
+        code: undefined,
+        color: undefined,
+        price: undefined,
+        size: undefined,
+        species: undefined,
+        qty: undefined,
+        branch_id: getUserCurentBranch()?.id,
+      });
     } catch (error) {
       extractErrorMessage(error);
     }

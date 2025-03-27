@@ -100,18 +100,19 @@ export default function RefractionEdit() {
   const handleRefractionDetailUpdate = async (
     data: RefractionDetailsFormModel
   ) => {
-    try {
-      await putHandler(`/refraction-details/${refraction_id}/`, {
-        ...data,
-        refraction: refractionDetail.refraction,
-        is_manual: refractionDetail.is_manual,
-      });
-      toast.success("Refraction saved successfully");
-      methods.reset();
-
-      navigate(-1);
-    } catch (err) {
-      extractErrorMessage(err);
+    if (refractionDetail) {
+      try {
+        await putHandler(`/refraction-details/${refraction_id}/`, {
+          ...data,
+          refraction: refractionDetail.refraction,
+          is_manual: refractionDetail.is_manual,
+        });
+        toast.success("Refraction saved successfully");
+        methods.reset();
+        navigate(-1);
+      } catch (err) {
+        extractErrorMessage(err);
+      }
     }
   };
   const handleRefractionDetailCreate = async (
@@ -147,7 +148,7 @@ export default function RefractionEdit() {
   };
 
   useEffect(() => {
-    if (!refractionDetailLoading && refractionDetailExist) {
+    if (refractionDetail && !refractionDetailLoading && refractionDetailExist) {
       methods.reset({
         hb_rx_right_dist: refractionDetail.hb_rx_right_dist,
         hb_rx_left_dist: refractionDetail.hb_rx_left_dist,

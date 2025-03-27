@@ -15,13 +15,13 @@ import SaveButton from "../../components/SaveButton";
 import useGetSingleRefractionNumber from "../../hooks/useGetSingleRefractionNumber";
 import LoadingAnimation from "../../components/LoadingAnimation";
 import { useEffect } from "react";
+import { getUserCurentBranch } from "../../utils/authDataConver";
 export default function UpdateRefraction() {
   const navigate = useNavigate();
   const { id } = useParams();
   const { singlerefractionNumber, singlerefractionNumberLoading } =
     useGetSingleRefractionNumber(id);
   const { putHandler, putHandlerloading } = useAxiosPut();
-  console.log(singlerefractionNumber);
 
   const {
     register,
@@ -34,6 +34,7 @@ export default function UpdateRefraction() {
       customer_full_name: "",
       customer_mobile: "",
       nic: "",
+      branch_id: getUserCurentBranch()?.id,
     },
   });
 
@@ -50,7 +51,12 @@ export default function UpdateRefraction() {
   const shandleSubmit = async (data: RefractionNumberFormModel) => {
     try {
       await putHandler(`refractions/${id}/update/`, data);
-      reset();
+      reset({
+        customer_full_name: "",
+        customer_mobile: "",
+        nic: "",
+        branch_id: getUserCurentBranch()?.id,
+      });
       toast.success("Refraction updated successfully");
       navigate(-1);
     } catch (error) {
@@ -119,7 +125,23 @@ export default function UpdateRefraction() {
             error={!!errors.customer_mobile}
             helperText={errors.customer_mobile?.message}
           />
-
+          <TextField
+            sx={{ display: "none" }}
+            inputProps={{
+              min: 0,
+            }}
+            {...register("branch_id", {
+              setValueAs: (value) => (value === "" ? undefined : Number(value)),
+            })}
+            label="Branch Id"
+            type="number"
+            fullWidth
+            margin="normal"
+            variant="outlined"
+            error={!!errors.branch_id}
+            helperText={errors.branch_id?.message}
+            defaultValue={getUserCurentBranch()?.id}
+          />
           <SaveButton
             btnText="Update Customer Details"
             loading={putHandlerloading}

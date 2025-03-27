@@ -1,60 +1,59 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
+import { useState, useEffect, useCallback } from "react";
 import axiosClient from "../axiosClient";
-import toast from "react-hot-toast";
 import { PaginatedResponse } from "../model/PaginatedResponse";
 import { RefractionNumberModel } from "../model/RefractionModel";
+import { extractErrorMessage } from "../utils/extractErrorMessage";
+import { getUserCurentBranch } from "../utils/authDataConver";
 
 const useGetRefraction = () => {
-  const [data, setData] = useState<PaginatedResponse<RefractionNumberModel>>({
-    count: 0,
-    next: null,
-    previous: null,
-    results: [],
-  });
+  const limit = 10;
+  const [navigatePage, setNavigatePage] = useState<number>(1);
+  const [searchQuary, setSearchQuary] = useState<string>("");
+  const [DataList, setDataList] = useState<RefractionNumberModel[]>([]);
+  const [totalCount, setTotalCount] = useState<number>(1);
+  const [loading, setLoading] = useState<boolean>(true);
 
-  const [params, setParams] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
-
-  const fetchData = async () => {
-    setIsLoading(true);
+  const loadData = useCallback(async () => {
+    setLoading(true);
     try {
-      const response = await axiosClient.get("/refractions/", {
-        params: params,
-      });
-      setData(response.data);
-    } catch (err) {
-      if (axios.isAxiosError(err)) {
-        toast.error(
-          err.response?.data?.message || "Failed to recive Reraction data"
-        );
-      } else {
-        toast.error("An unexpected error occurred");
-      }
+      const response: { data: PaginatedResponse<RefractionNumberModel> } =
+        await axiosClient.get(`refractions/`, {
+          params: {
+            page: navigatePage,
+            limit,
+            ...(searchQuary ? { search: searchQuary } : {}),
+            branch_id: getUserCurentBranch()?.id,
+          },
+        });
+      setDataList(response.data.results);
+      setTotalCount(response.data.count);
+    } catch (error) {
+      extractErrorMessage(error);
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
-  };
-  const refresh = () => {
-    setParams({});
-    fetchData();
-  };
-  useEffect(() => {
-    fetchData();
-  }, [params]);
+  }, [navigatePage, searchQuary]);
 
-  const updateSearchParams = (search: string) => {
-    setParams({ search: search });
+  const handleSearch = (searchKeyWord: string) => {
+    setNavigatePage(1);
+    setSearchQuary(searchKeyWord);
   };
-  const pageNavigation = (page: number) => {
-    setParams({ page: page });
+  const handlePageNavigation = (pageNumber: number) => {
+    setNavigatePage(pageNumber);
   };
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
+
   return {
-    data,
-    isLoading,
-    updateSearchParams,
-    pageNavigation,
-    refresh,
+    refractionLimit: limit,
+    refractionsList: DataList,
+    refractionLoading: loading,
+    totalRefractionCount: totalCount,
+    refractionPageNavigation: handlePageNavigation,
+    handleRefractionSearch: handleSearch,
+    refreshRefractionList: loadData,
   };
 };
 

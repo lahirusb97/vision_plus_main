@@ -9,17 +9,18 @@ import {
 import { useAxiosPost } from "../../hooks/useAxiosPost";
 import { extractErrorMessage } from "../../utils/extractErrorMessage";
 import toast from "react-hot-toast";
-import { useValidationState } from "../../hooks/validations/useValidationState";
-import VarificationDialog from "../../components/VarificationDialog";
+// import { useValidationState } from "../../hooks/validations/useValidationState";
+// import VarificationDialog from "../../components/VarificationDialog";
 import SaveButton from "../../components/SaveButton";
 import { RefractionNumberModel } from "../../model/RefractionModel";
+import { getUserCurentBranch } from "../../utils/authDataConver";
 
 export default function RefractionNumber() {
   const navigate = useNavigate();
   //API CALLS
   const { postHandler } = useAxiosPost();
-  const { setValidationState, resetValidation, validationState } =
-    useValidationState();
+  // const { setValidationState, resetValidation, validationState } =
+  //   useValidationState();
   //API CALLS
 
   const {
@@ -29,6 +30,12 @@ export default function RefractionNumber() {
     formState: { errors },
   } = useForm<RefractionNumberFormModel>({
     resolver: zodResolver(schemaRefractionNumber),
+    defaultValues: {
+      customer_full_name: "",
+      customer_mobile: "",
+      nic: "",
+      branch_id: getUserCurentBranch()?.id,
+    },
   });
 
   const sendRefractionData = async (data: RefractionNumberFormModel) => {
@@ -39,7 +46,12 @@ export default function RefractionNumber() {
       toast.success(
         `Refraction created for ${responseData.data.data.customer_full_name}`
       );
-      reset();
+      reset({
+        customer_full_name: "",
+        customer_mobile: "",
+        nic: "",
+        branch_id: getUserCurentBranch()?.id,
+      });
       navigate(`${responseData.data.data.id}/success/`);
     } catch (error) {
       extractErrorMessage(error);
@@ -102,29 +114,30 @@ export default function RefractionNumber() {
             error={!!errors.customer_mobile}
             helperText={errors.customer_mobile?.message}
           />
-          {/* <TextField
-                    sx={{ display: "none" }}
-                    inputProps={{
-                      min: 0,
-                    }}
-                    {...register("branch_id", {
-                      setValueAs: (value) => (value === "" ? undefined : Number(value)),
-                    })}
-                    label="Branch Id"
-                    type="number"
-                    fullWidth
-                    margin="normal"
-                    variant="outlined"
-                    error={!!errors.branch_id}
-                    helperText={errors.branch_id?.message}
-                    defaultValue={getUserCurentBranch()?.id}
-                  /> */}
+
+          <TextField
+            sx={{ display: "none" }}
+            inputProps={{
+              min: 0,
+            }}
+            {...register("branch_id", {
+              setValueAs: (value) => (value === "" ? undefined : Number(value)),
+            })}
+            label="Branch Id"
+            type="number"
+            fullWidth
+            margin="normal"
+            variant="outlined"
+            error={!!errors.branch_id}
+            helperText={errors.branch_id?.message}
+            defaultValue={getUserCurentBranch()?.id}
+          />
           <SaveButton btnText="Genarate Refraction Number" loading={false} />
         </form>
-        <VarificationDialog
+        {/* <VarificationDialog
           validationState={validationState}
           resetValidation={resetValidation}
-        />
+        /> */}
       </Paper>
     </Box>
   );

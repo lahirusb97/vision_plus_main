@@ -30,14 +30,20 @@ export default function RefractionTable() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedRow, setSelectedRow] = useState<number | null>(null);
 
-  const { data, isLoading, updateSearchParams, pageNavigation } =
-    useGetRefraction();
+  const {
+    refractionsList,
+    refractionLoading,
+    handleRefractionSearch,
+    refractionPageNavigation,
+    refractionLimit,
+    totalRefractionCount,
+  } = useGetRefraction();
   // Safely access data and meta-information
 
   // Filtered rows based on the search query
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // Prevents page reload
-    updateSearchParams(searchQuery);
+    handleRefractionSearch(searchQuery);
   };
 
   const handleInternalOrder = async () => {
@@ -105,7 +111,7 @@ export default function RefractionTable() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {isLoading ? (
+            {refractionLoading ? (
               [...Array(10)].map((_, index) => (
                 <TableRow key={index}>
                   <TableCell>
@@ -122,8 +128,8 @@ export default function RefractionTable() {
                   </TableCell>
                 </TableRow>
               ))
-            ) : data.results.length > 0 ? (
-              data.results.map((row) => (
+            ) : refractionsList.length > 0 ? (
+              refractionsList.map((row) => (
                 <TableRow
                   onClick={() => setSelectedRow(row.id)}
                   sx={{
@@ -177,15 +183,15 @@ export default function RefractionTable() {
         }}
       >
         <Pagination
-          count={Math.ceil(data.count / 10)}
+          count={Math.ceil(totalRefractionCount / refractionLimit)}
           onChange={(_e: ChangeEvent<unknown>, value: number) => {
-            pageNavigation(value);
+            refractionPageNavigation(value);
           }}
         ></Pagination>
         <IconButton
           color="info"
           onClick={() => {
-            pageNavigation(1);
+            refractionPageNavigation(1);
           }}
         >
           <Refresh />

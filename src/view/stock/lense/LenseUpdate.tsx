@@ -4,10 +4,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import axiosClient from "../../../axiosClient";
 import { useNavigate, useParams } from "react-router";
 import toast from "react-hot-toast";
-import { AxiosError } from "axios";
+
 import useGetSingleLense from "../../../hooks/lense/useGetSingleLense";
 import { LenseFormModel, schemaLens } from "../../../validations/schemaLens";
 import { getUserCurentBranch } from "../../../utils/authDataConver";
+import { extractErrorMessage } from "../../../utils/extractErrorMessage";
 
 const LenseUpdate = () => {
   const { id } = useParams();
@@ -30,7 +31,7 @@ const LenseUpdate = () => {
       branch_id: getUserCurentBranch()?.id,
     },
   });
-  console.log(errors);
+  console.log(singleLense);
 
   const submiteData = async (
     data: Pick<LenseFormModel, "limit" | "qty" | "branch_id">
@@ -38,11 +39,18 @@ const LenseUpdate = () => {
     if (!singleLenseLoading && singleLense) {
       const { qty, limit } = data;
       const postDAta = {
-        lens: id,
-        initial_count: (singleLense.stock[0]?.qty || 0) + qty,
-        qty: (singleLense.stock[0]?.qty || 0) + qty,
-        limit: limit,
-        branch_id: data.branch_id,
+        lens: {
+          brand: singleLense.brand,
+        },
+        stock: [
+          {
+            lens: id,
+            initial_count: (singleLense.stock[0]?.qty || 0) + qty,
+            qty: (singleLense.stock[0]?.qty || 0) + qty,
+            limit: limit,
+            branch_id: data.branch_id,
+          },
+        ],
       };
 
       try {
@@ -52,15 +60,7 @@ const LenseUpdate = () => {
         refresh();
         navigate(-1);
       } catch (error) {
-        console.log(error);
-
-        if (error instanceof AxiosError) {
-          // Safely access error.response.data.message
-          toast.error(error.response?.data?.message || "Something went wrong");
-        } else {
-          // Handle non-Axios errors (e.g., network errors, syntax errors, etc.)
-          toast.error("Something went wrong");
-        }
+        extractErrorMessage(error);
       }
     }
   };
