@@ -4,6 +4,7 @@ import UserCreate from "../../view/user/UserCreate";
 import BranchIndex from "../../view/user/BranchIndex";
 import BranchCreate from "../../view/user/BranchCreate";
 import UserUpdate from "../../view/user/UserUpdate";
+import BranchUpdate from "../../view/user/BranchUpdate";
 export const userRoutes: RouteObject[] = [
   {
     path: "",
@@ -20,6 +21,10 @@ export const userRoutes: RouteObject[] = [
   {
     path: "branch/",
     element: <BranchIndex />,
+  },
+  {
+    path: "branch/:branch_id/update",
+    element: <BranchUpdate />,
   },
   {
     path: "branch/create/",
