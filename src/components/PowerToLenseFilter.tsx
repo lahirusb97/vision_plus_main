@@ -34,6 +34,7 @@ import {
 import { AxiosError } from "axios";
 import { RefractionDetailModel } from "../model/RefractionDetailModel";
 import { getUserCurentBranch } from "../utils/authDataConver";
+import { extractErrorMessage } from "../utils/extractErrorMessage";
 interface LenseWithQty extends LenseModel {
   buyQty: number;
   lenseSide: string;
@@ -170,12 +171,7 @@ export default function PowerToLenseFilter({
           setRightPrice(lenseObj?.price || 0);
           toast.success("Sujested Lens Match Found Plese Check Lense Powers");
         } catch (error) {
-          if (error instanceof AxiosError) {
-            // Safely access error.response.data.message
-            toast.error(
-              error.response?.data?.message || "Something went wrong"
-            );
-          }
+          extractErrorMessage(error);
         }
       }
     }

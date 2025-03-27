@@ -12,8 +12,8 @@ import { RootState } from "../store/store";
 import InvoiceFrameItem from "./InvoiceFrameItem";
 import axiosClient from "../axiosClient";
 import { Colors } from "../model/ColorsModel";
-import axios from "axios";
 import { closeStockDrawer } from "../features/invoice/stockDrawerSlice";
+import { extractErrorMessage } from "../utils/extractErrorMessage";
 interface FrameWithQty extends FrameModel {
   buyQty: number;
 }
@@ -84,13 +84,7 @@ export default function PowerToFrameFilter() {
       setColors(response.data);
     } catch (error) {
       setColors([]);
-      if (axios.isAxiosError(error)) {
-        if (error.response?.status === 400) {
-          toast.error("Brand And Code need to be selected");
-        }
-      } else {
-        toast.error("try again netowek error");
-      }
+      extractErrorMessage(error);
     } finally {
       setColorLoading(false);
     }
