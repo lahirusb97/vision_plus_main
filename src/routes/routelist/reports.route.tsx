@@ -1,6 +1,9 @@
 import { RouteObject } from "react-router";
 import ProtectedChildRoute from "../ProtectedChildRoute";
 import ReportsIndex from "../../view/reports/ReportsIndex";
+import InvoiceReport from "../../view/reports/InvoiceReport";
+import FrameReport from "../../view/reports/FrameReport";
+import LensReport from "../../view/reports/LensReport";
 
 export const reportRoutes: RouteObject[] = [
   {
@@ -9,7 +12,27 @@ export const reportRoutes: RouteObject[] = [
     children: [
       {
         index: true,
-        element: <ReportsIndex />,
+        element: <InvoiceReport />,
+      },
+    ],
+  },
+  {
+    path: "frames_report",
+    element: <ProtectedChildRoute />,
+    children: [
+      {
+        index: true,
+        element: <FrameReport />,
+      },
+    ],
+  },
+  {
+    path: "lens_report",
+    element: <ProtectedChildRoute />,
+    children: [
+      {
+        index: true,
+        element: <LensReport />,
       },
     ],
   },
