@@ -26,39 +26,59 @@ const InvoiceReport = () => {
   const columns = useMemo(
     () => [
       {
-        header: "Brand",
-        accessorKey: "brand_name",
+        header: "Refraction No",
+        accessorKey: "refraction_no",
         size: 130,
       },
       {
-        header: "Code",
-        accessorKey: "code_name",
+        header: "Invoice",
+        accessorKey: "invoice_no",
+        size: 120,
+      },
+      {
+        header: "Date",
+        accessorKey: "date",
+        size: 80,
+      },
+      {
+        header: "Time",
+        accessorKey: "time",
         size: 130,
       },
       {
-        header: "Color",
-        accessorKey: "color_name",
+        header: "Name",
+        accessorKey: "name",
+        size: 120,
+      },
+      {
+        header: "NIC",
+        accessorKey: "nic",
+        size: 120,
+      },
+      {
+        header: "Address",
+        accessorKey: "address",
         size: 130,
       },
       {
-        header: "Species",
-        accessorKey: "species",
-        size: 130,
-      },
-      {
-        header: "Price",
-        accessorKey: "price",
+        header: "Mobile",
+        accessorKey: "mobile",
         size: 60,
       },
       {
-        header: "Quantity",
-        accessorFn: (row) => row.stock?.[0]?.qty ?? 0,
-        size: 50,
+        header: "Total Amount",
+        accessorKey: "total_amount",
+        size: 60,
       },
       {
-        header: "Stock Limit",
-        accessorFn: (row) => row.stock?.[0]?.limit ?? 0,
-        size: 50,
+        header: "Pay Amount",
+        accessorKey: "pay_amount",
+        size: 60,
+      },
+      {
+        header: "Balance",
+        accessorKey: "balance",
+        size: 60,
       },
     ],
     []
@@ -74,35 +94,33 @@ const InvoiceReport = () => {
           marginBottom: 4,
         }}
       >
-        <Typography
-          sx={{ marginBottom: 2, fontWeight: "bold" }}
-          variant="h4"
-          gutterBottom
+        <ToggleButtonGroup
+          color="primary"
+          value={alignment}
+          exclusive
+          onChange={handleChange}
+          aria-label="Platform"
         >
-          Invoice Report
-        </Typography>
+          <ToggleButton value="factory">Factory Order</ToggleButton>
+          <ToggleButton value="normal">Normal Order</ToggleButton>
+          <ToggleButton value="channel">Channel Order</ToggleButton>
+        </ToggleButtonGroup>
         <Box
           sx={{
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            gap: 5
+            gap: 5,
           }}
         >
-          <ToggleButtonGroup
-            color="primary"
-            value={alignment}
-            exclusive
-            onChange={handleChange}
-            aria-label="Platform"
-          >
-            <ToggleButton value="factory">Factory</ToggleButton>
-            <ToggleButton value="normal">Normal</ToggleButton>
-            <ToggleButton value="channel">Channel</ToggleButton>
-          </ToggleButtonGroup>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
-              label="Date"
+              label="From Date"
+              format="YYYY-MM-DD"
+              onChange={(date) => console.log(date)}
+            />
+            <DatePicker
+              label="To Date"
               format="YYYY-MM-DD"
               onChange={(date) => console.log(date)}
             />
@@ -112,7 +130,7 @@ const InvoiceReport = () => {
 
       <MaterialReactTable
         columns={columns}
-        data={frames}
+        data={[]}
         enableColumnFilters={false}
         enableSorting
         enablePagination

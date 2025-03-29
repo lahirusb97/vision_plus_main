@@ -8,52 +8,42 @@ import { DatePicker } from "@mui/x-date-pickers";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
-const FrameReport = () => {
+const BestCustomer = () => {
   const { frames, framesLoading, refresh } = useGetFrames();
 
   // Define columns
   const columns = useMemo(
     () => [
       {
+        header: "Invoice",
+        accessorKey: "invoice",
+        size: 130,
+      },
+      {
+        header: "Customer",
+        accessorKey: "customer",
+        size: 130,
+      },
+      {
+        header: "Mobile No",
+        accessorKey: "mobile",
+        size: 130,
+      },
+      {
+        header: "NIC",
+        accessorKey: "nic",
+        size: 130,
+      },
+      {
         header: "Date",
         accessorKey: "date",
-        size: 130,
-      },
-      {
-        header: "Brand",
-        accessorKey: "brand",
-        size: 130,
-      },
-      {
-        header: "Code",
-        accessorKey: "code",
-        size: 130,
-      },
-      {
-        header: "Color",
-        accessorKey: "color",
-        size: 130,
-      },
-      {
-        header: "Species",
-        accessorKey: "species",
         size: 60,
       },
       {
-        header: "Shape",
-        accessorKey: "shape",
+        header: "Price",
+        accessorKey: "price",
         size: 60,
-      },
-      {
-        header: "Quantity",
-        accessorFn: (row) => row.stock?.[0]?.qty ?? 0,
-        size: 50,
-      },
-      {
-        header: "Stock Limit",
-        accessorFn: (row) => row.stock?.[0]?.limit ?? 0,
-        size: 50,
-      },
+      }
     ],
     []
   );
@@ -73,7 +63,7 @@ const FrameReport = () => {
           variant="h4"
           gutterBottom
         >
-          Frames Report
+          Best Customer
         </Typography>
         <Box
           sx={{
@@ -115,4 +105,4 @@ const FrameReport = () => {
   );
 };
 
-export default FrameReport;
+export default BestCustomer;

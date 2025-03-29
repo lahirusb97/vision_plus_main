@@ -8,55 +8,41 @@ import { DatePicker } from "@mui/x-date-pickers";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
-const FrameReport = () => {
+const InvoiceSummary = () => {
   const { frames, framesLoading, refresh } = useGetFrames();
 
   // Define columns
   const columns = useMemo(
     () => [
       {
-        header: "Date",
-        accessorKey: "date",
+        header: "Refraction No",
+        accessorKey: "refraction_no",
         size: 130,
       },
       {
-        header: "Brand",
-        accessorKey: "brand",
+        header: "Invoice No",
+        accessorKey: "invoice",
         size: 130,
       },
       {
-        header: "Code",
-        accessorKey: "code",
+        header: "Name",
+        accessorKey: "name",
         size: 130,
       },
       {
-        header: "Color",
-        accessorKey: "color",
+        header: "Mobile No",
+        accessorKey: "mobile",
         size: 130,
       },
       {
-        header: "Species",
-        accessorKey: "species",
-        size: 60,
-      },
-      {
-        header: "Shape",
-        accessorKey: "shape",
-        size: 60,
-      },
-      {
-        header: "Quantity",
-        accessorFn: (row) => row.stock?.[0]?.qty ?? 0,
-        size: 50,
-      },
-      {
-        header: "Stock Limit",
-        accessorFn: (row) => row.stock?.[0]?.limit ?? 0,
-        size: 50,
-      },
+        header: "Address",
+        accessorKey: "address",
+        size: 150,
+      }
     ],
     []
   );
+  const navigate = useNavigate();
 
   return (
     <Box sx={{ padding: 4, maxWidth: "1300px" }}>
@@ -73,7 +59,7 @@ const FrameReport = () => {
           variant="h4"
           gutterBottom
         >
-          Frames Report
+          Invoice Summary
         </Typography>
         <Box
           sx={{
@@ -85,12 +71,7 @@ const FrameReport = () => {
         >
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
-              label="From Date"
-              format="YYYY-MM-DD"
-              onChange={(date) => console.log(date)}
-            />
-            <DatePicker
-              label="To Date"
+              label="Date"
               format="YYYY-MM-DD"
               onChange={(date) => console.log(date)}
             />
@@ -115,4 +96,4 @@ const FrameReport = () => {
   );
 };
 
-export default FrameReport;
+export default InvoiceSummary;

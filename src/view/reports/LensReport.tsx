@@ -6,52 +6,52 @@ import { useNavigate } from "react-router";
 import { DatePicker } from "@mui/x-date-pickers";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import ToggleButton from "@mui/material/ToggleButton";
+import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 
 const LensReport = () => {
   const { frames, framesLoading, refresh } = useGetFrames();
+
+  const [alignment, setAlignment] = React.useState("stock_lens");
+
+  const handleChange = (
+    event: React.MouseEvent<HTMLElement>,
+    newAlignment: string
+  ) => {
+    setAlignment(newAlignment);
+  };
 
   // Define columns
   const columns = useMemo(
     () => [
       {
-        header: "Brand",
-        accessorKey: "brand_name",
-        size: 130,
+        header: "Date",
+        accessorKey: "date",
+        size: 150,
       },
       {
-        header: "Code",
-        accessorKey: "code_name",
-        size: 130,
+        header: "Lens Type",
+        accessorKey: "lens_type",
+        size: 150,
       },
       {
-        header: "Color",
-        accessorKey: "color_name",
-        size: 130,
+        header: "Coating",
+        accessorKey: "coating",
+        size: 150,
       },
       {
-        header: "Species",
-        accessorKey: "species",
-        size: 130,
-      },
-      {
-        header: "Price",
-        accessorKey: "price",
-        size: 60,
+        header: "Lens Brand",
+        accessorKey: "lens_brand",
+        size: 150,
       },
       {
         header: "Quantity",
-        accessorFn: (row) => row.stock?.[0]?.qty ?? 0,
-        size: 50,
-      },
-      {
-        header: "Stock Limit",
-        accessorFn: (row) => row.stock?.[0]?.limit ?? 0,
-        size: 50,
+        accessorKey: "quantity",
+        size: 150,
       },
     ],
     []
   );
-  const navigate = useNavigate();
 
   return (
     <Box sx={{ padding: 4, maxWidth: "1200px" }}>
@@ -63,25 +63,42 @@ const LensReport = () => {
           marginBottom: 4,
         }}
       >
-        <Typography
-          sx={{ marginBottom: 2, fontWeight: "bold" }}
-          variant="h4"
-          gutterBottom
+        <ToggleButtonGroup
+          color="primary"
+          value={alignment}
+          exclusive
+          onChange={handleChange}
+          aria-label="Platform"
         >
-          Lens Report
-        </Typography>
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <ToggleButton value="stock_lens">Stock Lens</ToggleButton>
+          <ToggleButton value="non_stock_lens">Non Stock Lens</ToggleButton>
+        </ToggleButtonGroup>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            gap: 5,
+          }}
+        >
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
-              label="Date"
+              label="From Date"
+              format="YYYY-MM-DD"
+              onChange={(date) => console.log(date)}
+            />
+            <DatePicker
+              label="To Date"
               format="YYYY-MM-DD"
               onChange={(date) => console.log(date)}
             />
           </LocalizationProvider>
+        </Box>
       </Box>
 
       <MaterialReactTable
         columns={columns}
-        data={frames}
+        data={[]}
         enableColumnFilters={false}
         enableSorting
         enablePagination
