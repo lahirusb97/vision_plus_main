@@ -161,27 +161,28 @@ export default function PowerToLenseFilter({
 
         //Validated
         try {
-          const responce = await axiosClient.get("/lenses/search/", {
-            params: {
-              brand_id: selectLense.brand,
-              type_id: selectLense.lenseType,
-              coating_id: selectLense.coating,
-              ...(selectLense.lenseType === progresiveID
-                ? removeInvalidValues(progresive)
-                : selectLense.lenseType === singleVisionID
-                ? removeInvalidValues(normal)
-                : selectLense.lenseType === bifocalID
-                ? removeInvalidValues(bifocal)
-                : null),
-              branch_id: getUserCurentBranch()?.id,
-              side: selectLense.lenseType === progresiveID ? "right" : null,
-            },
-          });
+          const responce: { data: LenseModel } = await axiosClient.get(
+            "/lenses/search/",
+            {
+              params: {
+                brand_id: selectLense.brand,
+                type_id: selectLense.lenseType,
+                coating_id: selectLense.coating,
+                ...(selectLense.lenseType === progresiveID
+                  ? removeInvalidValues(progresive)
+                  : selectLense.lenseType === singleVisionID
+                  ? removeInvalidValues(normal)
+                  : selectLense.lenseType === bifocalID
+                  ? removeInvalidValues(bifocal)
+                  : null),
+                branch_id: getUserCurentBranch()?.id,
+                side: selectLense.lenseType === progresiveID ? "right" : null,
+              },
+            }
+          );
 
-          const lenseObj = responce.data.lens;
-          const stockObj = responce.data.stock;
-          setSelectedLenseRight({ ...lenseObj, ...stockObj });
-          setRightPrice(lenseObj?.price || 0);
+          setSelectedLenseRight(responce.data);
+          setRightPrice(responce.data.price || "0");
           toast.success("Sujested Lens Match Found Plese Check Lense Powers");
         } catch (error) {
           extractErrorMessage(error);
@@ -211,26 +212,28 @@ export default function PowerToLenseFilter({
         };
 
         try {
-          const responce = await axiosClient.get("/lenses/search/", {
-            params: {
-              brand_id: selectLense.brand,
-              type_id: selectLense.lenseType,
-              coating_id: selectLense.coating,
-              ...(selectLense.lenseType === progresiveID
-                ? removeInvalidValues(progresive)
-                : selectLense.lenseType === singleVisionID
-                ? removeInvalidValues(normal)
-                : selectLense.lenseType === bifocalID
-                ? removeInvalidValues(bifocal)
-                : null),
-              branch_id: getUserCurentBranch()?.id,
-              side: selectLense.lenseType === progresiveID ? "left" : null,
-            },
-          });
-          const lenseObj = responce.data.lens;
-          const stockObj = responce.data.stock;
-          setSelectedLenseLeft({ ...lenseObj, ...stockObj });
-          setLeftPrice(lenseObj?.price || 0);
+          const responce: { data: LenseModel } = await axiosClient.get(
+            "/lenses/search/",
+            {
+              params: {
+                brand_id: selectLense.brand,
+                type_id: selectLense.lenseType,
+                coating_id: selectLense.coating,
+                ...(selectLense.lenseType === progresiveID
+                  ? removeInvalidValues(progresive)
+                  : selectLense.lenseType === singleVisionID
+                  ? removeInvalidValues(normal)
+                  : selectLense.lenseType === bifocalID
+                  ? removeInvalidValues(bifocal)
+                  : null),
+                branch_id: getUserCurentBranch()?.id,
+                side: selectLense.lenseType === progresiveID ? "left" : null,
+              },
+            }
+          );
+
+          setSelectedLenseLeft(responce.data);
+          setLeftPrice(responce.data.price || "0");
           toast.success("Sujested Lens Match Found Plese Check Lense Powers");
         } catch (error) {
           if (error instanceof AxiosError) {
@@ -419,7 +422,7 @@ export default function PowerToLenseFilter({
             >
               <Typography>
                 {selectedLenseRight
-                  ? selectedLenseRight?.stock?.qty || 0
+                  ? selectedLenseRight?.stock[0]?.qty || 0
                   : "N/A"}
               </Typography>
             </Paper>
@@ -510,7 +513,7 @@ export default function PowerToLenseFilter({
             >
               <Typography>
                 {selectedLenseLeft
-                  ? selectedLenseLeft?.stock[0]?.qty || 0
+                  ? selectedLenseLeft?.stock[0].qty || 0
                   : "N/A"}
               </Typography>
             </Paper>

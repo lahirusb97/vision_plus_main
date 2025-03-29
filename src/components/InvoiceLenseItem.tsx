@@ -7,7 +7,6 @@ import { blue, orange, purple, yellow } from "@mui/material/colors";
 
 export default function InvoiceLenseItem({ lense }: LenseWithQty) {
   const dispatch = useDispatch();
-  console.log(lense);
 
   return (
     <Paper

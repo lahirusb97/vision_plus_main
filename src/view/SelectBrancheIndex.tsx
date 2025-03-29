@@ -20,7 +20,7 @@ export default function SelectBrancheIndex() {
       <Typography variant="h5"> Select your branche</Typography>
 
       <Box sx={{ display: "flex", flexDirection: "column" }}>
-        {userAuth?.branches.map((branch) => (
+        {userAuth?.branches?.map((branch) => (
           <Button
             onClick={() => {
               const currentBranch = saveUserCurentBranch(branch);
@@ -41,6 +41,13 @@ export default function SelectBrancheIndex() {
             <Typography variant="h6"> {branch.branch_name}</Typography>
           </Button>
         ))}
+        <Button
+          variant="outlined"
+          color="error"
+          onClick={() => navigate("/login")}
+        >
+          Back To Login
+        </Button>
       </Box>
     </Box>
   );

@@ -44,6 +44,7 @@ export default function InvoiceTable() {
   //calcuate Total
   const subtotal = frameTotal + lenseTotal + ExtraTotal;
   const grandTotal = subtotal - watch("discount");
+  console.log(LenseInvoiceList);
 
   return (
     <TableContainer
@@ -74,7 +75,7 @@ export default function InvoiceTable() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {Object.values(FrameInvoiceList).map((row, index) => (
+          {Object.values(FrameInvoiceList)?.map((row, index) => (
             <TableRow key={index}>
               <TableCell>
                 <IconButton onClick={() => dispatch(removeFrame(row.id))}>
@@ -90,7 +91,7 @@ export default function InvoiceTable() {
               </TableCell>
             </TableRow>
           ))}
-          {Object.values(LenseInvoiceList).map((row, index) => (
+          {Object.values(LenseInvoiceList)?.map((row, index) => (
             <TableRow key={index}>
               <TableCell>
                 <IconButton onClick={() => dispatch(removeLense(row.id))}>
@@ -99,8 +100,8 @@ export default function InvoiceTable() {
               </TableCell>
 
               <TableCell>
-                {`${row?.lens_type} / ${row.coating} / ${row.powers
-                  .map((power) => {
+                {`${row?.type} / ${row.coating} / ${row?.stock[0]?.powers
+                  ?.map((power) => {
                     if (power.power === 1) {
                       return `SPH: ${power.value}`; // For SPH (Sphere)
                     } else if (power.power === 2) {
@@ -121,7 +122,7 @@ export default function InvoiceTable() {
             </TableRow>
           ))}
           {/* //! External Invoice */}
-          {Object.values(externalLenseInvoiceList).map((row, index) => (
+          {Object.values(externalLenseInvoiceList)?.map((row, index) => (
             <TableRow key={index}>
               <TableCell>
                 <IconButton

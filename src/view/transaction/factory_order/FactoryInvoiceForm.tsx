@@ -49,6 +49,7 @@ import { useFactoryOrderContext } from "../../../context/FactoryOrderContext";
 import { heIL } from "@mui/x-date-pickers/locales";
 import VarificationDialog from "../../../components/VarificationDialog";
 import { useValidationState } from "../../../hooks/validations/useValidationState";
+import { getUserCurentBranch } from "../../../utils/authDataConver";
 
 export default function FactoryInvoiceForm() {
   const { setValidationState, resetValidation, validationState } =
@@ -156,6 +157,7 @@ export default function FactoryInvoiceForm() {
         height: data.height,
         right_height: data.right_height,
         left_height: data.left_height,
+        branch_id: getUserCurentBranch()?.id,
       },
       order_items: [
         ...Object.values(LenseInvoiceList).map((item) => ({
