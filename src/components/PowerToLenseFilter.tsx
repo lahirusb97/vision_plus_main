@@ -146,8 +146,6 @@ export default function PowerToLenseFilter({
         rightPowers.right_eye_dist_cyl ||
         rightPowers.right_eye_dist_sph
       ) {
-        console.log("ss");
-
         const progresive = {
           sph: rightPowers.right_eye_dist_sph,
           add: rightPowers.right_eye_near_sph,
@@ -176,13 +174,12 @@ export default function PowerToLenseFilter({
                 ? removeInvalidValues(bifocal)
                 : null),
               branch_id: getUserCurentBranch()?.id,
+              side: selectLense.lenseType === progresiveID ? "right" : null,
             },
           });
 
           const lenseObj = responce.data.lens;
           const stockObj = responce.data.stock;
-          console.log(lenseObj);
-
           setSelectedLenseRight({ ...lenseObj, ...stockObj });
           setRightPrice(lenseObj?.price || 0);
           toast.success("Sujested Lens Match Found Plese Check Lense Powers");
@@ -227,6 +224,7 @@ export default function PowerToLenseFilter({
                 ? removeInvalidValues(bifocal)
                 : null),
               branch_id: getUserCurentBranch()?.id,
+              side: selectLense.lenseType === progresiveID ? "left" : null,
             },
           });
           const lenseObj = responce.data.lens;

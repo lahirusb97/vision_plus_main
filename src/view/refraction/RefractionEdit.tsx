@@ -70,6 +70,7 @@ export default function RefractionEdit() {
       shuger: false,
       refraction_remark: null,
       prescription: false,
+      cataract: false,
       note: null,
     },
   });
@@ -189,6 +190,7 @@ export default function RefractionEdit() {
           refractionDetail.left_eye_near_sph
         ),
         shuger: refractionDetail.shuger,
+        cataract: refractionDetail.cataract,
         refraction_remark: refractionDetail.refraction_remark,
         prescription: refractionDetail.prescription,
         note: refractionDetail.note,
@@ -341,6 +343,15 @@ export default function RefractionEdit() {
                   />
                 }
                 label="Prescription"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    {...methods.register("cataract")}
+                    checked={methods.watch("cataract") === true}
+                  />
+                }
+                label="Cataract"
               />
               <SaveButton btnText="Save" loading={false} />
             </Box>

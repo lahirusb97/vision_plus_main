@@ -17,6 +17,7 @@ import { useReactToPrint } from "react-to-print";
 import { Invoice } from "../model/SingleInvoiceModel";
 import { dateAndTimeFormat } from "../utils/dateAndTimeFormat";
 import RefractionNumber from "../view/refraction/RefractionNumber";
+import OrderFormRemark from "./OrderFormRemark";
 
 interface OrderFormProps {
   invoiceDetail: Invoice | null;
@@ -26,25 +27,11 @@ const OrderForm: React.FC<OrderFormProps> = ({ invoiceDetail }) => {
   const componentRef = useRef<HTMLDivElement | null>(null);
   const RefractionDetails = invoiceDetail?.refraction_details;
 
-  const reactToPrintFn = useReactToPrint({
-    content: () => componentRef.current,
-  });
+  const reactToPrintFn = useReactToPrint({ contentRef: componentRef });
 
   return (
     <>
-      {/* Custom Font */}
-      <GlobalStyles
-        styles={{
-          "@font-face": {
-            fontFamily: "Alger",
-            src: "url('/fonts/ALGER.ttf') format('truetype')",
-            fontWeight: "normal",
-            fontStyle: "normal",
-          },
-        }}
-      />
-
-      <Box sx={{ padding: "0.5cm", fontFamily: "Alger" }}>
+      <Box sx={{ padding: "0.5cm" }}>
         {/* Printable Section */}
         <Box
           sx={{
@@ -53,7 +40,6 @@ const OrderForm: React.FC<OrderFormProps> = ({ invoiceDetail }) => {
             minHeight: "14.8cm",
             margin: "0 auto",
             border: "1px solid #000",
-            fontFamily: "Alger, Arial, sans-serif",
             "@media print": {
               width: "21cm",
               minHeight: "14.8cm",
@@ -72,13 +58,16 @@ const OrderForm: React.FC<OrderFormProps> = ({ invoiceDetail }) => {
                 flexDirection: "column",
                 flex: 2,
                 width: "14cm",
+                alignItems: "flex-start",
               }}
             >
               <Box sx={{ display: "flex", gap: "0.2cm" }}>
                 <Box sx={{ flex: 1 }}>
                   <Typography
                     variant="h6"
-                    sx={{ fontWeight: "bold", fontFamily: "Alger" }}
+                    sx={{ fontFamily: "Algerian", fontSize: "5mm" }}
+                    align="center"
+                    fontWeight="bold"
                   >
                     VISION PLUS OPTICIANS (PVT) LTD
                   </Typography>
@@ -88,13 +77,14 @@ const OrderForm: React.FC<OrderFormProps> = ({ invoiceDetail }) => {
                 </Box>
                 <Box
                   sx={{
-                    border: "1px solid black",
+                    border: "2px solid black",
                     padding: "0.2cm",
                     fontFamily: "Alger",
+                    width: "3cm",
                   }}
                 >
                   <Typography variant="body1">Invoice No:</Typography>
-                  {invoiceDetail?.id}
+                  <strong> MATA300000{invoiceDetail?.id}</strong>
                 </Box>
               </Box>
 
@@ -111,7 +101,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ invoiceDetail }) => {
                         colSpan={3}
                         sx={{
                           border: "1px solid black",
-                          fontWeight: "bold",
+
                           fontSize: "1.3em", // Right Eye border
                         }}
                       >
@@ -122,7 +112,6 @@ const OrderForm: React.FC<OrderFormProps> = ({ invoiceDetail }) => {
                         colSpan={3}
                         sx={{
                           border: "1px solid black",
-                          fontWeight: "bold",
                           fontSize: "1.3em", // Left Eye border
                         }}
                       >
@@ -282,22 +271,16 @@ const OrderForm: React.FC<OrderFormProps> = ({ invoiceDetail }) => {
               </TableContainer>
 
               <Box sx={{ marginTop: "0.2cm" }}>
-                <Typography variant="body2">
-                  <strong>Details:</strong> Lens Type / Lens Coating / Lens
-                  Brand / Frame Brand / Frame Shape / PD: 87 / H:10 /
-                  shuger/cataract /
-                </Typography>
-                <Typography variant="body2">
-                  LPD: 87 / LH:10 / shuger/cataract
-                </Typography>
-                <Typography variant="body2" sx={{ fontWeight: "bold" }}>
-                  Remark:
-                </Typography>
+                <OrderFormRemark invoiceDetail={invoiceDetail} />
 
-                {RefractionDetails?.remark}
+                <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+                  {RefractionDetails?.refraction_remark &&
+                    ` Refraction Remark : ${RefractionDetails?.refraction_remark}`}
+                </Typography>
 
                 <Typography variant="body2" fontWeight="bold">
-                  Refraction remark: Refraction related remark
+                  {invoiceDetail?.order_details?.order_remark &&
+                    ` Refraction Remark : ${invoiceDetail?.order_details?.order_remark}`}
                 </Typography>
               </Box>
 
@@ -361,7 +344,11 @@ const OrderForm: React.FC<OrderFormProps> = ({ invoiceDetail }) => {
                   textAlign: "center",
                 }}
               >
-                <strong>On Hold / Fitting on collection</strong>
+                <strong>
+                  {invoiceDetail?.order_details.on_hold && "On Hold /"}
+                  {invoiceDetail?.order_details.fitting_on_collection &&
+                    "Fitting on Collection Hold"}
+                </strong>
               </Typography>
               <Box sx={4}>
                 <Paper
@@ -374,15 +361,16 @@ const OrderForm: React.FC<OrderFormProps> = ({ invoiceDetail }) => {
                     variant="body2"
                     sx={{ fontWeight: "bold", marginTop: "0.2cm" }}
                   >
-                    Refraction:{" "}
-                    {invoiceDetail?.refraction_details.customer_full_name}
+                    Refraction by:{" "}
+                    {invoiceDetail?.refraction_details?.prescription &&
+                      "Prescription"}
                   </Typography>
                   <Typography
                     variant="body2"
                     sx={{ fontWeight: "bold", marginTop: "0.2cm" }}
                   >
                     Refraction No:{" "}
-                    {invoiceDetail?.refraction_details.refraction_number}
+                    {invoiceDetail?.customer_details.refraction_number}
                   </Typography>
                   <Typography
                     variant="body2"
@@ -395,7 +383,8 @@ const OrderForm: React.FC<OrderFormProps> = ({ invoiceDetail }) => {
                     variant="body2"
                     sx={{ fontWeight: "bold", marginTop: "0.2cm" }}
                   >
-                    Name:
+                    Name{` : `}
+                    {invoiceDetail?.customer_details.name}
                   </Typography>
                   <hr></hr>
                   <Typography
@@ -519,7 +508,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ invoiceDetail }) => {
             <Box
               sx={{
                 width: "15cm",
-                height: "4cm",
+                height: "3cm",
                 border: "1px solid black",
               }}
             />
@@ -527,16 +516,14 @@ const OrderForm: React.FC<OrderFormProps> = ({ invoiceDetail }) => {
         </Box>
 
         {/* Print Button */}
-        <Box sx={{ textAlign: "center" }}>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => reactToPrintFn()}
-            sx={{ marginTop: "0.2cm" }}
-          >
-            Print Invoice
-          </Button>
-        </Box>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => reactToPrintFn()}
+          sx={{ mt: "2mm" }}
+        >
+          Print Invoice
+        </Button>
       </Box>
     </>
   );

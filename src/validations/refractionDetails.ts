@@ -72,6 +72,7 @@ export const schemaRefractionDetails = z.object({
     .max(100, "Refraction Remark be 10 characters or fewer")
     .nullable(),
   prescription: z.boolean(),
+  cataract: z.boolean(),
   note: z.string().max(100, "Note be 10 characters or fewer").nullable(),
 });
 

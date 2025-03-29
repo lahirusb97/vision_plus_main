@@ -1,7 +1,7 @@
 import * as React from "react";
 import Dialog from "@mui/material/Dialog";
 import Typography from "@mui/material/Typography";
-import { Badge, Box, IconButton, Paper } from "@mui/material";
+import { Badge, Box, Button, IconButton, Paper } from "@mui/material";
 import { Close } from "@mui/icons-material";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import { useFactoryOrderContext } from "../context/FactoryOrderContext";
@@ -63,11 +63,12 @@ export default function HidenNoteDialog() {
 
   return (
     <div>
-      <IconButton onClick={handleClickOpen}>
+      <Button variant="outlined" sx={{ mx: 1 }} onClick={handleClickOpen}>
         <Badge badgeContent={note ? 1 : 0} color="error">
-          <NotificationsIcon color="action" />
+          Note
+          <NotificationsIcon color={note ? "error" : "action"} />
         </Badge>
-      </IconButton>
+      </Button>
 
       <SimpleDialog note={note} open={open} onClose={handleClose} />
     </div>

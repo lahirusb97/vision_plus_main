@@ -29,4 +29,5 @@ export interface RefractionDetailModel {
   refraction_remark: string | null;
   note: string | null;
   is_manual: boolean;
+  cataract: boolean;
 }

@@ -19,7 +19,10 @@ import useGetRefractionDetails from "../../../hooks/useGetRefractionDetails";
 import { InvoiceInputModel } from "../../../model/InvoiceInputModel";
 import { RefractionDetailModel } from "../../../model/RefractionDetailModel";
 //schemas
-import { factoryInvoiceSchema } from "../../../validations/factoryInvoiceSchema";
+import {
+  factoryInvoiceSchema,
+  FactoryOrderFrameFormModel,
+} from "../../../validations/factoryInvoiceSchema";
 //Store
 import { RootState } from "../../../store/store";
 import { clearFrame } from "../../../features/invoice/frameFilterSlice";
@@ -43,6 +46,7 @@ import StockDrawerBtn from "../../../components/StockDrawerBtn";
 import HidenNoteDialog from "../../../components/HidenNoteDialog";
 import { extractErrorMessage } from "../../../utils/extractErrorMessage";
 import { useFactoryOrderContext } from "../../../context/FactoryOrderContext";
+import { heIL } from "@mui/x-date-pickers/locales";
 
 export default function FactoryInvoiceForm() {
   const { id } = useParams();
@@ -142,6 +146,12 @@ export default function FactoryInvoiceForm() {
         total_price: parseFloat(grandTotal) || 0,
         remark: data.remark,
         sales_staff_code: data.sales_staff_code,
+        pd: data.pd,
+        right_pd: data.right_pd,
+        left_pd: data.left_pd,
+        height: data.height,
+        right_height: data.right_height,
+        left_height: data.left_height,
       },
       order_items: [
         ...Object.values(LenseInvoiceList).map((item) => ({
@@ -227,6 +237,14 @@ export default function FactoryInvoiceForm() {
     }
   };
 
+  const handleAddFrame = (frameData) => {
+    addItem("frame", {
+      frame: 1,
+      quantity: 2,
+      price_per_unit: 100,
+      subtotal: 200,
+    });
+  };
   return (
     <>
       <FormProvider {...methods}>
@@ -293,6 +311,16 @@ export default function FactoryInvoiceForm() {
                 display: "flex",
               }}
             >
+              <Typography mx={1}>
+                Shuger :{" "}
+                {refractionDetail?.shuger ? "Shuger Avilable" : "No Shuger"}
+              </Typography>
+              <Typography mx={1}>
+                Cataract :{" "}
+                {refractionDetail?.cataract
+                  ? "Cataract Avilable"
+                  : "No Cataract"}
+              </Typography>
               <FormControlLabel
                 control={<Checkbox {...methods.register("on_hold")} />}
                 label=" On Hold"
@@ -319,46 +347,85 @@ export default function FactoryInvoiceForm() {
                 my: 1,
               }}
             >
-              <TextField
-                {...methods.register("pd")}
-                sx={{ width: 100 }}
-                size="small"
-                type="number"
-                label="PD"
-                InputLabelProps={{
-                  shrink: Boolean(methods.watch("pd")),
-                }}
-              />
-              <TextField
-                {...methods.register("h")}
-                sx={{ width: 100 }}
-                type="number"
-                size="small"
-                label="H"
-                InputLabelProps={{
-                  shrink: Boolean(methods.watch("h")),
-                }}
-              />
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+                <TextField
+                  {...methods.register("pd")}
+                  sx={{ width: 100 }}
+                  size="small"
+                  type="number"
+                  label="PD"
+                  InputLabelProps={{
+                    shrink: Boolean(methods.watch("pd")),
+                  }}
+                />
+                <TextField
+                  {...methods.register("height")}
+                  sx={{ width: 100 }}
+                  type="number"
+                  size="small"
+                  label="Height"
+                  InputLabelProps={{
+                    shrink: Boolean(methods.watch("height")),
+                  }}
+                />
+              </Box>
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+                <Box sx={{ display: "flex", gap: 1 }}>
+                  <TextField
+                    {...methods.register("right_height")}
+                    sx={{ width: 100 }}
+                    type="number"
+                    size="small"
+                    label="Right-H"
+                    InputLabelProps={{
+                      shrink: Boolean(methods.watch("right_height")),
+                    }}
+                  />
+                  <TextField
+                    {...methods.register("left_height")}
+                    sx={{ width: 100 }}
+                    type="number"
+                    size="small"
+                    label="Left-H "
+                    InputLabelProps={{
+                      shrink: Boolean(methods.watch("left_height")),
+                    }}
+                  />
+                </Box>
+                <Box sx={{ display: "flex", gap: 1 }}>
+                  <TextField
+                    {...methods.register("right_pd")}
+                    sx={{ width: 100 }}
+                    type="number"
+                    size="small"
+                    label="Right-PD"
+                    InputLabelProps={{
+                      shrink: Boolean(methods.watch("right_pd")),
+                    }}
+                  />
+                  <TextField
+                    {...methods.register("left_pd")}
+                    sx={{ width: 100 }}
+                    type="number"
+                    size="small"
+                    label="Left-PD"
+                    InputLabelProps={{
+                      shrink: Boolean(methods.watch("left_pd")),
+                    }}
+                  />
+                </Box>
+              </Box>
               <TextField
                 fullWidth
                 size="small"
-                {...methods.register("remark")}
+                {...methods.register("order_remark")}
                 sx={{ maxWidth: "1200px" }}
-                placeholder="remark"
+                placeholder="Order remark"
+                rows={3} // Defines the number of visible lines
                 multiline
               />
             </Box>
-            {/* <TextField
-            {...methods.register("note")}
-            sx={{ my: 1, maxWidth: "1200px", width: "100%" }}
-            size="small"
-            fullWidth
-            label="note"
-            multiline
-            InputLabelProps={{
-              shrink: Boolean(methods.watch("note")),
-            }}
-          /> */}
+
             <Box
               sx={{
                 display: "flex",
