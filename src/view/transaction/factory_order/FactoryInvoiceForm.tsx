@@ -47,8 +47,12 @@ import HidenNoteDialog from "../../../components/HidenNoteDialog";
 import { extractErrorMessage } from "../../../utils/extractErrorMessage";
 import { useFactoryOrderContext } from "../../../context/FactoryOrderContext";
 import { heIL } from "@mui/x-date-pickers/locales";
+import VarificationDialog from "../../../components/VarificationDialog";
+import { useValidationState } from "../../../hooks/validations/useValidationState";
 
 export default function FactoryInvoiceForm() {
+  const { setValidationState, resetValidation, validationState } =
+    useValidationState();
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -219,32 +223,33 @@ export default function FactoryInvoiceForm() {
       Object.keys(LenseInvoiceList).length > 0 ||
       Object.keys(FrameInvoiceList).length > 0
     ) {
-      try {
-        if (refractionDetail && !refractionDetailLoading) {
-          //TODO USE THIS AND CREATE THE SYSTEM ALL GOOD TO DO IF NO REFRACTION DETAILS NO DETAIL CREATINS
-          const responce = await axiosClient.post("/orders/", postData);
-          toast.success("Order saved successfully");
-          const url = `?order_id=${encodeURIComponent(responce.data.id)}`;
-          navigate(`view/${url}`);
-        } else {
-          toast.error("Refraction Detail Not Found");
-        }
-      } catch (err) {
-        extractErrorMessage(err);
+      if (refractionDetail && !refractionDetailLoading) {
+        console.log("run");
+
+        setValidationState({
+          openValidationDialog: true,
+          validationType: "user",
+          apiCallFunction: () => sendDataToDb(postData),
+        });
+        //TODO USE THIS AND CREATE THE SYSTEM ALL GOOD TO DO IF NO REFRACTION DETAILS NO DETAIL CREATINS
+      } else {
+        toast.error("Refraction Detail Not Found");
       }
     } else {
       toast.error("No Items ware added");
     }
   };
-
-  const handleAddFrame = (frameData) => {
-    addItem("frame", {
-      frame: 1,
-      quantity: 2,
-      price_per_unit: 100,
-      subtotal: 200,
-    });
+  const sendDataToDb = async (postData) => {
+    try {
+      const responce = await axiosClient.post("/orders/", postData);
+      toast.success("Order saved successfully");
+      const url = `?order_id=${encodeURIComponent(responce.data.id)}`;
+      navigate(`view/${url}`);
+    } catch (error) {
+      extractErrorMessage(error);
+    }
   };
+
   return (
     <>
       <FormProvider {...methods}>
@@ -453,6 +458,11 @@ export default function FactoryInvoiceForm() {
         )}
         <DrawerStock refractionDetail={refractionDetail} />
       </FormProvider>
+
+      <VarificationDialog
+        validationState={validationState}
+        resetValidation={resetValidation}
+      />
     </>
   );
 }

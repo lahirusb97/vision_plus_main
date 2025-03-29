@@ -17,12 +17,12 @@ export const factoryInvoiceSchema = Yup.object().shape({
   order_remark: Yup.string().notRequired(),
   on_hold: Yup.boolean().required(),
   fitting_on_collection: Yup.boolean().required(),
-  pd: Yup.number().notRequired(),
-  right_pd: Yup.number().notRequired(),
-  left_pd: Yup.number().notRequired(),
-  height: Yup.number().notRequired(),
-  left_height: Yup.number().notRequired(),
-  right_height: Yup.number().notRequired(),
+  pd: Yup.string().notRequired().nullable(),
+  right_pd: Yup.string().notRequired().nullable(),
+  left_pd: Yup.string().notRequired().nullable(),
+  height: Yup.string().notRequired().nullable(),
+  left_height: Yup.string().notRequired().nullable(),
+  right_height: Yup.string().notRequired().nullable(),
 });
 
 import z from "zod";
