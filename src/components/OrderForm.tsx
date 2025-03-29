@@ -84,7 +84,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ invoiceDetail }) => {
                   }}
                 >
                   <Typography variant="body1">Invoice No:</Typography>
-                  <strong> MATA300000{invoiceDetail?.id}</strong>
+                  <strong> {invoiceDetail?.invoice_number}</strong>
                 </Box>
               </Box>
 
@@ -229,7 +229,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ invoiceDetail }) => {
                           fontSize: "1em",
                         }}
                       >
-                        {RefractionDetails?.left_eye_dist_axis} {/* cyl */}
+                        {RefractionDetails?.left_eye_dist_cyl} {/* cyl */}
                       </TableCell>
                       <TableCell
                         sx={{
@@ -292,7 +292,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ invoiceDetail }) => {
                 justifyContent={"flex-end"}
               >
                 <Typography variant="body2" fontWeight="bold">
-                  Staff Members:
+                  Staff Members:Nipuni
                 </Typography>
                 <Box sx={{ display: "flex", gap: "0.2cm" }}>
                   <Box
@@ -350,7 +350,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ invoiceDetail }) => {
                     "Fitting on Collection Hold"}
                 </strong>
               </Typography>
-              <Box sx={4}>
+              <Box>
                 <Paper
                   sx={{
                     padding: "0.2cm",

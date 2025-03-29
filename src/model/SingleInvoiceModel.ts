@@ -96,6 +96,7 @@ interface Invoice {
   id: number;
   order: number;
   customer: number;
+  invoice_number: string;
   customer_details: PatientModel;
   refraction_details: RefractionDetailModel | null;
   invoice_type: string; // Consider enum: 'factory' | 'retail' | 'wholesale'

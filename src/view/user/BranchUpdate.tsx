@@ -35,6 +35,7 @@ export default function UserUpdate() {
     setValue,
     control,
     watch,
+    reset,
     handleSubmit,
     formState: { errors },
   } = useForm<BranchModel>({
@@ -45,8 +46,8 @@ export default function UserUpdate() {
     console.log(data);
 
     try {
-      await putHandler(`branches/update/${branch_id}/`, data);
-
+      await putHandler(`branches/${branch_id}/`, data);
+      reset();
       toast.success(`Employee ${data.branch_name} updated successfully`);
     } catch (error) {
       extractErrorMessage(error);

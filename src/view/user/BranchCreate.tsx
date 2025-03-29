@@ -7,12 +7,13 @@ import { extractErrorMessage } from "../../utils/extractErrorMessage";
 import toast from "react-hot-toast";
 export default function BranchCreate() {
   const { postHandlerloading, postHandler } = useAxiosPost();
-  const { register, handleSubmit } = useForm<BranchFormModel>({
+  const { register, handleSubmit, reset } = useForm<BranchFormModel>({
     resolver: zodResolver(schemaBranch),
   });
   const branchCreate = async (data: BranchFormModel) => {
     try {
       await postHandler("branches/", data);
+      reset();
       toast.success("Branch Created Successfully");
     } catch (error) {
       extractErrorMessage(error);

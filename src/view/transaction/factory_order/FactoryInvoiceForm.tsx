@@ -149,7 +149,7 @@ export default function FactoryInvoiceForm() {
         sub_total: parseFloat(subtotal) || 0,
         discount: parseFloat(discount) || 0,
         total_price: parseFloat(grandTotal) || 0,
-        remark: data.remark,
+        order_remark: data.order_remark,
         sales_staff_code: data.sales_staff_code,
         pd: data.pd,
         right_pd: data.right_pd,
@@ -157,6 +157,8 @@ export default function FactoryInvoiceForm() {
         height: data.height,
         right_height: data.right_height,
         left_height: data.left_height,
+        fitting_on_collection: data.fitting_on_collection,
+        on_hold: data.on_hold,
         branch_id: getUserCurentBranch()?.id,
       },
       order_items: [
@@ -226,8 +228,6 @@ export default function FactoryInvoiceForm() {
       Object.keys(FrameInvoiceList).length > 0
     ) {
       if (refractionDetail && !refractionDetailLoading) {
-        console.log("run");
-
         setValidationState({
           openValidationDialog: true,
           validationType: "user",
@@ -242,6 +242,8 @@ export default function FactoryInvoiceForm() {
     }
   };
   const sendDataToDb = async (postData) => {
+    console.log(postData);
+
     try {
       const responce = await axiosClient.post("/orders/", postData);
       toast.success("Order saved successfully");
@@ -316,17 +318,14 @@ export default function FactoryInvoiceForm() {
                 width: "100%",
                 margin: "0 auto",
                 display: "flex",
+                alignItems: "center",
               }}
             >
               <Typography mx={1}>
-                Shuger :{" "}
-                {refractionDetail?.shuger ? "Shuger Avilable" : "No Shuger"}
+                Suger : {refractionDetail?.shuger ? "Yes" : "No"}
               </Typography>
               <Typography mx={1}>
-                Cataract :{" "}
-                {refractionDetail?.cataract
-                  ? "Cataract Avilable"
-                  : "No Cataract"}
+                Cataract : {refractionDetail?.cataract ? " Yes" : "No"}
               </Typography>
               <FormControlLabel
                 control={<Checkbox {...methods.register("on_hold")} />}
