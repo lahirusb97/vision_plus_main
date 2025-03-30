@@ -9,8 +9,8 @@ import { getUserAuth } from "./utils/authDataConver";
 // Create an Axios instance with a base URL
 const axiosClient: AxiosInstance = axios.create({
   // baseURL: import.meta.env.VITE_BASE_URL,
-  // baseURL: "https://www.onlineict.site/api/",
-  baseURL: "http://127.0.0.1:8005/api/",
+  baseURL: "https://www.onlineict.site/api/",
+  // baseURL: "http://127.0.0.1:8005/api/",
   withCredentials: false,
 });
 
