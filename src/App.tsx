@@ -7,6 +7,7 @@ import theme from "./theme/theme";
 import { Toaster } from "react-hot-toast";
 import { DeleteDialogProvider } from "./context/DeleteDialogContext";
 import DeleteDialog from "./components/DeleteDialog";
+
 function App() {
   return (
     <>

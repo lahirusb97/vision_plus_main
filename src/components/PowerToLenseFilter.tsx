@@ -32,23 +32,42 @@ import {
   singleVisionID,
 } from "../data/staticVariables";
 import { AxiosError } from "axios";
+import { RefractionDetailModel } from "../model/RefractionDetailModel";
+import { getUserCurentBranch } from "../utils/authDataConver";
+import { extractErrorMessage } from "../utils/extractErrorMessage";
 interface LenseWithQty extends LenseModel {
   buyQty: number;
   lenseSide: string;
 }
-export default function PowerToLenseFilter() {
+interface RefractionDetailsProps {
+  refractionDetail: RefractionDetailModel | null;
+}
+export default function PowerToLenseFilter({
+  refractionDetail,
+}: RefractionDetailsProps) {
   const dispatch = useDispatch();
-  const [leftPowers, setLeftPowers] = useState({
-    left_eye_dist_sph: "",
-    left_eye_dist_cyl: "",
-    left_eye_near_sph: "",
+  const [leftPowers, setLeftPowers] = useState<
+    Pick<
+      RefractionDetailModel,
+      "left_eye_dist_sph" | "left_eye_dist_cyl" | "left_eye_near_sph"
+    >
+  >({
+    left_eye_dist_sph: null,
+    left_eye_dist_cyl: null,
+    left_eye_near_sph: null,
   });
-  const [rightPowers, setRightPowers] = useState({
-    right_eye_dist_sph: "",
-    right_eye_dist_cyl: "",
-    right_eye_near_sph: "",
+
+  const [rightPowers, setRightPowers] = useState<
+    Pick<
+      RefractionDetailModel,
+      "right_eye_dist_sph" | "right_eye_dist_cyl" | "right_eye_near_sph"
+    >
+  >({
+    right_eye_dist_sph: null,
+    right_eye_dist_cyl: null,
+    right_eye_near_sph: null,
   });
-  const { watch } = useFormContext();
+
   const { brands, brandsLoading } = useGetBrands({
     brand_type: "lens",
   });
@@ -73,18 +92,19 @@ export default function PowerToLenseFilter() {
     coating: null,
     brand: null,
   });
+
   useEffect(() => {
     setLeftPowers({
-      left_eye_dist_sph: watch("left_eye_dist_sph"),
-      left_eye_dist_cyl: watch("left_eye_dist_cyl"),
-      left_eye_near_sph: watch("left_eye_near_sph"),
+      left_eye_dist_sph: refractionDetail?.left_eye_dist_sph ?? null,
+      left_eye_dist_cyl: refractionDetail?.left_eye_dist_cyl ?? null,
+      left_eye_near_sph: refractionDetail?.left_eye_near_sph ?? null,
     });
     setRightPowers({
-      right_eye_dist_sph: watch("right_eye_dist_sph"),
-      right_eye_dist_cyl: watch("right_eye_dist_cyl"),
-      right_eye_near_sph: watch("right_eye_near_sph"),
+      right_eye_dist_sph: refractionDetail?.right_eye_dist_sph ?? null,
+      right_eye_dist_cyl: refractionDetail?.right_eye_dist_cyl ?? null,
+      right_eye_near_sph: refractionDetail?.right_eye_near_sph ?? null,
     });
-  }, [watch]);
+  }, [refractionDetail]);
 
   const addRightLense = () => {
     if (selectedLenseRight) {
@@ -107,55 +127,65 @@ export default function PowerToLenseFilter() {
       toast.error("No Lense Selected");
     }
   };
+  function removeInvalidValues(obj) {
+    return Object.fromEntries(
+      Object.entries(obj).filter(
+        ([_, value]) =>
+          value !== "" &&
+          value !== null &&
+          value !== undefined &&
+          !Number.isNaN(value)
+      )
+    );
+  }
+
   const handleSearchRight = async () => {
     if (selectLense.brand && selectLense.coating && selectLense.lenseType) {
       if (
-        (rightPowers.right_eye_near_sph && rightPowers.right_eye_dist_cyl) ||
+        rightPowers.right_eye_near_sph ||
+        rightPowers.right_eye_dist_cyl ||
         rightPowers.right_eye_dist_sph
       ) {
         const progresive = {
-          sph_right: rightPowers.right_eye_dist_sph,
-          add_right: rightPowers.right_eye_near_sph,
+          sph: rightPowers.right_eye_dist_sph,
+          add: rightPowers.right_eye_near_sph,
         };
         const normal = {
-          sph_right: rightPowers.right_eye_dist_sph,
-          cyl_right: rightPowers.right_eye_dist_cyl,
+          sph: rightPowers.right_eye_dist_sph,
+          cyl: rightPowers.right_eye_dist_cyl,
         };
         const bifocal = {
-          sph_right: rightPowers.right_eye_dist_sph,
-          add_right: rightPowers.right_eye_near_sph,
+          sph: rightPowers.right_eye_dist_sph,
+          add: rightPowers.right_eye_near_sph,
         };
 
+        //Validated
         try {
-          const responce = await axiosClient.get("/lenses/search/", {
-            params: {
-              brand_id: selectLense.brand,
-              type_id: selectLense.lenseType,
-              coating_id: selectLense.coating,
-              ...(selectLense.lenseType === progresiveID
-                ? progresive
-                : selectLense.lenseType === singleVisionID
-                ? normal
-                : selectLense.lenseType === bifocalID
-                ? bifocal
-                : null),
-            },
-          });
+          const responce: { data: LenseModel } = await axiosClient.get(
+            "/lenses/search/",
+            {
+              params: {
+                brand_id: selectLense.brand,
+                type_id: selectLense.lenseType,
+                coating_id: selectLense.coating,
+                ...(selectLense.lenseType === progresiveID
+                  ? removeInvalidValues(progresive)
+                  : selectLense.lenseType === singleVisionID
+                  ? removeInvalidValues(normal)
+                  : selectLense.lenseType === bifocalID
+                  ? removeInvalidValues(bifocal)
+                  : null),
+                branch_id: getUserCurentBranch()?.id,
+                side: selectLense.lenseType === progresiveID ? "right" : null,
+              },
+            }
+          );
 
-          const lenseObj = responce.data.lens;
-          const stockObj = responce.data.stock;
-          console.log(lenseObj);
-
-          setSelectedLenseRight({ ...lenseObj, ...stockObj });
-          setRightPrice(lenseObj?.price || 0);
+          setSelectedLenseRight(responce.data);
+          setRightPrice(responce.data.price || "0");
           toast.success("Sujested Lens Match Found Plese Check Lense Powers");
         } catch (error) {
-          if (error instanceof AxiosError) {
-            // Safely access error.response.data.message
-            toast.error(
-              error.response?.data?.message || "Something went wrong"
-            );
-          }
+          extractErrorMessage(error);
         }
       }
     }
@@ -164,7 +194,8 @@ export default function PowerToLenseFilter() {
   const handleSearchLeft = async () => {
     if (selectLense.brand && selectLense.coating && selectLense.lenseType) {
       if (
-        (leftPowers.left_eye_near_sph && leftPowers.left_eye_dist_cyl) ||
+        leftPowers.left_eye_near_sph ||
+        leftPowers.left_eye_dist_cyl ||
         leftPowers.left_eye_dist_sph
       ) {
         const progresive = {
@@ -181,24 +212,28 @@ export default function PowerToLenseFilter() {
         };
 
         try {
-          const responce = await axiosClient.get("/lenses/search/", {
-            params: {
-              brand_id: selectLense.brand,
-              type_id: selectLense.lenseType,
-              coating_id: selectLense.coating,
-              ...(selectLense.lenseType.toString() === "3"
-                ? progresive
-                : selectLense.lenseType.toString() === "1"
-                ? normal
-                : selectLense.lenseType.toString() === "2"
-                ? bifocal
-                : null),
-            },
-          });
-          const lenseObj = responce.data.lens;
-          const stockObj = responce.data.stock;
-          setSelectedLenseLeft({ ...lenseObj, ...stockObj });
-          setLeftPrice(lenseObj?.price || 0);
+          const responce: { data: LenseModel } = await axiosClient.get(
+            "/lenses/search/",
+            {
+              params: {
+                brand_id: selectLense.brand,
+                type_id: selectLense.lenseType,
+                coating_id: selectLense.coating,
+                ...(selectLense.lenseType === progresiveID
+                  ? removeInvalidValues(progresive)
+                  : selectLense.lenseType === singleVisionID
+                  ? removeInvalidValues(normal)
+                  : selectLense.lenseType === bifocalID
+                  ? removeInvalidValues(bifocal)
+                  : null),
+                branch_id: getUserCurentBranch()?.id,
+                side: selectLense.lenseType === progresiveID ? "left" : null,
+              },
+            }
+          );
+
+          setSelectedLenseLeft(responce.data);
+          setLeftPrice(responce.data.price || "0");
           toast.success("Sujested Lens Match Found Plese Check Lense Powers");
         } catch (error) {
           if (error instanceof AxiosError) {
@@ -233,6 +268,7 @@ export default function PowerToLenseFilter() {
       toast.error("No Lense Selected");
     }
   };
+
   return (
     <Paper variant="elevation" sx={{ padding: 2, m: 2 }}>
       <Typography variant="h6">Select Lense </Typography>
@@ -385,7 +421,9 @@ export default function PowerToLenseFilter() {
               }}
             >
               <Typography>
-                {selectedLenseRight ? selectedLenseRight?.qty : "N/A"}
+                {selectedLenseRight
+                  ? selectedLenseRight?.stock[0]?.qty || 0
+                  : "N/A"}
               </Typography>
             </Paper>
             <Button
@@ -474,7 +512,9 @@ export default function PowerToLenseFilter() {
               }}
             >
               <Typography>
-                {selectedLenseLeft ? selectedLenseLeft?.qty : "N/A"}
+                {selectedLenseLeft
+                  ? selectedLenseLeft?.stock[0].qty || 0
+                  : "N/A"}
               </Typography>
             </Paper>
             <Button

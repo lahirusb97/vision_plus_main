@@ -4,7 +4,7 @@ import useGetBrands from "../../hooks/lense/useGetBrand";
 import useGetColors from "../../hooks/lense/useGetColors";
 import useGetCodes from "../../hooks/lense/useGetCode";
 import CodeCRUD from "./CodeCRUD";
-import { Box, Grid2, Paper } from "@mui/material";
+import { Box, Paper } from "@mui/material";
 import useGetLenseTypes from "../../hooks/lense/useGetLenseType";
 export default function AddVariation() {
   const { coatings, refresh: refreshCoatings } = useGetCoatings();
@@ -21,13 +21,13 @@ export default function AddVariation() {
   return (
     <Box sx={{ display: "flex", gap: 2 }}>
       <Paper variant="outlined" sx={{ width: "600px" }}>
-        {/* <AddVariationComp
+        <AddVariationComp
           textName="Lense Types"
           Urlpath="lense_type"
           dataList={lenseTypes}
           pathroute="lens-types"
           refresh={refreshLenseTypes}
-        /> */}
+        />
 
         <AddVariationComp
           textName="Lens Factory"

@@ -1,61 +1,75 @@
-import React, { useState } from "react";
-import {
-  Paper,
-  TextField,
-  Button,
-  Box,
-  Typography,
-  CircularProgress,
-} from "@mui/material";
-import axiosClient from "../../axiosClient";
+import { Paper, TextField, Box, Typography } from "@mui/material";
+
 import { AxiosError } from "axios";
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
-import { useLocation, useNavigate, useParams } from "react-router";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import { useNavigate, useParams } from "react-router";
+import {
+  RefractionNumberFormModel,
+  schemaRefractionNumber,
+} from "../../validations/schemaRefractionNumber";
+import { useAxiosPut } from "../../hooks/useAxiosPut";
+import SaveButton from "../../components/SaveButton";
+import useGetSingleRefractionNumber from "../../hooks/useGetSingleRefractionNumber";
+import LoadingAnimation from "../../components/LoadingAnimation";
+import { useEffect } from "react";
+import { getUserCurentBranch } from "../../utils/authDataConver";
 export default function UpdateRefraction() {
   const navigate = useNavigate();
   const { id } = useParams();
-  const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
+  const { singlerefractionNumber, singlerefractionNumberLoading } =
+    useGetSingleRefractionNumber(id);
+  const { putHandler, putHandlerloading } = useAxiosPut();
 
-  const [loading, setLoading] = useState(false);
-  const schema = yup.object({
-    customer_full_name: yup.string().required("Full Name is required"),
-    customer_mobile: yup
-      .string()
-      .required("User Name is required")
-      .max(10)
-      .min(10),
-  });
-
-  const { register, handleSubmit, reset } = useForm({
-    resolver: yupResolver(schema),
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<RefractionNumberFormModel>({
+    resolver: zodResolver(schemaRefractionNumber),
     defaultValues: {
-      customer_full_name: searchParams.get("customer_full_name") || "",
-      customer_mobile: searchParams.get("customer_mobile") || "",
+      customer_full_name: "",
+      customer_mobile: "",
+      nic: "",
+      branch_id: getUserCurentBranch()?.id,
     },
   });
-  const shandleSubmit = async (data) => {
+
+  useEffect(() => {
+    if (singlerefractionNumber) {
+      reset({
+        customer_full_name: singlerefractionNumber.customer_full_name || "",
+        customer_mobile: singlerefractionNumber.customer_mobile || "",
+        nic: singlerefractionNumber.nic || "",
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [singlerefractionNumber]); // Run when data changes
+  const shandleSubmit = async (data: RefractionNumberFormModel) => {
     try {
-      setLoading(true);
-      const responseData = await axiosClient.put(
-        `refractions/${id}/update/`,
-        data
-      );
-      reset();
+      await putHandler(`refractions/${id}/update/`, data);
+      reset({
+        customer_full_name: "",
+        customer_mobile: "",
+        nic: "",
+        branch_id: getUserCurentBranch()?.id,
+      });
       toast.success("Refraction updated successfully");
       navigate(-1);
     } catch (error) {
       if (error instanceof AxiosError) {
         toast.error(error.response?.data?.message || "Something went wrong");
       }
-    } finally {
-      setLoading(false);
     }
   };
-
+  if (singlerefractionNumberLoading) {
+    return (
+      <LoadingAnimation loadingMsg="Refraction Number Details Loading..." />
+    );
+  }
   return (
     <Box
       sx={{
@@ -84,6 +98,17 @@ export default function UpdateRefraction() {
             variant="outlined"
             margin="normal"
             required
+            error={!!errors.customer_full_name}
+            helperText={errors.customer_full_name?.message}
+          />
+          <TextField
+            {...register("nic")}
+            fullWidth
+            label="NIC"
+            variant="outlined"
+            margin="normal"
+            error={!!errors.nic}
+            helperText={errors.nic?.message}
           />
           <TextField
             {...register("customer_mobile")}
@@ -97,18 +122,30 @@ export default function UpdateRefraction() {
               pattern: "[0-9]{10}",
               title: "Please enter a valid 10-digit phone number",
             }}
+            error={!!errors.customer_mobile}
+            helperText={errors.customer_mobile?.message}
           />
-          <Button
-            fullWidth
-            type="submit"
-            variant="contained"
-            sx={{
-              marginTop: 2,
+          <TextField
+            sx={{ display: "none" }}
+            inputProps={{
+              min: 0,
             }}
-            disabled={loading}
-          >
-            {loading ? <CircularProgress /> : "Create"}
-          </Button>
+            {...register("branch_id", {
+              setValueAs: (value) => (value === "" ? undefined : Number(value)),
+            })}
+            label="Branch Id"
+            type="number"
+            fullWidth
+            margin="normal"
+            variant="outlined"
+            error={!!errors.branch_id}
+            helperText={errors.branch_id?.message}
+            defaultValue={getUserCurentBranch()?.id}
+          />
+          <SaveButton
+            btnText="Update Customer Details"
+            loading={putHandlerloading}
+          />
         </form>
       </Paper>
     </Box>

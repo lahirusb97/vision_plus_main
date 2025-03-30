@@ -23,7 +23,7 @@ const CashInput: React.FC = () => {
         size="small"
         type="number"
         placeholder="Enter amount"
-        sx={{ width: 200 }}
+        sx={{ width: 120 }}
         error={!!errors.cash}
         onFocus={(e) => {
           if (e.target.value === "0") {

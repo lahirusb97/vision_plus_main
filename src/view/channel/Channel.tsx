@@ -164,7 +164,6 @@ const Channel = () => {
                   {...field}
                   label="Channel Date"
                   format="YYYY-MM-DD"
-                
                 />
               )}
             />

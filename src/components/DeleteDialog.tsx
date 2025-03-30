@@ -10,7 +10,7 @@ import {
 import axiosClient from "../axiosClient";
 import { useDeleteDialog } from "../context/DeleteDialogContext";
 import toast from "react-hot-toast";
-import { handleError } from "../utils/handleError";
+import { extractErrorMessage } from "../utils/extractErrorMessage";
 
 const DeleteDialog: React.FC = () => {
   const { state, closeDialog } = useDeleteDialog();
@@ -22,8 +22,7 @@ const DeleteDialog: React.FC = () => {
       if (state.refresh) state.refresh(); // Call refresh function if provided
       closeDialog();
     } catch (error) {
-      handleError(error, "Delete operation failed");
-      toast.error("Delete operation failed");
+      extractErrorMessage(error);
     }
   };
 
@@ -32,7 +31,8 @@ const DeleteDialog: React.FC = () => {
       <DialogTitle>Confirm Deletion</DialogTitle>
       <DialogContent>
         <Typography>
-          Are you sure you want to delete {state.itemName || "this item"}?
+          Are you sure you want to delete{" "}
+          <strong>{state.itemName || "this item"}</strong>?
         </Typography>
       </DialogContent>
       <DialogActions>

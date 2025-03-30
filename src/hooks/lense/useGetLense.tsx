@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import axiosClient from "../../axiosClient";
 import { LenseModel } from "../../model/LenseModel";
-import { handleError } from "../../utils/handleError";
+import { extractErrorMessage } from "../../utils/extractErrorMessage";
+import { getUserCurentBranch } from "../../utils/authDataConver";
 
 interface UseGetLenseReturn {
   lenses: LenseModel[];
@@ -19,11 +20,15 @@ const useGetLenses = (): UseGetLenseReturn => {
     setLensesLoading(true);
     setLensesError(null);
     try {
-      const response = await axiosClient.get<LenseModel[]>("/lenses/");
+      const response = await axiosClient.get<LenseModel[]>("/lenses/", {
+        params: {
+          branch_id: getUserCurentBranch()?.id,
+        },
+      });
+      console.log(response.data);
       setLenses(response.data);
     } catch (err) {
-      handleError(err, "Failed to fetch lenses.");
-      setLensesError(err?.response?.data?.message || "Failed to fetch lenses.");
+      extractErrorMessage(err);
     } finally {
       setLensesLoading(false);
     }

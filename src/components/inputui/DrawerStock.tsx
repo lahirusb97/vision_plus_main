@@ -5,11 +5,16 @@ import { Close } from "@mui/icons-material";
 import { RootState } from "../../store/store";
 import { useDispatch, useSelector } from "react-redux";
 import { closeStockDrawer } from "../../features/invoice/stockDrawerSlice";
-import FrameStock from "../../view/transaction/factory_order/FrameStock";
-import LensStock from "../../view/transaction/factory_order/LensStock";
 import ExternalLense from "../../view/transaction/factory_order/ExternalLense";
-
-export default function DrawerStock() {
+import PowerToLenseFilter from "../PowerToLenseFilter";
+import PowerToFrameFilter from "../PowerToFrameFilter";
+import { RefractionDetailModel } from "../../model/RefractionDetailModel";
+interface RefractionDetailsProps {
+  refractionDetail: RefractionDetailModel | null;
+}
+export default function DrawerStock({
+  refractionDetail,
+}: RefractionDetailsProps) {
   const dispatch = useDispatch();
   const stockDrawerType = useSelector(
     (state: RootState) => state.stock_drawer.stockDrawerType
@@ -34,9 +39,9 @@ export default function DrawerStock() {
       </IconButton>
       <Box>
         {stockDrawerType === "frame" ? (
-          <FrameStock />
+          <PowerToFrameFilter />
         ) : stockDrawerType === "lense" ? (
-          <LensStock />
+          <PowerToLenseFilter refractionDetail={refractionDetail} />
         ) : stockDrawerType === "none_stock_lense" ? (
           <ExternalLense />
         ) : (

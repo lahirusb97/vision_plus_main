@@ -12,7 +12,7 @@ export default function RefractionDetailsLeft() {
           display: "flex",
           flexDirection: "column",
           gap: 1,
-          backgroundColor: "#f5f5f5" /* chalani- backgroundcolor change*/,
+          // backgroundColor: "#f5f5f5" /* chalani- backgroundcolor change*/,
           p: 1,
         }}
       >
@@ -92,7 +92,7 @@ export default function RefractionDetailsLeft() {
               <TextField
                 inputProps={{ step: 0.25 }}
                 type="number"
-                {...register("left_eye_dist_sph")}
+                {...register("left_eye_dist_sph", { valueAsNumber: true })}
                 placeholder=" sph"
                 size="small"
                 label="sph"
@@ -105,7 +105,7 @@ export default function RefractionDetailsLeft() {
               <TextField
                 inputProps={{ step: 0.25 }}
                 type="number"
-                {...register("left_eye_dist_cyl")}
+                {...register("left_eye_dist_cyl", { valueAsNumber: true })}
                 placeholder=" cyl"
                 size="small"
                 label="cyl"
@@ -118,7 +118,7 @@ export default function RefractionDetailsLeft() {
               <TextField
                 inputProps={{ step: 0.25 }}
                 type="number"
-                {...register("left_eye_dist_axis")}
+                {...register("left_eye_dist_axis", { valueAsNumber: true })}
                 placeholder=" axis"
                 size="small"
                 label="axis"
@@ -135,7 +135,7 @@ export default function RefractionDetailsLeft() {
             <TextField
               inputProps={{ step: 0.25 }}
               type="number"
-              {...register("left_eye_near_sph")}
+              {...register("left_eye_near_sph", { valueAsNumber: true })}
               placeholder=" near"
               size="small"
               label="near"

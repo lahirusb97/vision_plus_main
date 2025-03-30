@@ -145,7 +145,7 @@ const InvoiceView = () => {
           <Box sx={{ textAlign: "left" }}>
             <Typography variant="body2">
               <span style={{ fontWeight: "bold", fontSize: "20px" }}>
-                INVOICE NO : MATA000{invoiceDetail.id}{" "}
+                INVOICE NO : {invoiceDetail?.invoice_number}{" "}
                 {/* //!Order ID as Invoice Number */}
               </span>
             </Typography>

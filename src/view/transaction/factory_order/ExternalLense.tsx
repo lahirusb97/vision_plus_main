@@ -5,15 +5,16 @@ import { RootState } from "../../../store/store";
 import useGetBrands from "../../../hooks/lense/useGetBrand";
 import useGetCoatings from "../../../hooks/lense/useGetCoatings";
 import useGetLenseTypes from "../../../hooks/lense/useGetLenseType";
-import { useFormContext } from "react-hook-form";
+
 import { setexternalLense } from "../../../features/invoice/externalLenseSlice";
 import DropdownInputReturnWIthName from "../../../components/inputui/DropdownInputReturnWIthName";
 import { closeStockDrawer } from "../../../features/invoice/stockDrawerSlice";
 import toast from "react-hot-toast";
+import { getUserCurentBranch } from "../../../utils/authDataConver";
 
 export default function ExternalLense() {
   const dispatch = useDispatch();
-  const { watch } = useFormContext();
+
   const externalLenseInvoiceList = useSelector(
     (state: RootState) => state.invoice_external_lense.externalLense
   );
@@ -65,6 +66,7 @@ export default function ExternalLense() {
             coating: lenseCoatingSelection.id,
             brand: lenseFactorySelection.id,
             price: parseInt(price),
+            branch_id: getUserCurentBranch()?.id,
           },
         },
         quantity: 1,

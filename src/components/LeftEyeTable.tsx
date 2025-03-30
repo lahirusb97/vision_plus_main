@@ -1,106 +1,128 @@
 import { Box, TextField, Typography } from "@mui/material";
 const widthInput = 100;
-import { blue, lightBlue, yellow, grey } from "@mui/material/colors";
-import { useFormContext } from "react-hook-form";
-
-export default function LeftEyeTable() {
-  const {
-    register,
-    formState: { errors },
-  } = useFormContext();
-
+import { grey } from "@mui/material/colors";
+import { RefractionDetailModel } from "../model/RefractionDetailModel";
+interface LeftEyeTableProps {
+  refractionDetail: Pick<
+    RefractionDetailModel,
+    | "hb_rx_left_dist"
+    | "hb_rx_left_near"
+    | "auto_ref_left"
+    | "left_eye_dist_sph"
+    | "left_eye_dist_cyl"
+    | "left_eye_dist_axis"
+    | "left_eye_near_sph"
+  > | null;
+}
+export default function LeftEyeTable({ refractionDetail }: LeftEyeTableProps) {
+  if (!refractionDetail) {
+    return <p>No refraction details available</p>;
+  }
+  const showDashEmptyVisionValues = (
+    visionValue: string | null | undefined
+  ) => {
+    if (visionValue) {
+      return visionValue;
+    } else {
+      return "__";
+    }
+  };
   return (
     <div>
       <Box
         sx={{
           display: "flex",
           flexDirection: "column",
-          gap: 1,
-          backgroundColor: "#f5f5f5" /* chalani- backgroundcolor change*/,
+
+          // backgroundColor: "#f5f5f5" /* chalani- backgroundcolor change*/,
           p: 1,
         }}
       >
         <Box>
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-            <TextField
-              type="text"
-              inputProps={{ step: 0.25 }}
-              {...register("hb_rx_left_dist")}
-              error={!!errors.hb_rx_left_dist}
-              size="small"
-              label="Hb Rx Distance"
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+
+              border: "1px solid black",
+            }}
+          >
+            <SowValue
+              value={showDashEmptyVisionValues(
+                refractionDetail?.hb_rx_left_dist
+              )}
+              text="Hb Rx Distance"
             />
-            <TextField
-              inputProps={{ step: 0.25 }}
-              type="text"
-              {...register("hb_rx_left_near")}
-              error={!!errors.hb_rx_left_near}
-              size="small"
-              label="Hb Rx Near"
+            <SowValue
+              value={showDashEmptyVisionValues(
+                refractionDetail?.hb_rx_left_near
+              )}
+              text="Hb Rx Near"
             />
-            <TextField
-              inputProps={{ step: 0.25 }}
-              type="text"
-              {...register("auto_ref_left")}
-              error={!!errors.auto_ref_left}
-              size="small"
-              label="Auto Ref"
+            <SowValue
+              value={showDashEmptyVisionValues(refractionDetail?.auto_ref_left)}
+              text="Auto Ref"
             />
           </Box>
           <Box sx={{ display: "flex", gap: 1, mt: 1 }}>
             <TextField
-              inputProps={{ step: 0.25 }}
-              type="number"
-              {...register("left_eye_dist_sph")}
-              error={!!errors.left_eye_dist_sph}
+              disabled
+              type="text"
+              value={showDashEmptyVisionValues(
+                refractionDetail?.left_eye_dist_sph
+              )}
               placeholder=" sph"
               size="small"
               label="sph"
-              sx={{ width: widthInput }}
+              sx={disabledTextFieldStyles}
             />
 
             <TextField
-              inputProps={{ step: 0.25 }}
-              type="number"
-              {...register("left_eye_dist_cyl")}
-              error={!!errors.left_eye_dist_cyl}
+              disabled
+              type="text"
+              value={showDashEmptyVisionValues(
+                refractionDetail?.left_eye_dist_cyl
+              )}
               placeholder=" cyl"
               size="small"
               label="cyl"
-              sx={{ width: widthInput }}
+              sx={disabledTextFieldStyles}
             />
 
             <TextField
-              inputProps={{ step: 0.25 }}
-              type="number"
-              {...register("left_eye_dist_axis")}
-              error={!!errors.left_eye_dist_axis}
+              disabled
+              type="text"
+              value={showDashEmptyVisionValues(
+                refractionDetail?.left_eye_dist_axis
+              )}
               placeholder=" axis"
               size="small"
               label="axis"
-              sx={{ width: widthInput }}
+              sx={disabledTextFieldStyles}
             />
           </Box>
         </Box>
 
         {/* show this below */}
-        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+        <Box sx={{ display: "flex", justifyContent: "space-between", mt: 1 }}>
           <TextField
-            inputProps={{ step: 0.25 }}
-            type="number"
-            {...register("left_eye_near_sph")}
-            error={!!errors.left_eye_near_sph}
+            disabled
+            type="text"
+            value={showDashEmptyVisionValues(
+              refractionDetail?.left_eye_near_sph
+            )}
             placeholder=" near"
             size="small"
             label="near"
-            sx={{ width: widthInput }}
+            sx={disabledTextFieldStyles}
+            className="xsmall"
           />
           <Box
             sx={{
               flexGrow: 2,
-              p: 1,
               bgcolor: grey[800],
               ml: 1,
+              px: 1,
               color: "white",
             }}
           >
@@ -111,3 +133,45 @@ export default function LeftEyeTable() {
     </div>
   );
 }
+
+interface SowValueProps {
+  value: string;
+  text: string;
+}
+
+function SowValue({ value, text }: SowValueProps) {
+  return (
+    <div>
+      {" "}
+      <Box sx={{ display: "flex", justifyContent: "space-between", mx: 2 }}>
+        <Typography sx={{ m: 0, p: 0 }}>{text} </Typography>
+        <Typography sx={{ m: 0, p: 0 }}>
+          {/* {showDashEmptyVisionValues(refractionDetail.auto_ref_right)} */}
+          {value}
+        </Typography>
+      </Box>
+    </div>
+  );
+}
+const disabledTextFieldStyles = {
+  width: widthInput,
+  "& .MuiInputBase-input.Mui-disabled": {
+    WebkitTextFillColor: "black",
+    color: "black",
+  },
+  "& .MuiOutlinedInput-root.Mui-disabled": {
+    "& fieldset": {
+      borderColor: "rgba(0, 0, 0, 0.23)",
+    },
+  },
+  "& .MuiInputLabel-root.Mui-disabled": {
+    color: "black !important",
+  },
+  padding: "0", // Remove extra padding
+  "& .MuiInputBase-input": {
+    padding: "4px", // Reduce padding inside the input for a smaller appearance
+  },
+  "& .MuiOutlinedInput-root": {
+    borderRadius: "4px", // Adjust the border radius if you want it to look sharper
+  },
+};

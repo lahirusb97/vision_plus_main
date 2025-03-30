@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 import {
-  Button,
-  CircularProgress,
   FormControl,
   InputLabel,
   MenuItem,
@@ -15,38 +13,31 @@ import useGetBrands from "../../hooks/lense/useGetBrand";
 import useGetCodes from "../../hooks/lense/useGetCode";
 import useGetColors from "../../hooks/lense/useGetColors";
 import { Controller, useForm } from "react-hook-form";
-import * as Yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
+import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
-import axiosClient from "../../axiosClient";
-import { AxiosError } from "axios";
+
 import { CodeModel } from "../../model/CodeModel";
+import {
+  frameSizeFull,
+  frameSizeHalf,
+  frameSizeRimless,
+  frameSpeciesMetal,
+  frameSpeciesMetalPlastic,
+  frameSpeciesPlastic,
+} from "../../data/staticVariables";
+import { FrameFormModel, schemaFrame } from "../../validations/schemaFrame";
+import { getUserCurentBranch } from "../../utils/authDataConver";
+import { useAxiosPost } from "../../hooks/useAxiosPost";
+import { extractErrorMessage } from "../../utils/extractErrorMessage";
+import SaveButton from "../../components/SaveButton";
 const AddFrames = () => {
+  const { postHandler, postHandlerloading } = useAxiosPost();
   const { brands, brandsLoading } = useGetBrands({
     brand_type: "frame",
   });
   const { codes, codesLoading } = useGetCodes();
   const { colors, colorsLoading } = useGetColors();
-  const [loading, setLoading] = useState(false);
-  // Dropdown options
 
-  const validationSchema = Yup.object().shape({
-    brand: Yup.number().required("Brand Name is required"),
-    code: Yup.number().required("Code is required"),
-    color: Yup.number().required("Color is required"),
-    price: Yup.number()
-      .positive()
-      .min(0.01, "Price must be positive")
-      .required("Price is required"),
-    size: Yup.string().required("Frame Size is required"),
-    species: Yup.string().required("species is required"),
-    image: Yup.string(),
-    qty: Yup.number()
-      .positive()
-      .integer()
-      .min(1)
-      .required("Quantity is required"),
-  });
   const {
     register,
     handleSubmit,
@@ -54,8 +45,18 @@ const AddFrames = () => {
     formState: { errors },
     reset,
     watch,
-  } = useForm({
-    resolver: yupResolver(validationSchema),
+  } = useForm<FrameFormModel>({
+    resolver: zodResolver(schemaFrame),
+    defaultValues: {
+      brand: undefined,
+      code: undefined,
+      color: undefined,
+      price: undefined,
+      size: undefined,
+      species: undefined,
+      qty: undefined,
+      branch_id: getUserCurentBranch()?.id,
+    },
   });
   const [avilableCodes, setAvilableCodes] = useState<CodeModel[]>([]);
 
@@ -68,8 +69,9 @@ const AddFrames = () => {
   }, [watch("brand")]);
 
   // Submit handler
-  const submitData = async (frameData) => {
-    setLoading(true);
+  const submitData = async (frameData: FrameFormModel) => {
+    console.log(frameData);
+
     const postData = {
       frame: {
         brand: frameData.brand,
@@ -78,46 +80,41 @@ const AddFrames = () => {
         price: frameData.price,
         size: frameData.size,
         species: frameData.species,
-        image: frameData.image,
         qty: frameData.qty,
       },
-      stock: {
-        initial_count: frameData.qty,
-        qty: frameData.qty,
-      },
+      stock: [
+        {
+          initial_count: frameData.qty,
+          qty: frameData.qty,
+          branch_id: frameData.branch_id,
+          limit: frameData.limit,
+        },
+      ],
     };
     try {
-      await axiosClient.post("/frames/", postData);
+      await postHandler("frames/", postData);
       toast.success("Frame added successfully");
-      reset();
+      reset({
+        brand: undefined,
+        code: undefined,
+        color: undefined,
+        price: undefined,
+        size: undefined,
+        species: undefined,
+        qty: undefined,
+        branch_id: getUserCurentBranch()?.id,
+      });
     } catch (error) {
-      // Check if the error is an AxiosError
-      if (error instanceof AxiosError) {
-        // Safely access error.response.data.message
-        toast.error(error.response?.data?.message || "Something went wrong");
-      } else {
-        // Handle non-Axios errors (e.g., network errors, syntax errors, etc.)
-        toast.error("Something went wrong");
-      }
-    } finally {
-      setLoading(false);
+      extractErrorMessage(error);
     }
   };
 
   return (
     <div>
-      <Typography
-        sx={{ marginBottom: 2, fontWeight: "bold" }}
-        variant="h4"
-        gutterBottom
-      >
-        Create Frame
-      </Typography>
-
       <Paper
         sx={{
           width: "600px",
-          padding: 4,
+          padding: 2,
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
@@ -125,11 +122,18 @@ const AddFrames = () => {
           gap: 2,
         }}
       >
+        <Typography
+          sx={{ marginBottom: 1, fontWeight: "bold" }}
+          variant="h4"
+          gutterBottom
+        >
+          Frame Create
+        </Typography>
         <form
           style={{
             display: "flex",
             flexDirection: "column",
-            gap: 16,
+            gap: 10,
             width: "100%",
           }}
           onSubmit={handleSubmit(submitData)}
@@ -195,15 +199,13 @@ const AddFrames = () => {
           {/* Price Field */}
           <TextField
             label="Price"
+            size="small"
             type="number"
             fullWidth
-            margin="normal"
             variant="outlined"
             error={!!errors.price}
             helperText={errors.price?.message}
-            {...register("price", {
-              setValueAs: (value) => (value === "" ? undefined : Number(value)),
-            })}
+            {...register("price", { valueAsNumber: true })}
           />
 
           {/* Species Dropdown */}
@@ -212,17 +214,18 @@ const AddFrames = () => {
             control={control}
             render={({ field }) => (
               <FormControl fullWidth error={!!errors.size}>
-                <InputLabel id="demo-simple-select-label">Shape</InputLabel>
+                <InputLabel id="demo-simple-select-label">Size</InputLabel>
                 <Select
                   {...field}
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
                   label="Size"
                   value={field.value || ""}
+                  size="small"
                 >
-                  <MenuItem value={"Half"}>Half</MenuItem>
-                  <MenuItem value={"Full"}>Full</MenuItem>
-                  <MenuItem value={"Rimless"}>Rimless</MenuItem>
+                  <MenuItem value={frameSizeHalf}>Half</MenuItem>
+                  <MenuItem value={frameSizeFull}>Full</MenuItem>
+                  <MenuItem value={frameSizeRimless}>Rimless</MenuItem>
                 </Select>
               </FormControl>
             )}
@@ -239,15 +242,18 @@ const AddFrames = () => {
               <FormControl fullWidth error={!!errors.species}>
                 <InputLabel id="demo-simple-select-label">Species</InputLabel>
                 <Select
+                  size="small"
                   {...field}
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
                   label="species"
                   value={field.value || ""}
                 >
-                  <MenuItem value={"Metal"}>Metal</MenuItem>
-                  <MenuItem value={"Plastic"}>Plastic</MenuItem>
-                  <MenuItem value={"Metal/Plastic"}>Metal/Plastic</MenuItem>
+                  <MenuItem value={frameSpeciesMetal}>Metal</MenuItem>
+                  <MenuItem value={frameSpeciesPlastic}>Plastic</MenuItem>
+                  <MenuItem value={frameSpeciesMetalPlastic}>
+                    Metal/Plastic
+                  </MenuItem>
                 </Select>
               </FormControl>
             )}
@@ -258,31 +264,49 @@ const AddFrames = () => {
 
           {/* Quantity Field */}
           <TextField
+            size="small"
             inputProps={{
               min: 0,
             }}
-            {...register("qty", {
-              setValueAs: (value) => (value === "" ? undefined : Number(value)),
-            })}
+            {...register("qty", { valueAsNumber: true })}
             label="Quantity"
             type="number"
             fullWidth
-            margin="normal"
             variant="outlined"
             error={!!errors.qty}
             helperText={errors.qty?.message}
           />
+          <TextField
+            size="small"
+            inputProps={{
+              min: 0,
+            }}
+            {...register("limit", { valueAsNumber: true })}
+            label="Alert limit"
+            type="number"
+            fullWidth
+            variant="outlined"
+            error={!!errors.limit}
+            helperText={errors.limit?.message}
+          />
+          <TextField
+            size="small"
+            sx={{ display: "none" }}
+            inputProps={{
+              min: 0,
+            }}
+            {...register("branch_id", { valueAsNumber: true })}
+            label="Branch Id"
+            type="number"
+            fullWidth
+            variant="outlined"
+            error={!!errors.branch_id}
+            helperText={errors.branch_id?.message}
+            defaultValue={getUserCurentBranch()?.id}
+          />
 
           {/* Submit Button */}
-          <Button
-            disabled={loading}
-            variant="contained"
-            color="primary"
-            fullWidth
-            type="submit"
-          >
-            {loading ? <CircularProgress size={24} /> : "Submit"}
-          </Button>
+          <SaveButton btnText="Save" loading={postHandlerloading} />
         </form>
       </Paper>
     </div>

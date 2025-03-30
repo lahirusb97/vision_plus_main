@@ -1,54 +1,46 @@
-import React, { useState } from "react";
 import {
   Box,
-  Button,
   Chip,
   TextField,
   Typography,
   Paper,
   CircularProgress,
 } from "@mui/material";
-import { useForm, Controller } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
-import axiosClient from "../../../axiosClient";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
 import { useParams } from "react-router";
 import toast from "react-hot-toast";
 import { AxiosError } from "axios";
 import useGetSingleFrame from "../../../hooks/lense/useGetSingleFrame";
-interface Stock {
-  price: number;
-}
+import { FrameFormModel, schemaFrame } from "../../../validations/schemaFrame";
+import { useAxiosPut } from "../../../hooks/useAxiosPut";
+import SaveButton from "../../../components/SaveButton";
+
 const FrameEdit = () => {
   const { id } = useParams();
 
   const { singleFrame, singleFrameLoading, refresh } = useGetSingleFrame(id);
-  const schema = yup.object().shape({
-    price: yup
-      .number()
-      .positive()
-      .min(0.01, "Price must be positive")
-      .required("Price is required"),
-  });
+  const { putHandler, putHandlerloading } = useAxiosPut();
   const {
     handleSubmit,
     formState: { errors },
     register,
     reset,
-  } = useForm({
-    resolver: yupResolver(schema),
+  } = useForm<Pick<FrameFormModel, "price">>({
+    resolver: zodResolver(schemaFrame.pick({ price: true })),
     defaultValues: {
       price: undefined,
     },
   });
-  const submiteData = async (data: Stock) => {
+  const submiteData = async (data: Pick<FrameFormModel, "price">) => {
     const { price } = data;
     const postDAta = {
       price: price,
     };
 
     try {
-      await axiosClient.put(`/frames/${id}/`, postDAta);
+      await putHandler(`/frames/${id}/`, postDAta);
       toast.success("Frame added successfully");
       reset();
       refresh();
@@ -129,9 +121,7 @@ const FrameEdit = () => {
           sx={{ marginBottom: 2 }}
         />
 
-        <Button type="submit" variant="contained" fullWidth>
-          SAVE
-        </Button>
+        <SaveButton btnText="Save" loading={putHandlerloading} />
       </Paper>
     </Box>
   );

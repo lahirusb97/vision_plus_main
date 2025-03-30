@@ -8,14 +8,11 @@ import LoopIcon from "@mui/icons-material/Loop";
 import { useNavigate } from "react-router";
 import useGetLenses from "../../hooks/lense/useGetLense";
 import { useDeleteDialog } from "../../context/DeleteDialogContext";
+import { addID, cylID, sphID } from "../../data/staticVariables";
 
 const LenseStore = () => {
   const { lenses, lensesLoading, refresh } = useGetLenses();
-  //! Imporant Values can not be changed
-  const SPH = 1;
-  const CYL = 2;
-  const ADD = 3;
-  //! Imporant Values can not be changed
+
   const { openDialog } = useDeleteDialog();
   console.log(lenses);
 
@@ -64,7 +61,7 @@ const LenseStore = () => {
       },
       {
         header: "Lense Type",
-        accessorKey: "stock.lens_type",
+        accessorKey: "type_name",
         size: 130,
       },
       {
@@ -74,7 +71,7 @@ const LenseStore = () => {
       },
       {
         header: "Coating",
-        accessorKey: "stock.coating",
+        accessorKey: "coating_name",
         size: 130,
       },
       {
@@ -86,7 +83,7 @@ const LenseStore = () => {
         header: "Side",
         id: "side",
         Cell: ({ row }) => {
-          const sphEntry = row.original.powers.find((p) => p.power === SPH);
+          const sphEntry = row.original.powers.find((p) => p.power === sphID);
           return sphEntry && sphEntry.side ? sphEntry.side : "-";
         },
         size: 30,
@@ -95,7 +92,7 @@ const LenseStore = () => {
         header: "SPH",
         id: "sph",
         Cell: ({ row }) => {
-          const sphEntry = row.original.powers.find((p) => p.power === SPH);
+          const sphEntry = row.original.powers.find((p) => p.power === sphID);
           return sphEntry ? sphEntry.value : "-";
         },
         size: 30,
@@ -104,7 +101,7 @@ const LenseStore = () => {
         header: "CYL",
         id: "cyl",
         Cell: ({ row }) => {
-          const cylEntry = row.original.powers.find((p) => p.power === CYL);
+          const cylEntry = row.original.powers.find((p) => p.power === cylID);
           return cylEntry ? cylEntry.value : "-";
         },
         size: 30,
@@ -113,19 +110,19 @@ const LenseStore = () => {
         header: "ADD",
         id: "add",
         Cell: ({ row }) => {
-          const addEntry = row.original.powers.find((p) => p.power === ADD);
+          const addEntry = row.original.powers.find((p) => p.power === addID);
           return addEntry ? addEntry.value : "-";
         },
         size: 30,
       },
       {
         header: "Quantity",
-        accessorKey: "stock.qty", // Nested accessor for stock quantity
+        accessorFn: (row) => row.stock?.[0]?.qty ?? 0,
         size: 50,
       },
       {
         header: "Stock Limit",
-        accessorKey: "stock.limit", // Nested accessor for stock initial count
+        accessorFn: (row) => row.stock?.[0]?.limit ?? 0,
         size: 50,
       },
     ],

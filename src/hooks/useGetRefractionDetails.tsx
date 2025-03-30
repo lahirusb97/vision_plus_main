@@ -1,10 +1,11 @@
 import { useState, useEffect, useCallback } from "react";
-import { RefractionDetailModel } from "../model/RefractionDetailModel";
+
 import axiosClient from "../axiosClient";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { RefractionDetailModel } from "../model/RefractionDetailModel";
 interface UseGetRefractionDetailReturn {
-  refractionDetail: RefractionDetailModel;
+  refractionDetail: RefractionDetailModel | null;
   refractionDetailLoading: boolean;
   refractionDetailExist: boolean;
   refractionDetailError: boolean;
@@ -14,9 +15,8 @@ interface UseGetRefractionDetailReturn {
 const useGetRefractionDetails = (
   refraction_id: string | undefined
 ): UseGetRefractionDetailReturn => {
-  const [refractionDetail, setrefractionDetail] = useState(
-    {} as RefractionDetailModel
-  );
+  const [refractionDetail, setrefractionDetail] =
+    useState<RefractionDetailModel | null>(null);
   const [refractionDetailLoading, setrefractionDetailLoading] =
     useState<boolean>(true);
 
@@ -30,7 +30,7 @@ const useGetRefractionDetails = (
 
     try {
       const response = await axiosClient.get<RefractionDetailModel>(
-        `/refractions/${refraction_id}/`
+        `/refraction-details/${refraction_id}/`
       );
       setrefractionDetail(response.data);
       setrefractionDetailExist(true);

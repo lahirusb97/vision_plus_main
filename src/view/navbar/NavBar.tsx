@@ -12,16 +12,22 @@ import StockIcon from "../../assets/icons/navbar/Stock.png";
 import TransationIcon from "../../assets/icons/navbar/Transation.png";
 import UserIcon from "../../assets/icons/navbar/User.png";
 import RefractionNav from "../refraction/RefractionNav";
-import { Paper } from "@mui/material";
+import { Box, Button, Paper, Typography } from "@mui/material";
 import ChannelNav from "../channel/ChannelNav";
-
 import TransactionNav from "../transaction/TransactionNav";
 import StockNav from "../stock/StockNav";
 import { LogoutOutlined } from "@mui/icons-material";
-import { useAuthContext } from "../../context/AuthContext";
-import { useLocation } from "react-router";
+
+import { useLocation, useNavigate } from "react-router";
 import UserNav from "../user/UserNav";
 import CheckInNav from "../checkin/CheckInNav";
+import AccountNav from "../account/AccountNav";
+import {
+  deleteUserData,
+  getUserAuth,
+  getUserCurentBranch,
+} from "../../utils/authDataConver";
+import ReportsNav from "../reports/ReportsNav";
 
 // TabPanel Component
 
@@ -55,13 +61,13 @@ function TabPanel(props: {
 export default function NavBar() {
   const tabs = [
     {
-      path: "refraction",
+      path: "",
       icon: RefractionIcon,
       label: "Refraction",
       nav: RefractionNav,
     },
     {
-      path: "transaction",
+      path: "transaction/factory_order",
       icon: TransationIcon,
       label: "Transaction",
       nav: TransactionNav,
@@ -71,15 +77,20 @@ export default function NavBar() {
       path: "account",
       icon: AccountIcon,
       label: "Account",
-      nav: RefractionNav,
+      nav: AccountNav,
     },
-    { path: "stock", icon: StockIcon, label: "Stock", nav: StockNav },
+    {
+      path: "stock/add_frames",
+      icon: StockIcon,
+      label: "Stock",
+      nav: StockNav,
+    },
     { path: "channel", icon: ChanneltIcon, label: "Channel", nav: ChannelNav },
     {
       path: "reports",
       icon: ReportsIcon,
       label: "Reports",
-      nav: RefractionNav,
+      nav: ReportsNav,
     },
     {
       path: "messenger",
@@ -98,20 +109,23 @@ export default function NavBar() {
   };
 
   const [value, setValue] = React.useState(getTabIndexFromPath(firstSegment));
-  const { clearToken } = useAuthContext();
 
+  const navigate = useNavigate();
   // Handle Tab Change
   const handleChange = (
     _event: React.SyntheticEvent<Element, Event>,
     newValue: number
   ) => {
     setValue(newValue);
+    navigate(`/${tabs[newValue].path}`);
+    console.log(tabs[newValue].path);
   };
 
   // Array of Icons and Labels (dynamically derived)
 
   const deleteCookie = () => {
-    clearToken();
+    deleteUserData();
+    navigate("/login");
   };
   return (
     <Paper sx={{ width: "100%" }}>
@@ -137,14 +151,27 @@ export default function NavBar() {
             }}
           />
         ))}
-        <Tab
-          icon={<LogoutOutlined />}
-          label={"LogOut"}
-          onClick={deleteCookie}
+
+        <Button onClick={deleteCookie}>
+          <LogoutOutlined />
+        </Button>
+        <Box
           sx={{
-            textTransform: "capitalize", // Capitalizes the first letter of each word
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            mx: 1,
           }}
-        />
+        >
+          <Typography textTransform={"capitalize"} variant="body2">
+            <strong>{getUserCurentBranch()?.branch_name} Branch</strong>
+          </Typography>
+          <Typography variant="body2">
+            <strong>
+              {getUserAuth()?.is_superuser ? "Admin" : "User"} login
+            </strong>
+          </Typography>
+        </Box>
       </Tabs>
 
       {/* Tab Panels */}

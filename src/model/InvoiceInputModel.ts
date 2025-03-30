@@ -14,7 +14,7 @@ interface InvoiceInputModel {
   left_eye_dist_axis: string | null;
   left_eye_dist_sph: string | null;
   left_eye_near_sph: string | null;
-  remark?: string | null;
+  order_remark?: string | null;
   note: string | null;
   name: string;
   nic: string;
@@ -25,5 +25,14 @@ interface InvoiceInputModel {
   discount: number;
   credit_card: number;
   online_transfer: number;
+  pd: number;
+  right_pd: string;
+  left_pd: string;
+  height: string;
+  right_height: string;
+  left_height: string;
+  branch_id: number;
+  fitting_on_collection: boolean;
+  on_hold: boolean;
 }
 export type { InvoiceInputModel };

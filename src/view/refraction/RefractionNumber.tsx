@@ -1,56 +1,64 @@
-import React, { useState } from "react";
-import {
-  Paper,
-  TextField,
-  Button,
-  Box,
-  Typography,
-  CircularProgress,
-} from "@mui/material";
-import axiosClient from "../../axiosClient";
-import { AxiosError } from "axios";
-import toast from "react-hot-toast";
+import { Paper, TextField, Box, Typography } from "@mui/material";
 import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router";
-import { RefractionModel } from "../../model/RefractionModel";
+import {
+  RefractionNumberFormModel,
+  schemaRefractionNumber,
+} from "../../validations/schemaRefractionNumber";
+import { useAxiosPost } from "../../hooks/useAxiosPost";
+import { extractErrorMessage } from "../../utils/extractErrorMessage";
+import toast from "react-hot-toast";
+// import { useValidationState } from "../../hooks/validations/useValidationState";
+// import VarificationDialog from "../../components/VarificationDialog";
+import SaveButton from "../../components/SaveButton";
+import { RefractionNumberModel } from "../../model/RefractionModel";
+import { getUserCurentBranch } from "../../utils/authDataConver";
+
 export default function RefractionNumber() {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
-  const schema = yup.object({
-    customer_full_name: yup.string().required("Full Name is required"),
-    nic: yup.string().notRequired(),
-    customer_mobile: yup
-      .string()
-      .required("User Name is required")
-      .max(10)
-      .min(10),
+  //API CALLS
+  const { postHandler } = useAxiosPost();
+  // const { setValidationState, resetValidation, validationState } =
+  //   useValidationState();
+  //API CALLS
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<RefractionNumberFormModel>({
+    resolver: zodResolver(schemaRefractionNumber),
+    defaultValues: {
+      customer_full_name: "",
+      customer_mobile: "",
+      nic: "",
+      branch_id: getUserCurentBranch()?.id,
+    },
   });
 
-  const { register, handleSubmit, reset } = useForm({
-    resolver: yupResolver(schema),
-  });
-  const shandleSubmit = async (data) => {
+  const sendRefractionData = async (data: RefractionNumberFormModel) => {
     try {
-      setLoading(true);
-      const responseData = await axiosClient.post("/refractions/create/", data);
-      const params = new URLSearchParams({
-        customer_full_name: responseData.data.data.customer_full_name,
-        nic: responseData.data.data.nic,
-        customer_mobile: responseData.data.data.customer_mobile,
-        refraction_number: responseData.data.data.refraction_number,
+      const responseData: { data: { data: RefractionNumberModel } } =
+        await postHandler("refractions/create/", data);
+
+      toast.success(
+        `Refraction created for ${responseData.data.data.customer_full_name}`
+      );
+      reset({
+        customer_full_name: "",
+        customer_mobile: "",
+        nic: "",
+        branch_id: getUserCurentBranch()?.id,
       });
-      reset();
-      navigate(`success?${params.toString()}`);
+      navigate(`${responseData.data.data.id}/success/`);
     } catch (error) {
-      console.log(error);
-      if (error instanceof AxiosError) {
-        toast.error(error.response?.data?.message || "Something went wrong");
-      }
-    } finally {
-      setLoading(false);
+      extractErrorMessage(error);
     }
+  };
+  const shandleSubmit = async (data: RefractionNumberFormModel) => {
+    sendRefractionData(data);
   };
 
   return (
@@ -66,7 +74,7 @@ export default function RefractionNumber() {
         sx={{
           padding: 3,
           width: "100%",
-          maxWidth: 400,
+          maxWidth: 500,
           borderRadius: 2,
         }}
       >
@@ -81,6 +89,8 @@ export default function RefractionNumber() {
             variant="outlined"
             margin="normal"
             required
+            error={!!errors.customer_full_name}
+            helperText={errors.customer_full_name?.message}
           />
           <TextField
             {...register(
@@ -90,6 +100,8 @@ export default function RefractionNumber() {
             label="NIC"
             variant="outlined"
             margin="normal"
+            error={!!errors.nic}
+            helperText={errors.nic?.message}
           />
           <TextField
             {...register("customer_mobile")}
@@ -98,24 +110,34 @@ export default function RefractionNumber() {
             variant="outlined"
             margin="normal"
             required
-            type="tel"
-            inputProps={{
-              pattern: "[0-9]{10}",
-              title: "Please enter a valid 10-digit phone number",
-            }}
+            type="number"
+            error={!!errors.customer_mobile}
+            helperText={errors.customer_mobile?.message}
           />
-          <Button
-            fullWidth
-            type="submit"
-            variant="contained"
-            sx={{
-              marginTop: 2,
+
+          <TextField
+            sx={{ display: "none" }}
+            inputProps={{
+              min: 0,
             }}
-            disabled={loading}
-          >
-            {loading ? <CircularProgress /> : "Create"}
-          </Button>
+            {...register("branch_id", {
+              setValueAs: (value) => (value === "" ? undefined : Number(value)),
+            })}
+            label="Branch Id"
+            type="number"
+            fullWidth
+            margin="normal"
+            variant="outlined"
+            error={!!errors.branch_id}
+            helperText={errors.branch_id?.message}
+            defaultValue={getUserCurentBranch()?.id}
+          />
+          <SaveButton btnText="Genarate Refraction Number" loading={false} />
         </form>
+        {/* <VarificationDialog
+          validationState={validationState}
+          resetValidation={resetValidation}
+        /> */}
       </Paper>
     </Box>
   );

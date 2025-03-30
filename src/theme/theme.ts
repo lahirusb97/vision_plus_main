@@ -23,6 +23,15 @@ const theme = createTheme({
   components: {
     MuiOutlinedInput: {
       styleOverrides: {
+        root: ({ theme }) => ({
+          fontSize: ".8rem",
+          [theme.breakpoints.down("sm")]: {
+            fontSize: ".8rem", // Smaller font on small screens
+          },
+          [theme.breakpoints.up("md")]: {
+            fontSize: "1rem", // Larger font on medium and up
+          },
+        }),
         input: {
           "&[type=number]": {
             MozAppearance: "textfield", // Firefox

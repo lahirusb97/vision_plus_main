@@ -3,20 +3,17 @@ import { Box, Button, Paper, Typography, TextField } from "@mui/material";
 import DropdownInput from "./inputui/DropdownInput";
 import useGetFrames from "../hooks/lense/useGetFrames";
 import useGetBrands from "../hooks/lense/useGetBrand";
-import useGetColors from "../hooks/lense/useGetColors";
 import useGetCodes from "../hooks/lense/useGetCode";
 import { useDispatch, useSelector } from "react-redux";
-import { removeFrame, setFrame } from "../features/invoice/frameFilterSlice";
+import { setFrame } from "../features/invoice/frameFilterSlice";
 import { FrameModel } from "../model/FrameModel";
 import toast from "react-hot-toast";
-import { Delete, FindInPage, Search } from "@mui/icons-material";
 import { RootState } from "../store/store";
 import InvoiceFrameItem from "./InvoiceFrameItem";
-import { set } from "react-hook-form";
 import axiosClient from "../axiosClient";
 import { Colors } from "../model/ColorsModel";
-import axios from "axios";
 import { closeStockDrawer } from "../features/invoice/stockDrawerSlice";
+import { extractErrorMessage } from "../utils/extractErrorMessage";
 interface FrameWithQty extends FrameModel {
   buyQty: number;
 }
@@ -32,6 +29,7 @@ export default function PowerToFrameFilter() {
   });
 
   const { codes, codesLoading } = useGetCodes();
+
   const [colors, setColors] = useState<Colors[]>([]);
   const [colorLoading, setColorLoading] = useState<boolean>(false);
   const [avilableCodes, setAvilableCodes] = React.useState<dataList[]>([]);
@@ -86,13 +84,7 @@ export default function PowerToFrameFilter() {
       setColors(response.data);
     } catch (error) {
       setColors([]);
-      if (axios.isAxiosError(error)) {
-        if (error.response?.status === 400) {
-          toast.error("Brand And Code need to be selected");
-        }
-      } else {
-        toast.error("try again netowek error");
-      }
+      extractErrorMessage(error);
     } finally {
       setColorLoading(false);
     }
@@ -193,7 +185,7 @@ export default function PowerToFrameFilter() {
           onChange={(selectedId) =>
             setSelectFrame((preState) => ({ ...preState, color: selectedId }))
           }
-          loading={false}
+          loading={colorLoading}
           labelName="Select Color"
           defaultId={selectFrame.color}
         />
@@ -218,9 +210,7 @@ export default function PowerToFrameFilter() {
           onChange={(e) => setPrice(parseInt(e.target.value))}
           inputProps={{ min: 0 }}
         />
-        <Paper sx={{ p: 1 }}>
-          {selectedFrame ? selectedFrame?.stock.qty : ""}
-        </Paper>
+        <Paper sx={{ p: 1 }}>{selectedFrame?.stock[0]?.qty || 0}</Paper>
 
         {/* <Button color="info" onClick={findFrame} variant="contained">
           <Search />

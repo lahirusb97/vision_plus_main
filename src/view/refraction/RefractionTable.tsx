@@ -16,39 +16,39 @@ import {
   Skeleton,
 } from "@mui/material";
 import { useNavigate } from "react-router";
-import { Delete, Refresh } from "@mui/icons-material";
+import { Refresh } from "@mui/icons-material";
 import useGetRefraction from "../../hooks/useGetRefraction";
-import { RefractionModel } from "../../model/RefractionModel";
 import EditIcon from "@mui/icons-material/Edit";
+
 // import { useDeleteDialog } from "../../context/DeleteDialogContext";
 
-export default function RefractionDetails() {
+export default function RefractionTable() {
   const theme = useTheme();
   const navigate = useNavigate();
   // const { openDialog } = useDeleteDialog();
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedRow, setSelectedRow] = useState<RefractionModel | null>(null);
+  const [selectedRow, setSelectedRow] = useState<number | null>(null);
 
-  const { data, isLoading, updateSearchParams, pageNavigation, refresh } =
-    useGetRefraction();
+  const {
+    refractionsList,
+    refractionLoading,
+    handleRefractionSearch,
+    refractionPageNavigation,
+    refractionLimit,
+    totalRefractionCount,
+  } = useGetRefraction();
   // Safely access data and meta-information
 
   // Filtered rows based on the search query
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // Prevents page reload
-    updateSearchParams(searchQuery);
+    handleRefractionSearch(searchQuery);
   };
 
   const handleInternalOrder = async () => {
     if (selectedRow) {
-      const params = new URLSearchParams({
-        customerName: selectedRow.customer_full_name,
-        nic: selectedRow.nic,
-        mobileNumber: selectedRow.customer_mobile,
-        refraction_number: selectedRow.refraction_number,
-      });
-      navigate(`/refraction/${selectedRow.id}?${params.toString()}`);
+      navigate(`/refraction/${selectedRow}/`);
     }
   };
   return (
@@ -111,7 +111,7 @@ export default function RefractionDetails() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {isLoading ? (
+            {refractionLoading ? (
               [...Array(10)].map((_, index) => (
                 <TableRow key={index}>
                   <TableCell>
@@ -128,14 +128,14 @@ export default function RefractionDetails() {
                   </TableCell>
                 </TableRow>
               ))
-            ) : data.results.length > 0 ? (
-              data.results.map((row: RefractionModel) => (
+            ) : refractionsList.length > 0 ? (
+              refractionsList.map((row) => (
                 <TableRow
-                  onClick={() => setSelectedRow(row)}
+                  onClick={() => setSelectedRow(row.id)}
                   sx={{
                     cursor: "pointer",
                     backgroundColor:
-                      selectedRow?.id === row.id
+                      selectedRow === row.id
                         ? theme.palette.grey[600]
                         : "inherit",
                     "&:hover": {
@@ -150,13 +150,7 @@ export default function RefractionDetails() {
                       color="warning"
                       title="Edit"
                       onClick={() => {
-                        // update/:id
-                        const params = new URLSearchParams({
-                          customer_full_name: row.customer_full_name,
-                          nic: row.nic,
-                          customer_mobile: row.customer_mobile,
-                        });
-                        navigate(`update/${row.id}?${params.toString()}`);
+                        navigate(`update/${row.id}/`);
                       }}
                     >
                       <EditIcon fontSize="small" />
@@ -189,15 +183,15 @@ export default function RefractionDetails() {
         }}
       >
         <Pagination
-          count={Math.ceil(data.count / 10)}
-          onChange={(e: ChangeEvent<unknown>, value: number) => {
-            pageNavigation(value);
+          count={Math.ceil(totalRefractionCount / refractionLimit)}
+          onChange={(_e: ChangeEvent<unknown>, value: number) => {
+            refractionPageNavigation(value);
           }}
         ></Pagination>
         <IconButton
           color="info"
           onClick={() => {
-            pageNavigation(1);
+            refractionPageNavigation(1);
           }}
         >
           <Refresh />

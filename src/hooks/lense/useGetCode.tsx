@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import axiosClient from "../../axiosClient";
 import { CodeModel } from "../../model/CodeModel";
-import { handleError } from "../../utils/handleError";
+import { extractErrorMessage } from "../../utils/extractErrorMessage";
 
 interface UseGetCoatingReturn {
   codes: CodeModel[];
@@ -14,7 +14,6 @@ const useGetCodes = (): UseGetCoatingReturn => {
   const [codes, setCodes] = useState<CodeModel[]>([]);
   const [codesLoading, setCodesLoading] = useState<boolean>(true);
   const [codesError, setCodesError] = useState<string | null>(null);
-
   const fetchCodes = useCallback(async () => {
     setCodesLoading(true);
     setCodesError(null);
@@ -23,7 +22,7 @@ const useGetCodes = (): UseGetCoatingReturn => {
       const response = await axiosClient.get<CodeModel[]>("/codes/");
       setCodes(response.data);
     } catch (err) {
-      handleError(err, "Failed to fetch codes.");
+      extractErrorMessage(err);
     } finally {
       setCodesLoading(false);
     }

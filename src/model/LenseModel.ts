@@ -22,10 +22,13 @@ interface Stock {
 interface LenseModel {
   id: number;
   type: number;
+  type_name: string;
   coating: number;
+  coating_name: string;
   price: string;
   brand: number;
-  stock: Stock;
+  brand_name: string;
+  stock: Stock[];
   powers: Power[];
 }
 interface LenseWithQty extends LenseModel {

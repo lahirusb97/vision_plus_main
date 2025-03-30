@@ -1,5 +1,6 @@
 import { PatientModel } from "./Patient";
-import { RefractionDetailCreate } from "./RefractionDetailCreate";
+import { RefractionDetailModel } from "./RefractionDetailModel";
+
 interface LensDetail {
   id: number;
   type: number;
@@ -80,15 +81,24 @@ interface OrderDetails {
   order_items: OrderItem[];
   order_payments: OrderPayment[];
   sales_staff_code: number | null;
-  remark: string;
+  order_remark: string;
+  pd: string;
+  height: string;
+  right_height: string;
+  left_height: string;
+  left_pd: string;
+  right_pd: string;
+  fitting_on_collection: false;
+  on_hold: false;
 }
 
 interface Invoice {
   id: number;
   order: number;
   customer: number;
+  invoice_number: string;
   customer_details: PatientModel;
-  refraction_details: RefractionDetailCreate;
+  refraction_details: RefractionDetailModel | null;
   invoice_type: string; // Consider enum: 'factory' | 'retail' | 'wholesale'
   daily_invoice_no: number;
   invoice_date: string; // ISO datetime format
@@ -97,4 +107,4 @@ interface Invoice {
   order_payments: OrderPayment[];
 }
 
-export type { Invoice };
+export type { Invoice, OrderItem };

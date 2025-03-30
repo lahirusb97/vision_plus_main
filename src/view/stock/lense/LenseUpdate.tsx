@@ -1,74 +1,66 @@
-import React, { useState } from "react";
 import { Box, Button, Chip, TextField, Typography, Paper } from "@mui/material";
-import { useForm, Controller } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import axiosClient from "../../../axiosClient";
 import { useNavigate, useParams } from "react-router";
 import toast from "react-hot-toast";
-import { AxiosError } from "axios";
+
 import useGetSingleLense from "../../../hooks/lense/useGetSingleLense";
-interface Stock {
-  alertLevel: number;
-  quantity: number;
-}
+import { LenseFormModel, schemaLens } from "../../../validations/schemaLens";
+import { getUserCurentBranch } from "../../../utils/authDataConver";
+import { extractErrorMessage } from "../../../utils/extractErrorMessage";
+
 const LenseUpdate = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
   const { singleLense, singleLenseLoading, refresh } = useGetSingleLense(id);
 
-  const schema = yup.object().shape({
-    alertLevel: yup
-      .number()
-      .positive()
-      .min(0.01, "Alert Level must be positive")
-      .required("Alert Level is required"),
-    quantity: yup
-      .number()
-      .positive()
-      .integer()
-      .min(1)
-      .required("Quantity is required"),
-  });
   const {
     handleSubmit,
     formState: { errors },
     register,
     reset,
-  } = useForm({
-    resolver: yupResolver(schema),
+  } = useForm<Pick<LenseFormModel, "limit" | "qty" | "branch_id">>({
+    resolver: zodResolver(
+      schemaLens.pick({ limit: true, qty: true, branch_id: true })
+    ),
     defaultValues: {
-      alertLevel: undefined,
-      quantity: undefined,
+      limit: undefined,
+      qty: undefined,
+      branch_id: getUserCurentBranch()?.id,
     },
   });
-  const submiteData = async (data: Stock) => {
+  console.log(singleLense);
+
+  const submiteData = async (
+    data: Pick<LenseFormModel, "limit" | "qty" | "branch_id">
+  ) => {
     if (!singleLenseLoading && singleLense) {
-      const { quantity, alertLevel } = data;
+      const { qty, limit } = data;
       const postDAta = {
-        lens: id,
-        initial_count: singleLense.stock.initial_count + quantity,
-        qty: singleLense.stock.qty + quantity,
-        limit: alertLevel,
+        lens: {
+          brand: singleLense.brand,
+        },
+        stock: [
+          {
+            lens: id,
+            initial_count: (singleLense.stock[0]?.qty || 0) + qty,
+            qty: (singleLense.stock[0]?.qty || 0) + qty,
+            limit: limit,
+            branch_id: data.branch_id,
+          },
+        ],
       };
 
       try {
-        await axiosClient.patch(`/lens-stocks/${id}/`, postDAta);
+        await axiosClient.patch(`/lenses/${id}/`, postDAta);
         toast.success("Lense Updated Successfully");
         reset();
         refresh();
         navigate(-1);
       } catch (error) {
-        console.log(error);
-
-        if (error instanceof AxiosError) {
-          // Safely access error.response.data.message
-          toast.error(error.response?.data?.message || "Something went wrong");
-        } else {
-          // Handle non-Axios errors (e.g., network errors, syntax errors, etc.)
-          toast.error("Something went wrong");
-        }
+        extractErrorMessage(error);
       }
     }
   };
@@ -93,12 +85,12 @@ const LenseUpdate = () => {
 
         <Box sx={{ marginY: 2 }}>
           <Chip
-            label={`${singleLense?.stock?.lens_type}`}
+            label={`Factory - ${singleLense?.brand_name}`}
             color="primary"
             sx={{ marginX: 0.5, backgroundColor: "#237ADE", color: "white" }}
           />
           <Chip
-            label={`Coating - ${singleLense?.coating}`}
+            label={`Coating - ${singleLense?.coating_name}`}
             color="primary"
             sx={{ marginX: 0.5, backgroundColor: "#237ADE", color: "white" }}
           />
@@ -109,7 +101,7 @@ const LenseUpdate = () => {
           fontWeight="bold"
           paddingLeft="9px"
         >
-          Curently Avilable Quantity - {singleLense?.stock?.qty}
+          Curently Avilable Quantity - {singleLense?.stock[0]?.qty || 0}
         </Typography>
         <TextField
           fullWidth
@@ -117,11 +109,9 @@ const LenseUpdate = () => {
           variant="outlined"
           inputProps={{ min: 0 }}
           type="number"
-          {...register("quantity", {
-            setValueAs: (value) => (value === "" ? undefined : Number(value)),
-          })}
-          error={!!errors.quantity}
-          helperText={errors.quantity?.message}
+          {...register("qty", { valueAsNumber: true })}
+          error={!!errors.qty}
+          helperText={errors.qty?.message}
           sx={{ marginBottom: 2 }}
         />
         <TextField
@@ -130,14 +120,26 @@ const LenseUpdate = () => {
           label="Alert Level"
           inputProps={{ min: 0 }}
           variant="outlined"
-          {...register("alertLevel", {
-            setValueAs: (value) => (value === "" ? undefined : Number(value)),
-          })}
-          error={!!errors.alertLevel}
-          helperText={errors.alertLevel?.message}
+          {...register("limit", { valueAsNumber: true })}
+          error={!!errors.limit}
+          helperText={errors.limit?.message}
           sx={{ marginBottom: 2 }}
         />
-
+        <TextField
+          sx={{ display: "none" }}
+          inputProps={{
+            min: 0,
+          }}
+          {...register("branch_id", { valueAsNumber: true })}
+          label="Branch Id"
+          type="number"
+          fullWidth
+          margin="normal"
+          variant="outlined"
+          error={!!errors.branch_id}
+          helperText={errors.branch_id?.message}
+          defaultValue={getUserCurentBranch()?.id}
+        />
         <Button type="submit" variant="contained" fullWidth>
           SAVE
         </Button>

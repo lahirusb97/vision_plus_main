@@ -12,7 +12,6 @@ import { useDeleteDialog } from "../../context/DeleteDialogContext";
 const FrameStore = () => {
   const { frames, framesLoading, refresh } = useGetFrames();
   const { openDialog } = useDeleteDialog();
-  console.log(frames);
 
   // Define columns
   const columns = useMemo(
@@ -79,13 +78,13 @@ const FrameStore = () => {
         size: 60,
       },
       {
-        header: "Stock Limit",
-        accessorKey: "stock.limit", // Nested accessor for stock initial count
+        header: "Quantity",
+        accessorFn: (row) => row.stock?.[0]?.qty ?? 0,
         size: 50,
       },
       {
-        header: "Quantity",
-        accessorKey: "stock.qty", // Nested accessor for stock quantity
+        header: "Stock Limit",
+        accessorFn: (row) => row.stock?.[0]?.limit ?? 0,
         size: 50,
       },
     ],

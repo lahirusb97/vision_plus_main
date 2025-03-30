@@ -10,6 +10,10 @@ import { userRoutes } from "./routelist/user.route";
 import LoginProtectedRoute from "./LoginProtectedRoute";
 import ProtectedChildRoute from "./ProtectedChildRoute";
 import PublicRoute from "./PublicRoute";
+import ComingSoon from "../ComingSoon";
+import { accountRoutes } from "./routelist/account.route";
+import SelectBrancheIndex from "../view/SelectBrancheIndex";
+import { reportRoutes } from "./routelist/reports.route";
 
 const Login = lazy(() => import("../view/auth/login"));
 const RegisterUser = lazy(() => import("../view/auth/RegisterUser"));
@@ -25,25 +29,41 @@ export const router = createBrowserRouter([
       },
 
       {
-        path: "channel",
-        element: <ProtectedChildRoute />,
-
-        children: channelRoutes,
-      },
-      {
         path: "transaction",
         element: <ProtectedChildRoute />,
         children: transactionRoutes,
       },
+      {
+        path: "checkin",
+        element: <ProtectedChildRoute />,
+        children: checkInRoutes,
+      },
+      {
+        path: "account",
+        element: <ProtectedChildRoute />,
+        children: accountRoutes,
+      },
+
       {
         path: "stock",
         element: <ProtectedChildRoute />,
         children: stockRoutes,
       },
       {
-        path: "checkin",
+        path: "channel",
         element: <ProtectedChildRoute />,
-        children: checkInRoutes,
+
+        children: channelRoutes,
+      },
+      {
+        path: "reports",
+        element: <ProtectedChildRoute />,
+        children: reportRoutes,
+      },
+      {
+        path: "messenger",
+        element: <ComingSoon />,
+        // children: userRoutes,
       },
       {
         path: "user",
@@ -52,7 +72,10 @@ export const router = createBrowserRouter([
       },
     ],
   },
-
+  {
+    path: "branch_selection",
+    element: <SelectBrancheIndex />,
+  },
   {
     path: "login",
     element: (

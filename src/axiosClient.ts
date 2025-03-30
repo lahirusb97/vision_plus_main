@@ -4,19 +4,19 @@ import axios, {
   AxiosError,
   InternalAxiosRequestConfig,
 } from "axios";
-import { getTokenFromLocalStorage } from "./utils/geAuthToken";
+import { getUserAuth } from "./utils/authDataConver";
 
 // Create an Axios instance with a base URL
 const axiosClient: AxiosInstance = axios.create({
   // baseURL: import.meta.env.VITE_BASE_URL,
   baseURL: "https://www.onlineict.site/api/",
-  // baseURL: "http://127.0.0.1:8005/api",
+  // baseURL: "http://127.0.0.1:8005/api/",
   withCredentials: false,
 });
 
 // Request interceptor to add Authorization header
 axiosClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-  const token = getTokenFromLocalStorage();
+  const token = getUserAuth()?.token;
 
   if (
     token &&
