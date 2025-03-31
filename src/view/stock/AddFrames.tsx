@@ -55,6 +55,7 @@ const AddFrames = () => {
       size: undefined,
       species: undefined,
       qty: undefined,
+      limit: undefined,
       branch_id: getUserCurentBranch()?.id,
     },
   });
@@ -80,7 +81,6 @@ const AddFrames = () => {
         price: frameData.price,
         size: frameData.size,
         species: frameData.species,
-        qty: frameData.qty,
       },
       stock: [
         {
@@ -94,16 +94,7 @@ const AddFrames = () => {
     try {
       await postHandler("frames/", postData);
       toast.success("Frame added successfully");
-      reset({
-        brand: undefined,
-        code: undefined,
-        color: undefined,
-        price: undefined,
-        size: undefined,
-        species: undefined,
-        qty: undefined,
-        branch_id: getUserCurentBranch()?.id,
-      });
+      reset();
     } catch (error) {
       extractErrorMessage(error);
     }

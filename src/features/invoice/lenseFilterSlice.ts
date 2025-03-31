@@ -21,6 +21,8 @@ const lenseFilterSlice = createSlice({
     // Add or update a LenseModel in the store
     setLense: (state, action: PayloadAction<LenseWithQty>) => {
       const lense = action.payload;
+      console.log(lense);
+
       if (state.selectedLenses[lense.id]) {
         // If lens already exists, increase buyQty
         state.selectedLenses[lense.id].buyQty += 1;

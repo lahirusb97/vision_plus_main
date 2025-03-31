@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import {
   Box,
   Button,
@@ -42,6 +42,21 @@ interface LenseWithQty extends LenseModel {
 interface RefractionDetailsProps {
   refractionDetail: RefractionDetailModel | null;
 }
+const initialState = {
+  leftLens: {
+    sph: "",
+    cyl: "",
+    add: "",
+    price: "",
+  },
+  rightLens: {
+    sph: "",
+    cyl: "",
+    add: "",
+    price: "",
+  },
+};
+const lenseReducer = (state, action) => {};
 export default function PowerToLenseFilter({
   refractionDetail,
 }: RefractionDetailsProps) {

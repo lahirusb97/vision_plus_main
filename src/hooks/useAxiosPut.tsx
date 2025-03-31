@@ -17,7 +17,8 @@ export const useAxiosPut = () => {
     setputHandlerError(false);
 
     try {
-      await axiosClient.put(url, data);
+      const responce = await axiosClient.put(url, data);
+      return responce;
     } catch (error) {
       setputHandlerError(true);
 

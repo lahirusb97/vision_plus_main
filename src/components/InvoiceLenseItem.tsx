@@ -21,9 +21,9 @@ export default function InvoiceLenseItem({ lense }: LenseWithQty) {
         alignItems: "center",
       }}
     >
-      <Typography variant="body2">Type: {lense?.lens_type}</Typography>
-      <Typography variant="body2">Brand: {lense?.brand}</Typography>
-      <Typography variant="body2">Coating: {lense?.coating}</Typography>
+      <Typography variant="body2">Type: {lense?.type_name}</Typography>
+      <Typography variant="body2">Brand: {lense?.brand_name}</Typography>
+      <Typography variant="body2">Coating: {lense?.coating_name}</Typography>
       <Typography variant="body2">Quantity: {lense?.buyQty}</Typography>
       <Typography variant="body2">Unite Price: {lense?.price}</Typography>
       <Typography variant="body2">

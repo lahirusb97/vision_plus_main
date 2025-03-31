@@ -91,6 +91,7 @@ export default function InvoiceTable() {
               </TableCell>
             </TableRow>
           ))}
+
           {Object.values(LenseInvoiceList)?.map((row, index) => (
             <TableRow key={index}>
               <TableCell>
@@ -100,7 +101,9 @@ export default function InvoiceTable() {
               </TableCell>
 
               <TableCell>
-                {`${row?.type} / ${row.coating} / ${row?.stock[0]?.powers
+                {`${row?.type_name} / ${row.coating_name} / ${
+                  row.brand_name
+                } / ${row?.stock[0]?.powers
                   ?.map((power) => {
                     if (power.power === 1) {
                       return `SPH: ${power.value}`; // For SPH (Sphere)

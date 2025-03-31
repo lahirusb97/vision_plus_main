@@ -46,16 +46,22 @@ const FrameUpdate = () => {
     if (!singleFrameLoading && singleFrame) {
       const { qty, limit, branch_id } = data;
       const postDAta = {
-        frame: id,
-        initial_count: (singleFrame.stock[0]?.initial_count || 0) + qty,
-        qty: (singleFrame.stock[0]?.qty || 0) + qty,
-        limit: limit,
-        branch_id: branch_id,
+        // Keep frame data here if needed
+        stock: [
+          {
+            branch_id: branch_id,
+            initial_count: (singleFrame.stock[0]?.initial_count || 0) + qty,
+            qty: (singleFrame.stock[0]?.qty || 0) + qty,
+            limit: limit,
+          },
+        ],
       };
 
       try {
         // await axiosClient.put(`/frame-stocks/${id}/`, postDAta);
-        await putHandler(`/frames/${id}/`, postDAta);
+        const test = await putHandler(`/frames/${id}/`, postDAta);
+        console.log(test.data);
+
         toast.success("Frame Stock Updated successfully");
         reset();
         navigate(-1);

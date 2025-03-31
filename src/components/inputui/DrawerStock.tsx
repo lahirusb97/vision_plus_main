@@ -9,6 +9,7 @@ import ExternalLense from "../../view/transaction/factory_order/ExternalLense";
 import PowerToLenseFilter from "../PowerToLenseFilter";
 import PowerToFrameFilter from "../PowerToFrameFilter";
 import { RefractionDetailModel } from "../../model/RefractionDetailModel";
+import LensFilter from "../lensFilter/LensFilter";
 interface RefractionDetailsProps {
   refractionDetail: RefractionDetailModel | null;
 }
@@ -41,7 +42,8 @@ export default function DrawerStock({
         {stockDrawerType === "frame" ? (
           <PowerToFrameFilter />
         ) : stockDrawerType === "lense" ? (
-          <PowerToLenseFilter refractionDetail={refractionDetail} />
+          // <PowerToLenseFilter refractionDetail={refractionDetail} />
+          <LensFilter refractionDetail={refractionDetail} />
         ) : stockDrawerType === "none_stock_lense" ? (
           <ExternalLense />
         ) : (
