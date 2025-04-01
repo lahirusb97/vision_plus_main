@@ -4,6 +4,7 @@ import { styled } from "@mui/material/styles";
 import { useLocation, useNavigate } from "react-router";
 import { useTheme } from "@mui/material/styles";
 import { yellow } from "@mui/material/colors";
+import { teal } from "@mui/material/colors";
 
 // Define props including the onClick function
 interface NavButtonProps {
@@ -26,26 +27,25 @@ const NavButton: React.FC<NavButtonProps> = ({ name, path }) => {
       currentPath === path
         ? theme.palette.mode === "dark"
           ? yellow[300]
-          : yellow[700] // Highlight for active button
+          : "#FF7043" // Highlight for active button
         : theme.palette.mode === "dark"
         ? yellow[100]
-        : theme.palette.grey[900], // Default background color
+        : teal[800], // Default background color
     color:
       currentPath === path
         ? theme.palette.mode === "dark"
           ? theme.palette.grey[900]
           : "white"
         : theme.palette.mode === "dark"
-        ? theme.palette.grey[900]
+        ? teal[800]
         : "white", // Text color
     "&:hover": {
       backgroundColor:
-        theme.palette.mode === "dark"
-          ? theme.palette.grey[100]
-          : theme.palette.grey[800],
+        theme.palette.mode === "dark" ? theme.palette.grey[100] : teal[900],
+      transition: "background-color 0.3s ease", // Smooth transition
     },
     margin: "0 .5em",
-    border: currentPath === path ? `2px solid ${yellow[700]}` : "none", // Add a border for active state
+    // border: currentPath === path ? `2px solid ${teal[700]}` : "none", // Add a border for active state
     fontWeight: currentPath === path ? "bold" : "normal", // Bold text for active state
     textTransform: "capitalize",
   }));

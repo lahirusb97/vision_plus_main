@@ -1,16 +1,16 @@
 import { yellow } from "@mui/material/colors";
 import { createTheme } from "@mui/material/styles";
-
+import { teal } from "@mui/material/colors";
 const theme = createTheme({
   colorSchemes: {
     light: {
       palette: {
         mode: "light",
         primary: {
-          main: yellow[900],
+          main: teal[800],
         },
         secondary: {
-          main: yellow[600],
+          main: teal[500],
         },
       },
     },

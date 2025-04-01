@@ -1,5 +1,11 @@
 import React from "react";
+import { useState, useEffect } from "react";
 import {
+  Box,
+  TextField,
+  Button,
+  CircularProgress,
+  Alert,
   Table,
   TableBody,
   TableCell,
@@ -7,22 +13,28 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Button,
-  TextField,
-  IconButton,
-  Box,
+  Pagination,
+  Grid,
   Typography,
+  IconButton,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import CircleIcon from "@mui/icons-material/Circle";
+import useGetFactoryInvoices from "../../hooks/useGetFactoryInvoices";
+import FactoryInvoiceSearch from "../../hooks/factoryInvoiceSearch";
+import { dateAndTimeFormat } from "../../utils/dateAndTimeFormat";
+import { progressStatus } from "../../utils/progressState";
 
 const jobData = [
-  { name: "Alex", date: "2024/10/5", invoice: "54755", progress: "", notes: "lens damage", status: "red" },
-  { name: "Nuwan", date: "2024/10/5", invoice: "54755", progress: "Sent to factory", notes: "received lenses", status: "green" },
-  { name: "Nuwan", date: "2024/10/5", invoice: "54755", progress: "Received from factory", notes: "", status: "blue" },
-  { name: "Nuwan", date: "2024/10/5", invoice: "54755", progress: "Issued to customer", notes: "", status: "green" },
-  { name: "Alex", date: "2025/1/5", invoice: "54755", progress: "Received from customer", notes: "", status: "red" },
+  {
+    name: "Alex",
+    date: "2024/10/5",
+    invoice: "54755",
+    progress: "",
+    notes: "lens damage",
+    status: "red",
+  },
 ];
 
 const getStatusColor = (status) => {
@@ -39,17 +51,25 @@ const getStatusColor = (status) => {
 };
 
 const CheckInIndex = () => {
+  const {
+    invoices,
+    loading,
+    error,
+    totalCount,
+    currentPage,
+    pageSize,
+    searchParams,
+    handleSearch,
+    handlePageChange,
+    clearFilters,
+    refreshInvoices,
+  } = useGetFactoryInvoices();
+
   return (
     <div style={{ padding: 20 }}>
-      <div style={{ display: "flex", gap: 10, marginBottom: 20 }}>
-        <TextField size="small" label="Factory invoice Number / phone no / NIC no" variant="outlined" fullWidth />
-        <Button size="small" variant="contained" color="warning" startIcon={<SearchIcon />}>
-          Search
-        </Button>
-      </div>
-
-     {/* Status Indicators */}
-     <Box display="flex" alignItems="center" gap={2} marginBottom={2}>
+      <FactoryInvoiceSearch handleSearch={handleSearch} />
+      {/* Status Indicators */}
+      <Box display="flex" alignItems="center" gap={2} marginBottom={2}>
         <Box display="flex" alignItems="center" gap={1}>
           <CircleIcon sx={{ color: "red" }} />
           <Typography>On Hold Job</Typography>
@@ -64,30 +84,54 @@ const CheckInIndex = () => {
         </Box>
       </Box>
 
-      
       <TableContainer component={Paper}>
         <Table size="small">
           <TableHead>
             <TableRow sx={{ backgroundColor: "#f5f5f5" }}>
-              <TableCell><b>Customer Name</b></TableCell>
-              <TableCell><b>Date</b></TableCell>
-              <TableCell><b>Invoice</b></TableCell>
-              <TableCell><b>Progress</b> <span style={{ color: "red" }}>(4 stages)</span></TableCell>
-              <TableCell><b>Notes</b></TableCell>
-              <TableCell><b>Arrival Status</b></TableCell>
-              <TableCell><b>Details</b></TableCell>
+              <TableCell>
+                <b>Patient Name</b>
+              </TableCell>
+              <TableCell>
+                <b>Date</b>
+              </TableCell>
+              <TableCell>
+                <b>Invoice</b>
+              </TableCell>
+              <TableCell>
+                <b>Progress</b> <span style={{ color: "red" }}>(4 stages)</span>
+              </TableCell>
+              {/* <TableCell>
+                <b>Notes</b>
+              </TableCell> */}
+              <TableCell>
+                <b>Arrival Status</b>
+              </TableCell>
+              <TableCell>
+                <b>Details</b>
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {jobData.map((row, index) => (
+            {invoices.map((row, index) => (
               <TableRow key={index}>
-                <TableCell>{row.name}</TableCell>
-                <TableCell>{row.date}</TableCell>
-                <TableCell>{row.invoice}</TableCell>
-                <TableCell>{row.progress}</TableCell>
-                <TableCell>{row.notes}</TableCell>
+                <TableCell>{row.customer_details.name}</TableCell>
                 <TableCell>
-                  <CircleIcon sx={{ color: getStatusColor(row.status) }} />
+                  {dateAndTimeFormat(row.order_details.order_date)}
+                </TableCell>
+                <TableCell>{row.invoice_number}</TableCell>
+                <TableCell>{progressStatus(row.progress_status)}</TableCell>
+                {/* <TableCell>{row.notes}</TableCell> */}
+                <TableCell>
+                  {row.lens_arrival_status == null
+                    ? "_"
+                    : row.lens_arrival_status == "received"
+                    ? "Received"
+                    : "Not Received"}
+                </TableCell>
+                <TableCell>
+                  <CircleIcon
+                    sx={{ color: getStatusColor(row.progress_status) }}
+                  />
                 </TableCell>
                 <TableCell>
                   <IconButton color="inherit">

@@ -19,6 +19,7 @@ import { useNavigate } from "react-router";
 import { Refresh } from "@mui/icons-material";
 import useGetRefraction from "../../hooks/useGetRefraction";
 import EditIcon from "@mui/icons-material/Edit";
+import { teal } from "@mui/material/colors";
 
 // import { useDeleteDialog } from "../../context/DeleteDialogContext";
 
@@ -135,9 +136,7 @@ export default function RefractionTable() {
                   sx={{
                     cursor: "pointer",
                     backgroundColor:
-                      selectedRow === row.id
-                        ? theme.palette.grey[600]
-                        : "inherit",
+                      selectedRow === row.id ? teal[100] : "inherit",
                     "&:hover": {
                       backgroundColor: theme.palette.grey[300],
                     },
@@ -208,7 +207,6 @@ export default function RefractionTable() {
         <Button
           disabled={!selectedRow}
           onClick={handleInternalOrder}
-          color="info"
           variant="contained"
         >
           Refraction Details

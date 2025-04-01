@@ -105,6 +105,16 @@ interface Invoice {
   order_details: OrderDetails;
   order_items: OrderItem[];
   order_payments: OrderPayment[];
+  progress_status: ProgressStatus;
+  lens_arrival_status: LensArrivalStatus;
+  whatsapp_sent: false;
 }
 
 export type { Invoice, OrderItem };
+export type ProgressStatus =
+  | "received_from_customer"
+  | "Received from Customer"
+  | "issue_to_factory"
+  | "received_from_factory"
+  | "issue_to_customer";
+export type LensArrivalStatus = "received" | "not_received" | null;

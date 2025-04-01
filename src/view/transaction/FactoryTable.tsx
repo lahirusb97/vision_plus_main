@@ -21,6 +21,7 @@ import { Refresh } from "@mui/icons-material";
 import useGetRefraction from "../../hooks/useGetRefraction";
 import EditIcon from "@mui/icons-material/Edit";
 import { RefractionNumberModel } from "../../model/RefractionModel";
+import { teal } from "@mui/material/colors";
 
 // Interface for Refraction Data
 
@@ -146,11 +147,9 @@ export default function FactoryTable() {
                     height: 40,
                     cursor: "pointer",
                     backgroundColor:
-                      selectedRow?.id === row.id
-                        ? theme.palette.grey[600]
-                        : "inherit",
+                      selectedRow?.id === row.id ? teal[100] : "inherit",
                     "&:hover": {
-                      backgroundColor: theme.palette.grey[600],
+                      backgroundColor: theme.palette.grey[200],
                     },
                   }}
                   key={row.id}
@@ -228,7 +227,6 @@ export default function FactoryTable() {
         <Button
           disabled={!selectedRow}
           onClick={handleInternalOrder}
-          color="info"
           variant="contained"
         >
           Invoice
