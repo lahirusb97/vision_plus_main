@@ -28,6 +28,7 @@ const useGetRefraction = () => {
       setDataList(response.data.results);
       setTotalCount(response.data.count);
     } catch (error) {
+      setDataList([]);
       extractErrorMessage(error);
     } finally {
       setLoading(false);

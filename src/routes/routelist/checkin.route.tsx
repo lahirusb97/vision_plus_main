@@ -1,9 +1,8 @@
 import { RouteObject } from "react-router";
 import ProtectedChildRoute from "../ProtectedChildRoute";
 import CheckInIndex from "../../view/checkin/CheckInIndex";
-import Transfer from "../../view/checkin/Transfer";
+import JobProgress from "../../view/checkin/JobProgress";
 import SendOrder from "../../view/checkin/SendOrder";
-
 
 export const checkInRoutes: RouteObject[] = [
   {
@@ -18,7 +17,7 @@ export const checkInRoutes: RouteObject[] = [
   },
   {
     path: "transfer/", //you can change this new path if you do you have to mach the same in CheckInNav.tsx
-    element: <Transfer />, // Create new comp if you want you have to change this if you do
+    element: <JobProgress />, // Create new comp if you want you have to change this if you do
   },
   {
     path: "send_order",

@@ -17,7 +17,7 @@ const searchSchema = z.object({
 
 type SearchFormData = z.infer<typeof searchSchema>;
 
-export default function FactoryInvoiceSearch({ handleSearch }) {
+export default function FactoryInvoiceSearch({ invoiceSearch }) {
   const {
     control,
     handleSubmit,
@@ -32,7 +32,7 @@ export default function FactoryInvoiceSearch({ handleSearch }) {
   });
 
   const onSubmit = (data: SearchFormData) => {
-    handleSearch(data.searchTerm);
+    invoiceSearch(data.searchOption, data.searchTerm);
   };
 
   return (

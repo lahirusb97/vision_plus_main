@@ -2,79 +2,75 @@ import { useState, useEffect, useCallback } from "react";
 import axiosClient from "../axiosClient";
 import { PaginatedResponse } from "../model/PaginatedResponse";
 import { extractErrorMessage } from "../utils/extractErrorMessage";
+// import { getUserCurentBranch } from "../utils/authDataConver";
 import { Invoice } from "../model/SingleInvoiceModel";
-import { getUserCurentBranch } from "../utils/authDataConver";
+type searchParams = "invoice_number" | "mobile" | "nic";
 
-interface SearchParams {
-  param: string;
-  value: string;
-}
-
+type SearchQuery = {
+  [key in searchParams]?: string; // Optional string values for each of the possible keys
+};
 const useGetFactoryInvoices = () => {
-  const limit = 10;
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [searchParams, setSearchParams] = useState<SearchParams>("");
-  const [invoices, setInvoices] = useState<Invoice[]>([]);
+  const [page_size, setPage_size] = useState<number>(10);
+  const [navigatePage, setNavigatePage] = useState<number>(1);
+  const [searchQuary, setSearchQuary] = useState<SearchQuery>({});
+  const [DataList, setDataList] = useState<Invoice[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
-
+  const [initialLoad, setInitialLoad] = useState<boolean>(true);
   const loadData = useCallback(async () => {
     setLoading(true);
-
     try {
-      const params = {
-        search: { invoice_number: searchParams },
-      };
-
-      const response = await axiosClient.get<PaginatedResponse<Invoice>>(
-        "factory-invoices/",
-        {
+      const response: { data: PaginatedResponse<Invoice> } =
+        await axiosClient.get(`factory-invoices/search/`, {
           params: {
-            search: {
-              invoice_number: searchParams,
-            },
+            page: navigatePage,
+            page_size,
+            ...(searchQuary.invoice_number
+              ? { invoice_number: searchQuary.invoice_number }
+              : {}),
+            ...(searchQuary.mobile ? { mobile: searchQuary.mobile } : {}),
+            ...(searchQuary.nic ? { nic: searchQuary.nic } : {}),
+            // branch_id: getUserCurentBranch()?.id,
           },
-        }
-      );
-
-      setInvoices(response.data.results);
+        });
+      setDataList(response.data.results);
       setTotalCount(response.data.count);
+      // setTotalCount(response.data.count);
     } catch (error) {
+      setDataList([]);
       extractErrorMessage(error);
     } finally {
       setLoading(false);
     }
-  }, [currentPage, searchParams]);
+  }, [navigatePage, searchQuary, page_size]);
 
-  const handleSearch = useCallback((params: SearchParams) => {
-    setCurrentPage(1);
-    setSearchParams(params);
-  }, []);
-
-  const clearFilters = useCallback(() => {
-    setCurrentPage(1);
-    setSearchParams({});
-  }, []);
-
-  const handlePageChange = useCallback((page: number) => {
-    setCurrentPage(page);
-  }, []);
+  const handleSearch = (searchKey: searchParams, searchTerm: string) => {
+    setNavigatePage(1);
+    setSearchQuary({ [searchKey]: searchTerm });
+  };
+  const handlePageNavigation = (pageNumber: number) => {
+    setNavigatePage(pageNumber);
+  };
+  const changePageSize = (pageNumber: number) => {
+    setPage_size(pageNumber);
+  };
 
   useEffect(() => {
-    loadData();
+    setInitialLoad(false);
+    if (!initialLoad) loadData();
+    //!initialLoad not inluded in the array to stock initial loadData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loadData]);
 
   return {
-    invoices,
-    loading,
-    totalCount,
-    currentPage,
-    pageSize: limit,
-    searchParams,
-    handleSearch,
-    handlePageChange,
-    clearFilters,
-    refreshInvoices: loadData,
+    invoiceLimit: page_size,
+    invoiceList: DataList,
+    invoiceLoading: loading,
+    invoiceTotalCount: totalCount,
+    invoicePageNavigation: handlePageNavigation,
+    invoiceSearch: handleSearch,
+    invoiceListRefres: loadData,
+    changePageSize: changePageSize,
   };
 };
 

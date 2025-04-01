@@ -1,10 +1,20 @@
-import React, { useState } from 'react';
-import { DataGrid } from '@mui/x-data-grid';
-import { TextField, Button, Select, MenuItem, FormControl, InputLabel, Checkbox, Box, Typography } from '@mui/material';
+import React, { useState } from "react";
+import { DataGrid } from "@mui/x-data-grid";
+import {
+  TextField,
+  Button,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Checkbox,
+  Box,
+  Typography,
+} from "@mui/material";
 
-const Transfer = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [status, setStatus] = useState('');
+const JobProgress = () => {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [status, setStatus] = useState("");
   const [selectedInvoices, setSelectedInvoices] = useState([]);
   const [filteredInvoices, setFilteredInvoices] = useState([]);
   const [displayedInvoices, setDisplayedInvoices] = useState([]); // To store invoices to display after OK click
@@ -18,9 +28,11 @@ const Transfer = () => {
 
   // Handle search when Enter is pressed
   const handleSearch = (event) => {
-    if (event.key === 'Enter') {
+    if (event.key === "Enter") {
       const filtered = invoices.filter((invoice) =>
-        invoice.factoryInvoiceNo.toLowerCase().includes(searchTerm.toLowerCase())
+        invoice.factoryInvoiceNo
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase())
       );
       setFilteredInvoices(filtered);
     }
@@ -42,12 +54,12 @@ const Transfer = () => {
   // Handle OK button click to process selected invoices
   const handleUpdateStatus = () => {
     if (selectedInvoices.length === 0) {
-      alert('Please select at least one invoice.');
+      alert("Please select at least one invoice.");
       return;
     }
 
     // Log the selected invoices
-    console.log('Selected Invoices:', selectedInvoices);
+    console.log("Selected Invoices:", selectedInvoices);
 
     // Process selected invoices (update status)
     const updatedInvoices = invoices.map((invoice) => {
@@ -58,14 +70,14 @@ const Transfer = () => {
     });
 
     // Log the updated invoices (or send to an API)
-    console.log('Updated Invoices:', updatedInvoices);
+    console.log("Updated Invoices:", updatedInvoices);
 
     // Set the displayed invoices to the selected invoices
     setDisplayedInvoices(selectedInvoices);
 
     // Reset selected invoices and status
     setSelectedInvoices([]);
-    setStatus('');
+    setStatus("");
   };
 
   // Handle checkbox selection for invoices
@@ -79,11 +91,11 @@ const Transfer = () => {
 
   // Define columns for the DataGrid
   const columns = [
-    { field: 'factoryInvoiceNo', headerName: 'Factory Invoice No', width: 200 },
-    { field: 'status', headerName: 'Status', width: 200 },
+    { field: "factoryInvoiceNo", headerName: "Factory Invoice No", width: 200 },
+    { field: "status", headerName: "Status", width: 200 },
     {
-      field: 'action',
-      headerName: 'Action',
+      field: "action",
+      headerName: "Action",
       width: 100,
       renderCell: (params) => (
         <Checkbox
@@ -95,10 +107,10 @@ const Transfer = () => {
   ];
 
   return (
-    <Box sx={{ display: 'flex', gap: 2, padding: 2 }}>
+    <Box sx={{ display: "flex", gap: 2, padding: 2 }}>
       {/* Table Section */}
       <Box sx={{ flex: 1 }}>
-        <div style={{ height: 400, width: '100%' }}>
+        <div style={{ height: 400, width: "100%" }}>
           <DataGrid
             rows={filteredInvoices.length > 0 ? filteredInvoices : invoices}
             columns={columns}
@@ -114,7 +126,14 @@ const Transfer = () => {
       </Box>
 
       {/* Search, Status, and OK Section */}
-      <Box sx={{ width: '300px', display: 'flex', flexDirection: 'column', gap: 2 }}>
+      <Box
+        sx={{
+          width: "300px",
+          display: "flex",
+          flexDirection: "column",
+          gap: 2,
+        }}
+      >
         {/* Search Field and Button */}
         <TextField
           label="Search Factory Invoice No"
@@ -124,7 +143,12 @@ const Transfer = () => {
           onKeyPress={handleSearch}
           fullWidth
         />
-        <Button variant="contained" color="primary" onClick={handleSearchButtonClick} fullWidth>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleSearchButtonClick}
+          fullWidth
+        >
           Search Factory Invoice
         </Button>
 
@@ -133,13 +157,20 @@ const Transfer = () => {
           <InputLabel>Status</InputLabel>
           <Select value={status} onChange={handleStatusChange}>
             <MenuItem value="Issue factory">Issue factory</MenuItem>
-            <MenuItem value="Received from factory">Received from factory</MenuItem>
+            <MenuItem value="Received from factory">
+              Received from factory
+            </MenuItem>
             <MenuItem value="Issue customer">Issue customer</MenuItem>
           </Select>
         </FormControl>
 
         {/* OK Button */}
-        <Button variant="contained" color="primary" onClick={handleUpdateStatus} fullWidth>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleUpdateStatus}
+          fullWidth
+        >
           OK
         </Button>
 
@@ -162,4 +193,4 @@ const Transfer = () => {
   );
 };
 
-export default Transfer;
+export default JobProgress;

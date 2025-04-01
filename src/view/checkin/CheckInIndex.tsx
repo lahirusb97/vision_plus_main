@@ -1,11 +1,5 @@
-import React from "react";
-import { useState, useEffect } from "react";
 import {
   Box,
-  TextField,
-  Button,
-  CircularProgress,
-  Alert,
   Table,
   TableBody,
   TableCell,
@@ -13,63 +7,34 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Pagination,
-  Grid,
   Typography,
   IconButton,
 } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import CircleIcon from "@mui/icons-material/Circle";
 import useGetFactoryInvoices from "../../hooks/useGetFactoryInvoices";
 import FactoryInvoiceSearch from "../../hooks/factoryInvoiceSearch";
 import { dateAndTimeFormat } from "../../utils/dateAndTimeFormat";
 import { progressStatus } from "../../utils/progressState";
-
-const jobData = [
-  {
-    name: "Alex",
-    date: "2024/10/5",
-    invoice: "54755",
-    progress: "",
-    notes: "lens damage",
-    status: "red",
-  },
-];
-
-const getStatusColor = (status) => {
-  switch (status) {
-    case "red":
-      return "red";
-    case "green":
-      return "green";
-    case "blue":
-      return "blue";
-    default:
-      return "gray";
-  }
-};
+import CustomerPagination from "../../components/CustomPagination";
+import { useNavigate } from "react-router";
 
 const CheckInIndex = () => {
+  const navigate = useNavigate();
   const {
-    invoices,
-    loading,
-    error,
-    totalCount,
-    currentPage,
-    pageSize,
-    searchParams,
-    handleSearch,
-    handlePageChange,
-    clearFilters,
-    refreshInvoices,
+    invoiceList,
+    invoiceLimit,
+    invoiceSearch,
+    changePageSize,
+    invoicePageNavigation,
+    invoiceTotalCount,
   } = useGetFactoryInvoices();
 
   return (
-    <div style={{ padding: 20 }}>
-      <FactoryInvoiceSearch handleSearch={handleSearch} />
+    <div style={{ padding: 20, maxWidth: "1200px", minWidth: "900px" }}>
+      <FactoryInvoiceSearch invoiceSearch={invoiceSearch} />
       {/* Status Indicators */}
-      <Box display="flex" alignItems="center" gap={2} marginBottom={2}>
+      <Box m={1} display="flex" alignItems="center" gap={2} marginBottom={2}>
         <Box display="flex" alignItems="center" gap={1}>
           <CircleIcon sx={{ color: "red" }} />
           <Typography>On Hold Job</Typography>
@@ -98,7 +63,7 @@ const CheckInIndex = () => {
                 <b>Invoice</b>
               </TableCell>
               <TableCell>
-                <b>Progress</b> <span style={{ color: "red" }}>(4 stages)</span>
+                <b>Progress</b>
               </TableCell>
               {/* <TableCell>
                 <b>Notes</b>
@@ -112,7 +77,7 @@ const CheckInIndex = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {invoices.map((row, index) => (
+            {invoiceList.map((row, index) => (
               <TableRow key={index}>
                 <TableCell>{row.customer_details.name}</TableCell>
                 <TableCell>
@@ -128,21 +93,49 @@ const CheckInIndex = () => {
                     ? "Received"
                     : "Not Received"}
                 </TableCell>
-                <TableCell>
-                  <CircleIcon
-                    sx={{ color: getStatusColor(row.progress_status) }}
-                  />
-                </TableCell>
-                <TableCell>
-                  <IconButton color="inherit">
+
+                <TableCell sx={{ display: "flex", alignItems: "center" }}>
+                  <IconButton
+                    onClick={() =>
+                      navigate(
+                        `/transaction/factory_order/invoice/${row.invoice_number}`
+                      )
+                    }
+                    color="inherit"
+                  >
                     <AssignmentIcon />
                   </IconButton>
+                  <Box
+                    sx={{ display: "flex", gap: 1, flexDirection: "column" }}
+                  >
+                    {row.order_details.on_hold ? (
+                      <CircleIcon sx={{ color: "red", fontSize: "1rem" }} />
+                    ) : (
+                      <CircleIcon sx={{ color: "green", fontSize: "1rem" }} />
+                    )}
+                    {!row.order_details.fitting_on_collection && (
+                      <CircleIcon sx={{ color: "blue", fontSize: "1rem" }} />
+                    )}
+                  </Box>
                 </TableCell>
               </TableRow>
             ))}
+            {invoiceList.length == 0 && (
+              <TableRow>
+                <TableCell colSpan={6} align="center">
+                  No Data Found
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </TableContainer>
+      <CustomerPagination
+        totalCount={invoiceTotalCount}
+        handlePageNavigation={invoicePageNavigation}
+        changePageSize={changePageSize}
+        page_size={invoiceLimit}
+      />
     </div>
   );
 };

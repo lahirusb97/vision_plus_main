@@ -3,7 +3,6 @@ import NormalInvoice from "../../view/transaction/NormalInvoice";
 import ProtectedChildRoute from "../ProtectedChildRoute";
 import FactoryTable from "../../view/transaction/FactoryTable";
 import InvoiceView from "../../view/transaction/factory_order/InvoiceView";
-import OrderEditFrom from "../../view/transaction/order_edit/OrderEditFrom";
 import OrderEditIndex from "../../view/transaction/OrderEditIndex";
 import RePaymentIndex from "../../view/transaction/RePaymentIndex";
 import RepaymentForm from "../../view/transaction/RepaymentForm";
@@ -36,6 +35,10 @@ export const transactionRoutes: RouteObject[] = [
             element: <InvoiceView />,
           },
         ],
+      },
+      {
+        path: "invoice/:invoice_number",
+        element: <InvoiceView />, //Handle invoice view
       },
     ],
   },
