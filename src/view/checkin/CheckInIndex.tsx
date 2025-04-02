@@ -61,6 +61,9 @@ const CheckInIndex = () => {
               <TableCell>
                 <b>Details</b>
               </TableCell>
+              <TableCell>
+                <b>Status</b>
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -81,8 +84,10 @@ const CheckInIndex = () => {
                     : "Not Received"}
                 </TableCell>
 
-                <TableCell sx={{ display: "flex", alignItems: "center" }}>
+                <TableCell>
                   <IconButton
+                    size="small"
+                    sx={{ p: 0 }}
                     onClick={() =>
                       navigate(
                         `/transaction/factory_order/invoice/${row.invoice_number}`
@@ -90,11 +95,11 @@ const CheckInIndex = () => {
                     }
                     color="inherit"
                   >
-                    <AssignmentIcon />
+                    <AssignmentIcon fontSize="small" />
                   </IconButton>
-                  <Box
-                    sx={{ display: "flex", gap: 1, flexDirection: "column" }}
-                  >
+                </TableCell>
+                <TableCell>
+                  <Box sx={{ display: "flex", flexDirection: "rows" }}>
                     {row.order_details.on_hold ? (
                       <CircleIcon sx={{ color: "red", fontSize: "1rem" }} />
                     ) : (

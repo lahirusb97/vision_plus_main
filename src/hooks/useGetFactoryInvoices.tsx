@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import axiosClient from "../axiosClient";
 import { PaginatedResponse } from "../model/PaginatedResponse";
 import { extractErrorMessage } from "../utils/extractErrorMessage";
-// import { getUserCurentBranch } from "../utils/authDataConver";
+import { getUserCurentBranch } from "../utils/authDataConver";
 import { Invoice } from "../model/SingleInvoiceModel";
 import toast from "react-hot-toast";
 type searchParams = "invoice_number" | "mobile" | "nic" | "progress_status";
@@ -35,7 +35,7 @@ const useGetFactoryInvoices = () => {
             ...(searchQuary.progress_status
               ? { progress_status: searchQuary.progress_status }
               : {}),
-            // branch_id: getUserCurentBranch()?.id,
+            branch_id: getUserCurentBranch()?.id,
           },
         });
 

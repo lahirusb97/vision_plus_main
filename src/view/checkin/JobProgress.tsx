@@ -1,5 +1,7 @@
 import {
   Box,
+  Button,
+  Checkbox,
   FormControl,
   IconButton,
   InputLabel,
@@ -23,6 +25,7 @@ import CircleIcon from "@mui/icons-material/Circle";
 import CustomerPagination from "../../components/CustomPagination";
 import { useNavigate } from "react-router";
 import ProgressStagesColors from "../../components/ProgressStagesColors";
+import FactoryInvoiceSearch from "../../hooks/FactoryInvoiceSearch";
 
 export default function JobProgress() {
   const navigate = useNavigate();
@@ -44,10 +47,12 @@ export default function JobProgress() {
 
   return (
     <div>
-      <Box
+      <Paper
         sx={{
           display: "flex",
-
+          m: 1,
+          p: 1,
+          gap: 2,
           alignItems: "center",
         }}
       >
@@ -61,10 +66,10 @@ export default function JobProgress() {
             id="demo-simple-select"
             value={orderProgress}
             label=" Filter By Order Progress"
-            onChange={handleChange}
+            onChange={() => {}}
           >
             <MenuItem value={"received_from_customer"}>
-              Received From Customer Progress
+              Received From Customer
             </MenuItem>
             <MenuItem value={"issue_to_factory"}>Issue to Factory</MenuItem>
             <MenuItem value={"received_from_factory"}>
@@ -73,31 +78,63 @@ export default function JobProgress() {
             <MenuItem value={"issue_to_customer"}>Issue to Customer</MenuItem>
           </Select>
         </FormControl>
-        <ProgressStagesColors />
-      </Box>
+        <Button variant="contained">Update Progress</Button>
+      </Paper>
 
-      <TableContainer sx={{ mt: 2 }} component={Paper}>
+      <TableContainer sx={{ mt: 2 }} elevation={3} component={Paper}>
+        <Box
+          sx={{
+            display: "flex",
+            m: 1,
+            alignItems: "center",
+            flexWrap: "wrap",
+          }}
+        >
+          <FormControl size="small" sx={{ minWidth: 250 }}>
+            <InputLabel id="demo-simple-select-label">
+              {" "}
+              Filter By Order Progress
+            </InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={orderProgress}
+              label=" Filter By Order Progress"
+              onChange={handleChange}
+            >
+              <MenuItem value={"received_from_customer"}>
+                Received From Customer
+              </MenuItem>
+              <MenuItem value={"issue_to_factory"}>Issue to Factory</MenuItem>
+              <MenuItem value={"received_from_factory"}>
+                Received from Factory
+              </MenuItem>
+              <MenuItem value={"issue_to_customer"}>Issue to Customer</MenuItem>
+            </Select>
+          </FormControl>
+          <FactoryInvoiceSearch invoiceSearch={invoiceSearch} />
+          <ProgressStagesColors />
+        </Box>
         <Table size="small">
           <TableHead>
             <TableRow sx={{ backgroundColor: "#f5f5f5" }}>
               <TableCell>
-                <b>Patient Name</b>
-              </TableCell>
-              <TableCell>
-                <b>Date</b>
+                <b>Select</b>
               </TableCell>
               <TableCell>
                 <b>Invoice</b>
               </TableCell>
+              <TableCell>
+                <b>Date</b>
+              </TableCell>
+
               <TableCell>
                 <b>Progress</b>
               </TableCell>
               {/* <TableCell>
                 <b>Notes</b>
               </TableCell> */}
-              <TableCell>
-                <b>Arrival Status</b>
-              </TableCell>
+
               <TableCell>
                 <b>Details</b>
               </TableCell>
@@ -109,23 +146,21 @@ export default function JobProgress() {
           <TableBody>
             {invoiceList.map((row, index) => (
               <TableRow key={index}>
-                <TableCell>{row.customer_details.name}</TableCell>
+                <TableCell>
+                  <Checkbox sx={{ p: 0 }} size="small" />
+                </TableCell>
+                <TableCell>{row.invoice_number}</TableCell>
+
                 <TableCell>
                   {dateAndTimeFormat(row.order_details.order_date)}
                 </TableCell>
-                <TableCell>{row.invoice_number}</TableCell>
                 <TableCell>{progressStatus(row.progress_status)}</TableCell>
                 {/* <TableCell>{row.notes}</TableCell> */}
-                <TableCell>
-                  {row.lens_arrival_status == null
-                    ? "_"
-                    : row.lens_arrival_status == "received"
-                    ? "Received"
-                    : "Not Received"}
-                </TableCell>
 
                 <TableCell>
                   <IconButton
+                    size="small"
+                    sx={{ p: 0 }}
                     onClick={() =>
                       navigate(
                         `/transaction/factory_order/invoice/${row.invoice_number}`
@@ -136,7 +171,7 @@ export default function JobProgress() {
                     <AssignmentIcon fontSize="small" />
                   </IconButton>
                 </TableCell>
-                <TableCell sx={{ display: "flex", alignItems: "center" }}>
+                <TableCell>
                   <Box sx={{ display: "flex", flexDirection: "rows" }}>
                     {row.order_details.on_hold ? (
                       <CircleIcon sx={{ color: "red", fontSize: "1rem" }} />

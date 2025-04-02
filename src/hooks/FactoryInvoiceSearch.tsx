@@ -45,7 +45,6 @@ export default function FactoryInvoiceSearch({ invoiceSearch }) {
           p: 1,
           borderRadius: 2,
           bgcolor: "background.paper",
-          boxShadow: 2,
         }}
       >
         {/* Search Input */}
