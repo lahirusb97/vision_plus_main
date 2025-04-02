@@ -63,7 +63,9 @@ export default function JobProgress() {
             label=" Filter By Order Progress"
             onChange={handleChange}
           >
-            <MenuItem value={"received_from_customer"}>Order Progress</MenuItem>
+            <MenuItem value={"received_from_customer"}>
+              Received From Customer Progress
+            </MenuItem>
             <MenuItem value={"issue_to_factory"}>Issue to Factory</MenuItem>
             <MenuItem value={"received_from_factory"}>
               Received from Factory
@@ -131,7 +133,7 @@ export default function JobProgress() {
                     }
                     color="inherit"
                   >
-                    <AssignmentIcon />
+                    <AssignmentIcon fontSize="small" />
                   </IconButton>
                 </TableCell>
                 <TableCell sx={{ display: "flex", alignItems: "center" }}>
