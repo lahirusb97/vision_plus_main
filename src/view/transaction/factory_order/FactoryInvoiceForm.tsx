@@ -150,7 +150,7 @@ export default function FactoryInvoiceForm() {
         discount: parseFloat(discount) || 0,
         total_price: parseFloat(grandTotal) || 0,
         order_remark: data.order_remark,
-        sales_staff_code: data.sales_staff_code,
+        sales_staff_code: data.sales_staff_code, //!user code ID
         pd: data.pd,
         right_pd: data.right_pd,
         left_pd: data.left_pd,
@@ -242,8 +242,6 @@ export default function FactoryInvoiceForm() {
     }
   };
   const sendDataToDb = async (postData) => {
-    console.log(postData);
-
     try {
       const responce = await axiosClient.post("/orders/", postData);
       toast.success("Order saved successfully");

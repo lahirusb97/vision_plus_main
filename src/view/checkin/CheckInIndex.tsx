@@ -7,17 +7,18 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Typography,
   IconButton,
 } from "@mui/material";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import CircleIcon from "@mui/icons-material/Circle";
 import useGetFactoryInvoices from "../../hooks/useGetFactoryInvoices";
-import FactoryInvoiceSearch from "../../hooks/factoryInvoiceSearch";
+
 import { dateAndTimeFormat } from "../../utils/dateAndTimeFormat";
 import { progressStatus } from "../../utils/progressState";
 import CustomerPagination from "../../components/CustomPagination";
 import { useNavigate } from "react-router";
+import FactoryInvoiceSearch from "../../hooks/FactoryInvoiceSearch";
+import ProgressStagesColors from "../../components/ProgressStagesColors";
 
 const CheckInIndex = () => {
   const navigate = useNavigate();
@@ -34,21 +35,7 @@ const CheckInIndex = () => {
     <div style={{ padding: 20, maxWidth: "1200px", minWidth: "900px" }}>
       <FactoryInvoiceSearch invoiceSearch={invoiceSearch} />
       {/* Status Indicators */}
-      <Box m={1} display="flex" alignItems="center" gap={2} marginBottom={2}>
-        <Box display="flex" alignItems="center" gap={1}>
-          <CircleIcon sx={{ color: "red" }} />
-          <Typography>On Hold Job</Typography>
-        </Box>
-        <Box display="flex" alignItems="center" gap={1}>
-          <CircleIcon sx={{ color: "green" }} />
-          <Typography>Confirm Order</Typography>
-        </Box>
-        <Box display="flex" alignItems="center" gap={1}>
-          <CircleIcon sx={{ color: "blue" }} />
-          <Typography>Fitting on Collection</Typography>
-        </Box>
-      </Box>
-
+      <ProgressStagesColors />
       <TableContainer component={Paper}>
         <Table size="small">
           <TableHead>
@@ -120,13 +107,6 @@ const CheckInIndex = () => {
                 </TableCell>
               </TableRow>
             ))}
-            {invoiceList.length == 0 && (
-              <TableRow>
-                <TableCell colSpan={6} align="center">
-                  No Data Found
-                </TableCell>
-              </TableRow>
-            )}
           </TableBody>
         </Table>
       </TableContainer>

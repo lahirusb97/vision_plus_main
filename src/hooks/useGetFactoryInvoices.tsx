@@ -4,7 +4,8 @@ import { PaginatedResponse } from "../model/PaginatedResponse";
 import { extractErrorMessage } from "../utils/extractErrorMessage";
 // import { getUserCurentBranch } from "../utils/authDataConver";
 import { Invoice } from "../model/SingleInvoiceModel";
-type searchParams = "invoice_number" | "mobile" | "nic";
+import toast from "react-hot-toast";
+type searchParams = "invoice_number" | "mobile" | "nic" | "progress_status";
 
 type SearchQuery = {
   [key in searchParams]?: string; // Optional string values for each of the possible keys
@@ -17,6 +18,7 @@ const useGetFactoryInvoices = () => {
   const [totalCount, setTotalCount] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [initialLoad, setInitialLoad] = useState<boolean>(true);
+
   const loadData = useCallback(async () => {
     setLoading(true);
     try {
@@ -30,11 +32,23 @@ const useGetFactoryInvoices = () => {
               : {}),
             ...(searchQuary.mobile ? { mobile: searchQuary.mobile } : {}),
             ...(searchQuary.nic ? { nic: searchQuary.nic } : {}),
+            ...(searchQuary.progress_status
+              ? { progress_status: searchQuary.progress_status }
+              : {}),
             // branch_id: getUserCurentBranch()?.id,
           },
         });
-      setDataList(response.data.results);
-      setTotalCount(response.data.count);
+
+      if (response.data?.results.length > 0) {
+        setDataList(response.data.results);
+        setTotalCount(response.data.count);
+        toast.success("invoice found loadingg...");
+      } else {
+        setDataList([]);
+        setTotalCount(0);
+        toast.error("invoice not found");
+      }
+
       // setTotalCount(response.data.count);
     } catch (error) {
       setDataList([]);

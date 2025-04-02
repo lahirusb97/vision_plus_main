@@ -11,6 +11,7 @@ export default function useGetAllPatient({ open }: { open: boolean }) {
   const [DataList, setDataList] = useState<PatientModel[]>([]);
   const [totalCount, setTotalCount] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(true);
+  console.log(searchQuary ? { searchQuary } : {});
 
   const loadData = useCallback(async () => {
     if (open) {
@@ -21,7 +22,7 @@ export default function useGetAllPatient({ open }: { open: boolean }) {
             params: {
               page: navigatePage,
               limit,
-              ...(searchQuary ? { search: searchQuary } : {}),
+              ...(searchQuary ? { ...searchQuary } : {}),
             },
           });
         setDataList(response.data.results);

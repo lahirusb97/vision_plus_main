@@ -9,6 +9,10 @@ import {
   Button,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/AddBox";
+import NormalPatientDetail from "./normal_order/NormalPatientDetail";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { schemaPatientFormModel } from "../../validations/schemaPartient";
+import { FormProvider, useForm } from "react-hook-form";
 
 const data = [
   {
@@ -53,7 +57,9 @@ const TransactionUI = () => {
       selectedPrice: item ? item.price : "",
     }));
   };
-
+  const methods = useForm({
+    resolver: zodResolver(schemaPatientFormModel),
+  });
   return (
     <Box
       sx={{
@@ -64,48 +70,13 @@ const TransactionUI = () => {
       }}
     >
       {/* Row 1: Name, Phone No, Address, Sales Staff Code */}
-      <Box
-        sx={{
-          display: "flex",
-          gap: 2,
-          marginBottom: 2,
-          marginLeft: 4,
-          marginRight: 4,
-        }}
-      >
-        <TextField
-          label="Name"
-          name="name"
-          value={formData.name}
-          onChange={handleInputChange}
-          fullWidth
-          sx={{ flex: 1 }}
+      <FormProvider {...methods}>
+        <NormalPatientDetail
+          prescription={""}
+          refractionDetailLoading={false}
+          refractionNumber={""}
         />
-        <TextField
-          label="Phone No"
-          name="phone"
-          value={formData.phone}
-          onChange={handleInputChange}
-          fullWidth
-          sx={{ flex: 1 }}
-        />
-        <TextField
-          label="Address"
-          name="address"
-          value={formData.address}
-          onChange={handleInputChange}
-          fullWidth
-          sx={{ flex: 1 }}
-        />
-        <TextField
-          label="Sales Staff Code"
-          name="salesCode"
-          value={formData.salesCode}
-          onChange={handleInputChange}
-          fullWidth
-          sx={{ flex: 1 }}
-        />
-      </Box>
+      </FormProvider>
 
       {/* Row 2: Lens Cleaner Dropdown and Price */}
       <Box

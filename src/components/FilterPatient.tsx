@@ -56,7 +56,7 @@ export default function FilterPatient({
   useEffect(() => {
     if (open) {
       if (searchType === "phone_number") {
-        handlePatientSearch(watch("phone_number"));
+        handlePatientSearch({ phone_number: watch("phone_number") });
         setfetchPatientData(true);
       } else if (searchType === "name") {
         handlePatientSearch(watch("name"));

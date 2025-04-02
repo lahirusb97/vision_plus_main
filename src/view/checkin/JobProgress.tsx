@@ -1,196 +1,162 @@
-import React, { useState } from "react";
-import { DataGrid } from "@mui/x-data-grid";
 import {
-  TextField,
-  Button,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  Checkbox,
   Box,
-  Typography,
+  FormControl,
+  IconButton,
+  InputLabel,
+  MenuItem,
+  Paper,
+  Select,
+  SelectChangeEvent,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
 } from "@mui/material";
+import { useState } from "react";
+import useGetFactoryInvoices from "../../hooks/useGetFactoryInvoices";
+import { dateAndTimeFormat } from "../../utils/dateAndTimeFormat";
+import { progressStatus } from "../../utils/progressState";
+import AssignmentIcon from "@mui/icons-material/Assignment";
+import CircleIcon from "@mui/icons-material/Circle";
+import CustomerPagination from "../../components/CustomPagination";
+import { useNavigate } from "react-router";
+import ProgressStagesColors from "../../components/ProgressStagesColors";
 
-const JobProgress = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [status, setStatus] = useState("");
-  const [selectedInvoices, setSelectedInvoices] = useState([]);
-  const [filteredInvoices, setFilteredInvoices] = useState([]);
-  const [displayedInvoices, setDisplayedInvoices] = useState([]); // To store invoices to display after OK click
+export default function JobProgress() {
+  const navigate = useNavigate();
+  const {
+    invoiceList,
+    invoiceLimit,
+    invoiceSearch,
+    changePageSize,
+    invoicePageNavigation,
+    invoiceTotalCount,
+  } = useGetFactoryInvoices();
 
-  const invoices = [
-    { id: 1, factoryInvoiceNo: "INV001", status: "Issue factory" },
-    { id: 2, factoryInvoiceNo: "INV002", status: "Received from factory" },
-    { id: 3, factoryInvoiceNo: "INV003", status: "Issue customer" },
-    { id: 4, factoryInvoiceNo: "INV004", status: "Issue factory" },
-  ];
+  const [orderProgress, setOrderProgress] = useState("");
 
-  // Handle search when Enter is pressed
-  const handleSearch = (event) => {
-    if (event.key === "Enter") {
-      const filtered = invoices.filter((invoice) =>
-        invoice.factoryInvoiceNo
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase())
-      );
-      setFilteredInvoices(filtered);
-    }
+  const handleChange = (event: SelectChangeEvent) => {
+    setOrderProgress(event.target.value as string);
+    invoiceSearch("progress_status", event.target.value);
   };
-
-  // Handle search button click
-  const handleSearchButtonClick = () => {
-    const filtered = invoices.filter((invoice) =>
-      invoice.factoryInvoiceNo.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    setFilteredInvoices(filtered);
-  };
-
-  // Handle status change in the dropdown
-  const handleStatusChange = (event) => {
-    setStatus(event.target.value);
-  };
-
-  // Handle OK button click to process selected invoices
-  const handleUpdateStatus = () => {
-    if (selectedInvoices.length === 0) {
-      alert("Please select at least one invoice.");
-      return;
-    }
-
-    // Log the selected invoices
-    console.log("Selected Invoices:", selectedInvoices);
-
-    // Process selected invoices (update status)
-    const updatedInvoices = invoices.map((invoice) => {
-      if (selectedInvoices.includes(invoice.id)) {
-        return { ...invoice, status: status }; // Update status for selected invoices
-      }
-      return invoice;
-    });
-
-    // Log the updated invoices (or send to an API)
-    console.log("Updated Invoices:", updatedInvoices);
-
-    // Set the displayed invoices to the selected invoices
-    setDisplayedInvoices(selectedInvoices);
-
-    // Reset selected invoices and status
-    setSelectedInvoices([]);
-    setStatus("");
-  };
-
-  // Handle checkbox selection for invoices
-  const handleActionChange = (id) => {
-    setSelectedInvoices((prevSelected) =>
-      prevSelected.includes(id)
-        ? prevSelected.filter((invoiceId) => invoiceId !== id)
-        : [...prevSelected, id]
-    );
-  };
-
-  // Define columns for the DataGrid
-  const columns = [
-    { field: "factoryInvoiceNo", headerName: "Factory Invoice No", width: 200 },
-    { field: "status", headerName: "Status", width: 200 },
-    {
-      field: "action",
-      headerName: "Action",
-      width: 100,
-      renderCell: (params) => (
-        <Checkbox
-          checked={selectedInvoices.includes(params.row.id)}
-          onChange={() => handleActionChange(params.row.id)}
-        />
-      ),
-    },
-  ];
 
   return (
-    <Box sx={{ display: "flex", gap: 2, padding: 2 }}>
-      {/* Table Section */}
-      <Box sx={{ flex: 1 }}>
-        <div style={{ height: 400, width: "100%" }}>
-          <DataGrid
-            rows={filteredInvoices.length > 0 ? filteredInvoices : invoices}
-            columns={columns}
-            checkboxSelection={false}
-            disableSelectionOnClick
-          />
-        </div>
-
-        {/* Back Button */}
-        <Button variant="contained" color="secondary" sx={{ marginTop: 2 }}>
-          Back
-        </Button>
-      </Box>
-
-      {/* Search, Status, and OK Section */}
+    <div>
       <Box
         sx={{
-          width: "300px",
           display: "flex",
-          flexDirection: "column",
-          gap: 2,
+
+          alignItems: "center",
         }}
       >
-        {/* Search Field and Button */}
-        <TextField
-          label="Search Factory Invoice No"
-          variant="outlined"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          onKeyPress={handleSearch}
-          fullWidth
-        />
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleSearchButtonClick}
-          fullWidth
-        >
-          Search Factory Invoice
-        </Button>
-
-        {/* Status Dropdown */}
-        <FormControl fullWidth>
-          <InputLabel>Status</InputLabel>
-          <Select value={status} onChange={handleStatusChange}>
-            <MenuItem value="Issue factory">Issue factory</MenuItem>
-            <MenuItem value="Received from factory">
-              Received from factory
+        <FormControl size="small" sx={{ minWidth: 250 }}>
+          <InputLabel id="demo-simple-select-label">
+            {" "}
+            Filter By Order Progress
+          </InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            value={orderProgress}
+            label=" Filter By Order Progress"
+            onChange={handleChange}
+          >
+            <MenuItem value={"received_from_customer"}>Order Progress</MenuItem>
+            <MenuItem value={"issue_to_factory"}>Issue to Factory</MenuItem>
+            <MenuItem value={"received_from_factory"}>
+              Received from Factory
             </MenuItem>
-            <MenuItem value="Issue customer">Issue customer</MenuItem>
+            <MenuItem value={"issue_to_customer"}>Issue to Customer</MenuItem>
           </Select>
         </FormControl>
-
-        {/* OK Button */}
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleUpdateStatus}
-          fullWidth
-        >
-          OK
-        </Button>
-
-        {/* Display Selected Invoices */}
-        <Box sx={{ marginTop: 2 }}>
-          <Typography variant="h6">Selected Invoices:</Typography>
-          {displayedInvoices.length > 0 ? (
-            <ul>
-              {displayedInvoices.map((id) => {
-                const invoice = invoices.find((inv) => inv.id === id);
-                return <li key={id}>{invoice.factoryInvoiceNo}</li>;
-              })}
-            </ul>
-          ) : (
-            <Typography variant="body2">No invoices selected.</Typography>
-          )}
-        </Box>
+        <ProgressStagesColors />
       </Box>
-    </Box>
-  );
-};
 
-export default JobProgress;
+      <TableContainer sx={{ mt: 2 }} component={Paper}>
+        <Table size="small">
+          <TableHead>
+            <TableRow sx={{ backgroundColor: "#f5f5f5" }}>
+              <TableCell>
+                <b>Patient Name</b>
+              </TableCell>
+              <TableCell>
+                <b>Date</b>
+              </TableCell>
+              <TableCell>
+                <b>Invoice</b>
+              </TableCell>
+              <TableCell>
+                <b>Progress</b>
+              </TableCell>
+              {/* <TableCell>
+                <b>Notes</b>
+              </TableCell> */}
+              <TableCell>
+                <b>Arrival Status</b>
+              </TableCell>
+              <TableCell>
+                <b>Details</b>
+              </TableCell>
+              <TableCell>
+                <b>Status</b>
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {invoiceList.map((row, index) => (
+              <TableRow key={index}>
+                <TableCell>{row.customer_details.name}</TableCell>
+                <TableCell>
+                  {dateAndTimeFormat(row.order_details.order_date)}
+                </TableCell>
+                <TableCell>{row.invoice_number}</TableCell>
+                <TableCell>{progressStatus(row.progress_status)}</TableCell>
+                {/* <TableCell>{row.notes}</TableCell> */}
+                <TableCell>
+                  {row.lens_arrival_status == null
+                    ? "_"
+                    : row.lens_arrival_status == "received"
+                    ? "Received"
+                    : "Not Received"}
+                </TableCell>
+
+                <TableCell>
+                  <IconButton
+                    onClick={() =>
+                      navigate(
+                        `/transaction/factory_order/invoice/${row.invoice_number}`
+                      )
+                    }
+                    color="inherit"
+                  >
+                    <AssignmentIcon />
+                  </IconButton>
+                </TableCell>
+                <TableCell sx={{ display: "flex", alignItems: "center" }}>
+                  <Box sx={{ display: "flex", flexDirection: "rows" }}>
+                    {row.order_details.on_hold ? (
+                      <CircleIcon sx={{ color: "red", fontSize: "1rem" }} />
+                    ) : (
+                      <CircleIcon sx={{ color: "green", fontSize: "1rem" }} />
+                    )}
+                    {!row.order_details.fitting_on_collection && (
+                      <CircleIcon sx={{ color: "blue", fontSize: "1rem" }} />
+                    )}
+                  </Box>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <CustomerPagination
+        totalCount={invoiceTotalCount}
+        handlePageNavigation={invoicePageNavigation}
+        changePageSize={changePageSize}
+        page_size={invoiceLimit}
+      />
+    </div>
+  );
+}
