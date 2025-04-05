@@ -23,6 +23,10 @@ import useInvoiceReports from "../../hooks/useInvoiceReports";
 import dayjs, { Dayjs } from "dayjs";
 import SingleDatePicker from "../../hooks/SingleDatePicker";
 import useChannelReports from "../../hooks/useChannelReports";
+import { ChannelPaymentTable } from "../../components/ChannelPaymentTable";
+import { ExpensesTable } from "../../components/ExpensesTable";
+import InvoiceTable from "../../components/inputui/InvoiceTable";
+import { InvoicePaymentTable } from "../../hooks/InvoicePaymentTable";
 
 const Dashboard = () => {
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(dayjs());
@@ -62,36 +66,7 @@ const Dashboard = () => {
             <Typography variant="h6" gutterBottom>
               Expenses
             </Typography>
-            <TableContainer>
-              <Table size="small">
-                <TableHead>
-                  <TableRow sx={{ bgcolor: "orange" }}>
-                    <TableCell>Time</TableCell>
-                    <TableCell>Main Category</TableCell>
-                    <TableCell>Sub Category</TableCell>
-                    <TableCell>Description</TableCell>
-                    <TableCell>Amount</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {expensesData.map((row, index) => (
-                    <TableRow key={index}>
-                      <TableCell>{row.time}</TableCell>
-                      <TableCell>{row.mainCategory}</TableCell>
-                      <TableCell>{row.subCategory}</TableCell>
-                      <TableCell>{row.description}</TableCell>
-                      <TableCell>{row.amount}</TableCell>
-                    </TableRow>
-                  ))}
-                  <TableRow>
-                    <TableCell colSpan={4} align="right">
-                      <strong>Total</strong>
-                    </TableCell>
-                    <TableCell>Rs200</TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </TableContainer>
+            <ExpensesTable data={expensesData} loading={false} />
           </Paper>
 
           {/* Invoice Section */}
@@ -99,36 +74,10 @@ const Dashboard = () => {
             <Typography variant="h6" gutterBottom>
               Invoice
             </Typography>
-            <TableContainer>
-              <Table size="small">
-                <TableHead>
-                  <TableRow sx={{ bgcolor: "orange" }}>
-                    <TableCell>Invoice No</TableCell>
-                    <TableCell>Online Payment</TableCell>
-                    <TableCell>Card</TableCell>
-                    <TableCell>Cash</TableCell>
-                    <TableCell>Amount</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {invoiceReport.map((row, index) => (
-                    <TableRow key={index}>
-                      <TableCell>{row.invoice_number}</TableCell>
-                      <TableCell>{row.total_online_payment}</TableCell>
-                      <TableCell>{row.total_credit_card_payment}</TableCell>
-                      <TableCell>{row.total_cash_payment}</TableCell>
-                      <TableCell>{row.total_payment}</TableCell>
-                    </TableRow>
-                  ))}
-                  <TableRow>
-                    <TableCell colSpan={4} align="right">
-                      <strong>Total</strong>
-                    </TableCell>
-                    <TableCell>$$</TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </TableContainer>
+            <InvoicePaymentTable
+              data={invoiceReport}
+              loading={invoiceReportLoading}
+            />
           </Paper>
 
           {/* Channel Section and Financial Buttons */}
@@ -138,38 +87,10 @@ const Dashboard = () => {
               <Typography variant="h6" gutterBottom>
                 Channel
               </Typography>
-              <TableContainer>
-                <Table size="small">
-                  <TableHead>
-                    <TableRow sx={{ bgcolor: "orange" }}>
-                      <TableCell>Channel No</TableCell>
-                      <TableCell>Channel Cash</TableCell>
-                      <TableCell>Channel Card</TableCell>
-                      <TableCell>Channel Online</TableCell>
-                      <TableCell>Total Paid </TableCell>
-                      <TableCell>Balance</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {channelReports.map((row, index) => (
-                      <TableRow key={index}>
-                        <TableCell>{row.channel_no}</TableCell>
-                        <TableCell>{row.amount_cash}</TableCell>
-                        <TableCell>{row.amount_credit_card}</TableCell>
-                        <TableCell>{row.amount_online}</TableCell>
-                        <TableCell>{row.total_paid}</TableCell>
-                        <TableCell>{row.balance}</TableCell>
-                      </TableRow>
-                    ))}
-                    <TableRow>
-                      <TableCell colSpan={2} align="right">
-                        <strong>Total</strong>
-                      </TableCell>
-                      <TableCell>Rs1000</TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
-              </TableContainer>
+              <ChannelPaymentTable
+                data={channelReports}
+                loading={channelReportsLoading}
+              />
             </Paper>
 
             {/* Financial Summary Buttons */}
