@@ -83,13 +83,6 @@ export default function PationtDetails({
             Date {new Date().toLocaleDateString()}
           </Typography>
         </Paper>
-        <TextField
-          {...register("sales_staff_code")}
-          error={!!errors.sales_staff_code}
-          sx={{ width: 120 }}
-          size="small"
-          label="Staff Code"
-        />
       </Box>
       <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
         <TextField

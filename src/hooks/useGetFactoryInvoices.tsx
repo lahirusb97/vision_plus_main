@@ -3,8 +3,8 @@ import axiosClient from "../axiosClient";
 import { PaginatedResponse } from "../model/PaginatedResponse";
 import { extractErrorMessage } from "../utils/extractErrorMessage";
 import { getUserCurentBranch } from "../utils/authDataConver";
-import { Invoice } from "../model/SingleInvoiceModel";
 import toast from "react-hot-toast";
+import { CheckinInvoiceModel } from "../model/CheckinInvoiceModel";
 type searchParams = "invoice_number" | "mobile" | "nic" | "progress_status";
 
 type SearchQuery = {
@@ -14,7 +14,7 @@ const useGetFactoryInvoices = () => {
   const [page_size, setPage_size] = useState<number>(10);
   const [navigatePage, setNavigatePage] = useState<number>(1);
   const [searchQuary, setSearchQuary] = useState<SearchQuery>({});
-  const [DataList, setDataList] = useState<Invoice[]>([]);
+  const [DataList, setDataList] = useState<CheckinInvoiceModel[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [initialLoad, setInitialLoad] = useState<boolean>(true);
@@ -22,7 +22,7 @@ const useGetFactoryInvoices = () => {
   const loadData = useCallback(async () => {
     setLoading(true);
     try {
-      const response: { data: PaginatedResponse<Invoice> } =
+      const response: { data: PaginatedResponse<CheckinInvoiceModel> } =
         await axiosClient.get(`factory-invoices/search/`, {
           params: {
             page: navigatePage,

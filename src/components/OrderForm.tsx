@@ -1,7 +1,6 @@
 import React, { useRef } from "react";
 import {
   Box,
-  Grid,
   Typography,
   Table,
   TableBody,
@@ -11,12 +10,10 @@ import {
   TableRow,
   Paper,
   Button,
-  GlobalStyles,
 } from "@mui/material";
 import { useReactToPrint } from "react-to-print";
 import { Invoice } from "../model/SingleInvoiceModel";
 import { dateAndTimeFormat } from "../utils/dateAndTimeFormat";
-import RefractionNumber from "../view/refraction/RefractionNumber";
 import OrderFormRemark from "./OrderFormRemark";
 
 interface OrderFormProps {
@@ -292,7 +289,8 @@ const OrderForm: React.FC<OrderFormProps> = ({ invoiceDetail }) => {
                 justifyContent={"flex-end"}
               >
                 <Typography variant="body2" fontWeight="bold">
-                  Staff Members:Nipuni
+                  Invoice by:{" "}
+                  {invoiceDetail?.order_details?.sales_staff_username}
                 </Typography>
                 <Box sx={{ display: "flex", gap: "0.2cm" }}>
                   <Box
@@ -363,7 +361,9 @@ const OrderForm: React.FC<OrderFormProps> = ({ invoiceDetail }) => {
                   >
                     Refraction by:{" "}
                     {invoiceDetail?.refraction_details?.prescription &&
-                      "Prescription"}
+                      "Prescription / "}
+                    {invoiceDetail?.refraction_details?.username &&
+                      invoiceDetail?.refraction_details?.username}
                   </Typography>
                   <Typography
                     variant="body2"
@@ -377,6 +377,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ invoiceDetail }) => {
                     sx={{ fontWeight: "bold", marginTop: "0.2cm" }}
                   >
                     Staff Member:
+                    {invoiceDetail?.order_details.sales_staff_username}
                   </Typography>
                   <hr></hr>
                   <Typography

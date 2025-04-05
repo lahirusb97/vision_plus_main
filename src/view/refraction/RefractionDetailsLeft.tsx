@@ -93,12 +93,12 @@ export default function RefractionDetailsLeft() {
                 inputProps={{ step: 0.25 }}
                 type="number"
                 {...register("left_eye_dist_sph", { valueAsNumber: true })}
-                placeholder=" sph"
+                placeholder=" SPH"
                 size="small"
-                label="sph"
+                label="SPH"
                 sx={{ width: widthInput }}
                 InputLabelProps={{
-                  shrink: Boolean(watch("left_eye_dist_sph")),
+                  shrink: true,
                 }}
               />
 
@@ -106,12 +106,12 @@ export default function RefractionDetailsLeft() {
                 inputProps={{ step: 0.25 }}
                 type="number"
                 {...register("left_eye_dist_cyl", { valueAsNumber: true })}
-                placeholder=" cyl"
+                placeholder=" CYL"
                 size="small"
-                label="cyl"
+                label="CYL"
                 sx={{ width: widthInput }}
                 InputLabelProps={{
-                  shrink: Boolean(watch("left_eye_dist_cyl")),
+                  shrink: true,
                 }}
               />
 
@@ -119,12 +119,12 @@ export default function RefractionDetailsLeft() {
                 inputProps={{ step: 0.25 }}
                 type="number"
                 {...register("left_eye_dist_axis", { valueAsNumber: true })}
-                placeholder=" axis"
+                placeholder=" AXIS"
                 size="small"
-                label="axis"
+                label="AXIS"
                 sx={{ width: widthInput }}
                 InputLabelProps={{
-                  shrink: Boolean(watch("left_eye_dist_axis")),
+                  shrink: true,
                 }}
               />
             </Box>
@@ -136,12 +136,12 @@ export default function RefractionDetailsLeft() {
               inputProps={{ step: 0.25 }}
               type="number"
               {...register("left_eye_near_sph", { valueAsNumber: true })}
-              placeholder=" near"
+              placeholder=" NEAR"
               size="small"
-              label="near"
+              label="NEAR"
               sx={{ width: widthInput }}
               InputLabelProps={{
-                shrink: Boolean(watch("left_eye_near_sph")),
+                shrink: true,
               }}
             />
             <Box

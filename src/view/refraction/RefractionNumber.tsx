@@ -9,19 +9,14 @@ import {
 import { useAxiosPost } from "../../hooks/useAxiosPost";
 import { extractErrorMessage } from "../../utils/extractErrorMessage";
 import toast from "react-hot-toast";
-// import { useValidationState } from "../../hooks/validations/useValidationState";
-// import VarificationDialog from "../../components/VarificationDialog";
 import SaveButton from "../../components/SaveButton";
 import { RefractionNumberModel } from "../../model/RefractionModel";
 import { getUserCurentBranch } from "../../utils/authDataConver";
-
 export default function RefractionNumber() {
+  //API CALLS
   const navigate = useNavigate();
   //API CALLS
   const { postHandler } = useAxiosPost();
-  // const { setValidationState, resetValidation, validationState } =
-  //   useValidationState();
-  //API CALLS
 
   const {
     register,
@@ -58,7 +53,7 @@ export default function RefractionNumber() {
     }
   };
   const shandleSubmit = async (data: RefractionNumberFormModel) => {
-    sendRefractionData(data);
+    await sendRefractionData(data);
   };
 
   return (
@@ -134,10 +129,6 @@ export default function RefractionNumber() {
           />
           <SaveButton btnText="Genarate Refraction Number" loading={false} />
         </form>
-        {/* <VarificationDialog
-          validationState={validationState}
-          resetValidation={resetValidation}
-        /> */}
       </Paper>
     </Box>
   );

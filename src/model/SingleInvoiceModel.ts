@@ -1,5 +1,6 @@
 import { PatientModel } from "./Patient";
 import { RefractionDetailModel } from "./RefractionDetailModel";
+import { LensArrivalStatus, ProgressStatus } from "./StaticTypeModels";
 
 interface LensDetail {
   id: number;
@@ -81,6 +82,7 @@ interface OrderDetails {
   order_items: OrderItem[];
   order_payments: OrderPayment[];
   sales_staff_code: number | null;
+  sales_staff_username: string;
   order_remark: string;
   pd: string;
   height: string;
@@ -111,10 +113,3 @@ interface Invoice {
 }
 
 export type { Invoice, OrderItem };
-export type ProgressStatus =
-  | "received_from_customer"
-  | "Received from Customer"
-  | "issue_to_factory"
-  | "received_from_factory"
-  | "issue_to_customer";
-export type LensArrivalStatus = "received" | "not_received" | null;

@@ -28,9 +28,11 @@ import SaveButton from "../../components/SaveButton";
 import LoadingAnimation from "../../components/LoadingAnimation";
 import { useValidationState } from "../../hooks/validations/useValidationState";
 import VarificationDialog from "../../components/VarificationDialog";
+
 export default function RefractionEdit() {
   //USER VALIDATION HOOKS
-  const { setValidationState, resetValidation, validationState } =
+
+  const { prepareValidation, resetValidation, validationState } =
     useValidationState();
   //API CALLS
   //USER VALIDATION HOOKS
@@ -80,18 +82,13 @@ export default function RefractionEdit() {
 
     if (refraction_id !== undefined && refraction_id !== null) {
       if (refractionDetailExist) {
-        //update
-        setValidationState({
-          openValidationDialog: true,
-          validationType: "both",
-          apiCallFunction: () => handleRefractionDetailUpdate(data),
+        prepareValidation("update", async (verifiedUserId: number) => {
+          await handleRefractionDetailUpdate(data, verifiedUserId);
         });
       } else {
         //  create
-        setValidationState({
-          openValidationDialog: true,
-          validationType: "user",
-          apiCallFunction: () => handleRefractionDetailCreate(data),
+        prepareValidation("create", async (verifiedUserId: number) => {
+          await handleRefractionDetailCreate(data, verifiedUserId);
         });
       }
     }
@@ -99,7 +96,8 @@ export default function RefractionEdit() {
 
   //SEND DATA API CALLS
   const handleRefractionDetailUpdate = async (
-    data: RefractionDetailsFormModel
+    data: RefractionDetailsFormModel,
+    userId: number
   ) => {
     if (refractionDetail) {
       try {
@@ -107,6 +105,7 @@ export default function RefractionEdit() {
           ...data,
           refraction: refractionDetail.refraction,
           is_manual: refractionDetail.is_manual,
+          user: userId, // Include verified user ID,
         });
         toast.success("Refraction saved successfully");
         methods.reset();
@@ -117,17 +116,19 @@ export default function RefractionEdit() {
     }
   };
   const handleRefractionDetailCreate = async (
-    data: RefractionDetailsFormModel
+    data: RefractionDetailsFormModel,
+    userId: number
   ) => {
     if (refraction_id !== undefined && refraction_id !== null) {
       try {
-        await postHandler(`/refraction-details/create/`, {
+        const payload = {
           ...data,
+          user: userId, // Include verified user ID,
           refraction: parseInt(refraction_id),
-        });
+        };
+        await postHandler(`/refraction-details/create/`, payload);
         toast.success("Refraction saved successfully");
         methods.reset();
-
         navigate(-1);
       } catch (err) {
         extractErrorMessage(err);
@@ -294,26 +295,6 @@ export default function RefractionEdit() {
               }}
             />
             <Box sx={{ display: "flex", gap: 1 }}>
-              {/* <TextField
-              {...methods.register("pd", { valueAsNumber: true })}
-              sx={{ my: 0.5, width: 100 }}
-              size="small"
-              type="number"
-              label="PD"
-              InputLabelProps={{
-                shrink: Boolean(methods.watch("pd")),
-              }}
-            />
-            <TextField
-              {...methods.register("h", { valueAsNumber: true })}
-              sx={{ my: 0.5, width: 100 }}
-              type="number"
-              size="small"
-              label="H"
-              InputLabelProps={{
-                shrink: Boolean(methods.watch("h")),
-              }}
-            /> */}
               <TextField
                 {...methods.register("refraction_remark")}
                 sx={{ my: 0.5 }}
@@ -359,8 +340,14 @@ export default function RefractionEdit() {
         </Box>
       </FormProvider>
       <VarificationDialog
-        validationState={validationState}
-        resetValidation={resetValidation}
+        open={validationState.openValidationDialog}
+        operationType={validationState.validationType}
+        onVerified={async (verifiedUserId) => {
+          if (validationState.apiCallFunction) {
+            await validationState.apiCallFunction(verifiedUserId);
+          }
+        }}
+        onClose={resetValidation}
       />
     </>
   );

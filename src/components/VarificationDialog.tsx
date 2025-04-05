@@ -1,311 +1,255 @@
-import * as React from "react";
-import Dialog from "@mui/material/Dialog";
-import DialogContent from "@mui/material/DialogContent";
-import DialogTitle from "@mui/material/DialogTitle";
+import React, { useState } from "react";
 import {
-  Box,
-  Button,
-  IconButton,
-  Paper,
+  Dialog,
+  DialogTitle,
+  DialogContent,
   TextField,
+  Button,
+  Box,
   Typography,
+  IconButton,
 } from "@mui/material";
-
-import { useForm } from "react-hook-form";
-import {
-  schemaUserValidation,
-  UserValidationFormModel,
-} from "../validations/schemaUserValidation";
-import { zodResolver } from "@hookform/resolvers/zod";
-import SaveButton from "./SaveButton";
-import { useAxiosPost } from "../hooks/useAxiosPost";
-import { extractErrorMessage } from "../utils/extractErrorMessage";
 import { Close } from "@mui/icons-material";
-import { ValidationStateModel } from "../hooks/validations/useValidationState";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import axiosClient from "../axiosClient";
 
-interface ConfimationState {
-  userID: number | null;
-  adminID: number | null;
-  userName: string | null;
-  adminName: string | null;
+type UserRole = "admin" | "user";
+type OperationType = "create" | "update" | null;
+
+interface VerificationDialogProps {
+  open: boolean;
+  operationType: OperationType;
+  onVerified: (verifiedUserId: number) => Promise<void>; // Now returns Promise
+  onClose: () => void;
 }
-interface DialogProps {
-  validationState: ValidationStateModel;
-  resetValidation: () => void;
+
+interface UserData {
+  id: number;
+  username: string;
+  role: UserRole;
 }
 
-export default function VarificationDialog({
-  validationState,
-  resetValidation,
-}: DialogProps) {
-  const [confimationState, setConfimationState] =
-    React.useState<ConfimationState>({
-      userID: null,
-      adminID: null,
-      userName: null,
-      adminName: null,
-    });
-  const handleClose = () => {
-    setConfimationState({
-      userID: null,
-      adminID: null,
-      userName: null,
-      adminName: null,
-    });
-    resetValidation();
-  };
+const userCodeSchema = z.object({
+  user_code: z.string().min(1, "User code is required"),
+  password: z.string().min(1, "Password is required"),
+});
 
-  const handleSubmite = async () => {
+type UserCodeFormData = z.infer<typeof userCodeSchema>;
+
+const VerificationDialog: React.FC<VerificationDialogProps> = ({
+  open,
+  operationType,
+  onVerified,
+  onClose,
+}) => {
+  const [step, setStep] = useState<"initial" | "adminConfirmation">("initial");
+  const [verifiedUser, setVerifiedUser] = useState<UserData | null>(null);
+  const [adminVerifier, setAdminVerifier] = useState<UserData | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const userForm = useForm<UserCodeFormData>({
+    resolver: zodResolver(userCodeSchema),
+  });
+
+  const adminForm = useForm<UserCodeFormData>({
+    resolver: zodResolver(userCodeSchema),
+  });
+
+  const verifyUser = async (data: UserCodeFormData) => {
     try {
-      if (validationState.apiCallFunction) {
-        await validationState.apiCallFunction();
+      setError(null);
+      const response = await axiosClient.post(
+        "admin-and-user/check-code/",
+        data
+      );
+      const userData: UserData = response.data;
+
+      if (operationType === "create") {
+        setVerifiedUser(userData);
+      } else {
+        if (userData.role === "user") {
+          setVerifiedUser(userData);
+          setStep("adminConfirmation");
+        } else {
+          setVerifiedUser(userData);
+        }
       }
-      resetValidation();
-    } catch (error) {
-      extractErrorMessage(error);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Verification failed");
     }
   };
 
+  const verifyAdmin = async (data: UserCodeFormData) => {
+    try {
+      setError(null);
+      const response = await axiosClient.post(
+        "admin-and-user/check-code/",
+        data
+      );
+      const adminData: UserData = response.data;
+
+      if (adminData.role !== "admin") {
+        throw new Error("Only admins can confirm this action");
+      }
+
+      setAdminVerifier(adminData);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Admin verification failed"
+      );
+    }
+  };
+
+  const handleSave = async () => {
+    if (!verifiedUser) return;
+
+    setIsSubmitting(true);
+    try {
+      await onVerified(verifiedUser.id);
+      handleClose();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Operation failed");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleClose = () => {
+    setStep("initial");
+    setVerifiedUser(null);
+    setAdminVerifier(null);
+    setError(null);
+    userForm.reset();
+    adminForm.reset();
+    onClose();
+  };
+
+  const showSuccess =
+    verifiedUser &&
+    (operationType === "create" ||
+      (operationType === "update" &&
+        (verifiedUser.role === "admin" || adminVerifier)));
+
   return (
-    <React.Fragment>
-      <Dialog
-        open={validationState.openValidationDialog}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-        // onClose={handleClose}
-      >
-        <DialogTitle
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-          id="alert-dialog-title"
-        >
-          <Typography variant="h6" gutterBottom>
-            {"Employee Varification"}
+    <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
+      <DialogTitle>
+        <Box display="flex" justifyContent="space-between" alignItems="center">
+          <Typography variant="h6">
+            {operationType === "create" ? "Create" : "Update"} Verification
           </Typography>
-          <IconButton onClick={handleClose} size="large" color="error">
+          <IconButton onClick={handleClose}>
             <Close />
           </IconButton>
-        </DialogTitle>
-        <DialogContent>
-          <Paper
-            sx={{
-              p: 2,
-              width: 400,
-            }}
-          >
+        </Box>
+      </DialogTitle>
+
+      <DialogContent>
+        <Box p={2}>
+          {error && (
+            <Typography color="error" mb={2}>
+              {error}
+            </Typography>
+          )}
+
+          {!showSuccess && step === "initial" && (
+            <form onSubmit={userForm.handleSubmit(verifyUser)}>
+              <Typography variant="body1" mb={2}>
+                Please verify your identity
+              </Typography>
+              <TextField
+                fullWidth
+                label="User Code"
+                margin="normal"
+                {...userForm.register("user_code")}
+                error={!!userForm.formState.errors.user_code}
+                helperText={userForm.formState.errors.user_code?.message}
+              />
+              <TextField
+                fullWidth
+                label="Password"
+                type="password"
+                margin="normal"
+                {...userForm.register("password")}
+                error={!!userForm.formState.errors.password}
+                helperText={userForm.formState.errors.password?.message}
+              />
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                fullWidth
+                sx={{ mt: 2 }}
+                disabled={userForm.formState.isSubmitting}
+              >
+                Verify Identity
+              </Button>
+            </form>
+          )}
+
+          {!showSuccess && step === "adminConfirmation" && (
+            <form onSubmit={adminForm.handleSubmit(verifyAdmin)}>
+              <Typography variant="body1" mb={2}>
+                Admin confirmation required
+              </Typography>
+              <TextField
+                fullWidth
+                label="Admin Code"
+                margin="normal"
+                {...adminForm.register("user_code")}
+                error={!!adminForm.formState.errors.user_code}
+                helperText={adminForm.formState.errors.user_code?.message}
+              />
+              <TextField
+                fullWidth
+                label="Admin Password"
+                type="password"
+                margin="normal"
+                {...adminForm.register("password")}
+                error={!!adminForm.formState.errors.password}
+                helperText={adminForm.formState.errors.password?.message}
+              />
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                fullWidth
+                sx={{ mt: 2 }}
+                disabled={adminForm.formState.isSubmitting}
+              >
+                Verify Admin
+              </Button>
+            </form>
+          )}
+
+          {showSuccess && (
             <Box>
-              {(validationState.validationType === "user" ||
-                validationState.validationType === "both") &&
-                !confimationState.userID && (
-                  <UserForm
-                    onValidationSuccess={(userID, userName) =>
-                      setConfimationState((prev) => ({
-                        ...prev,
-                        userID,
-                        userName,
-                      }))
-                    }
-                  />
+              <Typography variant="body1" mb={2}>
+                Verification successful!
+              </Typography>
+              <Typography variant="body2" mb={3}>
+                Verified as: {verifiedUser.username} ({verifiedUser.role})
+                {adminVerifier && (
+                  <span>, Confirmed by admin: {adminVerifier.username}</span>
                 )}
-              {validationState.validationType === "both" &&
-                confimationState.userID &&
-                !confimationState.adminID && (
-                  <AdminForm
-                    onValidationSuccess={(adminID, adminName) =>
-                      setConfimationState((prev) => ({
-                        ...prev,
-                        adminID,
-                        adminName,
-                      }))
-                    }
-                  />
-                )}
-              {validationState.validationType === "admin" &&
-                !confimationState.adminID && (
-                  <AdminForm
-                    onValidationSuccess={(adminID, adminName) =>
-                      setConfimationState((prev) => ({
-                        ...prev,
-                        adminID,
-                        adminName,
-                      }))
-                    }
-                  />
-                )}
-              {validationState.validationType === "both" &&
-                confimationState.userID &&
-                confimationState.adminID && (
-                  <>
-                    <Typography sx={{ mb: 2 }} variant="body1">
-                      Varified User Name: {confimationState.userName}
-                    </Typography>
-                    <Typography sx={{ mb: 2 }} variant="body1">
-                      Varified Admin Name: {confimationState.adminName}
-                    </Typography>
-                    <Button
-                      variant="contained"
-                      fullWidth
-                      onClick={handleSubmite}
-                    >
-                      Save
-                    </Button>
-                  </>
-                )}
-
-              {validationState.validationType === "user" &&
-                confimationState.userID && (
-                  <>
-                    <Typography sx={{ mb: 2 }} variant="body1">
-                      Varified User Name: {confimationState.userName}
-                    </Typography>
-                    <Button
-                      variant="contained"
-                      fullWidth
-                      onClick={handleSubmite}
-                    >
-                      Save
-                    </Button>
-                  </>
-                )}
-              {validationState.validationType === "admin" &&
-                confimationState.adminID && (
-                  <>
-                    <Typography sx={{ mb: 2 }} variant="body1">
-                      Varified Admin Name: {confimationState.adminName}
-                    </Typography>
-                    <Button
-                      variant="contained"
-                      fullWidth
-                      onClick={handleSubmite}
-                    >
-                      Save
-                    </Button>
-                  </>
-                )}
+              </Typography>
+              <Button
+                variant="contained"
+                color="primary"
+                fullWidth
+                onClick={handleSave}
+                disabled={isSubmitting}
+              >
+                {operationType === "create" ? "Save" : "Update"} Record
+              </Button>
             </Box>
-          </Paper>
-        </DialogContent>
-      </Dialog>
-    </React.Fragment>
+          )}
+        </Box>
+      </DialogContent>
+    </Dialog>
   );
-}
+};
 
-function AdminForm({
-  onValidationSuccess,
-}: {
-  onValidationSuccess: (adminID: number, adminName: string) => void;
-}) {
-  const { postHandler, postHandlerloading } = useAxiosPost();
-
-  const { register, handleSubmit, reset } = useForm<UserValidationFormModel>({
-    resolver: zodResolver(schemaUserValidation),
-    defaultValues: {
-      user_code: "",
-    },
-  });
-  const userValidationSubmit = async (data: UserValidationFormModel) => {
-    try {
-      const response: { data: AdminResponse } = await postHandler(
-        "admin/check-code/",
-        data
-      );
-      onValidationSuccess(response.data.id, response.data.username);
-
-      reset();
-    } catch (error) {
-      extractErrorMessage(error);
-    }
-  };
-  return (
-    <div>
-      <form
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "1rem",
-        }}
-        onSubmit={handleSubmit(userValidationSubmit)}
-      >
-        <>
-          <Typography variant="h6">Admin Varification Required</Typography>
-          <TextField
-            fullWidth
-            label="Admin Code"
-            type="text"
-            {...register("user_code")}
-          />
-          <TextField fullWidth label="Password " type="password" />
-        </>
-
-        <SaveButton btnText="Varify" loading={postHandlerloading} />
-      </form>
-    </div>
-  );
-}
-
-//! USER FORM
-function UserForm({
-  onValidationSuccess,
-}: {
-  onValidationSuccess: (userID: number, userName: string) => void;
-}) {
-  const { postHandler, postHandlerloading } = useAxiosPost();
-
-  const { register, handleSubmit, reset } = useForm<UserValidationFormModel>({
-    resolver: zodResolver(schemaUserValidation),
-    defaultValues: {
-      user_code: "",
-    },
-  });
-  const userValidationSubmit = async (data: UserValidationFormModel) => {
-    try {
-      const response: { data: UserResponse } = await postHandler(
-        "user/check-code/",
-        data
-      );
-
-      onValidationSuccess(response.data.id, response.data.username);
-      reset();
-    } catch (error) {
-      extractErrorMessage(error);
-    }
-  };
-  return (
-    <div>
-      <form
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "1rem",
-        }}
-        onSubmit={handleSubmit(userValidationSubmit)}
-      >
-        <>
-          <Typography variant="h6">User Varification Required</Typography>
-
-          <TextField
-            fullWidth
-            label="User Code"
-            type="text"
-            {...register("user_code")}
-          />
-          <TextField fullWidth label="Password " type="password" />
-        </>
-
-        <SaveButton btnText="Varify" loading={postHandlerloading} />
-      </form>
-    </div>
-  );
-}
-interface UserResponse {
-  id: number;
-  username: string;
-}
-interface AdminResponse {
-  id: number;
-  username: string;
-  role: "admin" | "user";
-}
+export default VerificationDialog;

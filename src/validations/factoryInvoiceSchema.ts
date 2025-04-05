@@ -1,7 +1,6 @@
 import * as Yup from "yup";
 
 export const factoryInvoiceSchema = Yup.object().shape({
-  sales_staff_code: Yup.string().required("Enter Saff Code"),
   name: Yup.string().required("Patient Name is required"),
   nic: Yup.string(),
   phone_number: Yup.string()

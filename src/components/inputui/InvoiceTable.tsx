@@ -44,7 +44,6 @@ export default function InvoiceTable() {
   //calcuate Total
   const subtotal = frameTotal + lenseTotal + ExtraTotal;
   const grandTotal = subtotal - watch("discount");
-  console.log(LenseInvoiceList);
 
   return (
     <TableContainer

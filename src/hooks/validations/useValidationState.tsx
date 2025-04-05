@@ -1,17 +1,12 @@
 import { useState } from "react";
-type validationTypes = "admin" | "user" | "both" | null;
 
-export interface ValidationStateModel {
-  validationType: validationTypes;
-  openValidationDialog: boolean;
-  apiCallFunction: (() => Promise<void>) | null;
-}
+type ValidationTypes = "update" | "create" | null;
 
 export const useValidationState = () => {
-  const [validationState, setValidationState] = useState<ValidationStateModel>({
+  const [validationState, setValidationState] = useState({
     openValidationDialog: false,
-    validationType: null,
-    apiCallFunction: null,
+    validationType: null as ValidationTypes,
+    apiCallFunction: null as ((verifiedUserId: number) => Promise<void>) | null,
   });
 
   const resetValidation = () => {
@@ -22,5 +17,20 @@ export const useValidationState = () => {
     });
   };
 
-  return { validationState, setValidationState, resetValidation };
+  const prepareValidation = (
+    type: ValidationTypes,
+    apiCall: (verifiedUserId: number) => Promise<void>
+  ) => {
+    setValidationState({
+      validationType: type,
+      openValidationDialog: true,
+      apiCallFunction: apiCall,
+    });
+  };
+
+  return {
+    validationState,
+    prepareValidation,
+    resetValidation,
+  };
 };

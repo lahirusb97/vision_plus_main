@@ -23,7 +23,7 @@ const InvoiceView = () => {
   const componentRef = useRef(null);
   const reactToPrintFn = useReactToPrint({ contentRef: componentRef });
   const { invoiceDetail, invoiceDetailLoading } = useGetSingleInvoiceDetail(
-    parseInt(queryParams.get("order_id") ?? "")
+    parseInt(queryParams.get("invoice_number") ?? "")
   );
 
   const DateView = (date: string) => {

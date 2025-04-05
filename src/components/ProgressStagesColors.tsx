@@ -3,7 +3,7 @@ import CircleIcon from "@mui/icons-material/Circle";
 export default function ProgressStagesColors() {
   return (
     <div>
-      <Box m={1} display="flex" alignItems="center" gap={2} marginBottom={2}>
+      <Box display="flex" alignItems="center" gap={1}>
         <Box display="flex" alignItems="center" gap={1}>
           <CircleIcon sx={{ color: "red", fontSize: "1rem" }} />
           <Typography sx={{ fontSize: "1rem" }}>On Hold Job</Typography>

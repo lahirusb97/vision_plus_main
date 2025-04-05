@@ -118,7 +118,6 @@ export default function NavBar() {
   ) => {
     setValue(newValue);
     navigate(`/${tabs[newValue].path}`);
-    console.log(tabs[newValue].path);
   };
 
   // Array of Icons and Labels (dynamically derived)

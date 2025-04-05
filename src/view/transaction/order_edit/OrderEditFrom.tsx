@@ -49,13 +49,16 @@ import { CheckBox } from "@mui/icons-material";
 import HidenNoteDialog from "../../../components/HidenNoteDialog";
 import StockDrawerBtn from "../../../components/StockDrawerBtn";
 import { useFactoryOrderUpdateContext } from "../../../context/FactoryOrderUpdateContext";
+import { useValidationState } from "../../../hooks/validations/useValidationState";
+import VarificationDialog from "../../../components/VarificationDialog";
 
 export default function OrderEditFrom() {
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   // SET VALUES FOR PATIENT TABLE
-
+  const { prepareValidation, resetValidation, validationState } =
+    useValidationState();
   const {
     invoiceDetail,
     invoiceDetailLoading,
@@ -346,165 +349,183 @@ export default function OrderEditFrom() {
       Object.keys(LenseInvoiceList).length > 0 ||
       Object.keys(FrameInvoiceList).length > 0
     ) {
-      try {
-        // No refraction Data but have Refraction Number
-        const responce = await axiosClient.put(
-          `/orders/${invoiceDetail?.order}/`,
-          postData
-        );
-        toast.success("Order & Refraction Details saved successfully");
-        const url = `?order_id=${encodeURIComponent(responce.data.id)}`;
-
-        navigate(
-          `/transaction/factory_order/create/${invoiceDetail?.customer_details.refraction_id}/view/${url}`
-        );
-      } catch (err) {
-        extractErrorMessage(err);
-      }
+      prepareValidation("create", async (verifiedUserId: number) => {
+        await sendDataToDb(postData);
+      });
     } else {
       toast.error("No Items ware added");
     }
   };
+  const sendDataToDb = async (postData) => {
+    try {
+      // No refraction Data but have Refraction Number
+      const responce = await axiosClient.put(
+        `/orders/${invoiceDetail?.order}/`,
+        postData
+      );
+      toast.success("Order & Refraction Details saved successfully");
+      const url = `?order_id=${encodeURIComponent(responce.data.id)}`;
 
+      navigate(
+        `/transaction/factory_order/create/${invoiceDetail?.customer_details.refraction_id}/view/${url}`
+      );
+    } catch (err) {
+      extractErrorMessage(err);
+    }
+  };
   return (
-    <FormProvider {...methods}>
-      <Box
-        component={"form"}
-        onSubmit={methods.handleSubmit(submiteFromData)}
-        sx={{
-          width: "100vw", // Ensure the parent takes full width
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center", // Centers the child horizontally
-        }}
-      >
+    <>
+      <FormProvider {...methods}>
         <Box
+          component={"form"}
+          onSubmit={methods.handleSubmit(submiteFromData)}
           sx={{
+            width: "100vw", // Ensure the parent takes full width
             display: "flex",
-            justifyContent: "space-between",
-            maxWidth: "1200px",
-            width: "100%",
-            margin: "0 auto", // Centers it
+            flexDirection: "column",
+            alignItems: "center", // Centers the child horizontally
           }}
         >
           <Box
             sx={{
-              mr: 1,
+              display: "flex",
+              justifyContent: "space-between",
+              maxWidth: "1200px",
+              width: "100%",
+              margin: "0 auto", // Centers it
             }}
           >
             <Box
               sx={{
-                display: "flex",
+                mr: 1,
               }}
             >
-              <RightEyeTable refractionDetail={refractionDetail} />
-              <LeftEyeTable refractionDetail={refractionDetail} />
+              <Box
+                sx={{
+                  display: "flex",
+                }}
+              >
+                <RightEyeTable refractionDetail={refractionDetail} />
+                <LeftEyeTable refractionDetail={refractionDetail} />
+              </Box>
+              <Typography
+                sx={{ border: "1px solid gray", px: 1, mx: 1, mb: 1 }}
+              >
+                Refraction Remark - {refractionDetail?.note}
+              </Typography>
             </Box>
-            <Typography sx={{ border: "1px solid gray", px: 1, mx: 1, mb: 1 }}>
-              Refraction Remark - {refractionDetail?.note}
-            </Typography>
+
+            {/* sending data trugh invoide details with usefrom hook */}
+            <PationtDetails
+              prescription={
+                !refractionDetailLoading && refractionDetail?.prescription
+                  ? "Prescription "
+                  : ""
+              }
+              refractionDetailLoading={refractionDetailLoading}
+              refractionNumber={
+                invoiceDetail?.customer_details?.refraction_number
+              }
+            />
+          </Box>
+          <Box
+            sx={{
+              maxWidth: "1200px",
+              width: "100%",
+              margin: "0 auto",
+              display: "flex",
+            }}
+          >
+            <FormControlLabel
+              control={<Checkbox {...methods.register("on_hold")} />}
+              label=" On Hold"
+            />
+            <FormControlLabel
+              control={
+                <Checkbox {...methods.register("fitting_on_collection")} />
+              }
+              label="Fiting on Collection"
+            />
+            <HidenNoteDialog />
+            <StockDrawerBtn />
+          </Box>
+          <InvoiceTable />
+          <Box
+            sx={{
+              display: "flex",
+              width: "100%",
+              justifyContent: "center",
+              maxWidth: "1200px",
+              alignItems: "center",
+              gap: 1,
+              mt: 1,
+            }}
+          >
+            <TextField
+              {...methods.register("pd")}
+              sx={{ width: 100 }}
+              size="small"
+              type="number"
+              label="PD"
+              InputLabelProps={{
+                shrink: Boolean(methods.watch("pd")),
+              }}
+            />
+            <TextField
+              {...methods.register("h")}
+              sx={{ width: 100 }}
+              type="number"
+              size="small"
+              label="H"
+              InputLabelProps={{
+                shrink: Boolean(methods.watch("h")),
+              }}
+            />
+            <TextField
+              fullWidth
+              size="small"
+              {...methods.register("remark")}
+              sx={{ maxWidth: "1200px" }}
+              placeholder="remark"
+              multiline
+            />
           </Box>
 
-          {/* sending data trugh invoide details with usefrom hook */}
-          <PationtDetails
-            prescription={
-              !refractionDetailLoading && refractionDetail?.prescription
-                ? "Prescription "
-                : ""
-            }
-            refractionDetailLoading={refractionDetailLoading}
-            refractionNumber={
-              invoiceDetail?.customer_details?.refraction_number
-            }
-          />
-        </Box>
-        <Box
-          sx={{
-            maxWidth: "1200px",
-            width: "100%",
-            margin: "0 auto",
-            display: "flex",
-          }}
-        >
-          <FormControlLabel
-            control={<Checkbox {...methods.register("on_hold")} />}
-            label=" On Hold"
-          />
-          <FormControlLabel
-            control={
-              <Checkbox {...methods.register("fitting_on_collection")} />
-            }
-            label="Fiting on Collection"
-          />
-          <HidenNoteDialog />
-          <StockDrawerBtn />
-        </Box>
-        <InvoiceTable />
-        <Box
-          sx={{
-            display: "flex",
-            width: "100%",
-            justifyContent: "center",
-            maxWidth: "1200px",
-            alignItems: "center",
-            gap: 1,
-            mt: 1,
-          }}
-        >
-          <TextField
-            {...methods.register("pd")}
-            sx={{ width: 100 }}
-            size="small"
-            type="number"
-            label="PD"
-            InputLabelProps={{
-              shrink: Boolean(methods.watch("pd")),
+          <Box
+            sx={{
+              display: "flex",
+              gap: 1,
+              m: 2,
+              width: "100%",
+              maxWidth: "1200px",
+              justifyContent: "space-between",
             }}
-          />
-          <TextField
-            {...methods.register("h")}
-            sx={{ width: 100 }}
-            type="number"
-            size="small"
-            label="H"
-            InputLabelProps={{
-              shrink: Boolean(methods.watch("h")),
-            }}
-          />
-          <TextField
-            fullWidth
-            size="small"
-            {...methods.register("remark")}
-            sx={{ maxWidth: "1200px" }}
-            placeholder="remark"
-            multiline
-          />
-        </Box>
-
-        <Box
-          sx={{
-            display: "flex",
-            gap: 1,
-            m: 2,
-            width: "100%",
-            maxWidth: "1200px",
-            justifyContent: "space-between",
-          }}
-        >
-          <OnlinePayInput />
-          <CardInput />
-          <CashInput />
-          <Button
-            sx={{ width: "400px" }}
-            size="small"
-            variant="contained"
-            type="submit"
           >
-            Submit
-          </Button>
+            <OnlinePayInput />
+            <CardInput />
+            <CashInput />
+            <Button
+              sx={{ width: "400px" }}
+              size="small"
+              variant="contained"
+              type="submit"
+            >
+              Submit
+            </Button>
+          </Box>
+          <DrawerStock refractionDetail={refractionDetail} />
         </Box>
-        <DrawerStock refractionDetail={refractionDetail} />
-      </Box>
-    </FormProvider>
+      </FormProvider>
+      <VarificationDialog
+        open={validationState.openValidationDialog}
+        operationType={validationState.validationType}
+        onVerified={async (verifiedUserId) => {
+          if (validationState.apiCallFunction) {
+            await validationState.apiCallFunction(verifiedUserId);
+          }
+        }}
+        onClose={resetValidation}
+      />
+    </>
   );
 }

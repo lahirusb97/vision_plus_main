@@ -69,10 +69,8 @@ const CheckInIndex = () => {
           <TableBody>
             {invoiceList.map((row, index) => (
               <TableRow key={index}>
-                <TableCell>{row.customer_details.name}</TableCell>
-                <TableCell>
-                  {dateAndTimeFormat(row.order_details.order_date)}
-                </TableCell>
+                <TableCell>{row.customer}</TableCell>
+                <TableCell>{dateAndTimeFormat(row.invoice_date)}</TableCell>
                 <TableCell>{row.invoice_number}</TableCell>
                 <TableCell>{progressStatus(row.progress_status)}</TableCell>
                 {/* <TableCell>{row.notes}</TableCell> */}
@@ -100,12 +98,12 @@ const CheckInIndex = () => {
                 </TableCell>
                 <TableCell>
                   <Box sx={{ display: "flex", flexDirection: "rows" }}>
-                    {row.order_details.on_hold ? (
+                    {row.on_hold ? (
                       <CircleIcon sx={{ color: "red", fontSize: "1rem" }} />
                     ) : (
                       <CircleIcon sx={{ color: "green", fontSize: "1rem" }} />
                     )}
-                    {!row.order_details.fitting_on_collection && (
+                    {!row.fitting_on_collection && (
                       <CircleIcon sx={{ color: "blue", fontSize: "1rem" }} />
                     )}
                   </Box>

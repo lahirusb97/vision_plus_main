@@ -3,6 +3,7 @@ import axiosClient from "../axiosClient";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { Invoice } from "../model/SingleInvoiceModel";
+import { PaginatedResponse } from "../model/PaginatedResponse";
 interface UseGetInvoiceDetailReturn {
   invoiceDetail: Invoice | null;
   invoiceDetailLoading: boolean;
@@ -11,7 +12,7 @@ interface UseGetInvoiceDetailReturn {
 }
 
 const useGetSingleInvoiceDetail = (
-  order_id: number
+  invoice_number: number
 ): UseGetInvoiceDetailReturn => {
   const [invoiceDetail, setinvoiceDetail] = useState<Invoice | null>(null);
   const [invoiceDetailLoading, setinvoiceDetailLoading] =
@@ -23,12 +24,14 @@ const useGetSingleInvoiceDetail = (
     setinvoiceDetailLoading(true);
 
     try {
-      const response = await axiosClient.get<Invoice>(`/invoices/`, {
-        params: {
-          order_id: order_id,
-        },
-      });
-      setinvoiceDetail(response.data);
+      const response: { data: PaginatedResponse<Invoice> } =
+        await axiosClient.get(`factory-invoices/search/`, {
+          params: {
+            invoice_number: invoice_number,
+          },
+        });
+
+      setinvoiceDetail(response.data.results[0]);
       toast.success("Invoice Saved");
 
       setInvoiceDetailError(false);
@@ -42,7 +45,7 @@ const useGetSingleInvoiceDetail = (
     } finally {
       setinvoiceDetailLoading(false);
     }
-  }, [order_id]);
+  }, [invoice_number]);
 
   // Automatically fetch data on mount
   useEffect(() => {

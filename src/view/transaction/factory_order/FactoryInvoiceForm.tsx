@@ -3,8 +3,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router";
-import { useContext, useEffect, useState } from "react";
-import axios from "axios";
+import { useEffect } from "react";
 import toast from "react-hot-toast";
 import {
   Button,
@@ -14,15 +13,10 @@ import {
   Typography,
 } from "@mui/material";
 // Hooks
-import useGetRefractionDetails from "../../../hooks/useGetRefractionDetails";
 //Models
 import { InvoiceInputModel } from "../../../model/InvoiceInputModel";
-import { RefractionDetailModel } from "../../../model/RefractionDetailModel";
 //schemas
-import {
-  factoryInvoiceSchema,
-  FactoryOrderFrameFormModel,
-} from "../../../validations/factoryInvoiceSchema";
+import { factoryInvoiceSchema } from "../../../validations/factoryInvoiceSchema";
 //Store
 import { RootState } from "../../../store/store";
 import { clearFrame } from "../../../features/invoice/frameFilterSlice";
@@ -52,7 +46,7 @@ import { useValidationState } from "../../../hooks/validations/useValidationStat
 import { getUserCurentBranch } from "../../../utils/authDataConver";
 
 export default function FactoryInvoiceForm() {
-  const { setValidationState, resetValidation, validationState } =
+  const { prepareValidation, resetValidation, validationState } =
     useValidationState();
   const { id } = useParams();
   const navigate = useNavigate();
@@ -150,7 +144,7 @@ export default function FactoryInvoiceForm() {
         discount: parseFloat(discount) || 0,
         total_price: parseFloat(grandTotal) || 0,
         order_remark: data.order_remark,
-        sales_staff_code: data.sales_staff_code, //!user code ID
+        // sales_staff_code: data.sales_staff_code, //!user code ID
         pd: data.pd,
         right_pd: data.right_pd,
         left_pd: data.left_pd,
@@ -228,10 +222,8 @@ export default function FactoryInvoiceForm() {
       Object.keys(FrameInvoiceList).length > 0
     ) {
       if (refractionDetail && !refractionDetailLoading) {
-        setValidationState({
-          openValidationDialog: true,
-          validationType: "user",
-          apiCallFunction: () => sendDataToDb(postData),
+        prepareValidation("create", async (verifiedUserId: number) => {
+          await sendDataToDb(postData, verifiedUserId);
         });
         //TODO USE THIS AND CREATE THE SYSTEM ALL GOOD TO DO IF NO REFRACTION DETAILS NO DETAIL CREATINS
       } else {
@@ -241,11 +233,20 @@ export default function FactoryInvoiceForm() {
       toast.error("No Items ware added");
     }
   };
-  const sendDataToDb = async (postData) => {
+  const sendDataToDb = async (
+    postData: InvoiceInputModel,
+    verifiedUserId: number
+  ) => {
     try {
-      const responce = await axiosClient.post("/orders/", postData);
+      const responce = await axiosClient.post("/orders/", {
+        ...postData,
+        sales_staff_code: verifiedUserId,
+      });
       toast.success("Order saved successfully");
-      const url = `?order_id=${encodeURIComponent(responce.data.id)}`;
+      const url = `?invoice_number=${encodeURIComponent(
+        responce.data.invoice_number
+      )}`;
+      //send to invoice view
       navigate(`view/${url}`);
     } catch (error) {
       extractErrorMessage(error);
@@ -459,8 +460,14 @@ export default function FactoryInvoiceForm() {
       </FormProvider>
 
       <VarificationDialog
-        validationState={validationState}
-        resetValidation={resetValidation}
+        open={validationState.openValidationDialog}
+        operationType={validationState.validationType}
+        onVerified={async (verifiedUserId) => {
+          if (validationState.apiCallFunction) {
+            await validationState.apiCallFunction(verifiedUserId);
+          }
+        }}
+        onClose={resetValidation}
       />
     </>
   );
