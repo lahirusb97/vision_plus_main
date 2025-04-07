@@ -12,7 +12,7 @@ interface UseGetInvoiceDetailReturn {
 }
 
 const useGetSingleInvoiceDetail = (
-  invoice_number: number
+  invoice_number: string
 ): UseGetInvoiceDetailReturn => {
   const [invoiceDetail, setinvoiceDetail] = useState<Invoice | null>(null);
   const [invoiceDetailLoading, setinvoiceDetailLoading] =

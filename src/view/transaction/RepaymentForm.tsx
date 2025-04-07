@@ -28,11 +28,11 @@ import axiosClient from "../../axiosClient";
 
 const RepaymentForm = () => {
   const navigate = useNavigate();
-  const { id } = useParams();
+  const { invoice_number } = useParams();
   const { invoicePayments, invoicePaymentsLoading, invoicePaymentsError } =
-    useGetInvoicePayments(parseInt(id ?? ""));
+    useGetInvoicePayments(null);
   const { invoiceDetail, invoiceDetailLoading, invoiceDetailError } =
-    useGetSingleInvoiceDetail(parseInt(id ?? ""));
+    useGetSingleInvoiceDetail(invoice_number);
 
   const [secondPayment, setSecondPayment] = useState("");
   const [searchTerm, setSearchTerm] = useState("");

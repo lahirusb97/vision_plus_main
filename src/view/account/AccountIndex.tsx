@@ -1,19 +1,5 @@
-import React, { useState } from "react";
-import {
-  Box,
-  Button,
-  Grid,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography,
-  Stack,
-  TextField,
-} from "@mui/material";
+import { useState } from "react";
+import { Box, Button, Grid, Paper, Typography, Stack } from "@mui/material";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
@@ -25,7 +11,6 @@ import SingleDatePicker from "../../hooks/SingleDatePicker";
 import useChannelReports from "../../hooks/useChannelReports";
 import { ChannelPaymentTable } from "../../components/ChannelPaymentTable";
 import { ExpensesTable } from "../../components/ExpensesTable";
-import InvoiceTable from "../../components/inputui/InvoiceTable";
 import { InvoicePaymentTable } from "../../hooks/InvoicePaymentTable";
 
 const Dashboard = () => {
@@ -47,13 +32,6 @@ const Dashboard = () => {
       description: "Pens and Papers",
       amount: "Rs50",
     },
-  ];
-
-  // Dummy data for Invoice table
-
-  // Dummy data for Channel table
-  const channelData = [
-    { channelId: "CH001", channelDate: "2023-10-01", amount: "Rs500" },
   ];
 
   return (
