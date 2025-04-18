@@ -56,13 +56,13 @@ export default function FilterPatient({
   useEffect(() => {
     if (open) {
       if (searchType === "phone_number") {
-        handlePatientSearch({ phone_number: watch("phone_number") });
+        handlePatientSearch("phone_number", watch("phone_number"));
         setfetchPatientData(true);
       } else if (searchType === "name") {
-        handlePatientSearch(watch("name"));
+        handlePatientSearch("name", watch("name"));
         setfetchPatientData(true);
       } else if (searchType === "nic") {
-        handlePatientSearch(watch("nic"));
+        handlePatientSearch("nic", watch("nic"));
         setfetchPatientData(true);
       }
     } else {
@@ -189,6 +189,7 @@ export default function FilterPatient({
                           value={editedPatient.phone_number || ""}
                           onChange={handleChange}
                           size="small"
+                          type="number"
                         />
                       ) : (
                         patient.phone_number

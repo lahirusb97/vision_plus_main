@@ -1,0 +1,128 @@
+import React, { useState, useEffect } from "react";
+import {
+  DatePicker,
+  LocalizationProvider,
+  PickersDay,
+  PickersDayProps,
+} from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { Tooltip, CircularProgress, Box } from "@mui/material";
+import { styled } from "@mui/material/styles";
+import dayjs, { Dayjs } from "dayjs";
+import useGetDoctorShedule from "../hooks/useGetDoctorShedule";
+
+interface HighlightedDatePickerProps {
+  selectedDate: string | null;
+  onDateChange: (value: string | null) => void;
+  label?: string;
+  doctorId?: number; // Make doctorId configurable
+}
+
+const HighlightedPickersDay = styled(PickersDay)<PickersDayProps<any>>(
+  ({ theme }) => ({
+    backgroundColor: "#FFE082", // amber[200]
+    color: "#000",
+    borderRadius: theme.shape.borderRadius,
+    "&:hover": {
+      backgroundColor: "#FFD54F", // amber[300]
+    },
+    "&.Mui-selected": {
+      backgroundColor: theme.palette.primary.main,
+      color: theme.palette.primary.contrastText,
+    },
+  })
+);
+
+export default function HighlightedDatePicker({
+  selectedDate,
+  onDateChange,
+  label = "Select Date",
+  doctorId, // Default doctorId
+}: HighlightedDatePickerProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const {
+    doctorShedule: schedules,
+    doctorSheduleLoading,
+
+    refetch,
+  } = useGetDoctorShedule(doctorId);
+
+  // Fetch data when date picker opens
+  useEffect(() => {
+    if (isOpen) {
+      refetch();
+    }
+  }, [isOpen]);
+
+  const scheduleMap = React.useMemo(
+    () =>
+      schedules.reduce((acc, { date, start_time }) => {
+        acc[date] = start_time;
+        return acc;
+      }, {} as Record<string, string>),
+    [schedules]
+  );
+
+  const renderLoadingDay = (props: PickersDayProps<Dayjs>) => (
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100%",
+      }}
+    >
+      <CircularProgress size={20} />
+    </Box>
+  );
+
+  return (
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <DatePicker
+        label={label}
+        format="YYYY-MM-DD"
+        value={selectedDate ? dayjs(selectedDate) : null}
+        onChange={(newValue: Dayjs | null) => {
+          onDateChange(newValue ? newValue.format("YYYY-MM-DD") : null);
+        }}
+        disabled={!doctorId}
+        onOpen={() => setIsOpen(true)}
+        onClose={() => setIsOpen(false)}
+        slots={{
+          day: (props) => {
+            const dateStr = dayjs(props.day).format("YYYY-MM-DD");
+            const time = scheduleMap[dateStr];
+
+            if (doctorSheduleLoading) {
+              return renderLoadingDay(props);
+            }
+
+            if (time) {
+              return (
+                <Tooltip title={`Available at ${time}`} arrow>
+                  <span>
+                    <HighlightedPickersDay {...props} />
+                  </span>
+                </Tooltip>
+              );
+            }
+
+            return <PickersDay {...props} />;
+          },
+        }}
+        slotProps={{
+          popper: {
+            sx: {
+              "& .MuiPickersDay-root": {
+                // Optional: Style for days in the calendar
+              },
+            },
+          },
+          actionBar: {
+            actions: ["today", "cancel", "accept"],
+          },
+        }}
+      />
+    </LocalizationProvider>
+  );
+}

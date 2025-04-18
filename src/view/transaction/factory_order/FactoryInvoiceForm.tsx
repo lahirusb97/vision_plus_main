@@ -144,7 +144,7 @@ export default function FactoryInvoiceForm() {
         discount: parseFloat(discount) || 0,
         total_price: parseFloat(grandTotal) || 0,
         order_remark: data.order_remark,
-        // sales_staff_code: data.sales_staff_code, //!user code ID
+        // sales_staff_code: data.sales_staff_code, //!user code ID set this using varification Dialog
         pd: data.pd,
         right_pd: data.right_pd,
         left_pd: data.left_pd,
@@ -237,10 +237,15 @@ export default function FactoryInvoiceForm() {
     postData: InvoiceInputModel,
     verifiedUserId: number
   ) => {
+    console.log("postData", postData);
+
     try {
       const responce = await axiosClient.post("/orders/", {
         ...postData,
-        sales_staff_code: verifiedUserId,
+        order: {
+          ...postData.order,
+          sales_staff_code: verifiedUserId,
+        },
       });
       toast.success("Order saved successfully");
       const url = `?invoice_number=${encodeURIComponent(

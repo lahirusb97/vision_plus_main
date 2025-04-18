@@ -1,19 +1,10 @@
-import {
-  TextField,
-  Box,
-  Chip,
-  InputAdornment,
-  IconButton,
-} from "@mui/material";
+import { TextField, Box, InputAdornment, IconButton } from "@mui/material";
 import { useFormContext } from "react-hook-form";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { SearchSharp } from "@mui/icons-material";
-import { getBirthdateFromNIC } from "../../../utils/NictoBirthday";
 import FilterPatient from "../../../components/FilterPatient";
-import DateInput from "../../../components/inputui/DateInput";
-import { birthdayToAge } from "../../../utils/BirthdayToAge";
 
-export default function NormalPatientDetail() {
+export default function ChannelPatientDetail() {
   const [openSearchDialog, setOpenSearchDialog] = useState({
     open: false,
     searchType: "",
@@ -21,21 +12,10 @@ export default function NormalPatientDetail() {
 
   const {
     register,
-    setValue,
     watch,
     formState: { errors },
   } = useFormContext();
 
-  useEffect(() => {
-    if (watch("nic")?.length >= 10) {
-      const birthdate = getBirthdateFromNIC(watch("nic"));
-      setValue("dob", ""); // Force clear first
-      setTimeout(() => {
-        setValue("dob", birthdate);
-      }, 0); // Add a slight delay
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [watch("nic")]);
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
       <FilterPatient
@@ -45,10 +25,6 @@ export default function NormalPatientDetail() {
       />
 
       <Box sx={{ display: "flex", gap: 1 }}>
-        {/* <Button color="info" variant="contained">
-          <History />
-        </Button> */}
-
         <Box
           sx={{ display: "flex", flexGrow: 1, gap: 1, alignItems: "center" }}
         >
@@ -75,14 +51,6 @@ export default function NormalPatientDetail() {
               shrink: Boolean(watch("name")),
             }}
           />
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            <DateInput />
-
-            <Chip
-              sx={{ p: 1, fontWeight: "bold" }}
-              label={birthdayToAge(watch("dob"))}
-            ></Chip>
-          </Box>
         </Box>
       </Box>
 
@@ -93,6 +61,7 @@ export default function NormalPatientDetail() {
           sx={{ flexGrow: 1 }}
           size="small"
           label="Mobile Number"
+          type="number"
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
@@ -111,29 +80,6 @@ export default function NormalPatientDetail() {
           }}
           InputLabelProps={{
             shrink: Boolean(watch("phone_number")),
-          }}
-        />
-        <TextField
-          {...register("nic")}
-          error={!!errors.nic}
-          sx={{ flexGrow: 1 }}
-          size="small"
-          label="NIC"
-          InputLabelProps={{
-            shrink: Boolean(watch("nic")),
-          }}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton
-                  onClick={() =>
-                    setOpenSearchDialog({ open: true, searchType: "nic" })
-                  }
-                >
-                  <SearchSharp />
-                </IconButton>
-              </InputAdornment>
-            ),
           }}
         />
       </Box>

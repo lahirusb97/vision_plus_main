@@ -133,7 +133,6 @@ export default function OrderEditFrom() {
             })
           );
         });
-      console.log("ss");
 
       invoiceDetail?.order_details.order_items
         .filter((items) => items.external_lens !== null)
@@ -264,7 +263,7 @@ export default function OrderEditFrom() {
         discount: parseFloat(discount) || 0,
         total_price: parseFloat(grandTotal) || 0,
         remark: data.remark,
-        sales_staff_code: data.sales_staff_code,
+        sales_staff_code: data.sales_staff_code, //TODO TEST THIS
       },
       order_items: [
         ...Object.values(LenseInvoiceList).map((item) => ({

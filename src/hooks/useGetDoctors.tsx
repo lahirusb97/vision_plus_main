@@ -1,23 +1,17 @@
 import { useState, useEffect, useCallback } from "react";
 import axiosClient from "../axiosClient";
-
-interface Doctor {
-  id: number;
-  name: string;
-  specialization: string;
-  contact_info: string;
-  status: string;
-}
+import { extractErrorMessage } from "../utils/extractErrorMessage";
+import { DoctorModel } from "../model/DoctorModel";
 
 interface UseGetDoctorsReturn {
-  data: Doctor[];
+  data: DoctorModel[];
   loading: boolean;
   error: string | null;
   refresh: () => void;
 }
 
 const useGetDoctors = (): UseGetDoctorsReturn => {
-  const [data, setData] = useState<Doctor[]>([]);
+  const [data, setData] = useState<DoctorModel[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -26,10 +20,10 @@ const useGetDoctors = (): UseGetDoctorsReturn => {
     setError(null);
 
     try {
-      const response = await axiosClient.get<Doctor[]>("/doctors/");
+      const response = await axiosClient.get<DoctorModel[]>("/doctors/");
       setData(response.data);
-    } catch (err: any) {
-      setError(err?.response?.data?.message || "Failed to fetch doctors.");
+    } catch (err) {
+      extractErrorMessage(err);
     } finally {
       setLoading(false);
     }
