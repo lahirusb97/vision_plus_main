@@ -194,7 +194,6 @@ export default function OrderEditFrom() {
       dispatch(clearexternalLense());
     };
   }, []);
-  console.log(invoiceDetail);
 
   useEffect(() => {
     if (invoiceDetail && !invoiceDetailLoading) {

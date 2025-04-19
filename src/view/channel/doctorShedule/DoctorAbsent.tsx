@@ -23,6 +23,7 @@ const flexBoxStyle = {
   flexDirection: "column",
   gap: 2,
   padding: 2,
+  minWidth: "300px",
 };
 
 export default function DoctorAbsent() {

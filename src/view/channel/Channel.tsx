@@ -29,6 +29,9 @@ import { getUserCurentBranch } from "../../utils/authDataConver";
 import CashInput from "../../components/inputui/CashInput";
 import CardInput from "../../components/inputui/CardInput";
 import ChannelPatientDetail from "./apointments/ChannelPatientDetail";
+import HighlightedDatePicker from "../../components/HighlightedDatePicker";
+import OnlinePayInput from "../../components/inputui/OnlinePayInput";
+import { formatUserPayments } from "../../utils/formatUserPayments";
 
 const Channel = () => {
   const { data: doctorList, loading } = useGetDoctors();
@@ -42,13 +45,16 @@ const Channel = () => {
       branch_id: getUserCurentBranch()?.id,
     },
   });
-  const { control } = methods;
+  const { control, watch } = methods;
 
   const onSubmit = async (data: ChannelAppointmentForm) => {
     const channelDate = dayjs(data.channel_date).format("YYYY-MM-DD");
     const channelTime = dayjs(data.time, "HH:mm:ss", true).format("HH:mm:ss");
-    console.log(data);
-
+    const userPayments = {
+      credit_card: data.credit_card,
+      cash: data.cash,
+      online_transfer: data.online_transfer,
+    };
     const payload = {
       doctor_id: data.doctor_id,
       branch_id: data.branch_id,
@@ -58,16 +64,7 @@ const Channel = () => {
       channel_date: channelDate,
       time: channelTime,
       channeling_fee: data.channeling_fee,
-      payments: [
-        {
-          amount: data.cash,
-          payment_method: "Cash",
-        },
-        {
-          amount: data.credit_card,
-          payment_method: "Card",
-        },
-      ],
+      payments: formatUserPayments(userPayments),
     };
 
     try {
@@ -82,6 +79,7 @@ const Channel = () => {
   const channelingFee = Number(methods.watch("channeling_fee") || 0);
   const cashAmount = Number(methods.watch("cash") || 0);
   const cardAmount = Number(methods.watch("credit_card") || 0);
+  const onlineAmount = Number(methods.watch("online_transfer") || 0);
   return (
     <FormProvider {...methods}>
       <Box
@@ -154,22 +152,18 @@ const Channel = () => {
               <Controller
                 name="channel_date"
                 control={control}
-                render={({ field, fieldState: { error } }) => (
-                  <DatePicker
-                    {...methods.register("channel_date")}
-                    {...field}
-                    label="Channel Date"
-                    format="YYYY-MM-DD"
-                    value={field.value ? dayjs(field.value) : null}
-                    onChange={(newValue) => {
-                      field.onChange(newValue ? newValue.toISOString() : null);
+                render={({ field }) => (
+                  <HighlightedDatePicker
+                    selectedDate={
+                      field.value
+                        ? dayjs(field.value).format("YYYY-MM-DD")
+                        : null
+                    }
+                    onDateChange={(newValue) => {
+                      field.onChange(newValue); // Pass selected date to react-hook-form
                     }}
-                    slotProps={{
-                      textField: {
-                        error: !!error,
-                        helperText: error?.message,
-                      },
-                    }}
+                    label="Date"
+                    doctorId={watch("doctor_id") || undefined} // Set doctorId or pass it as a prop
                   />
                 )}
               />
@@ -239,9 +233,11 @@ const Channel = () => {
                 px: 1,
               }}
             >
-              First Payment
+              Payment
             </Typography>
-            <Typography variant="body2">{cashAmount + cardAmount}</Typography>
+            <Typography variant="body2">
+              {cashAmount + cardAmount + onlineAmount}
+            </Typography>
           </Paper>
           {/* Balance */}
 
@@ -260,15 +256,16 @@ const Channel = () => {
             </Typography>
 
             <Typography variant="body2">
-              {channelingFee - (cashAmount + cardAmount)}
+              {channelingFee - (cashAmount + cardAmount + onlineAmount)}
             </Typography>
           </Paper>
 
           {/* Payment Method */}
 
           <Paper sx={flexBoxStyle}>
-            <CashInput />
+            <OnlinePayInput />
             <CardInput />
+            <CashInput />
           </Paper>
           <TextField
             sx={{ display: "none" }}

@@ -345,7 +345,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ invoiceDetail }) => {
                 <strong>
                   {invoiceDetail?.order_details.on_hold && "On Hold /"}
                   {invoiceDetail?.order_details.fitting_on_collection &&
-                    "Fitting on Collection Hold"}
+                    "Fitting on Collection"}
                 </strong>
               </Typography>
               <Box>

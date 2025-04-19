@@ -1,14 +1,16 @@
 import { Button, TextField, Paper, Typography } from "@mui/material";
 import React, { useState } from "react";
 import { useNavigate } from "react-router";
+import { getBranchName } from "../../utils/branchName";
 
 export default function OrderEditIndex() {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(`${getBranchName()}`);
   const navigate = useNavigate();
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // Prevents page reload
     // updateSearchParams(searchQuery);
-    navigate(`${searchQuery}`);
+    const url = `?invoice_number=${encodeURIComponent(searchQuery)}`;
+    navigate(`${searchQuery}/${url}`);
   };
   return (
     <Paper

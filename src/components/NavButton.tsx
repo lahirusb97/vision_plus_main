@@ -50,7 +50,11 @@ const NavButton: React.FC<NavButtonProps> = ({ name, path }) => {
     textTransform: "capitalize",
   }));
 
-  return <MyButton onClick={handleNavigation}>{name}</MyButton>;
+  return (
+    <MyButton size="small" onClick={handleNavigation}>
+      {name}
+    </MyButton>
+  );
 };
 
 export default NavButton;

@@ -15,7 +15,6 @@ import * as Yup from "yup";
 import CardInput from "../../components/inputui/CardInput";
 import CashInput from "../../components/inputui/CashInput";
 import OnlinePayInput from "../../components/inputui/OnlinePayInput";
-import useGetSingleInvoiceDetail from "../../hooks/useGetSingleInvoiceDetail";
 import {
   orderpaymentTotal,
   safeParseFloat,
@@ -25,15 +24,18 @@ import { dateAndTimeFormat } from "../../utils/dateAndTimeFormat";
 import toast from "react-hot-toast";
 import { AxiosError } from "axios";
 import axiosClient from "../../axiosClient";
+import useGetSingleInvoice from "../../hooks/useGetSingleInvoice";
 
 const RepaymentForm = () => {
   const navigate = useNavigate();
   const { invoice_number } = useParams();
   const { invoicePayments, invoicePaymentsLoading, invoicePaymentsError } =
     useGetInvoicePayments(null);
-  const { invoiceDetail, invoiceDetailLoading, invoiceDetailError } =
-    useGetSingleInvoiceDetail(invoice_number);
 
+  const { invoiceData: invoiceDetail, invoiceLoading } = useGetSingleInvoice(
+    invoice_number || "",
+    "factory"
+  );
   const [secondPayment, setSecondPayment] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const fullAmount = 4000;
@@ -70,7 +72,6 @@ const RepaymentForm = () => {
         transaction_status: payment.transaction_status,
       }));
     }
-    console.log(formatApiResponseToRequest(invoicePayments));
 
     function formatUserPayments(userPayments) {
       return Object.keys(userPayments)
@@ -126,8 +127,8 @@ const RepaymentForm = () => {
           </Typography>
           <Button
             onClick={() => {
-              const url = `?order_id=${encodeURIComponent(
-                invoiceDetail?.order
+              const url = `?invoice_number=${encodeURIComponent(
+                invoiceDetail?.invoice_number
               )}`;
               navigate(
                 `/transaction/factory_order/create/${invoiceDetail?.customer_details.refraction_id}/view/${url}`
