@@ -18,10 +18,6 @@ export const channelRoutes: RouteObject[] = [
         index: true,
         element: <Channel />,
       },
-      {
-        path: ":id",
-        element: <Channel_Invoice />,
-      },
     ],
   },
   {
@@ -47,7 +43,7 @@ export const channelRoutes: RouteObject[] = [
     element: <DoctorSheduleIndex />,
   },
   {
-    path: "patient_shedule",
+    path: "patient_shedule/:appointment_id",
     element: <PatientShedule />,
   },
   // {
@@ -57,5 +53,9 @@ export const channelRoutes: RouteObject[] = [
   {
     path: "channel_details",
     element: <ChannelDetails />,
+  },
+  {
+    path: "channel_invoice/:channel_id",
+    element: <Channel_Invoice />,
   },
 ];

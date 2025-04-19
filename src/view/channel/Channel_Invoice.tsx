@@ -1,57 +1,60 @@
 import React, { useRef } from "react";
-import {
-  Container,
-  Typography,
-  Paper,
-  Box,
-  Divider,
-  Button,
-} from "@mui/material";
-import { useLocation } from "react-router";
+import { Container, Typography, Box, Divider, Button } from "@mui/material";
+import { useParams } from "react-router";
 import { useReactToPrint } from "react-to-print";
+import useGetSingleAppointment from "../../hooks/useGetSingleAppointment";
+import { formatPaymentMethod } from "../../utils/formatPaymentMethod";
+import { dateAndTimeFormat } from "../../utils/dateAndTimeFormat";
+import { numberWithCommas } from "../../utils/numberWithCommas";
 
 const ChannelInvoice = () => {
-  const location = useLocation();
-
-  const {
-    doctor_id,
-    name,
-    address,
-    contact_number,
-    channel_date,
-    time,
-    channeling_fee,
-    payments,
-  } = location.state || {
-    doctor_id: null,
-    name: "",
-    address: "",
-    contact_number: "",
-    channel_date: "",
-    time: "",
-    channeling_fee: 0,
-    payments: [
-      { amount: 0, payment_method: "Cash" },
-      { amount: 0, payment_method: "Card" },
-    ],
-  };
-
-  // Calculate the total of payments
-  const totalPayments = payments.reduce(
-    (total, payment) => total + parseFloat(payment.amount),
-    0
-  );
   const componentRef = useRef(null);
 
   const reactToPrintFn = useReactToPrint({ contentRef: componentRef });
 
+  const { channel_id } = useParams();
+  const { singleAppointment, singleAppointmentLoading } =
+    useGetSingleAppointment(channel_id);
+
+  if (singleAppointmentLoading) {
+    return <div>Loading...</div>;
+  }
+  if (!singleAppointment && !singleAppointmentLoading) {
+    return <div>No Data Found</div>;
+  }
+  // Calculate the total of payments
+  const totalAmount =
+    (singleAppointment?.payments || []).reduce((total, payment) => {
+      return total + parseFloat(payment.amount);
+    }, 0) || 0;
+
   return (
-    <Container maxWidth="sm" sx={{ mt: 4, width: "1400px" }}>
-      <Paper ref={componentRef} elevation={3} sx={{ p: 4, borderRadius: 2 }}>
-        <Typography variant="h5" align="center" gutterBottom>
+    <Container
+      sx={{
+        padding: "4mm",
+        minwidth: "7cm", // A5 width
+        minHeight: "10.5mc", // A5 height
+        border: "1px solid #000",
+        fontFamily: "Arial, sans-serif",
+        "@media print": {
+          minWidth: "14cm",
+          minHeight: "21cm",
+          border: "none",
+          margin: "1rem",
+          padding: "1rem",
+        },
+      }}
+    >
+      <Box ref={componentRef} sx={{ borderRadius: 2, padding: 2 }}>
+        <Typography
+          sx={{ fontFamily: "Algerian", fontSize: "6mm" }}
+          variant="h6"
+          align="center"
+          fontWeight="bold"
+        >
           VISION PLUS OPTICIANS (PVT) LTD
         </Typography>
-        <Typography variant="body2" align="center">
+        <Typography fontWeight={"bold"} variant="body2" align="center">
           (CHANNELED CONSULTATIONS SERVICE)
         </Typography>
         <Typography variant="body2" align="center" gutterBottom>
@@ -59,7 +62,9 @@ const ChannelInvoice = () => {
         </Typography>
 
         <Box sx={{ mt: 2 }}>
-          <Typography variant="body2">Date: {channel_date}</Typography>
+          <Typography variant="body2">
+            Date: {singleAppointment?.date}
+          </Typography>
           <Typography variant="body2">
             Tel: 034 - 2247466 / 071 - 7513639
           </Typography>
@@ -67,17 +72,14 @@ const ChannelInvoice = () => {
 
         <Box display="flex" justifyContent="space-between" sx={{ mt: 2 }}>
           <Typography variant="body2">Channel Id:</Typography>
-          <Typography variant="body2">{1}</Typography>
+          <Typography variant="body2">{singleAppointment?.id}</Typography>
         </Box>
 
         <Box display="flex" justifyContent="space-between">
           <Typography variant="body2">Patient Name:</Typography>
-          <Typography variant="body2">{name}</Typography>
-        </Box>
-
-        <Box display="flex" justifyContent="space-between">
-          <Typography variant="body2">Age:</Typography>
-          <Typography variant="body2">{28}</Typography> {/* Dummy Age */}
+          <Typography variant="body2">
+            {singleAppointment?.patient_name}
+          </Typography>
         </Box>
 
         <Divider sx={{ my: 2 }} />
@@ -89,47 +91,65 @@ const ChannelInvoice = () => {
 
         <Box display="flex" justifyContent="space-between">
           <Typography variant="body2">Channel Date:</Typography>
-          <Typography variant="body2">{channel_date}</Typography>
+          <Typography variant="body2">
+            {singleAppointment?.date}/{singleAppointment?.time}
+          </Typography>
         </Box>
 
         <Divider sx={{ my: 2 }} />
 
         <Box display="flex" justifyContent="space-between">
           <Typography variant="body2">Name of Doctor:</Typography>
-          <Typography variant="body2">{"Doc Name"}</Typography>
+          <Typography variant="body2">
+            {singleAppointment?.doctor_name}
+          </Typography>
         </Box>
 
         <Box display="flex" justifyContent="space-between">
           <Typography variant="body2">Consultant Fee:</Typography>
-          <Typography variant="body2">2000</Typography>{" "}
+          <Typography variant="body2">
+            {numberWithCommas(singleAppointment?.amount)}
+          </Typography>{" "}
           {/* Dummy Consultant Fee */}
         </Box>
 
-        <Box display="flex" justifyContent="space-between">
+        {/* <Box display="flex" justifyContent="space-between">
           <Typography variant="body2">Establishment Fee:</Typography>
-          <Typography variant="body2">{totalPayments}</Typography>
-        </Box>
+          <Typography variant="body2">{singleAppointment}</Typography>
+        </Box> */}
 
+        {singleAppointment?.payments.map((payment) => (
+          <Box display="flex" justifyContent="space-between" gap={1}>
+            <Typography variant="body2">
+              {formatPaymentMethod(payment.payment_method)} -
+              {dateAndTimeFormat(payment.created_at)}
+            </Typography>
+
+            <Typography variant="body2">
+              {numberWithCommas(payment.amount)}
+            </Typography>
+          </Box>
+        ))}
         <Box display="flex" justifyContent="space-between">
           <Typography variant="body2">Total:</Typography>
-          <Typography variant="body2">{totalPayments}</Typography>
+          <Typography variant="body2">
+            {numberWithCommas(totalAmount)}
+          </Typography>
         </Box>
-
-        <Box
-          display="flex"
-          justifyContent="space-between"
-          sx={{ mt: 2, backgroundColor: "#f0f0f0", p: 1 }}
-        >
-          <Typography variant="body2">Paid:</Typography>
-          <Typography variant="body2">{totalPayments}</Typography>
+        <Box display="flex" justifyContent="space-between">
+          <Typography variant="body2">Balance</Typography>
+          <Typography variant="body2">
+            {numberWithCommas(
+              parseInt(singleAppointment?.amount || "0") - totalAmount
+            )}
+          </Typography>
         </Box>
-
         <Divider sx={{ my: 2 }} />
 
         <Typography variant="body2" align="right" sx={{ fontStyle: "italic" }}>
           For Authorized Office
         </Typography>
-      </Paper>
+      </Box>
       <Button
         variant="contained"
         color="primary"

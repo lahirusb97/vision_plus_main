@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Box,
   TextField,
@@ -11,19 +11,15 @@ import {
   TableRow,
   Paper,
   IconButton,
-  Typography,
 } from "@mui/material";
-import { Edit, Print, Search } from "@mui/icons-material";
+import { Edit, Print } from "@mui/icons-material";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import AutocompleteInputField from "../../components/inputui/DropdownInput";
 import useGetDoctors from "../../hooks/useGetDoctors";
-import axiosClient from "../../axiosClient";
-import { cleanParams } from "../../utils/cleanParams";
-import dayjs from "dayjs";
 import useGetChannelDetails from "../../hooks/useGetChannelDetails";
 import HighlightedDatePicker from "../../components/HighlightedDatePicker";
+import { useNavigate } from "react-router";
 
 interface ChannelData {
   id: number;
@@ -37,25 +33,29 @@ interface ChannelData {
 }
 
 function ChannelDetails() {
+  const navigate = useNavigate();
   const { data: doctorList, loading: loadingDoctors } = useGetDoctors();
   const [searchText, setSearchText] = useState<string>("");
   //handle Filters
   const [dateInput, setDateInput] = useState<string | null>(null);
   const [doctorInput, setDoctorInput] = useState<number | undefined>(undefined);
 
-  const [loadingchannelList, SetloadingchannelList] = useState(true);
-  const { channelList, loading, searchChannels } = useGetChannelDetails();
+  const {
+    channelList,
+    loading: loadingchannelList,
+    searchChannels,
+  } = useGetChannelDetails();
 
   //handle Filters
 
   const handleFilter = () => {
-    console.log("Filter clicked", doctorInput, dateInput, searchText);
     searchChannels({
       doctor: doctorInput,
       date: dateInput,
       search: searchText,
     });
   };
+
   return (
     <Box sx={{ padding: 3 }}>
       <Box
@@ -170,10 +170,20 @@ function ChannelDetails() {
                 }}
               >
                 <TableCell sx={tableStyles}>
-                  <IconButton size="small">
+                  <IconButton
+                    onClick={() =>
+                      navigate(`/channel/patient_shedule/${row.id}`)
+                    }
+                    size="small"
+                  >
                     <Edit sx={{ fontSize: 15 }} />
                   </IconButton>
-                  <IconButton size="small">
+                  <IconButton
+                    onClick={() =>
+                      navigate(`/channel/channel_invoice/${row.id}`)
+                    }
+                    size="small"
+                  >
                     <Print sx={{ fontSize: 15 }} />
                   </IconButton>
                 </TableCell>
@@ -207,6 +217,13 @@ function ChannelDetails() {
             {loadingchannelList && (
               <TableRow>
                 <TableCell colSpan={8}>Loading...</TableCell>
+              </TableRow>
+            )}
+            {channelList.length === 0 && (
+              <TableRow>
+                <TableCell align="center" colSpan={9}>
+                  No data...
+                </TableCell>
               </TableRow>
             )}
           </TableBody>
