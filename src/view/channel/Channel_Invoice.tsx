@@ -57,19 +57,26 @@ const ChannelInvoice = () => {
         <Typography fontWeight={"bold"} variant="body2" align="center">
           (CHANNELED CONSULTATIONS SERVICE)
         </Typography>
-        <Typography variant="body2" align="center" gutterBottom>
+        <Typography variant="body2" align="center">
           34, Aluthgama Road, Mathugama
         </Typography>
 
-        <Box sx={{ mt: 2 }}>
-          <Typography variant="body2">
-            Date: {singleAppointment?.date}
-          </Typography>
-          <Typography variant="body2">
-            Tel: 034 - 2247466 / 071 - 7513639
+        <Typography variant="body2" align="center" gutterBottom>
+          Tel: 034 - 2247466 / 071 - 7513639
+        </Typography>
+
+        <Box display="flex" justifyContent="space-between">
+          <Typography variant="body2">Channele No:</Typography>
+          <Typography variant="h6" fontWeight={"bold"}>
+            {1}
           </Typography>
         </Box>
-
+        <Box display="flex" justifyContent="space-between">
+          <Typography variant="body2">Channel Date:</Typography>
+          <Typography fontSize={"1.5 rem"} fontWeight={"bold"} variant="h6">
+            {singleAppointment?.date}/{singleAppointment?.time}
+          </Typography>
+        </Box>
         <Box display="flex" justifyContent="space-between" sx={{ mt: 2 }}>
           <Typography variant="body2">Channel Id:</Typography>
           <Typography variant="body2">{singleAppointment?.id}</Typography>
@@ -83,18 +90,6 @@ const ChannelInvoice = () => {
         </Box>
 
         <Divider sx={{ my: 2 }} />
-
-        <Box display="flex" justifyContent="space-between">
-          <Typography variant="body2">Channele No:</Typography>
-          <Typography variant="body2">{1}</Typography>
-        </Box>
-
-        <Box display="flex" justifyContent="space-between">
-          <Typography variant="body2">Channel Date:</Typography>
-          <Typography variant="body2">
-            {singleAppointment?.date}/{singleAppointment?.time}
-          </Typography>
-        </Box>
 
         <Divider sx={{ my: 2 }} />
 

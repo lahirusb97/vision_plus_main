@@ -88,7 +88,7 @@ const CheckInIndex = () => {
                     sx={{ p: 0 }}
                     onClick={() =>
                       navigate(
-                        `/transaction/factory_order/invoice/${row.invoice_number}`
+                        `/transaction/factory_order/create/2/view/?invoice_number=${row.invoice_number}`
                       )
                     }
                     color="inherit"

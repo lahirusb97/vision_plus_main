@@ -9,6 +9,8 @@ import RepaymentForm from "../../view/transaction/RepaymentForm";
 import FactoryOrder from "../../view/transaction/factory_order/FactoryOrder";
 import FactoryOrderUpdate from "../../view/transaction/factory_order/FactoryOrderUpdate";
 import NormalInvoice from "../../view/transaction/normal_order/NormalInvoice";
+import NormalOrderInvoice from "../../view/transaction/normal_order/NormalOrderInvoice";
+import InvoiceSearchIndex from "../../view/transaction/InvoiceSearchIndex";
 
 export const transactionRoutes: RouteObject[] = [
   {
@@ -52,8 +54,8 @@ export const transactionRoutes: RouteObject[] = [
         element: <NormalInvoice />,
       },
       {
-        path: ":id",
-        element: <>s</>,
+        path: ":invoice_number",
+        element: <NormalOrderInvoice />,
       },
     ],
   },
@@ -84,5 +86,9 @@ export const transactionRoutes: RouteObject[] = [
         element: <RepaymentForm />,
       },
     ],
+  },
+  {
+    path: "invoice/search",
+    element: <InvoiceSearchIndex />,
   },
 ];
