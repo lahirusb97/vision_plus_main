@@ -70,7 +70,7 @@ const Channel = () => {
     try {
       const response = await axiosClient.post("/channel/", payload);
       toast.success("Channel created successfully");
-      navigate(`${response.data.id}`);
+      navigate(`/channel/channel_invoice/${response.data.appointment.id}`); //!! apointment ID
     } catch (error) {
       extractErrorMessage(error);
       console.log(error);

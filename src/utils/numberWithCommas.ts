@@ -1,4 +1,4 @@
-export function numberWithCommas(value: number) {
+export function numberWithCommas(value: number | string | undefined) {
   // Convert value to an integer
   if (typeof value == "number") {
     return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -7,7 +7,7 @@ export function numberWithCommas(value: number) {
     return parsedValue.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
 
-  if (isNaN(value)) return "Invalid number";
+  if (value === undefined || isNaN(value)) return "Invalid number";
 
   // Format with commas
 }

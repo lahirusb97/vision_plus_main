@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import { extractErrorMessage } from "../utils/extractErrorMessage";
 import { getUserCurentBranch } from "../utils/authDataConver";
 import toast from "react-hot-toast";
+import axiosClient from "../axiosClient";
 
 type ChannelModel = {
   id: number;
@@ -17,12 +18,13 @@ type ChannelModel = {
 
 type ChannelSearchParams = {
   doctor?: number;
-  date?: string;
+  date?: string | null;
+  search?: string;
 };
 
 const useGetChannelDetails = () => {
   const [channelList, setChannelList] = useState<ChannelModel[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
   const [searchParams, setSearchParams] = useState<ChannelSearchParams>({});
   const [initialLoad, setInitialLoad] = useState(true);
@@ -37,6 +39,7 @@ const useGetChannelDetails = () => {
           branch_id: getUserCurentBranch()?.id,
           ...(searchParams.doctor ? { doctor: searchParams.doctor } : {}),
           ...(searchParams.date ? { date: searchParams.date } : {}),
+          ...(searchParams.search ? { search: searchParams.search } : {}),
         },
       });
 
