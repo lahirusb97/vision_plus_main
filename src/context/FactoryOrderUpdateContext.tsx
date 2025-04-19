@@ -1,5 +1,5 @@
 import { createContext, ReactNode, useContext, useState } from "react";
-import { useParams } from "react-router";
+import { useLocation, useParams } from "react-router";
 import useGetSingleRefractionNumber from "../hooks/useGetSingleRefractionNumber";
 import useGetRefractionDetails from "../hooks/useGetRefractionDetails";
 import { RefractionDetailModel } from "../model/RefractionDetailModel";
@@ -7,6 +7,7 @@ import { RefractionNumberFormModel } from "../validations/schemaRefractionNumber
 import { RefractionNumberModel } from "../model/RefractionModel";
 import { Invoice } from "../model/SingleInvoiceModel";
 import useGetSingleInvoiceDetail from "../hooks/useGetSingleInvoiceDetail";
+import useGetSingleInvoice from "../hooks/useGetSingleInvoice";
 interface FactoryOrderContext {
   refractionDetail: RefractionDetailModel | null;
   invoiceDetail: Invoice | null;
@@ -28,11 +29,17 @@ const FactoryOrderUpdateContext = createContext<FactoryOrderContext>({
 export function FactoryOrderUpdateProvider({
   children,
 }: FactoryOrderProviderProps) {
-  const { id } = useParams();
-  const { invoiceDetail, invoiceDetailLoading, invoiceDetailError } =
-    useGetSingleInvoiceDetail(parseInt(id ?? ""));
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+
+  const {
+    invoiceData: invoiceDetail,
+    invoiceLoading: invoiceDetailLoading,
+    invoiceError: invoiceDetailError,
+  } = useGetSingleInvoice(queryParams.get("invoice_number") || "", "factory");
 
   const refractionDetail = invoiceDetail?.refraction_details;
+  console.log(invoiceDetail);
 
   return (
     <FactoryOrderUpdateContext.Provider

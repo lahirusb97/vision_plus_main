@@ -26,6 +26,7 @@ const flexBoxStyle = {
   flexDirection: "column",
   gap: 2,
   padding: 2,
+  minWidth: "300px",
 };
 
 export default function DoctorArival() {
@@ -53,7 +54,6 @@ export default function DoctorArival() {
       date: arivalDate,
       start_time: arivalTime,
     };
-    console.log(payload);
 
     try {
       await postHandler("doctor-schedule/create/", payload);
@@ -70,7 +70,7 @@ export default function DoctorArival() {
       onSubmit={handleSubmit(onSubmit)}
       sx={flexBoxStyle}
     >
-      <Typography variant="h6">Doctor Arrival Form</Typography>
+      <Typography variant="h6">Doctor Arrival Schedule</Typography>
 
       <Controller
         name="doctor_id" // Field name in the form

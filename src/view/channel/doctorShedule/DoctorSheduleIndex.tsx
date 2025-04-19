@@ -1,22 +1,12 @@
-import React, { useState } from "react";
 import DoctorArival from "./DoctorArival";
 import DoctorAbsent from "./DoctorAbsent";
-import HighlightedDatePicker from "../../../components/HighlightedDatePicker";
 
+import { Box } from "@mui/material";
 export default function DoctorSheduleIndex() {
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
-  console.log("Selected Date:", selectedDate);
-
   return (
-    <div>
+    <Box sx={{ display: "flex", gap: 2, mt: 4 }}>
       <DoctorArival />
       <DoctorAbsent />
-      <HighlightedDatePicker
-        doctorId={1} // Replace with actual doctor ID
-        selectedDate={selectedDate}
-        onDateChange={(date) => setSelectedDate(date)}
-        label="Appointment Date"
-      />
-    </div>
+    </Box>
   );
 }

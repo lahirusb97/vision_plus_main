@@ -16,14 +16,16 @@ import OrderForm from "../../../components/OrderForm";
 import { dateAndTimeFormat } from "../../../utils/dateAndTimeFormat";
 import { numberWithCommas } from "../../../utils/numberWithCommas";
 import { calculateTotals } from "../../../utils/calculations";
+import useGetSingleInvoice from "../../../hooks/useGetSingleInvoice";
 
 const InvoiceView = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const componentRef = useRef(null);
   const reactToPrintFn = useReactToPrint({ contentRef: componentRef });
-  const { invoiceDetail, invoiceDetailLoading } = useGetSingleInvoiceDetail(
-    parseInt(queryParams.get("invoice_number") ?? "")
+  const { invoiceData: invoiceDetail, invoiceLoading } = useGetSingleInvoice(
+    queryParams.get("invoice_number") || "",
+    "factory"
   );
 
   const DateView = (date: string) => {
@@ -34,7 +36,7 @@ const InvoiceView = () => {
     });
   };
 
-  if (invoiceDetailLoading) {
+  if (invoiceLoading) {
     return (
       <Box
         display="flex"
@@ -198,9 +200,10 @@ const InvoiceView = () => {
             {invoiceDetail?.order_details.order_items
               .filter((items) => items.lens !== null)
               .map(
-                (item, index) =>
+                (item) =>
                   item.lens_detail && (
                     <Box
+                      key={item.lens_detail.id}
                       sx={{
                         textAlign: "left",
                         fontSize: ".9rem",
@@ -250,10 +253,11 @@ const InvoiceView = () => {
               .filter((items) => items.external_lens !== null)
               .slice(0, 1)
               .map(
-                (item, index) =>
+                (item) =>
                   item.external_lens && (
                     <>
                       <Box
+                        key={item.id}
                         sx={{
                           textAlign: "left",
                           fontSize: ".9rem",
@@ -300,7 +304,7 @@ const InvoiceView = () => {
               (item, index) =>
                 item.frame_detail && (
                   <Box
-                    key={index}
+                    key={item.id}
                     sx={{
                       gridColumn: "1 / -1",
                       display: "grid",

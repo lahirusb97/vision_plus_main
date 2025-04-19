@@ -18,13 +18,13 @@ interface HighlightedDatePickerProps {
   doctorId?: number; // Make doctorId configurable
 }
 
-const HighlightedPickersDay = styled(PickersDay)<PickersDayProps<any>>(
+const HighlightedPickersDay = styled(PickersDay)<PickersDayProps<Dayjs>>(
   ({ theme }) => ({
-    backgroundColor: "#FFE082", // amber[200]
-    color: "#000",
-    borderRadius: theme.shape.borderRadius,
-    "&:hover": {
-      backgroundColor: "#FFD54F", // amber[300]
+    backgroundColor: "#C41E3A", // or "#FFE082"
+    color: theme.palette.getContrastText(theme.palette.primary.light),
+    fontWeight: "bold",
+    "&:hover, &:focus": {
+      backgroundColor: theme.palette.primary.main,
     },
     "&.Mui-selected": {
       backgroundColor: theme.palette.primary.main,
@@ -111,6 +111,9 @@ export default function HighlightedDatePicker({
           },
         }}
         slotProps={{
+          textField: {
+            size: "small", // <-- Makes the input field compact
+          },
           popper: {
             sx: {
               "& .MuiPickersDay-root": {
