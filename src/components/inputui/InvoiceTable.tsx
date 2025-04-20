@@ -77,7 +77,17 @@ export default function InvoiceTable() {
           {Object.values(FrameInvoiceList)?.map((row, index) => (
             <TableRow key={index}>
               <TableCell>
-                <IconButton onClick={() => dispatch(removeFrame(row.id))}>
+                <IconButton
+                  onClick={() => {
+                    if (
+                      window.confirm(
+                        "Are you sure you want to delete this item?"
+                      )
+                    ) {
+                      dispatch(removeFrame(row.id));
+                    }
+                  }}
+                >
                   <Delete color="error" />
                 </IconButton>
               </TableCell>
@@ -94,7 +104,17 @@ export default function InvoiceTable() {
           {Object.values(LenseInvoiceList)?.map((row, index) => (
             <TableRow key={index}>
               <TableCell>
-                <IconButton onClick={() => dispatch(removeLense(row.id))}>
+                <IconButton
+                  onClick={() => {
+                    if (
+                      window.confirm(
+                        "Are you sure you want to delete this item?"
+                      )
+                    ) {
+                      dispatch(removeLense(row.id));
+                    }
+                  }}
+                >
                   <Delete color="error" />
                 </IconButton>
               </TableCell>
@@ -128,7 +148,15 @@ export default function InvoiceTable() {
             <TableRow key={index}>
               <TableCell>
                 <IconButton
-                  onClick={() => dispatch(removeexternalLense(row.id))}
+                  onClick={() => {
+                    if (
+                      window.confirm(
+                        "Are you sure you want to Remove this item?"
+                      )
+                    ) {
+                      dispatch(removeexternalLense(row.id));
+                    }
+                  }}
                 >
                   <Delete color="error" />
                 </IconButton>

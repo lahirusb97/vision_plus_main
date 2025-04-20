@@ -33,7 +33,7 @@ export default function RefractionGenerated() {
         }}
       >
         <Typography variant="h5" fontWeight="bold" color="primary" gutterBottom>
-          ✅ Refraction Created Successfully!
+          Refraction Created Successfully!
         </Typography>
 
         <Divider sx={{ my: 2 }} />
@@ -65,7 +65,7 @@ export default function RefractionGenerated() {
           </Box>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             <Typography variant="body1" gutterBottom>
-              <strong>Nice </strong>
+              <strong>Nic </strong>
             </Typography>
             <Typography variant="body1" gutterBottom>
               {singlerefractionNumber?.nic}
@@ -75,15 +75,9 @@ export default function RefractionGenerated() {
 
         <Divider sx={{ my: 2 }} />
         <Button
+          size="small"
           variant="contained"
           fullWidth
-          sx={{
-            padding: 1.5,
-            fontSize: "1rem",
-            fontWeight: "bold",
-            borderRadius: 2,
-            marginTop: 2,
-          }}
           onClick={() => navigate(-1)}
         >
           OK

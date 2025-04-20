@@ -1,4 +1,3 @@
-// ExpensesTable.tsx
 import {
   Skeleton,
   Table,
@@ -9,19 +8,28 @@ import {
   TableRow,
   Paper,
 } from "@mui/material";
+import dayjs from "dayjs";
+
+interface ExpenseItem {
+  id: number;
+  created_at: string;
+  main_category_name: string;
+  sub_category_name: string;
+  amount: string;
+  note: string;
+}
 
 interface ExpensesTableProps {
-  data: Array<{
-    time: string;
-    mainCategory: string;
-    subCategory: string;
-    description: string;
-    amount: string;
-  }>;
+  data: ExpenseItem[];
   loading: boolean;
 }
 
 export const ExpensesTable = ({ data, loading }: ExpensesTableProps) => {
+  // Format time from ISO string to readable format
+  const formatTime = (isoString: string) => {
+    return dayjs(isoString).format("h:mm A");
+  };
+
   return (
     <TableContainer component={Paper}>
       <Table size="small">
@@ -30,8 +38,8 @@ export const ExpensesTable = ({ data, loading }: ExpensesTableProps) => {
             <TableCell>Time</TableCell>
             <TableCell>Main Category</TableCell>
             <TableCell>Sub Category</TableCell>
-            <TableCell>Description</TableCell>
-            <TableCell>Amount</TableCell>
+            <TableCell>Note</TableCell>
+            <TableCell>Amount (Rs.)</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -56,13 +64,13 @@ export const ExpensesTable = ({ data, loading }: ExpensesTableProps) => {
               </TableCell>
             </TableRow>
           ) : (
-            data.map((row, index) => (
-              <TableRow key={index}>
-                <TableCell>{row.time}</TableCell>
-                <TableCell>{row.mainCategory}</TableCell>
-                <TableCell>{row.subCategory}</TableCell>
-                <TableCell>{row.description}</TableCell>
-                <TableCell>{row.amount}</TableCell>
+            data.map((item) => (
+              <TableRow key={item.id}>
+                <TableCell>{formatTime(item.created_at)}</TableCell>
+                <TableCell>{item.main_category_name}</TableCell>
+                <TableCell>{item.sub_category_name}</TableCell>
+                <TableCell>{item.note}</TableCell>
+                <TableCell>{item.amount}</TableCell>
               </TableRow>
             ))
           )}

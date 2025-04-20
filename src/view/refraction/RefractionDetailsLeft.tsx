@@ -18,6 +18,7 @@ export default function RefractionDetailsLeft() {
       >
         <TextField
           {...register("hb_rx_left_dist")}
+          sx={inputStyle}
           size="small"
           label={"Hb Rx dist"}
           type="text"
@@ -30,6 +31,7 @@ export default function RefractionDetailsLeft() {
           {...register("hb_rx_left_near")}
           size="small"
           label={"Hb Rx near"}
+          sx={inputStyle}
           type="text"
           inputProps={{ step: 0.25 }}
           InputLabelProps={{
@@ -40,6 +42,7 @@ export default function RefractionDetailsLeft() {
           {...register("auto_ref_left")}
           size="small"
           label={"Auto Ref"}
+          sx={inputStyle}
           type="text"
           inputProps={{ step: 0.25 }}
           InputLabelProps={{
@@ -50,6 +53,7 @@ export default function RefractionDetailsLeft() {
           {...register("ntc_left")}
           size="small"
           label={"NTC"}
+          sx={inputStyle}
           type="text"
           inputProps={{ step: 0.25 }}
           InputLabelProps={{
@@ -59,6 +63,7 @@ export default function RefractionDetailsLeft() {
         <TextField
           {...register("va_without_glass_left")}
           size="small"
+          sx={inputStyle}
           label={"VA Without Glass"}
           type="text"
           inputProps={{ step: 0.25 }}
@@ -69,6 +74,7 @@ export default function RefractionDetailsLeft() {
         <TextField
           {...register("va_without_ph_left")}
           size="small"
+          sx={inputStyle}
           label={"VA with P/H"} /* chalani- labelname change*/
           type="text"
           inputProps={{ step: 0.25 }}
@@ -79,6 +85,7 @@ export default function RefractionDetailsLeft() {
         <TextField
           {...register("va_with_glass_left")}
           size="small"
+          sx={inputStyle}
           label={"VA With Glass"}
           type="text"
           inputProps={{ step: 0.25 }}
@@ -96,7 +103,7 @@ export default function RefractionDetailsLeft() {
                 placeholder=" SPH"
                 size="small"
                 label="SPH"
-                sx={{ width: widthInput }}
+                sx={{ width: widthInput, ...inputStyle }}
                 InputLabelProps={{
                   shrink: true,
                 }}
@@ -106,10 +113,11 @@ export default function RefractionDetailsLeft() {
                 inputProps={{ step: 0.25 }}
                 type="number"
                 {...register("left_eye_dist_cyl", { valueAsNumber: true })}
+                error={watch("left_eye_dist_cyl") > 0}
                 placeholder=" CYL"
                 size="small"
                 label="CYL"
-                sx={{ width: widthInput }}
+                sx={{ width: widthInput, ...inputStyle }}
                 InputLabelProps={{
                   shrink: true,
                 }}
@@ -122,7 +130,7 @@ export default function RefractionDetailsLeft() {
                 placeholder=" AXIS"
                 size="small"
                 label="AXIS"
-                sx={{ width: widthInput }}
+                sx={{ width: widthInput, ...inputStyle }}
                 InputLabelProps={{
                   shrink: true,
                 }}
@@ -139,7 +147,7 @@ export default function RefractionDetailsLeft() {
               placeholder=" NEAR"
               size="small"
               label="NEAR"
-              sx={{ width: widthInput }}
+              sx={{ width: widthInput, ...inputStyle }}
               InputLabelProps={{
                 shrink: true,
               }}
@@ -161,3 +169,8 @@ export default function RefractionDetailsLeft() {
     </div>
   );
 }
+const inputStyle = {
+  "& .MuiInputBase-root": {
+    height: 32,
+  },
+};

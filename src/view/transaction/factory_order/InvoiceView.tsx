@@ -27,6 +27,7 @@ const InvoiceView = () => {
     queryParams.get("invoice_number") || "",
     "factory"
   );
+  console.log("RefractionDetails", invoiceDetail);
 
   const DateView = (date: string) => {
     return new Date(date).toLocaleString("default", {
@@ -67,6 +68,7 @@ const InvoiceView = () => {
       (items) => items.lens !== null
     )
   );
+  console.log(invoiceDetail);
 
   return (
     <div>
@@ -197,25 +199,27 @@ const InvoiceView = () => {
                 instockLenseTotal.subtotal > 0 ? "1px solid #000" : "none",
             }}
           >
-            {invoiceDetail?.order_details.order_items
-              .filter((items) => items.lens !== null)
-              .map(
-                (item) =>
-                  item.lens_detail && (
-                    <Box
-                      key={item.lens_detail.id}
-                      sx={{
-                        textAlign: "left",
-                        fontSize: ".9rem",
-                        paddingY: "1mm",
-                      }}
-                    >
-                      {item.lens_detail.brand_name}/
-                      {item.lens_detail.coating_name}/
-                      {item.lens_detail.type_name}
-                    </Box>
-                  )
-              )}
+            {
+              invoiceDetail?.order_details.order_items
+                .filter((items) => items.lens !== null)
+                .map(
+                  (item) =>
+                    item.lens_detail && (
+                      <Box
+                        key={item.lens_detail.id}
+                        sx={{
+                          textAlign: "left",
+                          fontSize: ".9rem",
+                          paddingY: "1mm",
+                        }}
+                      >
+                        {item.lens_detail.brand_name}/
+                        {item.lens_detail.coating_name}/
+                        {item.lens_detail.type_name}
+                      </Box>
+                    )
+                )[0]
+            }
             {invoiceDetail.order_details.order_items.filter(
               (items) => items.lens !== null
             ).length > 0 && (
