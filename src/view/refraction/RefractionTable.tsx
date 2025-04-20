@@ -52,6 +52,7 @@ export default function RefractionTable() {
       navigate(`/refraction/${selectedRow}/`);
     }
   };
+
   return (
     <Box sx={{ padding: 2 }}>
       {/* Search Bar */}
