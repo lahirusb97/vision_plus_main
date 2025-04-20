@@ -25,17 +25,18 @@ import toast from "react-hot-toast";
 import { AxiosError } from "axios";
 import axiosClient from "../../axiosClient";
 import useGetSingleInvoice from "../../hooks/useGetSingleInvoice";
+import { extractErrorMessage } from "../../utils/extractErrorMessage";
 
 const RepaymentForm = () => {
   const navigate = useNavigate();
   const { invoice_number } = useParams();
-  const { invoicePayments, invoicePaymentsLoading, invoicePaymentsError } =
-    useGetInvoicePayments(null);
-
   const { invoiceData: invoiceDetail, invoiceLoading } = useGetSingleInvoice(
     invoice_number || "",
     "factory"
   );
+  const { invoicePayments, invoicePaymentsLoading, invoicePaymentsError } =
+    useGetInvoicePayments(invoiceDetail ? invoiceDetail?.order : null);
+
   const [secondPayment, setSecondPayment] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const fullAmount = 4000;
@@ -57,7 +58,6 @@ const RepaymentForm = () => {
       })
     ),
   });
-  console.log(invoiceDetail);
 
   const handleSecondPaymentChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSecondPayment(event.target.value);
@@ -82,6 +82,7 @@ const RepaymentForm = () => {
           transaction_status: "success", // Assuming success by default
         }));
     }
+    console.log(invoicePayments);
 
     try {
       const postData = {
@@ -91,16 +92,14 @@ const RepaymentForm = () => {
           ...formatApiResponseToRequest(invoicePayments),
         ],
       };
+      console.log("postData", postData);
       await axiosClient.put(`/orders/update-payments/`, postData);
 
       toast.success("Invoice Payment Updated...");
       window.location.reload();
     } catch (error) {
-      if (error instanceof AxiosError) {
-        toast.error(error.response?.data?.error || "Something went wrong");
-      }
+      extractErrorMessage(error);
     }
-    console.log(data);
   };
   return (
     <Container maxWidth="md" sx={{ borderRadius: 2, maxWidth: "1200px" }}>
