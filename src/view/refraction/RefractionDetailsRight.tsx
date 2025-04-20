@@ -32,6 +32,11 @@ export default function RefractionDetailsRight() {
             label={"Hb Rx dist"}
             type="text"
             InputLabelProps={{ shrink: Boolean(watch("hb_rx_right_dist")) }}
+            sx={{
+              "& .MuiInputBase-root": {
+                height: 32,
+              },
+            }}
           />
           <TextField
             inputProps={{ step: 0.25 }}
@@ -40,6 +45,11 @@ export default function RefractionDetailsRight() {
             label={"Hb Rx near"}
             type="text"
             InputLabelProps={{ shrink: Boolean(watch("hb_rx_right_near")) }}
+            sx={{
+              "& .MuiInputBase-root": {
+                height: 32,
+              },
+            }}
           />
           <TextField
             inputProps={{ step: 0.25 }}
@@ -48,6 +58,11 @@ export default function RefractionDetailsRight() {
             label={"Auto Ref"}
             type="text"
             InputLabelProps={{ shrink: Boolean(watch("auto_ref_right")) }}
+            sx={{
+              "& .MuiInputBase-root": {
+                height: 32,
+              },
+            }}
           />
           <TextField
             inputProps={{ step: 0.25 }}
@@ -56,6 +71,11 @@ export default function RefractionDetailsRight() {
             label={"NTC"}
             type="text"
             InputLabelProps={{ shrink: Boolean(watch("ntc_right")) }}
+            sx={{
+              "& .MuiInputBase-root": {
+                height: 32,
+              },
+            }}
           />
           <TextField
             inputProps={{ step: 0.25 }}
@@ -66,6 +86,11 @@ export default function RefractionDetailsRight() {
             InputLabelProps={{
               shrink: Boolean(watch("va_without_glass_right")),
             }}
+            sx={{
+              "& .MuiInputBase-root": {
+                height: 32,
+              },
+            }}
           />
           <TextField
             inputProps={{ step: 0.25 }}
@@ -74,6 +99,11 @@ export default function RefractionDetailsRight() {
             label={"VA with P/H"} /* chalani- labelname change*/
             type="text"
             InputLabelProps={{ shrink: Boolean(watch("va_without_ph_right")) }}
+            sx={{
+              "& .MuiInputBase-root": {
+                height: 32,
+              },
+            }}
           />
           <TextField
             inputProps={{ step: 0.25 }}
@@ -82,6 +112,11 @@ export default function RefractionDetailsRight() {
             label={"VA With Glass"}
             type="text"
             InputLabelProps={{ shrink: Boolean(watch("va_with_glass_right")) }}
+            sx={{
+              "& .MuiInputBase-root": {
+                height: 32,
+              },
+            }}
           />
         </Box>
         <Paper variant="elevation" sx={{ bgcolor: "#f5f5f5" }}>
@@ -94,7 +129,12 @@ export default function RefractionDetailsRight() {
                 placeholder=" SPH"
                 size="small"
                 label="SPH"
-                sx={{ width: widthInput }}
+                sx={{
+                  width: widthInput,
+                  "& .MuiInputBase-root": {
+                    height: 32,
+                  },
+                }}
                 InputLabelProps={{
                   shrink: true,
                 }}
@@ -105,9 +145,15 @@ export default function RefractionDetailsRight() {
                 type="number"
                 {...register("right_eye_dist_cyl", { valueAsNumber: true })}
                 placeholder=" CYL"
+                error={watch("right_eye_dist_cyl") > 0}
                 size="small"
                 label="CYL"
-                sx={{ width: widthInput }}
+                sx={{
+                  width: widthInput,
+                  "& .MuiInputBase-root": {
+                    height: 32,
+                  },
+                }}
                 InputLabelProps={{
                   shrink: true,
                 }}
@@ -120,7 +166,12 @@ export default function RefractionDetailsRight() {
                 placeholder=" AXIS"
                 size="small"
                 label="AXIS"
-                sx={{ width: widthInput }}
+                sx={{
+                  width: widthInput,
+                  "& .MuiInputBase-root": {
+                    height: 32,
+                  },
+                }}
                 InputLabelProps={{
                   shrink: true,
                 }}
@@ -144,7 +195,12 @@ export default function RefractionDetailsRight() {
               placeholder=" NEAR"
               size="small"
               label="NEAR"
-              sx={{ width: widthInput }}
+              sx={{
+                width: widthInput,
+                "& .MuiInputBase-root": {
+                  height: 32,
+                },
+              }}
               InputLabelProps={{
                 shrink: true,
               }}
@@ -158,7 +214,7 @@ export default function RefractionDetailsRight() {
                 color: "white",
               }}
             >
-              <Typography>right Side</Typography>
+              <Typography>Right Side</Typography>
             </Box>
           </Box>
         </Paper>

@@ -73,8 +73,11 @@ export default function RefractionNumber() {
           borderRadius: 2,
         }}
       >
-        <Typography variant="h6" gutterBottom align="center">
-          Customer Details
+        <Typography
+          sx={{ fontWeight: "bold", textAlign: "center" }}
+          variant="h6"
+        >
+          Refraction Genarate
         </Typography>
         <form onSubmit={handleSubmit(shandleSubmit)}>
           <TextField

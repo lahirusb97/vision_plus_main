@@ -205,7 +205,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ invoiceDetail }) => {
                           fontSize: "1em",
                         }}
                       >
-                        {RefractionDetails?.right_eye_dist_axis} {/* axis */}
+                        {RefractionDetails?.right_eye_dist_axis}
                       </TableCell>
 
                       {/* Left Eye Data */}
@@ -247,7 +247,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ invoiceDetail }) => {
                           fontSize: "1em",
                         }}
                       >
-                        {RefractionDetails?.right_eye_near_sph}
+                        {RefractionDetails?.right_eye_near_sph || "\u00A0"}
                       </TableCell>
                       <TableCell
                         colSpan={2}
@@ -260,7 +260,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ invoiceDetail }) => {
                           fontSize: "1em",
                         }}
                       >
-                        {RefractionDetails?.left_eye_near_sph}
+                        {RefractionDetails?.left_eye_near_sph || "\u00A0"}
                       </TableCell>
                     </TableRow>
                   </TableBody>

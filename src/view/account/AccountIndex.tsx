@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Box, Button, Grid, Paper, Typography, Stack } from "@mui/material";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
@@ -12,6 +12,7 @@ import useChannelReports from "../../hooks/useChannelReports";
 import { ChannelPaymentTable } from "../../components/ChannelPaymentTable";
 import { ExpensesTable } from "../../components/ExpensesTable";
 import { InvoicePaymentTable } from "../../hooks/InvoicePaymentTable";
+import useGetExpenseReport from "../../hooks/useGetExpenseReport";
 
 const Dashboard = () => {
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(dayjs());
@@ -19,6 +20,7 @@ const Dashboard = () => {
   const { invoiceReport, invoiceReportLoading } = useInvoiceReports({
     payment_date: formattedDate,
   });
+  const { expenseList, handleDateRangeChange } = useGetExpenseReport();
   const { channelReports, channelReportsLoading, refreshChannelReports } =
     useChannelReports({
       payment_date: formattedDate,
@@ -33,6 +35,11 @@ const Dashboard = () => {
       amount: "Rs50",
     },
   ];
+  useEffect(() => {
+    if (selectedDate) {
+      handleDateRangeChange(formattedDate, formattedDate);
+    }
+  }, [selectedDate]);
 
   return (
     <Box p={2} minHeight="50vh">
@@ -44,7 +51,7 @@ const Dashboard = () => {
             <Typography variant="h6" gutterBottom>
               Expenses
             </Typography>
-            <ExpensesTable data={expensesData} loading={false} />
+            <ExpensesTable data={expenseList} loading={false} />
           </Paper>
 
           {/* Invoice Section */}

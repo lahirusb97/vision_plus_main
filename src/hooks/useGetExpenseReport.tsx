@@ -1,0 +1,114 @@
+import { useState, useEffect, useCallback } from "react";
+import axiosClient from "../axiosClient";
+import { extractErrorMessage } from "../utils/extractErrorMessage";
+import { getUserCurentBranch } from "../utils/authDataConver";
+import toast from "react-hot-toast";
+
+interface ExpenseItem {
+  id: number;
+  created_at: string;
+  main_category_name: string;
+  sub_category_name: string;
+  amount: string;
+  note: string;
+}
+
+interface ExpenseReportResponse {
+  total_expense: number;
+  expenses: ExpenseItem[];
+}
+
+interface ExpenseReportParams {
+  start_date: string;
+  end_date: string;
+  branch_id?: number;
+  main_category?: number;
+  sub_category?: number;
+}
+
+const useGetExpenseReport = () => {
+  const [reportParams, setReportParams] = useState<ExpenseReportParams>({
+    start_date: new Date().toISOString().split("T")[0], // Today's date as default
+    end_date: new Date().toISOString().split("T")[0],
+    branch_id: getUserCurentBranch()?.id,
+  });
+  const [expenseList, setExpenseList] = useState<ExpenseItem[]>([]);
+  const [totalExpense, setTotalExpense] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const loadData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axiosClient.get<ExpenseReportResponse>(
+        "/expenses/report/",
+        {
+          params: reportParams,
+        }
+      );
+
+      setExpenseList(response.data.expenses);
+      setTotalExpense(response.data.total_expense);
+
+      if (response.data.expenses.length === 0) {
+        toast.error("No expenses found for selected criteria");
+      } else {
+        toast.success(`Loaded ${response.data.expenses.length} expenses`);
+      }
+    } catch (err) {
+      setError(true);
+      setExpenseList([]);
+      setTotalExpense(0);
+      extractErrorMessage(err);
+      toast.error("Failed to load expense report");
+    } finally {
+      setLoading(false);
+    }
+  }, [reportParams]);
+
+  const handleDateRangeChange = (startDate: string, endDate: string) => {
+    setReportParams((prev) => ({
+      ...prev,
+      start_date: startDate,
+      end_date: endDate,
+    }));
+  };
+
+  const handleCategoryFilter = (
+    mainCategory?: number,
+    subCategory?: number
+  ) => {
+    setReportParams((prev) => ({
+      ...prev,
+      main_category: mainCategory,
+      sub_category: subCategory,
+    }));
+  };
+
+  const handleBranchChange = (branchId?: number) => {
+    setReportParams((prev) => ({
+      ...prev,
+      branch_id: branchId,
+    }));
+  };
+
+  // Load data when params change
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
+
+  return {
+    expenseList,
+    totalExpense,
+    loading,
+    error,
+    reportParams,
+    handleDateRangeChange,
+    handleCategoryFilter,
+    handleBranchChange,
+    refreshReport: loadData,
+  };
+};
+
+export default useGetExpenseReport;
