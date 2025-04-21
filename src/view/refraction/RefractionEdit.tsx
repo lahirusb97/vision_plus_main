@@ -29,6 +29,8 @@ import LoadingAnimation from "../../components/LoadingAnimation";
 import { useValidationState } from "../../hooks/validations/useValidationState";
 import VarificationDialog from "../../components/VarificationDialog";
 
+import { formatDateTimeByType } from "../../utils/formatDateTimeByType";
+
 export default function RefractionEdit() {
   //USER VALIDATION HOOKS
 
@@ -139,16 +141,6 @@ export default function RefractionEdit() {
   };
   //SEND DATA API CALLS
 
-  const visionTypeStringToNumber = (vision: string | null) => {
-    if (typeof vision === "string") {
-      return parseFloat(vision);
-    } else if (typeof vision === "number") {
-      return vision;
-    } else {
-      return null;
-    }
-  };
-
   useEffect(() => {
     if (refractionDetail && !refractionDetailLoading && refractionDetailExist) {
       methods.reset({
@@ -166,30 +158,16 @@ export default function RefractionEdit() {
         va_without_ph_left: refractionDetail.va_without_ph_left,
         va_with_glass_right: refractionDetail.va_with_glass_right,
         va_with_glass_left: refractionDetail.va_with_glass_left,
-        right_eye_dist_sph: visionTypeStringToNumber(
-          refractionDetail.right_eye_dist_sph
-        ),
-        right_eye_dist_cyl: visionTypeStringToNumber(
-          refractionDetail.right_eye_dist_cyl
-        ),
-        right_eye_dist_axis: visionTypeStringToNumber(
-          refractionDetail.right_eye_dist_axis
-        ),
-        right_eye_near_sph: visionTypeStringToNumber(
-          refractionDetail.right_eye_near_sph
-        ),
-        left_eye_dist_sph: visionTypeStringToNumber(
-          refractionDetail.left_eye_dist_sph
-        ),
-        left_eye_dist_cyl: visionTypeStringToNumber(
-          refractionDetail.left_eye_dist_cyl
-        ),
-        left_eye_dist_axis: visionTypeStringToNumber(
-          refractionDetail.left_eye_dist_axis
-        ),
-        left_eye_near_sph: visionTypeStringToNumber(
-          refractionDetail.left_eye_near_sph
-        ),
+        right_eye_dist_sph: refractionDetail.right_eye_dist_sph,
+        right_eye_dist_cyl: refractionDetail.right_eye_dist_cyl,
+        //VISION POWERS
+        right_eye_dist_axis: refractionDetail.right_eye_dist_axis,
+        right_eye_near_sph: refractionDetail.right_eye_near_sph,
+        left_eye_dist_sph: refractionDetail.left_eye_dist_sph,
+        left_eye_dist_cyl: refractionDetail.left_eye_dist_cyl,
+        left_eye_dist_axis: refractionDetail.left_eye_dist_axis,
+        left_eye_near_sph: refractionDetail.left_eye_near_sph,
+        //VISION POWERS
         shuger: refractionDetail.shuger,
         cataract: refractionDetail.cataract,
         refraction_remark: refractionDetail.refraction_remark,
@@ -211,14 +189,13 @@ export default function RefractionEdit() {
         <Box sx={{ minWidth: "1000px" }}>
           <form onSubmit={methods.handleSubmit(onSubmit)}>
             <Paper
+              variant="outlined"
               sx={{
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
-                padding: 0.5,
+                p: 1,
                 borderRadius: 2,
-                boxShadow: 2,
-                backgroundColor: "#f5f5f5",
               }}
             >
               {[
@@ -235,6 +212,13 @@ export default function RefractionEdit() {
                   label: "Mobile",
                   value: singlerefractionNumber?.customer_mobile,
                 },
+                {
+                  label: "Date",
+                  value: formatDateTimeByType(
+                    singlerefractionNumber?.created_at,
+                    "date"
+                  ),
+                },
               ].map((item, index) => (
                 <Box
                   key={index}
@@ -250,10 +234,11 @@ export default function RefractionEdit() {
                     sx={{
                       bgcolor: grey[700],
                       color: "white",
-                      p: "2px 6px",
+                      p: "2px 5px",
                       borderRadius: 1,
                       minWidth: "40px",
                       textAlign: "center",
+                      fontSize: "0.8rem",
                     }}
                   >
                     {item.label}
@@ -316,15 +301,7 @@ export default function RefractionEdit() {
                 }
                 label="Sugar"
               />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    {...methods.register("prescription")}
-                    checked={methods.watch("prescription") === true}
-                  />
-                }
-                label="Prescription"
-              />
+
               <FormControlLabel
                 control={
                   <Checkbox
@@ -333,6 +310,15 @@ export default function RefractionEdit() {
                   />
                 }
                 label="Cataract"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    {...methods.register("prescription")}
+                    checked={methods.watch("prescription") === true}
+                  />
+                }
+                label="Prescription"
               />
               <SaveButton btnText="Save" loading={false} />
             </Box>

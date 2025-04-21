@@ -28,7 +28,7 @@ const LoginProtectedRoute: React.FC = () => {
           justifyContent: "center", // Horizontally center
           maxWidth: "1200px",
           minWidth: "1000px",
-          paddingTop: 2,
+          paddingTop: 1,
         }}
       >
         <Outlet />

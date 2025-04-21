@@ -5,6 +5,7 @@ interface RefractionNumberModel {
   nic: string;
   refraction_number: string;
   branch_id: number;
+  created_at: string;
 }
 
 export type { RefractionNumberModel };

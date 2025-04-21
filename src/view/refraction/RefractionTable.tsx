@@ -16,10 +16,12 @@ import {
   Skeleton,
 } from "@mui/material";
 import { useNavigate } from "react-router";
-import { Refresh } from "@mui/icons-material";
 import useGetRefraction from "../../hooks/useGetRefraction";
 import EditIcon from "@mui/icons-material/Edit";
 import { teal } from "@mui/material/colors";
+import { dateAndTimeFormat } from "../../utils/dateAndTimeFormat";
+import TitleText from "../../components/TitleText";
+import { formatDateTimeByType } from "../../utils/formatDateTimeByType";
 
 // import { useDeleteDialog } from "../../context/DeleteDialogContext";
 
@@ -54,11 +56,17 @@ export default function RefractionTable() {
   };
 
   return (
-    <Box sx={{ padding: 2 }}>
+    <Box>
+      <TitleText title=" Select a Refraction Number to Add Refraction Details" />
       {/* Search Bar */}
       <form
         onSubmit={handleSearch}
-        style={{ display: "flex", gap: "10px", alignItems: "center" }}
+        style={{
+          display: "flex",
+          gap: "10px",
+          marginBlock: 1,
+          alignItems: "center",
+        }}
       >
         <TextField
           size="small"
@@ -66,12 +74,23 @@ export default function RefractionTable() {
           variant="outlined"
           placeholder="Refraction Number"
           fullWidth
-          margin="normal"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
-        <Button type="submit" variant="contained">
+        <Button size="small" type="submit" variant="contained">
           Search
+        </Button>
+        <Button
+          size="small"
+          variant="contained"
+          color="info"
+          onClick={() => {
+            refractionPageNavigation(1);
+            handleRefractionSearch("");
+            setSearchQuery("");
+          }}
+        >
+          Reset
         </Button>
       </form>
       <Box
@@ -90,6 +109,7 @@ export default function RefractionTable() {
           boxShadow: 3,
           borderRadius: 2,
           overflowX: "auto",
+          mt: 1,
         }}
       >
         <Table
@@ -110,12 +130,16 @@ export default function RefractionTable() {
               <TableCell sx={{ fontWeight: "bold" }}>
                 Refraction Number
               </TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Date</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {refractionLoading ? (
               [...Array(10)].map((_, index) => (
                 <TableRow key={index}>
+                  <TableCell>
+                    <Skeleton variant="text" />
+                  </TableCell>
                   <TableCell>
                     <Skeleton variant="text" />
                   </TableCell>
@@ -161,6 +185,9 @@ export default function RefractionTable() {
                   <TableCell>{row.nic}</TableCell>
                   <TableCell>{row.customer_mobile}</TableCell>
                   <TableCell>{row.refraction_number}</TableCell>
+                  <TableCell>
+                    {formatDateTimeByType(row?.created_at, "date")}
+                  </TableCell>
                 </TableRow>
               ))
             ) : (
@@ -183,19 +210,13 @@ export default function RefractionTable() {
         }}
       >
         <Pagination
+          sx={{ my: ".2em" }}
+          size="small"
           count={Math.ceil(totalRefractionCount / refractionLimit)}
           onChange={(_e: ChangeEvent<unknown>, value: number) => {
             refractionPageNavigation(value);
           }}
         ></Pagination>
-        <IconButton
-          color="info"
-          onClick={() => {
-            refractionPageNavigation(1);
-          }}
-        >
-          <Refresh />
-        </IconButton>
       </Box>
       <Box
         sx={{
@@ -206,11 +227,12 @@ export default function RefractionTable() {
         }}
       >
         <Button
+          size="small"
           disabled={!selectedRow}
           onClick={handleInternalOrder}
           variant="contained"
         >
-          Refraction Details
+          Select Details
         </Button>
       </Box>
     </Box>
