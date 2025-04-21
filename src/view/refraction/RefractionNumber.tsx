@@ -1,4 +1,4 @@
-import { Paper, TextField, Box, Typography } from "@mui/material";
+import { Paper, TextField, Box } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router";
@@ -12,6 +12,7 @@ import toast from "react-hot-toast";
 import SaveButton from "../../components/SaveButton";
 import { RefractionNumberModel } from "../../model/RefractionModel";
 import { getUserCurentBranch } from "../../utils/authDataConver";
+import TitleText from "../../components/TitleText";
 export default function RefractionNumber() {
   //API CALLS
   const navigate = useNavigate();
@@ -73,12 +74,7 @@ export default function RefractionNumber() {
           borderRadius: 2,
         }}
       >
-        <Typography
-          sx={{ fontWeight: "bold", textAlign: "center" }}
-          variant="h6"
-        >
-          Refraction Genarate
-        </Typography>
+        <TitleText title="Genarate Refraction Number" />
         <form onSubmit={handleSubmit(shandleSubmit)}>
           <TextField
             {...register("customer_full_name")}

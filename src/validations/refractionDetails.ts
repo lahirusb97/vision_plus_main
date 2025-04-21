@@ -15,57 +15,65 @@ export const schemaRefractionDetails = z.object({
   va_with_glass_right: z.string().nullable(),
   va_with_glass_left: z.string().nullable(),
   right_eye_dist_sph: z
-    .number()
-    .or(z.nan())
+    .string()
     .nullable()
-    .transform((val) => (val === null || isNaN(val) ? null : val)),
+    .transform((val) => (val === null || val === "" ? null : val)),
   right_eye_dist_cyl: z
-    .number()
-    .max(0, "Cylinder must be 0 or less than 0")
-    .or(z.nan())
+    .string()
+    .refine(
+      (val) => {
+        const num = parseFloat(val);
+        return !isNaN(num) && num <= 0;
+      },
+      {
+        message: "Cylinder must be 0 or less than 0",
+      }
+    )
     .nullable()
-    .transform((val) => (val === null || isNaN(val) ? null : val)),
+    .transform((val) => {
+      if (val === null || isNaN(parseFloat(String(val)))) {
+        return null;
+      }
+      return val;
+    }),
   right_eye_dist_axis: z
-    .number()
-    .or(z.nan())
+    .string()
     .nullable()
-    .transform((val) => (val === null || isNaN(val) ? null : val)),
+    .transform((val) => (val === null || val === "" ? null : val)),
   right_eye_near_sph: z
-    .number()
-    .or(z.nan())
+    .string()
     .nullable()
-    .transform((val) => (val === null || isNaN(val) ? null : val)),
+    .transform((val) => (val === null || val === "" ? null : val)),
   left_eye_dist_sph: z
-    .number()
-    .or(z.nan())
+    .string()
     .nullable()
-    .transform((val) => (val === null || isNaN(val) ? null : val)),
+    .transform((val) => (val === null || val === "" ? null : val)),
   left_eye_dist_cyl: z
-    .number()
-    .max(0, "Cylinder must be 0 or less than 0")
-    .or(z.nan())
+    .string()
+    .refine(
+      (val) => {
+        const num = parseFloat(val);
+        return !isNaN(num) && num <= 0;
+      },
+      {
+        message: "Cylinder must be 0 or less than 0",
+      }
+    )
     .nullable()
-    .transform((val) => (val === null || isNaN(val) ? null : val)),
+    .transform((val) => {
+      if (val === null || isNaN(parseFloat(String(val)))) {
+        return null;
+      }
+      return val;
+    }),
   left_eye_dist_axis: z
-    .number()
-    .or(z.nan())
+    .string()
     .nullable()
-    .transform((val) => (val === null || isNaN(val) ? null : val)),
+    .transform((val) => (val === null || val === "" ? null : val)),
   left_eye_near_sph: z
-    .number()
-    .or(z.nan())
+    .string()
     .nullable()
-    .transform((val) => (val === null || isNaN(val) ? null : val)),
-  // pd: z
-  //   .number()
-  //   .or(z.nan())
-  //   .nullable()
-  //   .transform((val) => (val === null || isNaN(val) ? null : val)),
-  // h: z
-  //   .number()
-  //   .or(z.nan())
-  //   .nullable()
-  //   .transform((val) => (val === null || isNaN(val) ? null : val)),
+    .transform((val) => (val === null || val === "" ? null : val)),
   shuger: z.boolean(),
   refraction_remark: z
     .string()

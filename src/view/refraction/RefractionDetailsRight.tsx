@@ -1,10 +1,12 @@
 import { Box, Paper, TextField, Typography } from "@mui/material";
 import { grey } from "@mui/material/colors";
-import { useFormContext } from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
+import NumericInput from "../../components/inputui/NumericInput";
+
 const widthInput = 160;
 
 export default function RefractionDetailsRight() {
-  const { register, watch } = useFormContext();
+  const { register, watch, control } = useFormContext();
 
   return (
     <div>
@@ -119,62 +121,42 @@ export default function RefractionDetailsRight() {
             }}
           />
         </Box>
-        <Paper variant="elevation" sx={{ bgcolor: "#f5f5f5" }}>
+        <Paper variant="outlined" sx={{ bgcolor: "#f5f5f5" }}>
           <Box sx={{ p: 1 }}>
             <Box sx={{ display: "flex", gap: 1 }}>
-              <TextField
-                inputProps={{ step: 0.25 }}
-                type="number"
-                {...register("right_eye_dist_sph", { valueAsNumber: true })}
-                placeholder=" SPH"
-                size="small"
-                label="SPH"
-                sx={{
-                  width: widthInput,
-                  "& .MuiInputBase-root": {
-                    height: 32,
-                  },
-                }}
-                InputLabelProps={{
-                  shrink: true,
-                }}
+              <Controller
+                name="right_eye_dist_sph"
+                control={control}
+                render={({ field }) => (
+                  <NumericInput
+                    {...field}
+                    inputLabel="SPH"
+                    sx={{ width: widthInput }}
+                  />
+                )}
               />
-
-              <TextField
-                inputProps={{ step: 0.25, max: 0 }}
-                type="number"
-                {...register("right_eye_dist_cyl", { valueAsNumber: true })}
-                placeholder=" CYL"
-                error={watch("right_eye_dist_cyl") > 0}
-                size="small"
-                label="CYL"
-                sx={{
-                  width: widthInput,
-                  "& .MuiInputBase-root": {
-                    height: 32,
-                  },
-                }}
-                InputLabelProps={{
-                  shrink: true,
-                }}
+              <Controller
+                name="right_eye_dist_cyl"
+                control={control}
+                render={({ field }) => (
+                  <NumericInput
+                    {...field}
+                    inputLabel="CYL"
+                    errorCheck={(val) => parseFloat(val || "1") > 0}
+                    sx={{ width: widthInput }}
+                  />
+                )}
               />
-
-              <TextField
-                inputProps={{ step: 0.25 }}
-                type="number"
-                {...register("right_eye_dist_axis", { valueAsNumber: true })}
-                placeholder=" AXIS"
-                size="small"
-                label="AXIS"
-                sx={{
-                  width: widthInput,
-                  "& .MuiInputBase-root": {
-                    height: 32,
-                  },
-                }}
-                InputLabelProps={{
-                  shrink: true,
-                }}
+              <Controller
+                name="right_eye_dist_axis"
+                control={control}
+                render={({ field }) => (
+                  <NumericInput
+                    {...field}
+                    inputLabel="AXIS"
+                    sx={{ width: widthInput }}
+                  />
+                )}
               />
             </Box>
           </Box>
@@ -184,26 +166,20 @@ export default function RefractionDetailsRight() {
             sx={{
               display: "flex",
               justifyContent: "space-between",
-              px: 2,
+              px: 1,
               pb: 1,
             }}
           >
-            <TextField
-              inputProps={{ step: 0.25 }}
-              type="number"
-              {...register("right_eye_near_sph", { valueAsNumber: true })}
-              placeholder=" NEAR"
-              size="small"
-              label="NEAR"
-              sx={{
-                width: widthInput,
-                "& .MuiInputBase-root": {
-                  height: 32,
-                },
-              }}
-              InputLabelProps={{
-                shrink: true,
-              }}
+            <Controller
+              name="right_eye_near_sph"
+              control={control}
+              render={({ field }) => (
+                <NumericInput
+                  {...field}
+                  inputLabel="NEAR"
+                  sx={{ width: widthInput }}
+                />
+              )}
             />
             <Box
               sx={{

@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from "react";
+import { ChangeEvent, useState } from "react";
 import {
   Box,
   Paper,
@@ -16,12 +16,14 @@ import {
   Skeleton,
 } from "@mui/material";
 import { useNavigate } from "react-router";
-import { Refresh } from "@mui/icons-material";
 
 import useGetRefraction from "../../hooks/useGetRefraction";
 import EditIcon from "@mui/icons-material/Edit";
 import { RefractionNumberModel } from "../../model/RefractionModel";
 import { teal } from "@mui/material/colors";
+import { dateAndTimeFormat } from "../../utils/dateAndTimeFormat";
+import TitleText from "../../components/TitleText";
+import { formatDateTimeByType } from "../../utils/formatDateTimeByType";
 
 // Interface for Refraction Data
 
@@ -63,15 +65,18 @@ export default function FactoryTable() {
     }
   };
   return (
-    <Box sx={{ padding: 2 }}>
+    <Box>
       {/* Search Bar */}
 
+      <TitleText title=" Select a Refraction Number to create Factory Order" />
       <Box
         component={"form"}
         sx={{
           display: "flex",
           justifyContent: "space-between",
-          gap: 2,
+          gap: "10px",
+          mb: 1,
+
           alignItems: "baseline",
         }}
         onSubmit={(e) => {
@@ -84,12 +89,23 @@ export default function FactoryTable() {
           label="Search"
           variant="outlined"
           fullWidth
-          margin="normal"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
-        <Button type="submit" variant="contained">
+        <Button size="small" type="submit" variant="contained">
           Search
+        </Button>
+        <Button
+          size="small"
+          variant="contained"
+          color="info"
+          onClick={() => {
+            refractionPageNavigation(1);
+            handleRefractionSearch("");
+            setSearchQuery("");
+          }}
+        >
+          Reset
         </Button>
       </Box>
 
@@ -97,7 +113,6 @@ export default function FactoryTable() {
       <TableContainer
         component={Paper}
         sx={{
-          boxShadow: 3,
           borderRadius: 2,
           overflowX: "auto",
         }}
@@ -112,7 +127,8 @@ export default function FactoryTable() {
               sx={{
                 backgroundColor: theme.palette.grey[200],
 
-                height: 50,
+                padding: 0,
+                margin: 0,
               }}
             >
               <TableCell sx={{ fontWeight: "bold" }}>Actions</TableCell>
@@ -122,12 +138,19 @@ export default function FactoryTable() {
               <TableCell sx={{ fontWeight: "bold" }}>
                 Refraction Number
               </TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Date</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {refractionLoading ? (
               [...Array(10)].map((_, index) => (
                 <TableRow key={index}>
+                  <TableCell>
+                    <Skeleton variant="text" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton variant="text" />
+                  </TableCell>
                   <TableCell>
                     <Skeleton variant="text" />
                   </TableCell>
@@ -144,7 +167,6 @@ export default function FactoryTable() {
                 <TableRow
                   onClick={() => setSelectedRow(row)}
                   sx={{
-                    height: 40,
                     cursor: "pointer",
                     backgroundColor:
                       selectedRow?.id === row.id ? teal[100] : "inherit",
@@ -179,6 +201,9 @@ export default function FactoryTable() {
                   <TableCell>{row.nic}</TableCell>
                   <TableCell>{row.customer_mobile}</TableCell>
                   <TableCell>{row.refraction_number}</TableCell>
+                  <TableCell>
+                    {formatDateTimeByType(row?.created_at, "date")}
+                  </TableCell>
                 </TableRow>
               ))
             ) : (
@@ -198,23 +223,15 @@ export default function FactoryTable() {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          marginTop: 1,
         }}
       >
         <Pagination
+          size="small"
           count={Math.ceil(totalRefractionCount / refractionLimit)}
           onChange={(_e: ChangeEvent<unknown>, value: number) => {
             refractionPageNavigation(value);
           }}
         ></Pagination>
-        <IconButton
-          color="info"
-          onClick={() => {
-            refractionPageNavigation(1);
-          }}
-        >
-          <Refresh />
-        </IconButton>
       </Box>
       <Box
         sx={{
@@ -225,11 +242,12 @@ export default function FactoryTable() {
         }}
       >
         <Button
+          size="small"
           disabled={!selectedRow}
           onClick={handleInternalOrder}
           variant="contained"
         >
-          Invoice
+          Select Refraction
         </Button>
       </Box>
     </Box>

@@ -1,9 +1,10 @@
 import { Box, Paper, TextField, Typography } from "@mui/material";
 import { grey } from "@mui/material/colors";
-import { useFormContext } from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
+import NumericInput from "../../components/inputui/NumericInput";
 const widthInput = 160;
 export default function RefractionDetailsLeft() {
-  const { register, watch } = useFormContext();
+  const { register, watch, control } = useFormContext();
 
   return (
     <div>
@@ -93,64 +94,58 @@ export default function RefractionDetailsLeft() {
             shrink: Boolean(watch("va_with_glass_left")),
           }}
         />
-        <Paper sx={{ p: 1, bgcolor: "#f5f5f5" }}>
+        <Paper variant="outlined" sx={{ bgcolor: "#f5f5f5", p: 1 }}>
           <Box>
             <Box sx={{ display: "flex", gap: 1 }}>
-              <TextField
-                inputProps={{ step: 0.25 }}
-                type="number"
-                {...register("left_eye_dist_sph", { valueAsNumber: true })}
-                placeholder=" SPH"
-                size="small"
-                label="SPH"
-                sx={{ width: widthInput, ...inputStyle }}
-                InputLabelProps={{
-                  shrink: true,
-                }}
+              <Controller
+                name="left_eye_dist_sph"
+                control={control}
+                render={({ field }) => (
+                  <NumericInput
+                    {...field}
+                    inputLabel="SPH"
+                    sx={{ width: widthInput }}
+                  />
+                )}
               />
-
-              <TextField
-                inputProps={{ step: 0.25 }}
-                type="number"
-                {...register("left_eye_dist_cyl", { valueAsNumber: true })}
-                error={watch("left_eye_dist_cyl") > 0}
-                placeholder=" CYL"
-                size="small"
-                label="CYL"
-                sx={{ width: widthInput, ...inputStyle }}
-                InputLabelProps={{
-                  shrink: true,
-                }}
+              <Controller
+                name="left_eye_dist_cyl"
+                control={control}
+                render={({ field }) => (
+                  <NumericInput
+                    {...field}
+                    inputLabel="CYL"
+                    errorCheck={(val) => parseFloat(val || "1") > 0}
+                    sx={{ width: widthInput }}
+                  />
+                )}
               />
-
-              <TextField
-                inputProps={{ step: 0.25 }}
-                type="number"
-                {...register("left_eye_dist_axis", { valueAsNumber: true })}
-                placeholder=" AXIS"
-                size="small"
-                label="AXIS"
-                sx={{ width: widthInput, ...inputStyle }}
-                InputLabelProps={{
-                  shrink: true,
-                }}
+              <Controller
+                name="left_eye_dist_axis"
+                control={control}
+                render={({ field }) => (
+                  <NumericInput
+                    {...field}
+                    inputLabel="AXIS"
+                    sx={{ width: widthInput }}
+                  />
+                )}
               />
             </Box>
           </Box>
 
           {/* show this below */}
           <Box sx={{ display: "flex", justifyContent: "space-between", mt: 1 }}>
-            <TextField
-              inputProps={{ step: 0.25 }}
-              type="number"
-              {...register("left_eye_near_sph", { valueAsNumber: true })}
-              placeholder=" NEAR"
-              size="small"
-              label="NEAR"
-              sx={{ width: widthInput, ...inputStyle }}
-              InputLabelProps={{
-                shrink: true,
-              }}
+            <Controller
+              name="left_eye_near_sph"
+              control={control}
+              render={({ field }) => (
+                <NumericInput
+                  {...field}
+                  inputLabel="NEAR"
+                  sx={{ width: widthInput }}
+                />
+              )}
             />
             <Box
               sx={{
