@@ -20,8 +20,9 @@ export default function SelectBrancheIndex() {
       <Typography variant="h5"> Select your branche</Typography>
 
       <Box sx={{ display: "flex", flexDirection: "column" }}>
-        {userAuth?.branches?.map((branch) => (
+        {userAuth?.branches?.map((branch, index) => (
           <Button
+            data-testid={`branch-button-${index}`}
             onClick={() => {
               const currentBranch = saveUserCurentBranch(branch);
 
