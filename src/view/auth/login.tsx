@@ -24,8 +24,8 @@ interface LoginInput {
 
 export default function Login() {
   const [loginInput, setLoginInput] = useState<LoginInput>({
-    username: "admin",
-    password: "admin",
+    username: "",
+    password: "",
   });
   const [loading, setLoading] = useState(false); // Loading state
   const navigate = useNavigate();
@@ -181,6 +181,7 @@ export default function Login() {
         </Box>
 
         <Button
+          data-testid={`login-button`}
           variant="contained"
           fullWidth
           sx={{

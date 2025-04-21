@@ -75,6 +75,7 @@ export default function RefractionGenerated() {
 
         <Divider sx={{ my: 2 }} />
         <Button
+          data-testid="refaction-number-ok-button"
           size="small"
           variant="contained"
           fullWidth
