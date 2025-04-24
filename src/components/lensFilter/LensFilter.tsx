@@ -1,6 +1,13 @@
 import React, { useEffect, useReducer } from "react";
 import { RefractionDetailModel } from "../../model/RefractionDetailModel";
-import { Box, Button, Typography, IconButton } from "@mui/material";
+import {
+  Box,
+  Button,
+  Typography,
+  IconButton,
+  Paper,
+  TextField,
+} from "@mui/material";
 import useGetBrands from "../../hooks/lense/useGetBrand";
 import useGetCoatings from "../../hooks/lense/useGetCoatings";
 import useGetLenseTypes from "../../hooks/lense/useGetLenseType";
@@ -14,7 +21,7 @@ import { lensefilterReducer, lensFilterinitialState } from "./LensFilterUtil";
 import { useLensFilter } from "./useLensFilter";
 import { useDispatch, useSelector } from "react-redux";
 import { setLense } from "../../features/invoice/lenseFilterSlice";
-import { LenseWithQty } from "../../model/LenseModel";
+
 import { RootState } from "../../store/store";
 import InvoiceLenseItem from "../InvoiceLenseItem";
 
@@ -22,9 +29,10 @@ export default function LensFilter({
   refractionDetail,
 }: RefractionDetailsProps) {
   const dispatch = useDispatch();
-
+  const [rightByQty, setRightByQty] = React.useState(1);
+  const [leftByQty, setLeftByQty] = React.useState(1);
   const selectedLenseList = useSelector(
-    (state: RootState) => state.invoice_lense_filer.selectedLenses
+    (state: RootState) => state.invoice_lense_filer.selectedLensesList
   );
   const { brands, brandsLoading } = useGetBrands({
     brand_type: "lens",
@@ -34,8 +42,8 @@ export default function LensFilter({
   const {
     leftLens,
     rightLens,
-    leftFilterLoading,
-    rightFilterLoading,
+    // leftFilterLoading,
+    // rightFilterLoading,
     handleLeftLensFilter,
     handleRightLensFilter,
   } = useLensFilter();
@@ -57,6 +65,7 @@ export default function LensFilter({
       payload: { [name]: value === "" ? null : value },
     });
   };
+
   useEffect(() => {
     if (refractionDetail) {
       dispatchLens({
@@ -102,7 +111,6 @@ export default function LensFilter({
           type: "reset_left_qty",
         });
         const response = await handleLeftLensFilter(params);
-        console.log(response);
 
         dispatchLens({
           type: "update_left_price",
@@ -163,28 +171,46 @@ export default function LensFilter({
     if (leftLens) {
       dispatch(
         setLense({
-          ...leftLens,
-          price: lensState.leftLens.left_price,
-          buyQty: 1,
-          lenseSide: "left",
-        } as LenseWithQty)
+          lense_id: leftLens.id,
+          avilable_qty: leftLens.stock[0].qty,
+          price_per_unit: parseInt(lensState?.leftLens?.left_price || "0"),
+          buyQty: leftByQty,
+          subtotal: parseInt(lensState.leftLens.left_price ?? "0") * leftByQty,
+          lense_detail: {
+            type_name: leftLens.type_name,
+            brand_name: leftLens.brand_name,
+            coating_name: leftLens.coating_name,
+            powers: leftLens.powers,
+          },
+        })
       );
+      setLeftByQty(1);
     }
   };
   const handleRightLenseAddToCart = async () => {
     if (rightLens) {
       dispatch(
         setLense({
-          ...rightLens,
-          price: lensState.rightLens.right_price,
-          buyQty: 1,
-          lenseSide: "right",
-        } as LenseWithQty)
+          lense_id: rightLens.id,
+          avilable_qty: rightLens.stock[0].qty,
+          price_per_unit: parseInt(lensState?.rightLens?.right_price || "0"),
+          buyQty: rightByQty,
+          subtotal:
+            parseInt(lensState.rightLens.right_price ?? "0") * rightByQty,
+          lense_detail: {
+            type_name: rightLens.type_name,
+            brand_name: rightLens.brand_name,
+            coating_name: rightLens.coating_name,
+            powers: rightLens.powers,
+          },
+        })
       );
+      setRightByQty(1);
     }
   };
   return (
-    <div>
+    <Paper sx={{ p: 1 }}>
+      <Typography variant="h6">Select In Stock Lense </Typography>
       <Box
         sx={{
           display: "flex",
@@ -246,6 +272,16 @@ export default function LensFilter({
               namePrice="left_price"
               price={lensState.leftLens.left_price}
             />
+            <TextField
+              sx={{ width: 80, height: 32, mb: 2 }}
+              size="small"
+              label="Left Qty"
+              type="number"
+              variant="outlined"
+              value={leftByQty}
+              onChange={(e) => setLeftByQty(parseInt(e.target.value))}
+              inputProps={{ min: 0 }}
+            />
             <Typography variant="body2">
               Quantity : {lensState.leftQty || "N/A"}
             </Typography>
@@ -269,6 +305,16 @@ export default function LensFilter({
               namePrice="right_price"
               price={lensState.rightLens.right_price}
             />
+            <TextField
+              sx={{ width: 80, height: 32, mb: 2 }}
+              size="small"
+              label="Right Qty"
+              type="number"
+              variant="outlined"
+              value={rightByQty}
+              onChange={(e) => setRightByQty(parseInt(e.target.value))}
+              inputProps={{ min: 0 }}
+            />
             <Typography variant="body2">
               Quantity :{lensState.rightQty || "N/A"}
             </Typography>
@@ -284,12 +330,12 @@ export default function LensFilter({
       <Box sx={{ marginTop: 2, display: "flex", flexDirection: "column" }}>
         {Object.values(selectedLenseList).length !== 0 &&
           Object.values(selectedLenseList).map((lenseitem) => (
-            <div>
+            <div key={lenseitem.lense_id}>
               <InvoiceLenseItem lense={lenseitem} />
             </div>
           ))}
       </Box>
-    </div>
+    </Paper>
   );
 }
 interface RefractionDetailsProps {

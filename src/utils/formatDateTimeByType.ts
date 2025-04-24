@@ -5,9 +5,9 @@ export const formatDateTimeByType = (
   type: "date" | "time" | "both" = "both"
 ): string => {
   const fallback = {
-    date: " N/A",
-    time: " N/A",
-    both: " N/A - N/A",
+    date: "N/A",
+    time: "N/A",
+    both: "N/A - N/A",
   };
 
   if (!isoString || typeof isoString !== "string") {

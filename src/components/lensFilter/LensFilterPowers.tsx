@@ -1,6 +1,7 @@
 import React from "react";
 import { Box, TextField, Typography } from "@mui/material";
 import { ArrowRight } from "@mui/icons-material";
+import NumericInput from "../inputui/NumericInput";
 
 interface LensFilterPowersProps {
   handleLensInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -27,6 +28,8 @@ const LensFilterPowers: React.FC<LensFilterPowersProps> = ({
   namePrice,
   price,
 }) => {
+  console.log(sph);
+
   return (
     <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
       <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -38,48 +41,54 @@ const LensFilterPowers: React.FC<LensFilterPowersProps> = ({
         </Typography>
         <ArrowRight />
       </Box>
-      <TextField
+
+      <NumericInput
         sx={{ width: 80 }}
-        size="small"
+        inputLabel="SPH"
         name={nameSph}
-        type="number"
-        label={`sph`}
         value={sph}
-        onChange={handleLensInputChange}
-        margin="normal"
-        inputProps={{ step: 0.25 }}
+        onChange={(val) =>
+          handleLensInputChange({
+            target: { name: nameSph, value: val },
+          } as React.ChangeEvent<HTMLInputElement>)
+        }
       />
-      <TextField
+      <NumericInput
         sx={{ width: 80 }}
-        size="small"
         name={nameCyl}
-        type="number"
-        label={`cyl`}
+        inputLabel="CYL"
         value={cyl}
-        onChange={handleLensInputChange}
-        margin="normal"
-        inputProps={{ step: 0.25, inputMode: "decimal" }}
+        onChange={(val) =>
+          handleLensInputChange({
+            target: { name: nameCyl, value: val },
+          } as React.ChangeEvent<HTMLInputElement>)
+        }
       />
-      <TextField
-        sx={{ width: 80 }}
-        type="number"
-        size="small"
+      <NumericInput
+        sx={{
+          width: 80,
+          "& .MuiInputBase-root": {
+            height: 32,
+          },
+        }}
         name={nameAdd}
-        label={`add`}
+        inputLabel="ADD"
         value={add}
-        onChange={handleLensInputChange}
-        margin="normal"
-        inputProps={{ step: 0.25 }}
+        onChange={(val) =>
+          handleLensInputChange({
+            target: { name: nameAdd, value: val },
+          } as React.ChangeEvent<HTMLInputElement>)
+        }
       />
+
       <TextField
-        sx={{ width: 100 }}
+        sx={{ width: 100, height: 32, mb: 2 }}
         type="number"
         size="small"
         name={namePrice}
         label={`Price`}
         value={price || ""}
         onChange={handleLensInputChange}
-        margin="normal"
         inputProps={{ step: 0.25 }}
         InputLabelProps={{
           shrink: Boolean(namePrice),

@@ -6,44 +6,57 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { Delete } from "@mui/icons-material";
-import { IconButton, Input } from "@mui/material";
+import { Add, Delete, Remove } from "@mui/icons-material";
+import { IconButton } from "@mui/material";
 import { RootState } from "../../store/store";
 import { useDispatch, useSelector } from "react-redux";
-import { removeFrame } from "../../features/invoice/frameFilterSlice";
-import { removeLense } from "../../features/invoice/lenseFilterSlice";
-import { removeOtherItem } from "../../features/invoice/otherItemSlice";
+import {
+  frameQtyminus,
+  frameQtyPlus,
+  removeFrame,
+} from "../../features/invoice/frameFilterSlice";
+import {
+  lenseQtyminus,
+  lenseQtyPlus,
+  removeLense,
+} from "../../features/invoice/lenseFilterSlice";
 import { useFormContext } from "react-hook-form";
-import { removeexternalLense } from "../../features/invoice/externalLenseSlice";
-import { calculateExternalLensTotal } from "../../utils/calculateExternalLensTotal";
+import {
+  externalLenseQtyminus,
+  externalLenseQtyPlus,
+  removeexternalLense,
+} from "../../features/invoice/externalLenseSlice";
+
+import DiscountInput from "./DiscountInput";
 
 export default function InvoiceTable() {
-  const { register, watch, setValue } = useFormContext();
+  const { watch } = useFormContext();
 
   const dispatch = useDispatch();
   const externalLenseInvoiceList = useSelector(
-    (state: RootState) => state.invoice_external_lense.externalLense
+    (state: RootState) => state.invoice_external_lense.externalLenseList
+  );
+  const ExtraTotal = useSelector(
+    (state: RootState) => state.invoice_external_lense.externalLenseSubTotal
   );
   const FrameInvoiceList = useSelector(
     (state: RootState) => state.invoice_frame_filer.selectedFrameList
   );
   const LenseInvoiceList = useSelector(
-    (state: RootState) => state.invoice_lense_filer.selectedLenses
+    (state: RootState) => state.invoice_lense_filer.selectedLensesList
   );
-  const calculateTotal = (list: any[]) => {
-    return list.reduce((acc, row) => {
-      const rowTotal = parseInt(row.price) * row.buyQty;
-      return acc + rowTotal;
-    }, 0);
-  };
-  const frameTotal = calculateTotal(Object.values(FrameInvoiceList));
-  const lenseTotal = calculateTotal(Object.values(LenseInvoiceList));
-  const ExtraTotal = calculateExternalLensTotal(
-    Object.values(externalLenseInvoiceList)
+  const lenseTotal = useSelector(
+    (state: RootState) => state.invoice_lense_filer.lenseSubTotal
   );
+
+  const frameTotal = useSelector(
+    (state: RootState) => state.invoice_frame_filer.framesubTotal
+  );
+
   //calcuate Total
+  const discount = watch("discount") || 0;
   const subtotal = frameTotal + lenseTotal + ExtraTotal;
-  const grandTotal = subtotal - watch("discount");
+  const grandTotal = subtotal - discount;
 
   return (
     <TableContainer
@@ -68,7 +81,7 @@ export default function InvoiceTable() {
           <TableRow>
             <TableCell>Remove</TableCell>
             <TableCell>Description</TableCell>
-            <TableCell align="right">Qty.</TableCell>
+            <TableCell align="center">Qty.</TableCell>
             <TableCell align="right">Unit</TableCell>
             <TableCell align="right">Sum</TableCell>
           </TableRow>
@@ -84,7 +97,7 @@ export default function InvoiceTable() {
                         "Are you sure you want to delete this item?"
                       )
                     ) {
-                      dispatch(removeFrame(row.id));
+                      dispatch(removeFrame(row.frame_id));
                     }
                   }}
                 >
@@ -92,17 +105,31 @@ export default function InvoiceTable() {
                 </IconButton>
               </TableCell>
 
-              <TableCell>{`${row.brand_name} / ${row.code_name} / ${row.color_name} / ${row.species}`}</TableCell>
-              <TableCell align="right">{row.buyQty}</TableCell>
-              <TableCell align="right">{row.price}</TableCell>
-              <TableCell align="right">
-                {parseInt(row.price) * row.buyQty}
+              <TableCell>{`${row.frame_detail.brand_name} / ${row.frame_detail.code_name} / ${row.frame_detail.color_name} / ${row.frame_detail.species}`}</TableCell>
+              <TableCell align="center">
+                <IconButton
+                  onClick={() => dispatch(frameQtyPlus(row.frame_id))}
+                  color="primary"
+                  size="small"
+                >
+                  <Add sx={{ fontSize: 16 }} />
+                </IconButton>
+                {row.buyQty}
+                <IconButton
+                  onClick={() => dispatch(frameQtyminus(row.frame_id))}
+                  color="error"
+                  size="small"
+                >
+                  <Remove sx={{ fontSize: 16 }} />
+                </IconButton>
               </TableCell>
+              <TableCell align="right">{row.price_per_unit}</TableCell>
+              <TableCell align="right">{row.subtotal}</TableCell>
             </TableRow>
           ))}
 
-          {Object.values(LenseInvoiceList)?.map((row, index) => (
-            <TableRow key={index}>
+          {Object.values(LenseInvoiceList)?.map((row) => (
+            <TableRow key={row.lense_id}>
               <TableCell>
                 <IconButton
                   onClick={() => {
@@ -111,7 +138,7 @@ export default function InvoiceTable() {
                         "Are you sure you want to delete this item?"
                       )
                     ) {
-                      dispatch(removeLense(row.id));
+                      dispatch(removeLense(row.lense_id));
                     }
                   }}
                 >
@@ -120,27 +147,34 @@ export default function InvoiceTable() {
               </TableCell>
 
               <TableCell>
-                {`${row?.type_name} / ${row.coating_name} / ${
-                  row.brand_name
-                } / ${row?.stock[0]?.powers
+                {`${row?.lense_detail.type_name} / ${
+                  row.lense_detail.coating_name
+                } / ${row.lense_detail.brand_name} / ${row?.lense_detail.powers
                   ?.map((power) => {
-                    if (power.power === 1) {
-                      return `SPH: ${power.value}`; // For SPH (Sphere)
-                    } else if (power.power === 2) {
-                      return `CYL: ${power.value}`; // For CYL (Cylinder)
-                    } else if (power.power === 3) {
-                      return `ADD: ${power.value}`; // For ADD (Addition)
-                    }
-                    return ""; // If no matching power type
+                    return `${power.power_name.toUpperCase()}: ${power.value}`; // For ADD (Addition)
                   })
                   .join(" / ")} `}
               </TableCell>
 
-              <TableCell align="right">{row.buyQty}</TableCell>
-              <TableCell align="right">{row.price}</TableCell>
-              <TableCell align="right">
-                {parseInt(row.price) * row.buyQty}
+              <TableCell align="center">
+                <IconButton
+                  onClick={() => dispatch(lenseQtyPlus(row.lense_id))}
+                  color="primary"
+                  size="small"
+                >
+                  <Add sx={{ fontSize: 16 }} />
+                </IconButton>
+                {row.buyQty}
+                <IconButton
+                  onClick={() => dispatch(lenseQtyminus(row.lense_id))}
+                  color="error"
+                  size="small"
+                >
+                  <Remove sx={{ fontSize: 16 }} />
+                </IconButton>
               </TableCell>
+              <TableCell align="right">{row.price_per_unit}</TableCell>
+              <TableCell align="right">{row.subtotal}</TableCell>
             </TableRow>
           ))}
           {/* //! External Invoice */}
@@ -154,7 +188,7 @@ export default function InvoiceTable() {
                         "Are you sure you want to Remove this item?"
                       )
                     ) {
-                      dispatch(removeexternalLense(row.id));
+                      dispatch(removeexternalLense(row.external_lens_id));
                     }
                   }}
                 >
@@ -162,9 +196,29 @@ export default function InvoiceTable() {
                 </IconButton>
               </TableCell>
 
-              <TableCell>{`${row.lensNames.typeName} / ${row.lensNames.brandName} /${row.lensNames.coatingName} `}</TableCell>
+              <TableCell>{`${row.external_lens_details.type_name} / ${row.external_lens_details.brand_name} /${row.external_lens_details.coating_name} `}</TableCell>
 
-              <TableCell align="right">{row.quantity}</TableCell>
+              <TableCell align="center">
+                <IconButton
+                  onClick={() =>
+                    dispatch(externalLenseQtyPlus(row.external_lens_id))
+                  }
+                  color="primary"
+                  size="small"
+                >
+                  <Add sx={{ fontSize: 16 }} />
+                </IconButton>
+                {row.buyQty}
+                <IconButton
+                  onClick={() =>
+                    dispatch(externalLenseQtyminus(row.external_lens_id))
+                  }
+                  color="error"
+                  size="small"
+                >
+                  <Remove sx={{ fontSize: 16 }} />
+                </IconButton>
+              </TableCell>
               <TableCell align="right">{row.price_per_unit}</TableCell>
               <TableCell align="right">{row.subtotal}</TableCell>
             </TableRow>
@@ -183,22 +237,7 @@ export default function InvoiceTable() {
             <TableCell colSpan={1} />
             <TableCell align="right">Discounts</TableCell>
             <TableCell align="right">
-              <Input
-                {...register("discount")}
-                sx={{ width: "100%" }} // Optional for full width
-                type="number"
-                inputProps={{ style: { textAlign: "right" }, min: 0 }} // Correct way
-                onFocus={(e) => {
-                  if (e.target.value === "0") {
-                    setValue("discount", "");
-                  }
-                }}
-                onBlur={(e) => {
-                  if (e.target.value === "") {
-                    setValue("discount", "0");
-                  }
-                }}
-              />
+              <DiscountInput />
             </TableCell>
           </TableRow>
           <TableRow>

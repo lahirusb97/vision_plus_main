@@ -1,38 +1,91 @@
-interface InvoiceInputModel {
-  sales_staff_code: number;
-  hb_rx_right_dist: string;
-  hb_rx_left_dist: string;
-  hb_rx_right_near: string;
-  hb_rx_left_near: string;
-  auto_ref_right: string;
-  auto_ref_left: string;
-  right_eye_dist_sph: string | null;
-  right_eye_dist_cyl: string | null;
-  right_eye_dist_axis: string | null;
-  right_eye_near_sph: string | null;
-  left_eye_dist_cyl: string | null;
-  left_eye_dist_axis: string | null;
-  left_eye_dist_sph: string | null;
-  left_eye_near_sph: string | null;
-  order_remark?: string | null;
-  note: string | null;
+import {
+  PaymentMethodTypes,
+  TransactionStatusTypes,
+  TypeLensSide,
+  TypeOrderStatus,
+} from "./StaticTypeModels";
+
+// Patient Model
+
+export interface Patient {
+  refraction_id: number;
+  date_of_birth: string;
   name: string;
-  nic: string;
   phone_number: string;
-  address: string;
-  dob: string;
-  cash: number;
+  address: string | undefined;
+  nic: string | undefined;
+}
+// Order Model
+export interface Order {
+  refraction: number;
+  status: Omit<TypeOrderStatus, "pending" | "completed">;
+  sub_total: number;
   discount: number;
-  credit_card: number;
-  online_transfer: number;
-  pd: number;
-  right_pd: string;
-  left_pd: string;
-  height: string;
-  right_height: string;
-  left_height: string;
-  branch_id: number;
+  total_price: number;
+  order_remark?: string;
+  sales_staff_code?: number;
+  pd?: string | undefined | null;
+  height?: string | undefined | null;
+  right_height?: string | undefined | null;
+  left_height?: string | undefined | null;
+  left_pd?: string | undefined | null;
+  right_pd?: string | undefined | null;
   fitting_on_collection: boolean;
   on_hold: boolean;
+  branch_id: number;
 }
-export type { InvoiceInputModel };
+
+// External Lens Model
+export interface ExternalLens {
+  lens: {
+    type: number;
+    coating: number;
+    brand: number;
+    price: number;
+  };
+  powers: {
+    power: number;
+    value: number;
+    side: TypeLensSide;
+  }[];
+}
+
+// Order Item Model (Lens, Frame, External Lens)
+export interface OrderItemLens {
+  lens: number;
+  quantity: number;
+  price_per_unit: number;
+  subtotal: number;
+}
+
+export interface OrderItemFrame {
+  frame: number;
+  quantity: number;
+  price_per_unit: number;
+  subtotal: number;
+}
+
+export interface OrderItemExternalLens {
+  external_lens_data: ExternalLens;
+  quantity: number;
+  price_per_unit: number;
+  subtotal: number;
+  is_non_stock: boolean;
+}
+
+export type OrderItem = OrderItemLens | OrderItemFrame | OrderItemExternalLens;
+
+// Payment Model
+export interface OrderPayment {
+  amount: number;
+  payment_method: PaymentMethodTypes;
+  transaction_status: TransactionStatusTypes;
+}
+
+// Full Order Model
+export interface FactoryOrderInputModel {
+  patient: Patient;
+  order: Order;
+  order_items: OrderItem[];
+  order_payments: OrderPayment[];
+}

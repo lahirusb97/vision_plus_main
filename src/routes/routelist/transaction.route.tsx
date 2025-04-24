@@ -22,7 +22,7 @@ export const transactionRoutes: RouteObject[] = [
         element: <FactoryTable />,
       },
       {
-        path: "create/:id",
+        path: "create/:refraction_id",
         element: <ProtectedChildRoute />,
         children: [
           {
@@ -68,7 +68,7 @@ export const transactionRoutes: RouteObject[] = [
         element: <OrderEditIndex />,
       },
       {
-        path: ":id",
+        path: ":invoice_number",
         element: <FactoryOrderUpdate />,
       },
     ],

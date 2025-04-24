@@ -107,6 +107,7 @@ export default function PationtDetails({
           InputLabelProps={{
             shrink: Boolean(watch("name")),
           }}
+          helperText={errors.name?.message ? String(errors.name.message) : ""}
         />
         <DateInput />
 
@@ -141,10 +142,15 @@ export default function PationtDetails({
           InputLabelProps={{
             shrink: Boolean(watch("phone_number")),
           }}
+          helperText={
+            errors.phone_number?.message
+              ? String(errors.phone_number.message)
+              : ""
+          }
         />
         <TextField
           {...register("nic")}
-          error={!!errors.nic}
+          error={watch("nic") === ""}
           sx={{ flexGrow: 1 }}
           size="small"
           label="NIC"
@@ -168,7 +174,7 @@ export default function PationtDetails({
       </Box>
       <TextField
         {...register("address")}
-        error={!!errors.address}
+        error={watch("address") === ""}
         size="small"
         label="Address"
         InputLabelProps={{

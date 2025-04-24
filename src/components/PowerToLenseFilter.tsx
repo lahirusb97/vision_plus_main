@@ -1,15 +1,6 @@
-import React, { useEffect, useReducer, useState } from "react";
-import {
-  Box,
-  Button,
-  Paper,
-  Typography,
-  TextField,
-  Grid,
-  IconButton,
-} from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Box, Button, Paper, Typography, TextField } from "@mui/material";
 import DropdownInput from "./inputui/DropdownInput";
-import useGetLenses from "../hooks/lense/useGetLense";
 
 import useGetBrands from "../hooks/lense/useGetBrand";
 
@@ -21,7 +12,6 @@ import useGetCoatings from "../hooks/lense/useGetCoatings";
 import useGetLenseTypes from "../hooks/lense/useGetLenseType";
 import { LenseModel } from "../model/LenseModel";
 import { setLense } from "../features/invoice/lenseFilterSlice";
-import { useFormContext } from "react-hook-form";
 import { RootState } from "../store/store";
 import InvoiceLenseItem from "./InvoiceLenseItem";
 import { Search } from "@mui/icons-material";
@@ -35,28 +25,11 @@ import { AxiosError } from "axios";
 import { RefractionDetailModel } from "../model/RefractionDetailModel";
 import { getUserCurentBranch } from "../utils/authDataConver";
 import { extractErrorMessage } from "../utils/extractErrorMessage";
-interface LenseWithQty extends LenseModel {
-  buyQty: number;
-  lenseSide: string;
-}
+
 interface RefractionDetailsProps {
   refractionDetail: RefractionDetailModel | null;
 }
-const initialState = {
-  leftLens: {
-    sph: "",
-    cyl: "",
-    add: "",
-    price: "",
-  },
-  rightLens: {
-    sph: "",
-    cyl: "",
-    add: "",
-    price: "",
-  },
-};
-const lenseReducer = (state, action) => {};
+
 export default function PowerToLenseFilter({
   refractionDetail,
 }: RefractionDetailsProps) {
@@ -88,6 +61,8 @@ export default function PowerToLenseFilter({
   });
   const [leftPrice, setLeftPrice] = React.useState<string>("");
   const [rightPrice, setRightPrice] = React.useState<string>("");
+  const [leftlenseByQty, setLeftlenseByQty] = React.useState<number>(1);
+  const [rightlenseByQty, setRightlenseByQty] = React.useState<number>(1);
 
   const { coatings, coatingsLoading } = useGetCoatings();
   const { lenseTypes, lenseTypesLoading } = useGetLenseTypes();
@@ -96,7 +71,7 @@ export default function PowerToLenseFilter({
   const [selectedLenseRight, setSelectedLenseRight] =
     React.useState<LenseModel | null>(null);
   const selectedLenseList = useSelector(
-    (state: RootState) => state.invoice_lense_filer.selectedLenses
+    (state: RootState) => state.invoice_lense_filer.selectedLensesList
   );
   const [selectLense, setSelectLense] = React.useState<{
     lenseType: number | null;
@@ -126,15 +101,23 @@ export default function PowerToLenseFilter({
       if (parseInt(rightPrice)) {
         dispatch(
           setLense({
-            ...selectedLenseRight,
-            price: rightPrice,
-            buyQty: 1,
-            lenseSide: "right",
-          } as LenseWithQty)
+            lense_id: selectedLenseRight.id,
+            avilable_qty: selectedLenseRight.stock[0].qty,
+            price_per_unit: parseInt(rightPrice),
+            buyQty: rightlenseByQty,
+            lense_detail: {
+              type_name: selectedLenseRight.type_name,
+              coating_name: selectedLenseRight.coating_name,
+              brand_name: selectedLenseRight.brand_name,
+              powers: selectedLenseRight.powers,
+            },
+            subtotal: parseInt(rightPrice),
+          })
         );
         toast.success("Lense Added to Right Side");
         setSelectedLenseRight(null);
         setRightPrice("");
+        setRightlenseByQty(1);
       } else {
         toast.error("Price  Right  Side lense must be greater than 0");
       }
@@ -142,9 +125,10 @@ export default function PowerToLenseFilter({
       toast.error("No Lense Selected");
     }
   };
-  function removeInvalidValues(obj) {
+  function removeInvalidValues(obj: unknown) {
     return Object.fromEntries(
-      Object.entries(obj).filter(
+      Object.entries(obj as Record<string, unknown>).filter(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         ([_, value]) =>
           value !== "" &&
           value !== null &&
@@ -267,15 +251,23 @@ export default function PowerToLenseFilter({
       if (parseInt(leftPrice)) {
         dispatch(
           setLense({
-            ...selectedLenseLeft,
-            price: leftPrice,
-            buyQty: 1,
-            lenseSide: "left",
-          } as LenseWithQty)
+            lense_id: selectedLenseLeft.id,
+            avilable_qty: selectedLenseLeft.stock[0].qty,
+            price_per_unit: parseInt(leftPrice),
+            buyQty: leftlenseByQty,
+            lense_detail: {
+              type_name: selectedLenseLeft.type_name,
+              coating_name: selectedLenseLeft.coating_name,
+              brand_name: selectedLenseLeft.brand_name,
+              powers: selectedLenseLeft.powers,
+            },
+            subtotal: parseInt(leftPrice),
+          })
         );
         toast.success("Lense Added to Left Side");
         setSelectedLenseLeft(null);
-        setLeftPrice(0);
+        setLeftPrice("");
+        setLeftlenseByQty(1);
       } else {
         toast.error("Price  Left  Side lense must be greater than 0");
       }
@@ -425,6 +417,15 @@ export default function PowerToLenseFilter({
               onChange={(e) => setRightPrice(e.target.value)}
               inputProps={{ min: 0 }}
             />
+            <TextField
+              size="small"
+              label="Qty"
+              type="number"
+              variant="outlined"
+              value={leftPrice}
+              onChange={(e) => setRightlenseByQty(parseInt(e.target.value))}
+              inputProps={{ min: 0 }}
+            />
             <Paper
               sx={{
                 p: 1,
@@ -507,12 +508,21 @@ export default function PowerToLenseFilter({
               inputProps={{ step: 0.25 }}
             />
             <TextField
+              size="small"
               label="Price"
               type="number"
-              margin="normal"
               variant="outlined"
               value={leftPrice}
               onChange={(e) => setLeftPrice(e.target.value)}
+              inputProps={{ min: 0 }}
+            />
+            <TextField
+              size="small"
+              label="Qty"
+              type="number"
+              variant="outlined"
+              value={leftPrice}
+              onChange={(e) => setLeftlenseByQty(parseInt(e.target.value))}
               inputProps={{ min: 0 }}
             />
             <Paper
@@ -540,7 +550,7 @@ export default function PowerToLenseFilter({
               <Search />
             </Button>
             <Button size="small" onClick={addLeftLense} variant="contained">
-              Left Add
+              Left Adds
             </Button>
           </Box>
         </Box>

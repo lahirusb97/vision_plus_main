@@ -1,12 +1,7 @@
-import { createContext, ReactNode, useContext, useState } from "react";
-import { useLocation, useParams } from "react-router";
-import useGetSingleRefractionNumber from "../hooks/useGetSingleRefractionNumber";
-import useGetRefractionDetails from "../hooks/useGetRefractionDetails";
+import { createContext, ReactNode, useContext } from "react";
+import { useLocation } from "react-router";
 import { RefractionDetailModel } from "../model/RefractionDetailModel";
-import { RefractionNumberFormModel } from "../validations/schemaRefractionNumber";
-import { RefractionNumberModel } from "../model/RefractionModel";
 import { Invoice } from "../model/SingleInvoiceModel";
-import useGetSingleInvoiceDetail from "../hooks/useGetSingleInvoiceDetail";
 import useGetSingleInvoice from "../hooks/useGetSingleInvoice";
 interface FactoryOrderContext {
   refractionDetail: RefractionDetailModel | null;
@@ -38,8 +33,7 @@ export function FactoryOrderUpdateProvider({
     invoiceError: invoiceDetailError,
   } = useGetSingleInvoice(queryParams.get("invoice_number") || "", "factory");
 
-  const refractionDetail = invoiceDetail?.refraction_details;
-  console.log(invoiceDetail);
+  const refractionDetail = invoiceDetail?.refraction_details ?? null;
 
   return (
     <FactoryOrderUpdateContext.Provider

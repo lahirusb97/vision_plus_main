@@ -14,9 +14,7 @@ import axiosClient from "../axiosClient";
 import { Colors } from "../model/ColorsModel";
 import { closeStockDrawer } from "../features/invoice/stockDrawerSlice";
 import { extractErrorMessage } from "../utils/extractErrorMessage";
-interface FrameWithQty extends FrameModel {
-  buyQty: number;
-}
+
 export default function PowerToFrameFilter() {
   const dispatch = useDispatch();
   //GET FRAME LIST
@@ -33,11 +31,12 @@ export default function PowerToFrameFilter() {
   const [colors, setColors] = useState<Colors[]>([]);
   const [colorLoading, setColorLoading] = useState<boolean>(false);
   const [avilableCodes, setAvilableCodes] = React.useState<dataList[]>([]);
-  const [price, setPrice] = React.useState<number>(0);
+  const [price, setPrice] = React.useState<string>("");
+  const [frameByQty, setFrameByQty] = React.useState<number>(1);
   const [selectedFrame, setSelectedFrame] = React.useState<FrameModel | null>(
     null
   );
-  const [selectFrame, setSelectFrame] = React.useState<{
+  const [searchFrame, setSearchFrame] = React.useState<{
     brand: number | null;
     code: number | null;
     color: number | null;
@@ -52,24 +51,24 @@ export default function PowerToFrameFilter() {
   });
   //Filter Codes usign Brand
   useEffect(() => {
-    if (selectFrame.brand) {
+    if (searchFrame.brand) {
       setAvilableCodes(
-        codes.filter((item) => item.brand === selectFrame.brand)
+        codes.filter((item) => item.brand === searchFrame.brand)
       );
     } else {
       setAvilableCodes([]);
     }
-  }, [selectFrame.brand]);
+  }, [searchFrame.brand]);
   //Filter Codes usign Brand
 
   //Filter Colors usign Brand ID and frame ID **
   useEffect(() => {
-    if (selectFrame.brand && selectFrame.code) {
+    if (searchFrame.brand && searchFrame.code) {
       filterColorsByBrandAndCode();
     } else {
       setColors([]);
     }
-  }, [selectFrame.brand, selectFrame.code]);
+  }, [searchFrame.brand, searchFrame.code]);
   //Filter Colors usign Brand ID and frame ID
   //* GET FROM DB FIILTERD COLORS
   const filterColorsByBrandAndCode = async () => {
@@ -77,8 +76,8 @@ export default function PowerToFrameFilter() {
       setColorLoading(true);
       const response = await axiosClient.get<Colors[]>("/frames/colors/", {
         params: {
-          brand_id: selectFrame.brand,
-          code_id: selectFrame.code,
+          brand_id: searchFrame.brand,
+          code_id: searchFrame.code,
         },
       });
       setColors(response.data);
@@ -96,20 +95,20 @@ export default function PowerToFrameFilter() {
   useEffect(() => {
     if (
       !framesLoading &&
-      selectFrame.brand &&
-      selectFrame.code &&
-      selectFrame.color
+      searchFrame.brand &&
+      searchFrame.code &&
+      searchFrame.color
     ) {
       setSelectedFrame(null);
-      setPrice(0);
+      setPrice("");
       const matchingItems: FrameModel[] = frames.filter(
         (item) =>
-          item.code === selectFrame.code &&
-          item.brand === selectFrame.brand &&
-          item.color === selectFrame.color
+          item.code === searchFrame.code &&
+          item.brand === searchFrame.brand &&
+          item.color === searchFrame.color
       );
       if (matchingItems.length === 1) {
-        setPrice(parseInt(matchingItems[0].price));
+        setPrice(matchingItems[0].price);
         setSelectedFrame({ ...matchingItems[0] });
       } else if (matchingItems.length > 1) {
         toast.error("Multiple frames found check the stock ");
@@ -117,21 +116,34 @@ export default function PowerToFrameFilter() {
     } else {
       //! If Any of valuse null set selected frame to null & Price 0
       setSelectedFrame(null);
-      setPrice(0);
+      setPrice("");
     }
-  }, [selectFrame.brand, selectFrame.code, selectFrame.color, framesLoading]);
+  }, [searchFrame.brand, searchFrame.code, searchFrame.color, framesLoading]);
 
   //TODO find a maching frame by brand code and color END***
 
   const addFrameByList = () => {
     if (selectedFrame) {
-      if (price > 0 && selectedFrame.id) {
+      if (parseInt(price) > 0 && selectedFrame.id) {
         dispatch(
-          setFrame({ ...selectedFrame, price: String(price) } as FrameWithQty)
+          setFrame({
+            frame_id: selectedFrame.id,
+            avilable_qty: selectedFrame.stock[0].qty,
+            price_per_unit: parseInt(price),
+            buyQty: frameByQty,
+            subtotal: parseInt(price) * frameByQty,
+            frame_detail: {
+              brand_name: selectedFrame.brand_name,
+              code_name: selectedFrame.code_name,
+              color_name: selectedFrame.color_name,
+              size: selectedFrame.size,
+              species: selectedFrame.species,
+            },
+          })
         );
-        toast.success("Frame Added ");
+
         setSelectedFrame(null);
-        setSelectFrame({
+        setSearchFrame({
           brand: null,
           code: null,
           color: null,
@@ -155,40 +167,44 @@ export default function PowerToFrameFilter() {
           display: "flex",
           justifyContent: "end",
           alignItems: "center",
-          marginY: 3,
-          gap: 2,
+
+          gap: 1,
         }}
       >
-        <DropdownInput
-          options={brands}
-          onChange={(id) =>
-            setSelectFrame((preState) => ({ ...preState, brand: id }))
-          }
-          loading={brandsLoading}
-          labelName="Select Brand"
-          defaultId={selectFrame.brand}
-        />
-
-        <DropdownInput
-          options={avilableCodes}
-          onChange={(selectedId) =>
-            setSelectFrame((preState) => ({ ...preState, code: selectedId }))
-          }
-          loading={codesLoading}
-          labelName="Select Code"
-          defaultId={selectFrame.code}
-        />
-
+        <Box width={{ minWidth: 180 }}>
+          <DropdownInput
+            options={brands}
+            onChange={(id) =>
+              setSearchFrame((preState) => ({ ...preState, brand: id }))
+            }
+            loading={brandsLoading}
+            labelName="Select Brand"
+            defaultId={searchFrame.brand}
+          />
+        </Box>
+        <Box width={{ minWidth: 180 }}>
+          <DropdownInput
+            options={avilableCodes}
+            onChange={(selectedId) =>
+              setSearchFrame((preState) => ({ ...preState, code: selectedId }))
+            }
+            loading={codesLoading}
+            labelName="Select Code"
+            defaultId={searchFrame.code}
+          />
+        </Box>
         {/* Color Dropdown */}
-        <DropdownInput
-          options={colors}
-          onChange={(selectedId) =>
-            setSelectFrame((preState) => ({ ...preState, color: selectedId }))
-          }
-          loading={colorLoading}
-          labelName="Select Color"
-          defaultId={selectFrame.color}
-        />
+        <Box width={{ minWidth: 180 }}>
+          <DropdownInput
+            options={colors}
+            onChange={(selectedId) =>
+              setSearchFrame((preState) => ({ ...preState, color: selectedId }))
+            }
+            loading={colorLoading}
+            labelName="Select Color"
+            defaultId={searchFrame.color}
+          />
+        </Box>
         {/* Species Dropdown */}
         <Box width={{ minWidth: 130 }}>
           <Typography>
@@ -201,13 +217,22 @@ export default function PowerToFrameFilter() {
           </Typography>
         </Box>
         <TextField
+          size="small"
           label="Price"
           type="number"
-          fullWidth
-          margin="normal"
           variant="outlined"
           value={price}
-          onChange={(e) => setPrice(parseInt(e.target.value))}
+          onChange={(e) => setPrice(e.target.value)}
+          inputProps={{ min: 0 }}
+        />
+        <TextField
+          sx={{ width: 80 }}
+          size="small"
+          label="Qty"
+          type="number"
+          variant="outlined"
+          value={frameByQty}
+          onChange={(e) => setFrameByQty(parseInt(e.target.value))}
           inputProps={{ min: 0 }}
         />
         <Paper sx={{ p: 1 }}>{selectedFrame?.stock[0]?.qty || 0}</Paper>
@@ -224,10 +249,10 @@ export default function PowerToFrameFilter() {
         </Button>
       </Box>
 
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}>
         {Object.values(selectedFrameList).length !== 0 &&
           Object.values(selectedFrameList).map((frame) => (
-            <div>
+            <div key={frame.frame_id}>
               <InvoiceFrameItem frame={frame} />
             </div>
           ))}

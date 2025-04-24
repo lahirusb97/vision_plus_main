@@ -1,54 +1,51 @@
 import Box from "@mui/material/Box";
 import { FormProvider, useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
-import {
-  Button,
-  Checkbox,
-  FormControlLabel,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Button, Checkbox, TextField, Typography } from "@mui/material";
 // Hooks
 //Models
-import { InvoiceInputModel } from "../../../model/InvoiceInputModel";
+
 //schemas
-import { factoryInvoiceSchema } from "../../../validations/factoryInvoiceSchema";
+import {
+  FactoryInvoiceFormModel,
+  schemaFactoryInvoice,
+} from "../../../validations/factoryInvoiceSchema";
 //Store
 import { RootState } from "../../../store/store";
 import { clearFrame } from "../../../features/invoice/frameFilterSlice";
 import { clearLenses } from "../../../features/invoice/lenseFilterSlice";
 import { clearOtherItem } from "../../../features/invoice/otherItemSlice";
 //Components
-import OnlinePayInput from "../../../components/inputui/OnlinePayInput";
 import InvoiceTable from "../../../components/inputui/InvoiceTable";
-import CardInput from "../../../components/inputui/CardInput";
-import CashInput from "../../../components/inputui/CashInput";
 import LoadingAnimation from "../../../components/LoadingAnimation";
 import RightEyeTable from "../../../components/RightEyeTable";
 import LeftEyeTable from "../../../components/LeftEyeTable";
 import DrawerStock from "../../../components/inputui/DrawerStock";
 import axiosClient from "../../../axiosClient";
 import PationtDetails from "../../../components/PationtDetails";
-import { calculateExternalLensTotal } from "../../../utils/calculateExternalLensTotal";
 import { clearexternalLense } from "../../../features/invoice/externalLenseSlice";
 import { formatUserPayments } from "../../../utils/formatUserPayments";
 import StockDrawerBtn from "../../../components/StockDrawerBtn";
 import HidenNoteDialog from "../../../components/HidenNoteDialog";
 import { extractErrorMessage } from "../../../utils/extractErrorMessage";
 import { useFactoryOrderContext } from "../../../context/FactoryOrderContext";
-import { heIL } from "@mui/x-date-pickers/locales";
 import VarificationDialog from "../../../components/VarificationDialog";
 import { useValidationState } from "../../../hooks/validations/useValidationState";
 import { getUserCurentBranch } from "../../../utils/authDataConver";
+import SugarCataractText from "../../../components/common/SugarCataractText";
+import PdAndHeightInputs from "../factory_layouts/PdAndHeightInputs";
+import PaymentMethodsLayout from "../factory_layouts/PaymentMethodsLayout";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { FactoryOrderInputModel } from "../../../model/InvoiceInputModel";
 
 export default function FactoryInvoiceForm() {
   const { prepareValidation, resetValidation, validationState } =
     useValidationState();
-  const { id } = useParams();
+  const { refraction_id } = useParams();
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
   //HOOKS
@@ -60,16 +57,26 @@ export default function FactoryInvoiceForm() {
   const FrameInvoiceList = useSelector(
     (state: RootState) => state.invoice_frame_filer.selectedFrameList
   );
+  const frameTotal = useSelector(
+    (state: RootState) => state.invoice_frame_filer.framesubTotal
+  );
   const LenseInvoiceList = useSelector(
-    (state: RootState) => state.invoice_lense_filer.selectedLenses
+    (state: RootState) => state.invoice_lense_filer.selectedLensesList
+  );
+  const lenseTotal = useSelector(
+    (state: RootState) => state.invoice_lense_filer.lenseSubTotal
   );
   const externalLenseInvoiceList = useSelector(
-    (state: RootState) => state.invoice_external_lense.externalLense
+    (state: RootState) => state.invoice_external_lense.externalLenseList
+  );
+  const ExtraTotal = useSelector(
+    (state: RootState) => state.invoice_external_lense.externalLenseSubTotal
   );
   // Store Data**
+  console.log(LenseInvoiceList);
 
-  const methods = useForm({
-    resolver: yupResolver(factoryInvoiceSchema),
+  const methods = useForm<FactoryInvoiceFormModel>({
+    resolver: zodResolver(schemaFactoryInvoice),
     defaultValues: {
       credit_card: 0,
       cash: 0,
@@ -86,20 +93,8 @@ export default function FactoryInvoiceForm() {
       methods.setValue("nic", singlerefractionNumber.nic);
     }
   }, [singlerefractionNumber]);
-  const calculateTotal = (list: any[]) => {
-    return list.reduce((acc, row) => {
-      const rowTotal = parseInt(row.price) * row.buyQty;
-      return acc + rowTotal;
-    }, 0);
-  };
-  //test this function
 
-  const frameTotal = calculateTotal(Object.values(FrameInvoiceList));
-  const lenseTotal = calculateTotal(Object.values(LenseInvoiceList));
   //calculate total send
-  const ExtraTotal = calculateExternalLensTotal(
-    Object.values(externalLenseInvoiceList)
-  );
 
   const subtotal = frameTotal + lenseTotal + ExtraTotal;
   //Total  with discount
@@ -113,128 +108,95 @@ export default function FactoryInvoiceForm() {
       dispatch(clearexternalLense());
     };
   }, []);
+  console.log("FrameInvoiceList", methods.formState.errors);
 
-  const submiteFromData = async (data: InvoiceInputModel) => {
-    //HANDLE PAYMENT To REMOVE SENDING  0
-    const userPayments = {
-      credit_card: data.credit_card,
-      cash: data.cash,
-      online_transfer: data.online_transfer,
-    };
-    const postData = {
-      patient: {
-        refraction_id: id,
-        name: data.name,
-        nic: data.nic,
-        address: data.address,
-        phone_number: data.phone_number,
-        date_of_birth: data.dob,
-      },
-      order: {
-        refraction: id,
-        status:
-          grandTotal <=
-          parseInt(data.credit_card || "0") +
-            parseInt(data.cash || "0") +
-            parseInt(data.online_transfer || "0")
-            ? "completed"
-            : "pending",
+  const submiteFromData = async (data: FactoryInvoiceFormModel) => {
+    if (refraction_id) {
+      //HANDLE PAYMENT To REMOVE SENDING  0
+      const orderState =
+        grandTotal <= data.credit_card + data.cash + data.online_transfer
+          ? "completed"
+          : "pending";
+      const userPayments = {
+        credit_card: data.credit_card,
+        cash: data.cash,
+        online_transfer: data.online_transfer,
+      };
+      const postData = {
+        patient: {
+          refraction_id: parseInt(refraction_id),
+          name: data.name,
+          nic: data.nic || "",
+          address: data.address || "",
+          phone_number: data.phone_number || "",
+          date_of_birth: data.dob || "",
+        },
+        order: {
+          refraction: parseInt(refraction_id),
+          status: orderState,
+          sub_total: subtotal,
+          discount: discount,
+          total_price: grandTotal,
+          order_remark: data.order_remark,
+          // sales_staff_code: data.sales_staff_code, //!user code ID set this using varification Dialog
+          pd: data.pd,
+          right_pd: data.right_pd,
+          left_pd: data.left_pd,
+          height: data.height,
+          right_height: data.right_height,
+          left_height: data.left_height,
+          fitting_on_collection: data.fitting_on_collection,
+          on_hold: data.on_hold,
+          branch_id: data.branch_id,
+        },
+        order_items: [
+          ...Object.values(LenseInvoiceList).map((item) => ({
+            lens: item.lense_id,
+            quantity: item.buyQty,
+            price_per_unit: item.price_per_unit,
+            subtotal: item.subtotal,
+          })),
 
-        sub_total: parseFloat(subtotal) || 0,
-        discount: parseFloat(discount) || 0,
-        total_price: parseFloat(grandTotal) || 0,
-        order_remark: data.order_remark,
-        // sales_staff_code: data.sales_staff_code, //!user code ID set this using varification Dialog
-        pd: data.pd,
-        right_pd: data.right_pd,
-        left_pd: data.left_pd,
-        height: data.height,
-        right_height: data.right_height,
-        left_height: data.left_height,
-        fitting_on_collection: data.fitting_on_collection,
-        on_hold: data.on_hold,
-        branch_id: getUserCurentBranch()?.id,
-      },
-      order_items: [
-        ...Object.values(LenseInvoiceList).map((item) => ({
-          lens: item.id,
-          quantity: item.buyQty,
-          price_per_unit: parseFloat(item.price),
-          subtotal: item.buyQty * parseFloat(item.price),
-        })),
+          ...Object.values(FrameInvoiceList).map((item) => ({
+            frame: item.frame_id,
+            quantity: item.buyQty,
+            price_per_unit: item.price_per_unit,
+            subtotal: item.subtotal,
+          })),
+          ...Object.values(externalLenseInvoiceList).map((item) => ({
+            external_lens: item.external_lens_id,
+            quantity: item.buyQty,
+            price_per_unit: item.price_per_unit,
+            subtotal: item.subtotal,
+            is_non_stock: true,
+            //!Note here
+          })),
+        ],
+        order_payments: formatUserPayments(userPayments),
+      };
 
-        ...Object.values(FrameInvoiceList).map((item) => ({
-          frame: item.id,
-          quantity: item.buyQty,
-          price_per_unit: item.price,
-          subtotal: item.buyQty * parseFloat(item.price),
-        })),
-        ...Object.values(externalLenseInvoiceList).map((item) => {
-          const { external_lens_data = {}, lensNames, id, ...rest } = item; // Default to empty object if not available
-
-          const powers = [
-            {
-              power: 1,
-              value: refractionDetail?.right_eye_dist_sph,
-              side: "left",
-            },
-            {
-              power: 2,
-              value: refractionDetail?.right_eye_dist_cyl,
-              side: "left",
-            },
-            {
-              power: 3,
-              value: refractionDetail?.right_eye_near_sph,
-              side: "left",
-            },
-            {
-              power: 1,
-              value: refractionDetail?.left_eye_dist_sph,
-              side: "right",
-            },
-            {
-              power: 2,
-              value: refractionDetail?.left_eye_dist_cyl,
-              side: "right",
-            },
-            {
-              power: 3,
-              value: refractionDetail?.left_eye_near_sph,
-              side: "right",
-            },
-          ];
-          return {
-            ...rest,
-            external_lens_data: {
-              ...external_lens_data,
-              powers: powers.filter((item) => item.value !== null),
-            }, // Send the rest of the object without `name`
-          };
-        }),
-      ],
-      order_payments: formatUserPayments(userPayments),
-    };
-
-    if (
-      Object.keys(externalLenseInvoiceList).length > 0 ||
-      Object.keys(LenseInvoiceList).length > 0 ||
-      Object.keys(FrameInvoiceList).length > 0
-    ) {
-      if (refractionDetail && !refractionDetailLoading) {
-        prepareValidation("create", async (verifiedUserId: number) => {
-          await sendDataToDb(postData, verifiedUserId);
-        });
-        //TODO USE THIS AND CREATE THE SYSTEM ALL GOOD TO DO IF NO REFRACTION DETAILS NO DETAIL CREATINS
+      if (
+        Object.keys(externalLenseInvoiceList).length > 0 ||
+        Object.keys(LenseInvoiceList).length > 0 ||
+        Object.keys(FrameInvoiceList).length > 0
+      ) {
+        if (refractionDetail && !refractionDetailLoading) {
+          prepareValidation("create", async (verifiedUserId: number) => {
+            await sendDataToDb(postData, verifiedUserId);
+          });
+          //TODO USE THIS AND CREATE THE SYSTEM ALL GOOD TO DO IF NO REFRACTION DETAILS NO DETAIL CREATINS
+        } else {
+          toast.error("Refraction Detail Not Found");
+        }
       } else {
-        toast.error("Refraction Detail Not Found");
+        toast.error("No Items ware added");
       }
     } else {
-      toast.error("No Items ware added");
+      toast.error("Selected Petient Does not Have a  Refraction Number");
     }
   };
   const sendDataToDb = async (
-    postData: InvoiceInputModel,
+    postData: FactoryOrderInputModel,
     verifiedUserId: number
   ) => {
     console.log("postData", postData);
@@ -325,22 +287,21 @@ export default function FactoryInvoiceForm() {
                 alignItems: "center",
               }}
             >
-              <Typography mx={1}>
-                Suger : {refractionDetail?.shuger ? "Yes" : "No"}
-              </Typography>
-              <Typography mx={1}>
-                Cataract : {refractionDetail?.cataract ? " Yes" : "No"}
-              </Typography>
-              <FormControlLabel
-                control={<Checkbox {...methods.register("on_hold")} />}
-                label=" On Hold"
+              <SugarCataractText
+                shuger={refractionDetail?.shuger}
+                cataract={refractionDetail?.cataract}
               />
-              <FormControlLabel
-                control={
-                  <Checkbox {...methods.register("fitting_on_collection")} />
-                }
-                label="Fiting on Collection"
-              />
+
+              <Box ml={1} display="flex" alignItems="center">
+                <Typography variant="body1"> On Hold</Typography>
+                <Checkbox {...methods.register("on_hold")} />
+              </Box>
+
+              <Box display="flex" alignItems="center">
+                <Typography variant="body1">| Fiting on Collection</Typography>
+                <Checkbox {...methods.register("fitting_on_collection")} />
+              </Box>
+
               <HidenNoteDialog />
               <StockDrawerBtn />
             </Box>
@@ -357,74 +318,7 @@ export default function FactoryInvoiceForm() {
                 my: 1,
               }}
             >
-              <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-                <TextField
-                  {...methods.register("pd")}
-                  sx={{ width: 100 }}
-                  size="small"
-                  type="number"
-                  label="PD"
-                  InputLabelProps={{
-                    shrink: Boolean(methods.watch("pd")),
-                  }}
-                />
-                <TextField
-                  {...methods.register("height")}
-                  sx={{ width: 100 }}
-                  type="number"
-                  size="small"
-                  label="Height"
-                  InputLabelProps={{
-                    shrink: Boolean(methods.watch("height")),
-                  }}
-                />
-              </Box>
-              <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-                <Box sx={{ display: "flex", gap: 1 }}>
-                  <TextField
-                    {...methods.register("right_height")}
-                    sx={{ width: 100 }}
-                    type="number"
-                    size="small"
-                    label="Right-H"
-                    InputLabelProps={{
-                      shrink: Boolean(methods.watch("right_height")),
-                    }}
-                  />
-                  <TextField
-                    {...methods.register("left_height")}
-                    sx={{ width: 100 }}
-                    type="number"
-                    size="small"
-                    label="Left-H "
-                    InputLabelProps={{
-                      shrink: Boolean(methods.watch("left_height")),
-                    }}
-                  />
-                </Box>
-                <Box sx={{ display: "flex", gap: 1 }}>
-                  <TextField
-                    {...methods.register("right_pd")}
-                    sx={{ width: 100 }}
-                    type="number"
-                    size="small"
-                    label="Right-PD"
-                    InputLabelProps={{
-                      shrink: Boolean(methods.watch("right_pd")),
-                    }}
-                  />
-                  <TextField
-                    {...methods.register("left_pd")}
-                    sx={{ width: 100 }}
-                    type="number"
-                    size="small"
-                    label="Left-PD"
-                    InputLabelProps={{
-                      shrink: Boolean(methods.watch("left_pd")),
-                    }}
-                  />
-                </Box>
-              </Box>
+              <PdAndHeightInputs />
               <TextField
                 fullWidth
                 size="small"
@@ -446,10 +340,20 @@ export default function FactoryInvoiceForm() {
                 justifyContent: "space-between",
               }}
             >
-              <OnlinePayInput />
-              <CardInput />
-              <CashInput />
-
+              <PaymentMethodsLayout />
+              <TextField
+                size="small"
+                sx={{ display: "none" }}
+                inputProps={{
+                  min: 0,
+                }}
+                {...methods.register("branch_id", { valueAsNumber: true })}
+                label="Branch Id"
+                type="number"
+                fullWidth
+                variant="outlined"
+                defaultValue={getUserCurentBranch()?.id}
+              />
               <Button
                 sx={{ width: "400px" }}
                 size="small"

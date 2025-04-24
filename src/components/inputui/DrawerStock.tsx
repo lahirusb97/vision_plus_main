@@ -6,7 +6,6 @@ import { RootState } from "../../store/store";
 import { useDispatch, useSelector } from "react-redux";
 import { closeStockDrawer } from "../../features/invoice/stockDrawerSlice";
 import ExternalLense from "../../view/transaction/factory_order/ExternalLense";
-import PowerToLenseFilter from "../PowerToLenseFilter";
 import PowerToFrameFilter from "../PowerToFrameFilter";
 import { RefractionDetailModel } from "../../model/RefractionDetailModel";
 import LensFilter from "../lensFilter/LensFilter";

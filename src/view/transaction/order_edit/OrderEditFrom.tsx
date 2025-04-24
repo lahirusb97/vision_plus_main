@@ -1,28 +1,19 @@
 import Box from "@mui/material/Box";
 import { FormProvider, useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
 import { useDispatch, useSelector } from "react-redux";
-import { redirect, useNavigate, useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { useEffect, useState } from "react";
-import axios from "axios";
+
 import toast from "react-hot-toast";
+import { Button, Checkbox, TextField, Typography } from "@mui/material";
 import {
-  Button,
-  Checkbox,
-  FormControlLabel,
-  TextField,
-  Typography,
-} from "@mui/material";
-import { factoryInvoiceSchema } from "../../../validations/factoryInvoiceSchema";
-import useGetSingleInvoiceDetail from "../../../hooks/useGetSingleInvoiceDetail";
+  FactoryInvoiceFormModel,
+  schemaFactoryInvoice,
+} from "../../../validations/factoryInvoiceSchema";
+
 import LeftEyeTable from "../../../components/LeftEyeTable";
 import RightEyeTable from "../../../components/RightEyeTable";
 import PationtDetails from "../../../components/PationtDetails";
-import { InvoiceInputModel } from "../../../model/InvoiceInputModel";
-import InvoiceTable from "../../../components/inputui/InvoiceTable";
-import CashInput from "../../../components/inputui/CashInput";
-import CardInput from "../../../components/inputui/CardInput";
-import OnlinePayInput from "../../../components/inputui/OnlinePayInput";
 import DrawerStock from "../../../components/inputui/DrawerStock";
 import LoadingAnimation from "../../../components/LoadingAnimation";
 import {
@@ -38,22 +29,27 @@ import {
   clearexternalLense,
   setexternalLense,
 } from "../../../features/invoice/externalLenseSlice";
-import { RefractionDetailCreate } from "../../../model/RefractionDetailModel";
-import { PatientModel } from "../../../model/Patient";
+
 import axiosClient from "../../../axiosClient";
 import { RootState } from "../../../store/store";
-import { calculateExternalLensTotal } from "../../../utils/calculateExternalLensTotal";
-import { convertEmptyStringsToNull } from "../../../utils/convertEmptyStringsToNull";
+
 import { extractErrorMessage } from "../../../utils/extractErrorMessage";
-import { CheckBox } from "@mui/icons-material";
 import HidenNoteDialog from "../../../components/HidenNoteDialog";
 import StockDrawerBtn from "../../../components/StockDrawerBtn";
 import { useFactoryOrderUpdateContext } from "../../../context/FactoryOrderUpdateContext";
 import { useValidationState } from "../../../hooks/validations/useValidationState";
 import VarificationDialog from "../../../components/VarificationDialog";
+import OrderPaymentHistoryDialog from "../factory_layouts/OrderPaymentHistoryDialog";
+import { zodResolver } from "@hookform/resolvers/zod";
+import SugarCataractText from "../../../components/common/SugarCataractText";
+import PdAndHeightInputs from "../factory_layouts/PdAndHeightInputs";
+import PaymentMethodsLayout from "../factory_layouts/PaymentMethodsLayout";
+import { formatUserPayments } from "../../../utils/formatUserPayments";
+import EditInvoiceTable from "../../../components/inputui/EditInvoiceTable";
 
 export default function OrderEditFrom() {
-  const { id } = useParams();
+  const { invoice_number } = useParams();
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
   // SET VALUES FOR PATIENT TABLE
@@ -69,31 +65,32 @@ export default function OrderEditFrom() {
   const FrameInvoiceList = useSelector(
     (state: RootState) => state.invoice_frame_filer.selectedFrameList
   );
+  const frameTotal = useSelector(
+    (state: RootState) => state.invoice_frame_filer.framesubTotal
+  );
   const LenseInvoiceList = useSelector(
-    (state: RootState) => state.invoice_lense_filer.selectedLenses
+    (state: RootState) => state.invoice_lense_filer.selectedLensesList
+  );
+  const lenseTotal = useSelector(
+    (state: RootState) => state.invoice_lense_filer.lenseSubTotal
   );
   const externalLenseInvoiceList = useSelector(
-    (state: RootState) => state.invoice_external_lense.externalLense
+    (state: RootState) => state.invoice_external_lense.externalLenseList
   );
-  const methods = useForm({
-    resolver: yupResolver(factoryInvoiceSchema),
+  const ExtraTotal = useSelector(
+    (state: RootState) => state.invoice_external_lense.externalLenseSubTotal
+  );
+  const methods = useForm<FactoryInvoiceFormModel>({
+    resolver: zodResolver(schemaFactoryInvoice.omit({ branch_id: true })),
+    defaultValues: {
+      credit_card: 0,
+      cash: 0,
+      online_transfer: 0,
+      discount: 0,
+    },
   });
 
   const discount = methods.watch("discount");
-
-  const calculateTotal = (list: any[]) => {
-    return list.reduce((acc, row) => {
-      const rowTotal = parseInt(row.price) * row.buyQty;
-      return acc + rowTotal;
-    }, 0);
-  };
-
-  const frameTotal = calculateTotal(Object.values(FrameInvoiceList));
-  const lenseTotal = calculateTotal(Object.values(LenseInvoiceList));
-  //calculate total send
-  const ExtraTotal = calculateExternalLensTotal(
-    Object.values(externalLenseInvoiceList)
-  );
 
   const subtotal = frameTotal + lenseTotal + ExtraTotal;
   const grandTotal = subtotal - discount;
@@ -108,16 +105,24 @@ export default function OrderEditFrom() {
   }, []);
   const [loadState, setLoadState] = useState(0);
   useEffect(() => {
-    if (!invoiceDetailLoading && invoiceDetail?.refraction_details) {
-      Object.entries(
-        invoiceDetail.refraction_details as RefractionDetailCreate
-      ).forEach(([key, value]) => {
-        methods.setValue(key as keyof InvoiceInputModel, value || null);
-      });
-      Object.entries(invoiceDetail.customer_details as PatientModel).forEach(
-        ([key, value]) => {
-          methods.setValue(key as keyof InvoiceInputModel, value || null);
-        }
+    if (!invoiceDetailLoading && invoiceDetail) {
+      methods.setValue("name", invoiceDetail?.customer_details.name);
+      methods.setValue("nic", invoiceDetail?.customer_details.nic ?? undefined);
+      methods.setValue(
+        "address",
+        invoiceDetail?.customer_details?.address ?? undefined
+      );
+      methods.setValue(
+        "phone_number",
+        invoiceDetail?.customer_details.phone_number
+      );
+      methods.setValue(
+        "dob",
+        invoiceDetail?.customer_details?.date_of_birth ?? undefined
+      );
+      methods.setValue(
+        "discount",
+        parseInt(invoiceDetail.order_details.discount)
       );
     }
     if (invoiceDetail && !invoiceDetailLoading && loadState === 0) {
@@ -127,9 +132,18 @@ export default function OrderEditFrom() {
           // const { brand, code, color, id } = item.frame_detail;
           dispatch(
             setFrame({
-              ...item.frame_detail,
-              price: item.price_per_unit,
-              id: item.frame,
+              frame_id: item.frame,
+              buyQty: item.quantity,
+              avilable_qty: item.quantity,
+              price_per_unit: parseInt(item.price_per_unit),
+              subtotal: parseInt(item.subtotal),
+              frame_detail: {
+                brand_name: item.frame_detail?.brand_name,
+                code_name: item.frame_detail?.code_name,
+                color_name: item.frame_detail?.color_name,
+                size: item.frame_detail?.size,
+                species: item.frame_detail?.species,
+              },
             })
           );
         });
@@ -137,29 +151,17 @@ export default function OrderEditFrom() {
       invoiceDetail?.order_details.order_items
         .filter((items) => items.external_lens !== null)
         .forEach((item) => {
-          const externalLense = {
-            external_lens_data: {
-              lens: {
-                type: parseInt(item.type_id),
-                coating: parseInt(item.coating_id),
-                brand: parseInt(item.type_id),
-                price: parseInt(item.price_per_unit),
-              },
-            },
-            quantity: 1,
-            price_per_unit: parseInt(item.price_per_unit),
-            subtotal: parseInt(item.subtotal),
-            is_non_stock: true,
-            lensNames: {
-              typeName: item.brand_name,
-              coatingName: item.coating_name,
-              brandName: item.brand_name,
-            },
-          };
           dispatch(
             setexternalLense({
-              ...externalLense,
-              id: item.external_lens,
+              external_lens_id: item.external_lens,
+              buyQty: item.quantity,
+              price_per_unit: parseInt(item.price_per_unit),
+              subtotal: parseInt(item.subtotal),
+              external_lens_details: {
+                brand_name: item?.brand_name,
+                type_name: item?.type_name,
+                coating_name: item?.coating_name,
+              },
             })
           );
         });
@@ -167,17 +169,19 @@ export default function OrderEditFrom() {
       invoiceDetail?.order_details.order_items
         .filter((items) => items.lens !== null)
         .forEach((item) => {
-          const { brand, type, coating } = item.lens_detail;
           dispatch(
             setLense({
-              type: type,
-              brand: brand,
-              lens_type: item.lens_name,
-              coating: coating,
-              powers: item.lens_powers,
-              price: item.price_per_unit,
-              buyQty: 1,
-              id: item.lens,
+              lense_id: item.lens,
+              avilable_qty: item.quantity, //TODO UPDATE BACKEND to get stock avilable qty
+              price_per_unit: parseInt(item.price_per_unit),
+              buyQty: item.quantity,
+              subtotal: parseInt(item.subtotal),
+              lense_detail: {
+                brand_name: item.lens_detail?.brand_name,
+                type_name: item.lens_detail?.type_name,
+                coating_name: item.lens_detail?.coating_name,
+                powers: item?.lens_powers,
+              },
             })
           );
         });
@@ -194,34 +198,6 @@ export default function OrderEditFrom() {
       dispatch(clearexternalLense());
     };
   }, []);
-
-  useEffect(() => {
-    if (invoiceDetail && !invoiceDetailLoading) {
-      const orderDetails = invoiceDetail?.order_details;
-      const orderPayments = orderDetails?.order_payments;
-
-      if (orderPayments && orderPayments.length > 0) {
-        const totals = {};
-
-        // Calculate total amount for each payment method
-        orderPayments.forEach((payment) => {
-          const method = payment.payment_method;
-          const amount = parseFloat(payment.amount) || 0; // Ensure valid number
-
-          if (!totals[method]) {
-            totals[method] = 0;
-          }
-          totals[method] += amount;
-        });
-
-        // Set the calculated totals in the specific method's input field
-        Object.keys(totals).forEach((method) => {
-          methods.setValue(method, totals[method]); // Ensure decimal format
-        });
-        methods.setValue("discount", parseFloat(orderDetails.discount));
-      }
-    }
-  }, [invoiceDetail, invoiceDetailLoading]);
 
   if (invoiceDetailLoading) {
     return (
@@ -240,8 +216,29 @@ export default function OrderEditFrom() {
     return null;
   }
 
-  const submiteFromData = async (data: InvoiceInputModel) => {
-    //  ! Custoome rID Tep solution
+  const submiteFromData = async (data: FactoryInvoiceFormModel) => {
+    const prePayments = invoiceDetail?.order_details.order_payments;
+    const simplifiedPayments = prePayments?.map(
+      ({ id, amount, payment_method, transaction_status }) => ({
+        id,
+        amount: parseInt(amount),
+        payment_method,
+        transaction_status,
+      })
+    );
+
+    const lastPayment = parseInt(invoiceDetail?.order_details.sub_total || "0");
+    const orderState =
+      grandTotal <=
+      data.credit_card + data.cash + data.online_transfer + lastPayment
+        ? "completed"
+        : "pending";
+
+    const userPayments = {
+      credit_card: data.credit_card,
+      cash: data.cash,
+      online_transfer: data.online_transfer,
+    };
     const postData = {
       patient: {
         refraction_id: invoiceDetail?.customer_details.refraction_id,
@@ -253,94 +250,53 @@ export default function OrderEditFrom() {
       },
       order: {
         refraction: invoiceDetail?.customer_details.refraction_id,
-        status:
-          subtotal <= parseInt(data.card || "0") + parseInt(data.cash || "0")
-            ? "completed"
-            : "pending",
+        status: orderState,
 
-        sub_total: parseFloat(subtotal) || 0,
-        discount: parseFloat(discount) || 0,
-        total_price: parseFloat(grandTotal) || 0,
-        remark: data.remark,
-        sales_staff_code: data.sales_staff_code, //TODO TEST THIS
+        sub_total: subtotal,
+        discount: discount,
+        total_price: grandTotal,
+        order_remark: data.order_remark,
+        sales_staff_code: invoiceDetail?.order_details.sales_staff_code, //TODO TEST THIS
+        branch_id: invoiceDetail?.order_details.branch_id,
+        pd: data.pd,
+        right_pd: data.right_pd,
+        left_pd: data.left_pd,
+        height: data.height,
+        right_height: data.right_height,
+        left_height: data.left_height,
+        fitting_on_collection: data.fitting_on_collection,
+        on_hold: data.on_hold,
       },
       order_items: [
         ...Object.values(LenseInvoiceList).map((item) => ({
-          lens: item.id,
+          lens: item.lense_id,
           quantity: item.buyQty,
-          price_per_unit: parseFloat(item.price),
-          subtotal: item.buyQty * parseFloat(item.price),
+          price_per_unit: item.price_per_unit,
+          subtotal: item.subtotal,
         })),
 
         ...Object.values(FrameInvoiceList).map((item) => ({
-          frame: item.id,
+          frame: item.frame_id,
           quantity: item.buyQty,
-          price_per_unit: parseFloat(item.price),
-          subtotal: item.buyQty * parseFloat(item.price),
+          price_per_unit: item.price_per_unit,
+          subtotal: item.subtotal,
         })),
 
-        ...Object.values(externalLenseInvoiceList).map((item) => {
-          const { external_lens_data = {}, lensNames, id, ...rest } = item; // Default to empty object if not available
-
-          const powers = [
-            {
-              power: 1,
-              value: methods.watch("right_eye_dist_sph") || null,
-              side: "left",
-            },
-            {
-              power: 2,
-              value: methods.watch("right_eye_dist_cyl") || null,
-              side: "left",
-            },
-            {
-              power: 3,
-              value: methods.watch("right_eye_near_sph") || null,
-              side: "left",
-            },
-            {
-              power: 1,
-              value: methods.watch("left_eye_dist_sph") || null,
-              side: "right",
-            },
-            {
-              power: 2,
-              value: methods.watch("left_eye_dist_cyl") || null,
-              side: "right",
-            },
-            {
-              power: 3,
-              value: methods.watch("left_eye_near_sph") || null,
-              side: "right",
-            },
-          ];
-          return {
-            ...rest,
-            external_lens_data: {
-              ...external_lens_data,
-              powers: powers.filter((item) => item.value !== null),
-            }, // Send the rest of the object without `name`
-          };
-        }),
+        ...Object.values(externalLenseInvoiceList).map((item) => ({
+          external_lens: item.external_lens_id,
+          quantity: item.buyQty,
+          price_per_unit: item.price_per_unit,
+          subtotal: item.subtotal,
+          is_non_stock: true,
+          //!Note here
+        })),
       ],
       order_payments: [
-        {
-          amount: data.credit_card,
-          payment_method: "credit_card",
-          transaction_status: "success",
-        },
-        {
-          amount: data.cash,
-          payment_method: "cash",
-          transaction_status: "success",
-        },
-        {
-          amount: data.online_transfer,
-          payment_method: "online_transfer",
-          transaction_status: "success",
-        },
+        ...formatUserPayments(userPayments),
+        ...(simplifiedPayments || []),
       ],
     };
+    console.log(postData);
 
     if (
       Object.keys(externalLenseInvoiceList).length > 0 ||
@@ -354,6 +310,8 @@ export default function OrderEditFrom() {
       toast.error("No Items ware added");
     }
   };
+  console.log(methods.formState.errors);
+
   const sendDataToDb = async (postData) => {
     try {
       // No refraction Data but have Refraction Number
@@ -362,8 +320,9 @@ export default function OrderEditFrom() {
         postData
       );
       toast.success("Order & Refraction Details saved successfully");
-      const url = `?order_id=${encodeURIComponent(responce.data.id)}`;
-
+      const url = `?invoice_number=${encodeURIComponent(
+        responce.data.invoice_number
+      )}`;
       navigate(
         `/transaction/factory_order/create/${invoiceDetail?.customer_details.refraction_id}/view/${url}`
       );
@@ -409,7 +368,7 @@ export default function OrderEditFrom() {
               <Typography
                 sx={{ border: "1px solid gray", px: 1, mx: 1, mb: 1 }}
               >
-                Refraction Remark - {refractionDetail?.note}
+                Refraction Remark - {refractionDetail?.refraction_remark}
               </Typography>
             </Box>
 
@@ -432,22 +391,31 @@ export default function OrderEditFrom() {
               width: "100%",
               margin: "0 auto",
               display: "flex",
+              alignItems: "center",
             }}
           >
-            <FormControlLabel
-              control={<Checkbox {...methods.register("on_hold")} />}
-              label=" On Hold"
+            <SugarCataractText
+              shuger={refractionDetail?.shuger}
+              cataract={refractionDetail?.cataract}
             />
-            <FormControlLabel
-              control={
-                <Checkbox {...methods.register("fitting_on_collection")} />
-              }
-              label="Fiting on Collection"
-            />
+            <Box ml={1} display="flex" alignItems="center">
+              <Typography variant="body1"> On Hold</Typography>
+              <Checkbox {...methods.register("on_hold")} />
+            </Box>
+
+            <Box display="flex" alignItems="center">
+              <Typography variant="body1">| Fiting on Collection</Typography>
+              <Checkbox {...methods.register("fitting_on_collection")} />
+            </Box>
             <HidenNoteDialog />
             <StockDrawerBtn />
+            <OrderPaymentHistoryDialog
+              paymentList={invoiceDetail?.order_details?.order_payments ?? []}
+            />
           </Box>
-          <InvoiceTable />
+          <EditInvoiceTable
+            paymentList={invoiceDetail?.order_details?.order_payments ?? []}
+          />
           <Box
             sx={{
               display: "flex",
@@ -459,32 +427,14 @@ export default function OrderEditFrom() {
               mt: 1,
             }}
           >
-            <TextField
-              {...methods.register("pd")}
-              sx={{ width: 100 }}
-              size="small"
-              type="number"
-              label="PD"
-              InputLabelProps={{
-                shrink: Boolean(methods.watch("pd")),
-              }}
-            />
-            <TextField
-              {...methods.register("h")}
-              sx={{ width: 100 }}
-              type="number"
-              size="small"
-              label="H"
-              InputLabelProps={{
-                shrink: Boolean(methods.watch("h")),
-              }}
-            />
+            <PdAndHeightInputs />
             <TextField
               fullWidth
               size="small"
-              {...methods.register("remark")}
+              {...methods.register("order_remark")}
               sx={{ maxWidth: "1200px" }}
-              placeholder="remark"
+              placeholder="Order remark"
+              rows={3} // Defines the number of visible lines
               multiline
             />
           </Box>
@@ -499,9 +449,8 @@ export default function OrderEditFrom() {
               justifyContent: "space-between",
             }}
           >
-            <OnlinePayInput />
-            <CardInput />
-            <CashInput />
+            <PaymentMethodsLayout />
+
             <Button
               sx={{ width: "400px" }}
               size="small"

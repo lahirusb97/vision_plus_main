@@ -28,6 +28,9 @@ import ColorsEdit from "../../view/stock/frame/ColorsEdit";
 import FrameCodeEdit from "../../view/stock/frame/FrameCodeEdit";
 import FrameCodeAdd from "../../view/stock/frame/FrameCodeAdd";
 import OtherItemCreate from "../../view/stock/otherItem/OtherItemCreate";
+import ExternalLensStore from "../../view/stock/external_lens/ExternalLensStore";
+import ExternalLensCreate from "../../view/stock/external_lens/ExternalLensCreate";
+import ExternalLensUpdate from "../../view/stock/external_lens/ExternalLensUpdate";
 
 export const stockRoutes: RouteObject[] = [
   {
@@ -202,5 +205,23 @@ export const stockRoutes: RouteObject[] = [
   {
     path: "add_other_item",
     element: <OtherItemCreate />,
+  },
+  {
+    path: "external_lense",
+    element: <ProtectedChildRoute />,
+    children: [
+      {
+        index: true,
+        element: <ExternalLensStore />,
+      },
+      {
+        path: "create",
+        element: <ExternalLensCreate />,
+      },
+      {
+        path: "update/:external_lens_id",
+        element: <ExternalLensUpdate />,
+      },
+    ],
   },
 ];

@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import axiosClient from "../../axiosClient";
+import { extractErrorMessage } from "../../utils/extractErrorMessage";
 
 interface Colors {
   id: number;
@@ -26,10 +27,8 @@ const useGetColors = (): UseGetCoatingReturn => {
     try {
       const response = await axiosClient.get<Colors[]>("/colors/");
       setColors(response.data);
-    } catch (err: any) {
-      setColorsLoading(
-        err?.response?.data?.message || "Failed to fetch doctors."
-      );
+    } catch (err) {
+      extractErrorMessage(err);
     } finally {
       setColorsLoading(false);
     }

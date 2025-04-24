@@ -1,4 +1,24 @@
 import z from "zod";
+
+const cylinderSchema = z
+  .string()
+  .optional()
+  .nullable()
+  .transform((val) => {
+    if (val === "" || val === undefined || val === null) return null;
+    return val;
+  })
+  .refine(
+    (val) => {
+      if (val === null) return true; // Skip check if null
+      const num = parseFloat(val);
+      return !isNaN(num) && num <= 0;
+    },
+    {
+      message: "Cylinder must be 0 or less than 0",
+    }
+  );
+
 export const schemaRefractionDetails = z.object({
   hb_rx_right_dist: z.string().nullable(),
   hb_rx_left_dist: z.string().nullable(),
@@ -18,24 +38,7 @@ export const schemaRefractionDetails = z.object({
     .string()
     .nullable()
     .transform((val) => (val === null || val === "" ? null : val)),
-  right_eye_dist_cyl: z
-    .string()
-    .refine(
-      (val) => {
-        const num = parseFloat(val);
-        return !isNaN(num) && num <= 0;
-      },
-      {
-        message: "Cylinder must be 0 or less than 0",
-      }
-    )
-    .nullable()
-    .transform((val) => {
-      if (val === null || isNaN(parseFloat(String(val)))) {
-        return null;
-      }
-      return val;
-    }),
+  right_eye_dist_cyl: cylinderSchema,
   right_eye_dist_axis: z
     .string()
     .nullable()
@@ -48,24 +51,7 @@ export const schemaRefractionDetails = z.object({
     .string()
     .nullable()
     .transform((val) => (val === null || val === "" ? null : val)),
-  left_eye_dist_cyl: z
-    .string()
-    .refine(
-      (val) => {
-        const num = parseFloat(val);
-        return !isNaN(num) && num <= 0;
-      },
-      {
-        message: "Cylinder must be 0 or less than 0",
-      }
-    )
-    .nullable()
-    .transform((val) => {
-      if (val === null || isNaN(parseFloat(String(val)))) {
-        return null;
-      }
-      return val;
-    }),
+  left_eye_dist_cyl: cylinderSchema,
   left_eye_dist_axis: z
     .string()
     .nullable()

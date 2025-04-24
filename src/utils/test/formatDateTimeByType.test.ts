@@ -34,15 +34,15 @@ describe("formatDateTimeByType", () => {
 
   it("should return fallback string if input is null", () => {
     const result = formatDateTimeByType(null, "both");
-    expect(result).toBe("Date: N/A -Time: N/A");
+    expect(result).toBe("N/A - N/A");
   });
 
   it("should return fallback string if input is undefined", () => {
     const result = formatDateTimeByType(undefined, "both");
-    expect(result).toBe("Date: N/A -Time: N/A");
+    expect(result).toBe("N/A - N/A");
   });
   it("should return fallback string if input is random string", () => {
     const result = formatDateTimeByType("sdas", "both");
-    expect(result).toBe("Date: N/A -Time: N/A");
+    expect(result).toBe("N/A - N/A");
   });
 });

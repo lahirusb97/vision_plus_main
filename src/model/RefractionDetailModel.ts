@@ -30,7 +30,6 @@ export interface RefractionDetailModel {
   note: string | null;
   is_manual: boolean;
   cataract: boolean;
-  created_by: number;
   user: number;
   username: string;
 }

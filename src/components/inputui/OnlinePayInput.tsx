@@ -6,8 +6,10 @@ const OnlinePayInput: React.FC = () => {
   const {
     register,
     setValue,
+    watch,
     formState: { errors },
   } = useFormContext();
+
   return (
     <Box display="flex" alignItems="center" gap={2}>
       <Box display="flex" alignItems="center" gap={1}>
@@ -36,7 +38,6 @@ const OnlinePayInput: React.FC = () => {
             setValue("online_transfer", 0);
           }
         }}
-        error={!!errors.card}
       />
     </Box>
   );

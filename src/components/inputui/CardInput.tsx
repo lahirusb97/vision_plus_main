@@ -7,8 +7,10 @@ const CardInput: React.FC = () => {
   const {
     register,
     setValue,
+    watch,
     formState: { errors },
   } = useFormContext();
+
   return (
     <Box display="flex" alignItems="center" gap={2}>
       <Box display="flex" alignItems="center" gap={1}>
@@ -37,7 +39,6 @@ const CardInput: React.FC = () => {
             setValue("credit_card", 0);
           }
         }}
-        error={!!errors.card}
       />
     </Box>
   );

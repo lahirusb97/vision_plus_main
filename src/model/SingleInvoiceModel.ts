@@ -1,6 +1,14 @@
+import { SizeType, SpeciesType } from "./FrameModel";
+import { Power } from "./LenseModel";
 import { PatientModel } from "./Patient";
+import { PaymentModel } from "./PaymentModel";
 import { RefractionDetailModel } from "./RefractionDetailModel";
-import { LensArrivalStatus, ProgressStatus } from "./StaticTypeModels";
+import {
+  InvoiceType,
+  LensArrivalStatus,
+  ProgressStatus,
+  TypeOrderStatus,
+} from "./StaticTypeModels";
 
 interface LensDetail {
   id: number;
@@ -23,51 +31,66 @@ interface FrameDetail {
   color: number;
   color_name: string;
   price: string;
-  size: string;
-  species: string;
+  size: SizeType;
+  species: SpeciesType;
   image: string | null;
 }
-interface External_Lens_Powers {
-  external_lens: number;
-  id: number;
-  power: number;
-  side: string;
-  value: string;
-}
-interface OrderItem {
+
+interface FrameOrderItem {
+  frame: number;
+  frame_detail: FrameDetail;
+  lens: null;
+  lens_detail: null;
+  external_lens: null;
+  external_lens_name: null;
+  external_lens_powers: [];
+  // Other shared fields
   id: number;
   order: number;
-  lens: number | null;
-  lens_cleaner: number | null;
-  lens_name?: string;
-  frame_name?: string;
-  frame: number | null;
   quantity: number;
-  price_per_unit: string; // Decimal as string
-  subtotal: string; // Decimal as string
-  lens_detail: LensDetail | null;
-  frame_detail: FrameDetail | null;
-  external_lens: number | null;
-  external_lens_name: string | null;
-  external_lens_powers: External_Lens_Powers[];
-  brand_id: string;
-  brand_name: string;
-  coating_id: number;
-  coating_name: string;
-  type_name: string;
-  type_id: string;
+  price_per_unit: string;
+  subtotal: string;
+}
+interface LensOrderItem {
+  lens: number;
+  lens_detail: LensDetail;
+  lens_powers: Power[];
+  frame: null;
+  frame_detail: null;
+  external_lens: null;
+  external_lens_name: null;
+  external_lens_powers: [];
+  // Other shared fields
+  id: number;
+  order: number;
+  quantity: number;
+  price_per_unit: string;
+  subtotal: string;
 }
 
-interface OrderPayment {
+interface ExternalLensOrderItem {
+  external_lens: number;
+  type_name: string;
+  coating_name: string;
+  brand_name: string;
+  quantity: number;
+  price_per_unit: string;
+  subtotal: string;
+  is_non_stock: boolean;
+
+  // Other shared fields
+
+  frame: null;
+  frame_detail: null;
+  lens: null;
+  lens_detail: null;
+  external_lens_name: string | null;
   id: number;
   order: number;
-  payment_date: string; // ISO datetime format
-  amount: string; // Decimal as string
-  payment_method: string; // Consider enum: 'credit_card' | 'cash' | 'check'
-  transaction_status: string; // Consider enum: 'success' | 'failed' | 'pending'
-  is_partial: boolean;
-  is_final_payment: boolean;
+  lens_powers: Power[] | null;
 }
+
+type OrderItem = FrameOrderItem | LensOrderItem | ExternalLensOrderItem;
 
 interface OrderDetails {
   id: number;
@@ -75,23 +98,25 @@ interface OrderDetails {
   refraction: number;
   order_date: string; // ISO datetime format
   order_updated_date: string; // ISO datetime format
-  status: string; // Consider enum: 'pending' | 'completed' | 'cancelled'
+  status: TypeOrderStatus; // Consider enum: 'pending' | 'completed' | 'cancelled'
   sub_total: string; // Decimal as string
   discount: string; // Decimal as string
   total_price: string; // Decimal as string
   order_items: OrderItem[];
-  order_payments: OrderPayment[];
+  order_payments: PaymentModel[];
   sales_staff_code: number | null;
-  sales_staff_username: string;
+  branch_id: number;
+  branch_name: string;
   order_remark: string;
-  pd: string;
-  height: string;
-  right_height: string;
-  left_height: string;
-  left_pd: string;
-  right_pd: string;
+  pd: string | null;
+  height: string | null;
+  right_height: string | null;
+  left_height: string | null;
+  left_pd: string | null;
+  right_pd: string | null;
   fitting_on_collection: false;
   on_hold: false;
+  sales_staff_username: string;
 }
 
 interface Invoice {
@@ -100,16 +125,15 @@ interface Invoice {
   customer: number;
   invoice_number: string;
   customer_details: PatientModel;
-  refraction_details: RefractionDetailModel | null;
-  invoice_type: string; // Consider enum: 'factory' | 'retail' | 'wholesale'
+  refraction_details?: RefractionDetailModel | null;
+  invoice_type: InvoiceType; // Consider enum: 'factory' | 'retail' | 'wholesale'
   daily_invoice_no: number;
   invoice_date: string; // ISO datetime format
   order_details: OrderDetails;
   order_items: OrderItem[];
-  order_payments: OrderPayment[];
   progress_status: ProgressStatus;
   lens_arrival_status: LensArrivalStatus;
-  whatsapp_sent: false;
+  whatsapp_sent: boolean;
 }
 
 export type { Invoice, OrderItem };

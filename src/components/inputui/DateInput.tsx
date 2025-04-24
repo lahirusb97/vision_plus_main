@@ -36,8 +36,11 @@ export default function DateInput() {
               textField: {
                 size: "small",
                 sx: { width: 170 },
-                error: !!errors.dob,
-                helperText: errors.dob?.message,
+                error: watch("dob") === "",
+                helperText:
+                  typeof errors.dob?.message === "string"
+                    ? errors.dob.message
+                    : undefined,
               },
             }}
           />

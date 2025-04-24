@@ -23,12 +23,12 @@ const FactoryOrderContext = createContext<FactoryOrderContext>({
 });
 
 export function FactoryOrderProvider({ children }: FactoryOrderProviderProps) {
-  const { id } = useParams();
+  const { refraction_id } = useParams();
 
   const { singlerefractionNumber, singlerefractionNumberLoading } =
-    useGetSingleRefractionNumber(id);
+    useGetSingleRefractionNumber(refraction_id);
   const { refractionDetail, refractionDetailLoading } =
-    useGetRefractionDetails(id);
+    useGetRefractionDetails(refraction_id);
 
   return (
     <FactoryOrderContext.Provider

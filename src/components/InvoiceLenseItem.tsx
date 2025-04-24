@@ -1,11 +1,14 @@
 import { Delete } from "@mui/icons-material";
 import { Paper, Typography, IconButton } from "@mui/material";
 import { useDispatch } from "react-redux";
-import { removeLense } from "../features/invoice/lenseFilterSlice";
-import { LenseModel, LenseWithQty } from "../model/LenseModel";
-import { blue, orange, purple, yellow } from "@mui/material/colors";
-
-export default function InvoiceLenseItem({ lense }: LenseWithQty) {
+import {
+  LenseFilterModel,
+  removeLense,
+} from "../features/invoice/lenseFilterSlice";
+interface LenseItemProps {
+  lense: LenseFilterModel;
+}
+export default function InvoiceLenseItem({ lense }: LenseItemProps) {
   const dispatch = useDispatch();
 
   return (
@@ -21,15 +24,24 @@ export default function InvoiceLenseItem({ lense }: LenseWithQty) {
         alignItems: "center",
       }}
     >
-      <Typography variant="body2">Type: {lense?.type_name}</Typography>
-      <Typography variant="body2">Brand: {lense?.brand_name}</Typography>
-      <Typography variant="body2">Coating: {lense?.coating_name}</Typography>
-      <Typography variant="body2">Quantity: {lense?.buyQty}</Typography>
-      <Typography variant="body2">Unite Price: {lense?.price}</Typography>
       <Typography variant="body2">
-        Total Price: {parseInt(lense?.price) * lense?.buyQty}
+        Type: {lense?.lense_detail.type_name}
       </Typography>
-      <IconButton onClick={() => dispatch(removeLense(lense.id))} color="error">
+      <Typography variant="body2">
+        Brand: {lense?.lense_detail.brand_name}
+      </Typography>
+      <Typography variant="body2">
+        Coating: {lense?.lense_detail.coating_name}
+      </Typography>
+      <Typography variant="body2">Quantity: {lense?.buyQty}</Typography>
+      <Typography variant="body2">
+        Unite Price: {lense?.price_per_unit}
+      </Typography>
+      <Typography variant="body2">Total Price: {lense?.subtotal}</Typography>
+      <IconButton
+        onClick={() => dispatch(removeLense(lense.lense_id))}
+        color="error"
+      >
         <Delete />
       </IconButton>
     </Paper>

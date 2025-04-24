@@ -4,9 +4,10 @@ interface Power {
   power: number;
   value: string;
   side: string | null;
+  power_name: string;
 }
 
-interface Stock {
+interface LenseStock {
   id: number;
   lens: number;
   lens_type: string;
@@ -28,12 +29,8 @@ interface LenseModel {
   price: string;
   brand: number;
   brand_name: string;
-  stock: Stock[];
+  stock: LenseStock[];
   powers: Power[];
 }
-interface LenseWithQty extends LenseModel {
-  buyQty: number;
-  lenseSide: string;
-}
 
-export type { Power, Stock, LenseModel, LenseWithQty };
+export type { Power, LenseStock, LenseModel };

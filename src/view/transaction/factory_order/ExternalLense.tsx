@@ -2,103 +2,73 @@ import React, { useEffect } from "react";
 import { Box, Button, Paper, Typography, TextField } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../store/store";
-import useGetBrands from "../../../hooks/lense/useGetBrand";
-import useGetCoatings from "../../../hooks/lense/useGetCoatings";
-import useGetLenseTypes from "../../../hooks/lense/useGetLenseType";
 
 import { setexternalLense } from "../../../features/invoice/externalLenseSlice";
-import DropdownInputReturnWIthName from "../../../components/inputui/DropdownInputReturnWIthName";
+
 import { closeStockDrawer } from "../../../features/invoice/stockDrawerSlice";
 import toast from "react-hot-toast";
-import { getUserCurentBranch } from "../../../utils/authDataConver";
+
+import ExternlLenseFilter from "../../stock/external_lens/ExternlLenseFilter";
+import { useGetExternalLenses } from "../../../hooks/useGetExternalLenses";
+import InvoiceExternalLenseItem from "../../../components/InvoiceExternalLenseItem";
 
 export default function ExternalLense() {
   const dispatch = useDispatch();
+  const { externaLenseList, externaLenseListLoading, setExternalLenseParams } =
+    useGetExternalLenses();
+  console.log("externalLenseList", externaLenseList);
 
   const externalLenseInvoiceList = useSelector(
-    (state: RootState) => state.invoice_external_lense.externalLense
+    (state: RootState) => state.invoice_external_lense.externalLenseList
   );
+  const selectedprice = externaLenseList?.results[0]?.price ?? "0";
 
-  //CAll Hoos to recive Type Brand and Coating
-  const { brands: LensFactory, brandsLoading: LensFactoryLoading } =
-    useGetBrands({ brand_type: "lens" });
-
-  const { coatings, coatingsLoading } = useGetCoatings();
-  const { lenseTypes, lenseTypesLoading } = useGetLenseTypes();
-  const [lenseTypeSelection, setLenseTypeSelection] = React.useState<null | {
-    id: number;
-    typeName: string;
-  }>(null);
-  const [lenseCoatingSelection, setLenseCoatingSelection] =
-    React.useState<null | {
-      id: number;
-      coatingName: string;
-    }>(null);
-  const [lenseFactorySelection, setLenseFactorySelection] =
-    React.useState<null | {
-      id: number;
-      factoryName: string;
-    }>(null);
-
-  const [price, setPrice] = React.useState<string>("");
+  const [price, setPrice] = React.useState<string>(selectedprice);
+  const [externalLensQty, setExternalLensQty] = React.useState<string>("0");
+  console.log("price", selectedprice);
+  useEffect(() => {
+    if (externaLenseList?.results.length === 1) {
+      setPrice(selectedprice);
+    } else {
+      setPrice("0");
+    }
+  }, [externaLenseList?.results]);
 
   const addNoneStockLense = () => {
-    if (
-      lenseTypeSelection &&
-      lenseCoatingSelection &&
-      lenseFactorySelection &&
-      parseInt(price) >= 0
-    ) {
-      // console.log({ ...selectedItem, price: price });
-      // console.log(watch("left_eye_dist_sph"));
-      // console.log(watch("left_eye_dist_cyl"));
-      // console.log(watch("left_eye_dist_axis"));
-      // console.log(watch("left_eye_near_sph"));
-
-      // console.log(watch("right_eye_dist_sph"));
-      // console.log(watch("right_eye_dist_cyl"));
-      // console.log(watch("right_eye_dist_axis"));
-      // console.log(watch("right_eye_near_sph"));
-      const externalLense = {
-        external_lens_data: {
-          lens: {
-            type: lenseTypeSelection.id,
-            coating: lenseCoatingSelection.id,
-            brand: lenseFactorySelection.id,
-            price: parseInt(price),
-            branch_id: getUserCurentBranch()?.id,
-          },
-        },
-        quantity: 1,
-        price_per_unit: parseInt(price),
-        subtotal: parseInt(price),
-        is_non_stock: true,
-        lensNames: {
-          typeName: lenseTypeSelection.typeName,
-          coatingName: lenseCoatingSelection.coatingName,
-          brandName: lenseFactorySelection.factoryName,
-        },
-      };
-      const entries = Object.values(externalLenseInvoiceList);
-
-      //Adding Manual Id to Track changes and Removes
-      dispatch(
-        setexternalLense({
-          ...externalLense,
-          id: entries.length == 0 ? 1 : entries[entries.length - 1].id + 1,
-        })
-      );
-      setPrice("0");
-      dispatch(closeStockDrawer());
+    if (parseInt(price) >= 0 && parseInt(externalLensQty) > 0) {
+      if (externaLenseList?.results.length === 1) {
+        const selectedExternalLense = externaLenseList?.results[0];
+        dispatch(
+          setexternalLense({
+            buyQty: parseInt(externalLensQty),
+            external_lens_id: selectedExternalLense.id,
+            subtotal: parseInt(externalLensQty) * parseInt(price),
+            price_per_unit: parseInt(price),
+            external_lens_details: {
+              brand_name: selectedExternalLense.brand_name,
+              coating_name: selectedExternalLense.coating_name,
+              type_name: selectedExternalLense.lens_type_name,
+            },
+          })
+        );
+        setPrice("0");
+        dispatch(closeStockDrawer());
+      } else {
+        toast.error(
+          "Dublicated External Lense Found Please Remove Duplicated External Lense from the store"
+        );
+      }
     } else {
-      toast.error("Please fill all the External Lense selection fields");
+      toast.error("Quantity and Price should be greater than 0");
     }
   };
 
   return (
     <div>
       <Paper variant="elevation" sx={{ padding: 2, m: 2 }}>
-        <Typography variant="h6">Select External Lense </Typography>
+        <Typography mb={1} variant="h6">
+          Select External Lense{" "}
+        </Typography>
         <Box
           sx={{
             display: "flex",
@@ -107,50 +77,15 @@ export default function ExternalLense() {
             gap: 2,
           }}
         >
-          <DropdownInputReturnWIthName
-            options={LensFactory}
-            onChange={(factory) =>
-              factory &&
-              setLenseFactorySelection({
-                id: factory.id,
-                factoryName: factory.name,
-              })
-            }
-            loading={LensFactoryLoading}
-            labelName="Lens Factory"
-            defaultId={null}
+          <ExternlLenseFilter
+            availableFilters={externaLenseList?.available_filters ?? null}
+            setExternalLenseParams={setExternalLenseParams}
           />
-          <DropdownInputReturnWIthName
-            options={coatings}
-            onChange={(factory) =>
-              factory &&
-              setLenseCoatingSelection({
-                id: factory.id,
-                coatingName: factory.name,
-              })
-            }
-            loading={coatingsLoading}
-            labelName="Lens Coating"
-            defaultId={null}
-          />
-          <DropdownInputReturnWIthName
-            options={lenseTypes}
-            onChange={(factory) =>
-              factory &&
-              setLenseTypeSelection({
-                id: factory.id,
-                typeName: factory.name,
-              })
-            }
-            loading={lenseTypesLoading}
-            labelName="Lens Types"
-            defaultId={null}
-          />
-
           <TextField
-            fullWidth
+            sx={{ width: 100 }}
             type="number"
-            size="medium"
+            size="small"
+            label="Price"
             value={price}
             onChange={(e) => setPrice(e.target.value)}
             onFocus={(e) => {
@@ -164,11 +99,38 @@ export default function ExternalLense() {
               }
             }}
           />
+          <TextField
+            sx={{ width: 100 }}
+            label="Quantity"
+            type="number"
+            size="small"
+            value={externalLensQty}
+            onChange={(e) => setExternalLensQty(e.target.value)}
+            onFocus={(e) => {
+              if (e.target.value === "0") {
+                setExternalLensQty("");
+              }
+            }}
+            onBlur={(e) => {
+              if (e.target.value === "") {
+                setExternalLensQty("0");
+              }
+            }}
+          />
           <Button onClick={addNoneStockLense} variant="contained">
             Add
           </Button>
         </Box>
       </Paper>
+      <Box sx={{ padding: 2 }}>
+        {Object.values(externalLenseInvoiceList).length !== 0 &&
+          Object.values(externalLenseInvoiceList).map((externalLensItem) => (
+            <div key={externalLensItem.external_lens_id}>
+              <InvoiceExternalLenseItem lense={externalLensItem} />
+            </div>
+          ))}
+        {/* {externalLenseInvoiceList.} */}
+      </Box>
     </div>
   );
 }

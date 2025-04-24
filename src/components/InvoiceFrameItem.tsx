@@ -1,8 +1,16 @@
 import { Delete } from "@mui/icons-material";
 import { Paper, Typography, IconButton } from "@mui/material";
 import { useDispatch } from "react-redux";
-import { removeFrame } from "../features/invoice/frameFilterSlice";
-export default function InvoiceFrameItem({ frame }) {
+import {
+  FrameFilterModel,
+  removeFrame,
+} from "../features/invoice/frameFilterSlice";
+
+interface Props {
+  frame: FrameFilterModel;
+}
+
+export default function InvoiceFrameItem({ frame }: Props) {
   const dispatch = useDispatch();
   return (
     <div>
@@ -18,18 +26,24 @@ export default function InvoiceFrameItem({ frame }) {
           alignItems: "center",
         }}
       >
-        <Typography variant="body2">Code: {frame.code_name}</Typography>
-        <Typography variant="body2">Brand: {frame.brand_name}</Typography>
-        <Typography variant="body2">Color: {frame.color_name}</Typography>
-        <Typography variant="body2">Size: {frame.size}</Typography>
+        <Typography variant="body2">
+          Code: {frame.frame_detail.code_name}
+        </Typography>
+        <Typography variant="body2">
+          Brand: {frame.frame_detail.brand_name}
+        </Typography>
+        <Typography variant="body2">
+          Color: {frame.frame_detail.color_name}
+        </Typography>
+        <Typography variant="body2">Size: {frame.frame_detail.size}</Typography>
 
         <Typography variant="body2">Quantity: {frame.buyQty}</Typography>
-        <Typography variant="body2">Unite Price: {frame.price}</Typography>
         <Typography variant="body2">
-          Total Price: {parseInt(frame.price) * frame.buyQty}
+          Unite Price: {frame.price_per_unit}
         </Typography>
+        <Typography variant="body2">Total Price: {frame.subtotal}</Typography>
         <IconButton
-          onClick={() => dispatch(removeFrame(frame.id))}
+          onClick={() => dispatch(removeFrame(frame.frame_id))}
           color="error"
         >
           <Delete />

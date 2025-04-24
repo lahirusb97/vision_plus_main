@@ -17,6 +17,7 @@ import { dateAndTimeFormat } from "../../../utils/dateAndTimeFormat";
 import { numberWithCommas } from "../../../utils/numberWithCommas";
 import { calculateTotals } from "../../../utils/calculations";
 import useGetSingleInvoice from "../../../hooks/useGetSingleInvoice";
+import InvoiceHeading from "../../../components/Invoice/InvoiceHeading";
 
 const InvoiceView = () => {
   const location = useLocation();
@@ -81,7 +82,7 @@ const InvoiceView = () => {
           border: "1px solid #000",
           fontFamily: "Arial, sans-serif",
           "@media print": {
-            minWidth: "14cm",
+            minWidth: "13cm",
             minHeight: "21cm",
             border: "none",
             margin: "0",
@@ -90,28 +91,7 @@ const InvoiceView = () => {
         ref={componentRef}
       >
         {/* Logo and Header */}
-        <Box display="flex" justifyContent="center" alignItems="center">
-          <img
-            src={log}
-            alt="Vision Plus Logo"
-            style={{ height: "8mm", margin: "0 -4mm" }}
-          />
-          <Typography
-            sx={{ fontFamily: "Algerian", fontSize: "6mm" }}
-            variant="h6"
-            align="center"
-            fontWeight="bold"
-          >
-            VISION PLUS OPTICIANS & EYE - CLINIC (PVT) LTD
-          </Typography>
-        </Box>
-
-        <Typography variant="body2" align="center">
-          Tel: 034 2247466 / 071 7513639
-        </Typography>
-        <Typography variant="body2" align="center">
-          Date: {DateView(invoiceDetail.invoice_date)}
-        </Typography>
+        <InvoiceHeading invoiceDate={invoiceDetail.invoice_date} />
 
         <Box
           sx={{

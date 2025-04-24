@@ -1,38 +1,28 @@
-// Lens information
-interface Lens {
-  type: number;
+import { TypeBraned } from "./StaticTypeModels";
+
+export interface ExternalLensModel {
+  id: number;
+  branch: null | number;
+  lens_type: number;
+  lens_type_name: string;
   coating: number;
+  coating_name: string;
   brand: number;
-  price: number;
-}
-interface LensNames {
-  typeName: string;
-  coatingName: string;
-  brandName: string;
-}
-
-// Power details for each eye
-interface Power {
-  power: number;
-  value: number;
-  side: string | null;
+  brand_name: string;
+  branded: TypeBraned; // assuming this is a string enum like "1" or "0"
+  branded_display: string; // display label
+  price: string; // if this should be treated as a number, convert it accordingly
+  created_at: string; // ISO date
+  updated_at: string;
 }
 
-// External lens data containing lens details and powers
-interface ExternalLensData {
-  lens: Lens;
-  powers: Power[];
+interface ExternalLensFilter {
+  lens_types: number[];
+  coatings: number[];
+  branded: TypeBraned; // assuming it's always "0" or "1" as strings
+  brands: number[];
 }
-
-// Main model for the entire structure
-interface ExternalLenseModel {
-  id: number; //added by index
-  external_lens_data: ExternalLensData;
-  quantity: number;
-  price_per_unit: number;
-  subtotal: number;
-  is_non_stock: boolean;
-  lensNames: LensNames;
+export interface ExternalLensFilterList {
+  results: ExternalLensModel[];
+  available_filters: ExternalLensFilter;
 }
-
-export type { ExternalLenseModel };
