@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import axiosClient from "../axiosClient";
 import { ExternalLensFilterList } from "../model/ExternalLenseModel";
 import { extractErrorMessage } from "../utils/extractErrorMessage";
@@ -41,6 +41,7 @@ export const useGetExternalLenses = () => {
       } catch (err) {
         extractErrorMessage(err);
         setError(true);
+        setData(null);
       } finally {
         setLoading(false);
       }

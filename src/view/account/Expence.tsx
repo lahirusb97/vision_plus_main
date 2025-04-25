@@ -58,7 +58,6 @@ const Expence = () => {
 
   const selectedMainCategory = watch("main_category");
   const { expenseList, totalExpense } = useGetExpenseReport();
-  console.log("expenseList", expenseList);
 
   React.useEffect(() => {
     if (selectedMainCategory && subExCategory) {

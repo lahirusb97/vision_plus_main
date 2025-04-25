@@ -11,7 +11,7 @@ interface NavButtonProps {
   name: string;
   path: string;
 }
-
+//remember to aad / to front of the path  toy pass as props
 const NavButton: React.FC<NavButtonProps> = ({ name, path }) => {
   const theme = useTheme();
   const navigation = useNavigate();

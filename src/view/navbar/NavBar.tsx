@@ -61,48 +61,69 @@ function TabPanel(props: {
 export default function NavBar() {
   const tabs = [
     {
+      id: 0,
       path: "",
       icon: RefractionIcon,
       label: "Refraction",
       nav: RefractionNav,
     },
     {
+      id: 1,
       path: "transaction/factory_order",
       icon: TransationIcon,
       label: "Transaction",
       nav: TransactionNav,
     },
-    { path: "checkin", icon: MasterIcon, label: "Check In", nav: CheckInNav },
     {
+      id: 2,
+      path: "checkin",
+      icon: MasterIcon,
+      label: "Check In",
+      nav: CheckInNav,
+    },
+    {
+      id: 3,
       path: "account",
       icon: AccountIcon,
       label: "Account",
       nav: AccountNav,
     },
     {
+      id: 4,
       path: "stock/add_frames",
       icon: StockIcon,
       label: "Stock",
       nav: StockNav,
     },
-    { path: "channel", icon: ChanneltIcon, label: "Channel", nav: ChannelNav },
     {
+      id: 5,
+      path: "channel",
+      icon: ChanneltIcon,
+      label: "Channel",
+      nav: ChannelNav,
+    },
+    {
+      id: 6,
       path: "reports",
       icon: ReportsIcon,
       label: "Reports",
       nav: ReportsNav,
     },
     {
+      id: 7,
       path: "messenger",
       icon: MessangerIcon,
       label: "Messenger",
       nav: RefractionNav,
     },
-    { path: "user", icon: UserIcon, label: "User", nav: UserNav },
+    { id: 8, path: "user", icon: UserIcon, label: "User", nav: UserNav },
   ];
 
   const location = useLocation();
   const firstSegment = location.pathname.split("/")[1] || "home"; // Default to 'home' if empty
+
+  console.log(tabs.findIndex((tab) => firstSegment.startsWith(tab.path)));
+
   const getTabIndexFromPath = (path: string) => {
     const index = tabs.findIndex((tab) => path.startsWith(tab.path));
     return index !== -1 ? index : 0; // Default to first tab if no match
@@ -134,9 +155,9 @@ export default function NavBar() {
         aria-label="icon label tabs example"
         variant="scrollable"
       >
-        {tabs.map((tab, index) => (
+        {tabs.map((tab) => (
           <Tab
-            key={index}
+            key={tab.id}
             icon={
               <img
                 src={tab.icon}

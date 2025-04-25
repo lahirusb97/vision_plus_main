@@ -5,8 +5,8 @@ export default function AccountNav() {
     <>
       {/* Pass unique onClick handlers */}
       <NavButton name="Account" path={"/account"} />
-      <NavButton name="Expence" path={"account/expence/"} />
-      <NavButton name="Add Catagory" path={"account/add_catagory/"} />
+      <NavButton name="Add Expenses" path={"/account/expence/"} />
+      <NavButton name="Bank Accounts" path={"/account/bank_accounts/"} />
     </>
   );
 }

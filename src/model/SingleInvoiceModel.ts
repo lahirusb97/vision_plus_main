@@ -36,7 +36,7 @@ interface FrameDetail {
   image: string | null;
 }
 
-interface FrameOrderItem {
+export interface FrameOrderItem {
   frame: number;
   frame_detail: FrameDetail;
   lens: null;
@@ -51,7 +51,7 @@ interface FrameOrderItem {
   price_per_unit: string;
   subtotal: string;
 }
-interface LensOrderItem {
+export interface LensOrderItem {
   lens: number;
   lens_detail: LensDetail;
   lens_powers: Power[];
@@ -68,7 +68,7 @@ interface LensOrderItem {
   subtotal: string;
 }
 
-interface ExternalLensOrderItem {
+export interface ExternalLensOrderItem {
   external_lens: number;
   type_name: string;
   coating_name: string;

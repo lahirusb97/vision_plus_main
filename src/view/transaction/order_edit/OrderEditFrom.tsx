@@ -39,7 +39,6 @@ import StockDrawerBtn from "../../../components/StockDrawerBtn";
 import { useFactoryOrderUpdateContext } from "../../../context/FactoryOrderUpdateContext";
 import { useValidationState } from "../../../hooks/validations/useValidationState";
 import VarificationDialog from "../../../components/VarificationDialog";
-import OrderPaymentHistoryDialog from "../factory_layouts/OrderPaymentHistoryDialog";
 import { zodResolver } from "@hookform/resolvers/zod";
 import SugarCataractText from "../../../components/common/SugarCataractText";
 import PdAndHeightInputs from "../factory_layouts/PdAndHeightInputs";
@@ -310,7 +309,7 @@ export default function OrderEditFrom() {
       toast.error("No Items ware added");
     }
   };
-  console.log(methods.formState.errors);
+  console.log(invoiceDetail);
 
   const sendDataToDb = async (postData) => {
     try {
@@ -407,11 +406,8 @@ export default function OrderEditFrom() {
               <Typography variant="body1">| Fiting on Collection</Typography>
               <Checkbox {...methods.register("fitting_on_collection")} />
             </Box>
-            <HidenNoteDialog />
+            <HidenNoteDialog note={invoiceDetail?.refraction_details?.note} />
             <StockDrawerBtn />
-            <OrderPaymentHistoryDialog
-              paymentList={invoiceDetail?.order_details?.order_payments ?? []}
-            />
           </Box>
           <EditInvoiceTable
             paymentList={invoiceDetail?.order_details?.order_payments ?? []}
