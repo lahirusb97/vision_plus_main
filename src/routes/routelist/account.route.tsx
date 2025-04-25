@@ -7,6 +7,9 @@ import ExCategoryCreate from "../../view/account/expencess_category/ExCategoryCr
 import ExCategoryUpdate from "../../view/account/expencess_category/ExCategoryUpdate";
 import ExSubCategoryCreate from "../../view/account/expencess_category/ExSubCategoryCreate";
 import ExSubCategoryUpdate from "../../view/account/expencess_category/ExSubCategoryUpdate";
+import BankAccountCreate from "../../view/account/bank_account/BankAccountCreate";
+import BankAccountIndex from "../../view/account/bank_account/BankAccountIndex";
+import BankAccountUpdate from "../../view/account/bank_account/BankAccountUpdate";
 
 export const accountRoutes: RouteObject[] = [
   {
@@ -50,6 +53,24 @@ export const accountRoutes: RouteObject[] = [
       {
         path: "sub/update/:id",
         element: <ExSubCategoryUpdate />,
+      },
+    ],
+  },
+  {
+    path: "bank_accounts/",
+    element: <ProtectedChildRoute />,
+    children: [
+      {
+        index: true,
+        element: <BankAccountIndex />,
+      },
+      {
+        path: "create/",
+        element: <BankAccountCreate />,
+      },
+      {
+        path: "update/:account_id",
+        element: <BankAccountUpdate />,
       },
     ],
   },

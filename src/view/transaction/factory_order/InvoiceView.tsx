@@ -1,23 +1,17 @@
-import {
-  Box,
-  Typography,
-  Button,
-  CircularProgress,
-  Paper,
-  Grid,
-  Grid2,
-} from "@mui/material";
+import { Box, Typography, Button, CircularProgress } from "@mui/material";
 import { useLocation } from "react-router";
 import { useRef } from "react";
 import { useReactToPrint } from "react-to-print";
-import useGetSingleInvoiceDetail from "../../../hooks/useGetSingleInvoiceDetail";
-import log from "../../../assets/defalt/Rectangle 522.png";
+
 import OrderForm from "../../../components/OrderForm";
-import { dateAndTimeFormat } from "../../../utils/dateAndTimeFormat";
-import { numberWithCommas } from "../../../utils/numberWithCommas";
-import { calculateTotals } from "../../../utils/calculations";
 import useGetSingleInvoice from "../../../hooks/useGetSingleInvoice";
 import InvoiceHeading from "../../../components/Invoice/InvoiceHeading";
+import InvoiceAddress from "../../../components/Invoice/InvoiceAddress";
+import InvoiceLensDetails from "../../../components/Invoice/InvoiceLensDetails";
+import InvoiceExternalLensDetails from "../../../components/Invoice/InvoiceExternalLensDetails";
+import InvoiceFrameDetails from "../../../components/Invoice/InvoiceFrameDetails";
+import InvoiceFooter from "../../../components/Invoice/InvoiceFooter";
+import InvoiceTotalSummery from "../../../components/Invoice/InvoiceTotalSummery";
 
 const InvoiceView = () => {
   const location = useLocation();
@@ -28,15 +22,6 @@ const InvoiceView = () => {
     queryParams.get("invoice_number") || "",
     "factory"
   );
-  console.log("RefractionDetails", invoiceDetail);
-
-  const DateView = (date: string) => {
-    return new Date(date).toLocaleString("default", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    });
-  };
 
   if (invoiceLoading) {
     return (
@@ -58,18 +43,6 @@ const InvoiceView = () => {
       </Typography>
     );
   }
-
-  const externalLenseTotal = calculateTotals(
-    invoiceDetail?.order_details.order_items.filter(
-      (items) => items.external_lens !== null
-    )
-  );
-  const instockLenseTotal = calculateTotals(
-    invoiceDetail?.order_details.order_items.filter(
-      (items) => items.lens !== null
-    )
-  );
-  console.log(invoiceDetail);
 
   return (
     <div>
@@ -93,50 +66,7 @@ const InvoiceView = () => {
         {/* Logo and Header */}
         <InvoiceHeading invoiceDate={invoiceDetail.invoice_date} />
 
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "baseline",
-          }}
-        >
-          <Box sx={{ alignSelf: "flex-end" }}>
-            <Box
-              sx={{
-                display: "grid",
-                gridTemplateColumns: "15mm 1fr",
-                gridTemplateRows: "repeat(3, 1fr)", // 3 equal columns
-              }}
-            >
-              <Typography variant="body2">Name</Typography>
-              <Typography sx={{}} variant="body2">
-                <span style={{ margin: "0 1mm", fontWeight: "bold" }}>:</span>
-                {invoiceDetail?.customer_details?.name}
-              </Typography>
-              <Typography variant="body2">Address</Typography>
-              <Typography sx={{}} variant="body2">
-                <span style={{ margin: "0 1mm", fontWeight: "bold" }}>:</span>
-                {invoiceDetail?.customer_details?.address}
-              </Typography>
-              <Typography variant="body2">Contact</Typography>
-              <Typography sx={{}} variant="body2">
-                <span style={{ margin: "0 1mm", fontWeight: "bold" }}>:</span>
-                {invoiceDetail?.customer_details?.phone_number}
-              </Typography>
-            </Box>
-          </Box>
-          <Box sx={{ textAlign: "left" }}>
-            <Typography variant="body2">
-              <span style={{ fontWeight: "bold", fontSize: "20px" }}>
-                INVOICE NO : {invoiceDetail?.invoice_number}{" "}
-                {/* //!Order ID as Invoice Number */}
-              </span>
-            </Typography>
-            <Typography variant="body2">No: 34, Aluthgama Road</Typography>
-            <Typography variant="body2">Mathugama</Typography>
-            <Typography variant="body2">Sri Lanka</Typography>
-          </Box>
-        </Box>
+        <InvoiceAddress invoiceDetail={invoiceDetail} />
 
         {/* Table using CSS Grid */}
         <Box
@@ -163,367 +93,26 @@ const InvoiceView = () => {
             }}
           >
             <Box sx={{ marginLeft: "" }}>Item Name</Box>
-            <Box sx={{ textAlign: "left" }}>Qty</Box>
+            <Box sx={{ textAlign: "center" }}>Qty</Box>
             <Box sx={{ textAlign: "left" }}>Unit</Box>
             <Box sx={{ textAlign: "right" }}>Value</Box>
           </Box>
           {/* Item List */}
-          <Box
-            sx={{
-              gridColumn: "1 / -1",
-              display: "grid",
-              gridTemplateColumns: "2fr 21mm 22mm 21mm",
-              backgroundColor: "#fff",
-              paddingX: "2mm",
-              borderBottom:
-                instockLenseTotal.subtotal > 0 ? "1px solid #000" : "none",
-            }}
-          >
-            {
-              invoiceDetail?.order_details.order_items
-                .filter((items) => items.lens !== null)
-                .map(
-                  (item) =>
-                    item.lens_detail && (
-                      <Box
-                        key={item.lens_detail.id}
-                        sx={{
-                          textAlign: "left",
-                          fontSize: ".9rem",
-                          paddingY: "1mm",
-                        }}
-                      >
-                        {item.lens_detail.brand_name}/
-                        {item.lens_detail.coating_name}/
-                        {item.lens_detail.type_name}
-                      </Box>
-                    )
-                )[0]
-            }
-            {invoiceDetail.order_details.order_items.filter(
-              (items) => items.lens !== null
-            ).length > 0 && (
-              <>
-                <Box sx={{ textAlign: "left" }}>
-                  {instockLenseTotal.quantity}
-                </Box>
-                <Box sx={{ textAlign: "left" }}>
-                  {numberWithCommas(instockLenseTotal.price_per_unit)}
-                </Box>
-                <Box
-                  sx={{
-                    textAlign: "right",
-
-                    paddingLeft: "2mm",
-                  }}
-                >
-                  {numberWithCommas(instockLenseTotal.subtotal)}
-                </Box>
-              </>
-            )}
-          </Box>
-          <Box
-            sx={{
-              gridColumn: "1 / -1",
-              display: "grid",
-              gridTemplateColumns: "2fr 21mm 22mm 21mm",
-              backgroundColor: "#fff",
-              paddingX: "1mm",
-              borderBottom:
-                externalLenseTotal.subtotal > 0 ? "1px solid #000" : "none",
-            }}
-          >
-            {invoiceDetail?.order_details.order_items
-              .filter((items) => items.external_lens !== null)
-              .slice(0, 1)
-              .map(
-                (item) =>
-                  item.external_lens && (
-                    <>
-                      <Box
-                        key={item.id}
-                        sx={{
-                          textAlign: "left",
-                          fontSize: ".9rem",
-                          paddingY: "1mm",
-                        }}
-                      >
-                        {`${item.brand_name} / ${item.coating_name} / ${item.type_name}`}
-                      </Box>
-                    </>
-                  )
-              )}
-
-            {invoiceDetail.order_details.order_items.filter(
-              (items) => items.external_lens !== null
-            ).length > 0 && (
-              <>
-                <Box
-                  sx={{
-                    textAlign: "left",
-                  }}
-                >
-                  {externalLenseTotal.quantity}
-                </Box>
-                <Box
-                  sx={{
-                    textAlign: "left",
-                  }}
-                >
-                  {numberWithCommas(externalLenseTotal.price_per_unit)}
-                </Box>
-                <Box
-                  sx={{
-                    textAlign: "right",
-                  }}
-                >
-                  {numberWithCommas(externalLenseTotal.subtotal)}
-                </Box>
-              </>
-            )}
-          </Box>
-          {invoiceDetail?.order_details.order_items
-            .filter((items) => items.frame !== null)
-            .map(
-              (item, index) =>
-                item.frame_detail && (
-                  <Box
-                    key={item.id}
-                    sx={{
-                      gridColumn: "1 / -1",
-                      display: "grid",
-                      gridTemplateColumns: "2fr 23mm 21mm 21mm",
-                      backgroundColor: "#fff",
-                      paddingY: "1mm",
-                      paddingX: "1mm",
-                      borderBottom: "1px solid #000",
-                    }}
-                  >
-                    <Box sx={{ textAlign: "left", fontSize: ".9rem" }}>
-                      {item.frame_detail.brand_name}/
-                      {item.frame_detail.code_name}/
-                      {item.frame_detail.color_name}
-                    </Box>
-                    <Box sx={{ textAlign: "left" }}>{item.quantity}</Box>
-                    <Box sx={{ textAlign: "left" }}>
-                      {numberWithCommas(item.price_per_unit)}
-                    </Box>
-                    <Box sx={{ textAlign: "right" }}>
-                      {numberWithCommas(item.subtotal)}
-                    </Box>
-                  </Box>
-                )
-            )}
+          <InvoiceLensDetails
+            order_items={invoiceDetail?.order_details?.order_items ?? []}
+          />
+          <InvoiceExternalLensDetails
+            order_items={invoiceDetail?.order_details?.order_items ?? []}
+          />
+          <InvoiceFrameDetails
+            order_items={invoiceDetail?.order_details?.order_items ?? []}
+          />
 
           {/* Summary Section */}
-          <Box
-            sx={{
-              gridColumn: "1 / -1",
-              display: "grid",
-              gridTemplateColumns: "2fr 1fr 24mm 21mm ",
-              backgroundColor: "#fff",
-            }}
-          >
-            <Box
-              sx={{
-                gridColumn: "3/4",
-                padding: "1mm",
-
-                borderBottom: "1px solid #000",
-                borderLeft: "1px solid #000",
-              }}
-            >
-              Subtotal
-            </Box>
-
-            <Box
-              sx={{
-                textAlign: "right",
-                gridColumn: "4 / 6",
-                padding: "1mm",
-                borderBottom: "1px solid #000",
-              }}
-            >
-              {numberWithCommas(invoiceDetail.order_details.sub_total)}
-            </Box>
-          </Box>
-          <Box
-            sx={{
-              gridColumn: "1 / -1",
-              display: "grid",
-              gridTemplateColumns: "2fr 1fr 24mm 21mm ",
-              backgroundColor: "#fff",
-            }}
-          >
-            <Box
-              sx={{
-                gridColumn: "3 / 4",
-                padding: "1mm",
-                borderBottom: "1px solid #000",
-
-                paddingLeft: "1mm",
-                borderLeft: "1px solid #000",
-              }}
-            >
-              Discounts
-            </Box>
-            <Box
-              sx={{
-                textAlign: "right",
-                gridColumn: "4 / 6",
-                padding: "1mm",
-                borderBottom: "1px solid #000",
-              }}
-            >
-              {numberWithCommas(invoiceDetail.order_details.discount)}
-            </Box>
-          </Box>
-          <Box
-            sx={{
-              gridColumn: "1 / -1",
-              display: "grid",
-              gridTemplateColumns: "2fr 1fr 24mm 21mm ",
-              backgroundColor: "#fff",
-            }}
-          >
-            <Box
-              sx={{
-                gridColumn: "3 / 4",
-                fontWeight: "bold",
-                textAlign: "left",
-                padding: "1mm",
-
-                borderBottom: "1px solid #000",
-
-                paddingLeft: "1mm",
-                borderLeft: "1px solid #000",
-              }}
-            >
-              Total
-            </Box>
-            <Box
-              sx={{
-                textAlign: "right",
-                gridColumn: "4 / 6",
-                padding: "1mm",
-
-                borderBottom: "1px solid #000",
-              }}
-            >
-              <strong>
-                {numberWithCommas(invoiceDetail.order_details.total_price)}
-              </strong>
-            </Box>
-          </Box>
-          <Box
-            sx={{
-              gridColumn: "1 / -1",
-              display: "grid",
-              gridTemplateColumns: "2fr 1fr 24mm 21mm",
-              backgroundColor: "#fff",
-            }}
-          >
-            <Box
-              sx={{
-                gridColumn: "3 / 4",
-
-                borderBottom: "1px solid #000",
-                paddingLeft: "1mm",
-                borderLeft: "1px solid #000",
-              }}
-            >
-              Payment
-            </Box>
-            <Box
-              sx={{
-                textAlign: "right",
-                gridColumn: "4 / 6",
-                padding: "1mm",
-
-                borderBottom: "1px solid #000",
-              }}
-            >
-              {numberWithCommas(
-                invoiceDetail.order_details.order_payments.reduce(
-                  (acc, payment) => acc + parseFloat(payment.amount),
-                  0
-                )
-              )}
-            </Box>
-          </Box>
-          <Box
-            sx={{
-              gridColumn: "1 / -1",
-              display: "grid",
-              gridTemplateColumns: "2fr 1fr 24mm 21mm",
-              backgroundColor: "#fff",
-            }}
-          >
-            <Box
-              sx={{
-                gridColumn: "3 / 4",
-                fontWeight: "bold",
-                paddingLeft: "1mm",
-                borderLeft: "1px solid #000",
-              }}
-            >
-              Balance
-            </Box>
-            <Box
-              sx={{
-                textAlign: "right",
-                gridColumn: "4 / 6",
-                fontWeight: "bold",
-                padding: "1mm",
-              }}
-            >
-              {numberWithCommas(
-                parseFloat(invoiceDetail?.order_details?.total_price) -
-                  invoiceDetail.order_details.order_payments.reduce(
-                    (acc, payment) => acc + parseFloat(payment.amount),
-                    0
-                  )
-              )}
-            </Box>
-          </Box>
+          <InvoiceTotalSummery invoiceDetail={invoiceDetail} />
         </Box>
 
-        {/* Branches Section */}
-        <Typography
-          variant="body2"
-          align="center"
-          sx={{ marginTop: "2mm", fontWeight: "bolder" }}
-        >
-          <span style={{ color: "red", fontSize: "4mm" }}>* </span>We will not
-          be responsible for any uncollected orders after 3 months.
-          Non-refundable.
-        </Typography>
-        <Typography
-          variant="body2"
-          align="center"
-          sx={{ fontWeight: "bold", fontFamily: "fm-emanee" }}
-        >
-          {`udi  03la blaujQ weKjqï  ms<sn|j j.lshkq fkd,efí' ì,am;a i|yd f.jQ uqo,a kej; f.jkq fkd,efí' `}
-        </Typography>
-        <Box sx={{ mt: "2mm", display: "flex", justifyContent: "center" }}>
-          <Typography variant="body1">
-            Branches
-            <span style={{ margin: "0 1mm", fontWeight: "bold" }}>:</span>
-          </Typography>
-          <Typography variant="body1">
-            Mathugama - 034 2247466
-            <span style={{ margin: "0 2mm", fontWeight: "bold" }}>|</span>
-          </Typography>
-          <Typography variant="body1">Aluthgama - 034 2275268</Typography>
-        </Box>
-
-        {/* Footer Note */}
-
-        <Typography variant="body2" align="center" sx={{ fontSize: "12px" }}>
-          Bill Printed On{" "}
-          <span style={{ margin: "0 1mm", fontWeight: "bold" }}>:</span>{" "}
-          {dateAndTimeFormat(new Date().toISOString())}
-        </Typography>
+        <InvoiceFooter />
       </Box>
       <Button
         variant="contained"

@@ -4,11 +4,10 @@ import Typography from "@mui/material/Typography";
 import { Badge, Box, Button, IconButton, Paper } from "@mui/material";
 import { Close } from "@mui/icons-material";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import { useFactoryOrderContext } from "../context/FactoryOrderContext";
 
 export interface SimpleDialogProps {
   open: boolean;
-  note: string | null;
+  note: string | null | undefined;
   onClose: () => void;
 }
 
@@ -48,11 +47,12 @@ function SimpleDialog(props: SimpleDialogProps) {
     </Dialog>
   );
 }
-
-export default function HidenNoteDialog() {
-  const { refractionDetail } = useFactoryOrderContext();
+export interface HidenNoteDialogProps {
+  note: string | null | undefined;
+}
+export default function HidenNoteDialog({ note }: HidenNoteDialogProps) {
   const [open, setOpen] = React.useState(false);
-  const note = refractionDetail?.note || null;
+
   const handleClickOpen = () => {
     setOpen(true);
   };

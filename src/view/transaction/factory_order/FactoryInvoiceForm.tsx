@@ -302,7 +302,7 @@ export default function FactoryInvoiceForm() {
                 <Checkbox {...methods.register("fitting_on_collection")} />
               </Box>
 
-              <HidenNoteDialog />
+              <HidenNoteDialog note={refractionDetail?.note} />
               <StockDrawerBtn />
             </Box>
 
