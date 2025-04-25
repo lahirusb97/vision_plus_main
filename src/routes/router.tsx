@@ -1,5 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
-import { lazy, Suspense } from "react";
+import { Suspense } from "react";
 import { createBrowserRouter } from "react-router";
 import { refractionRoutes } from "./routelist/refraction.route";
 import { channelRoutes } from "./routelist/channel.route";
@@ -14,9 +14,9 @@ import ComingSoon from "../ComingSoon";
 import { accountRoutes } from "./routelist/account.route";
 import SelectBrancheIndex from "../view/SelectBrancheIndex";
 import { reportRoutes } from "./routelist/reports.route";
+import Login from "../view/auth/login";
+import RegisterUser from "../view/auth/RegisterUser";
 
-const Login = lazy(() => import("../view/auth/login"));
-const RegisterUser = lazy(() => import("../view/auth/RegisterUser"));
 export const router = createBrowserRouter([
   {
     path: "/",

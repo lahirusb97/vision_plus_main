@@ -2,13 +2,12 @@ import RefractionTable from "../../view/refraction/RefractionTable";
 import { RouteObject } from "react-router";
 import RefractionNumber from "../../view/refraction/RefractionNumber";
 
-import { lazy, Suspense } from "react";
+import { Suspense } from "react";
 import ProtectedChildRoute from "../ProtectedChildRoute";
 import RefractionGenarated from "../../view/refraction/RefractionGenarated";
 import UpdateRefraction from "../../view/refraction/UpdateRefraction";
-const RefractionEdit = lazy(
-  () => import("../../view/refraction/RefractionEdit")
-);
+import RefractionEdit from "../../view/refraction/RefractionEdit";
+
 export const refractionRoutes: RouteObject[] = [
   {
     path: "",
