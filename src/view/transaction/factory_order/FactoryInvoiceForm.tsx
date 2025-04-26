@@ -5,10 +5,6 @@ import { useNavigate, useParams } from "react-router";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
 import { Button, Checkbox, TextField, Typography } from "@mui/material";
-// Hooks
-//Models
-
-//schemas
 import {
   FactoryInvoiceFormModel,
   schemaFactoryInvoice,
@@ -73,7 +69,6 @@ export default function FactoryInvoiceForm() {
     (state: RootState) => state.invoice_external_lense.externalLenseSubTotal
   );
   // Store Data**
-  console.log(LenseInvoiceList);
 
   const methods = useForm<FactoryInvoiceFormModel>({
     resolver: zodResolver(schemaFactoryInvoice),
@@ -108,7 +103,6 @@ export default function FactoryInvoiceForm() {
       dispatch(clearexternalLense());
     };
   }, []);
-  console.log("FrameInvoiceList", methods.formState.errors);
 
   const submiteFromData = async (data: FactoryInvoiceFormModel) => {
     if (refraction_id) {
@@ -168,6 +162,7 @@ export default function FactoryInvoiceForm() {
             quantity: item.buyQty,
             price_per_unit: item.price_per_unit,
             subtotal: item.subtotal,
+            note: item.note,
             is_non_stock: true,
             //!Note here
           })),

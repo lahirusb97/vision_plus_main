@@ -15,6 +15,7 @@ interface AddVariationCompProps {
   dataList: dataList[];
   pathroute: string;
   refresh: () => void;
+  loading: boolean;
 }
 
 export default function AddVariationComp({
@@ -22,6 +23,7 @@ export default function AddVariationComp({
   Urlpath,
   dataList,
   pathroute,
+  loading,
   refresh,
 }: AddVariationCompProps) {
   const navigate = useNavigate();
@@ -41,7 +43,7 @@ export default function AddVariationComp({
         <Typography variant="h6">{textName}</Typography>
         <AutocompleteInputField
           options={dataList}
-          loading={false}
+          loading={loading}
           labelName={textName}
           defaultId={undefined}
           onChange={(id) => setLenseCoating(id)}
@@ -71,7 +73,7 @@ export default function AddVariationComp({
             variant="outlined"
             onClick={() => {
               if (lenseCoating) {
-                openDialog(`/${pathroute}/${lenseCoating}/`, textName, refresh);
+                openDialog(`${pathroute}/${lenseCoating}/`, textName, refresh);
               }
             }}
           >

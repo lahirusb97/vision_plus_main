@@ -169,7 +169,7 @@ const AddLens = () => {
             <DropdownInput
               options={brands}
               onChange={field.onChange}
-              labelName="Brand"
+              labelName="Lens Factory"
               loading={brandsLoading}
               defaultId={field.value}
             />

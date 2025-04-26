@@ -33,6 +33,9 @@ export default function InvoiceExternalLenseItem({ lense }: LenseItemProps) {
       <Typography variant="body2">
         Coating: {lense?.external_lens_details.coating_name}
       </Typography>
+      <Typography variant="body2">
+        Note : {lense?.note && lense?.note}
+      </Typography>
       <Typography variant="body2">Quantity: {lense?.buyQty}</Typography>
       <Typography variant="body2">
         Unite Price: {lense?.price_per_unit}

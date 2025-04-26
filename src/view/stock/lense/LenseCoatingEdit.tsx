@@ -3,7 +3,7 @@ import { Box, TextField, Button, Container, Paper } from "@mui/material";
 import axiosClient from "../../../axiosClient";
 import { toast } from "react-hot-toast";
 import { useNavigate, useParams } from "react-router";
-import { handleError } from "../../../utils/handleError";
+import { extractErrorMessage } from "../../../utils/extractErrorMessage";
 const LenseCoatingEdit = () => {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -26,7 +26,7 @@ const LenseCoatingEdit = () => {
         const response = await axiosClient.get(`/lens-coatings/${id}/`);
         setFormData(response.data);
       } catch (error) {
-        handleError(error, "Failed to recive lens type");
+        extractErrorMessage(error);
       }
     };
     fetchLenseType();
@@ -43,7 +43,7 @@ const LenseCoatingEdit = () => {
         description: "",
       });
     } catch (error) {
-      handleError(error, "Failed to recive lens type");
+      extractErrorMessage(error);
     }
   };
 

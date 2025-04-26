@@ -33,7 +33,8 @@ export default function OrderFormRemark({ invoiceDetail }: InvoiceProps) {
             <span key={index}>
               {item.type_name || "No Type Available"} {` / `}
               {item.brand_name || "No Brand Available"} {` / `}
-              {item.coating_name || "No Coating Available"}
+              {item.coating_name || "No Coating Available"} {` / `}
+              {item.note !== null ? item.note : ""}
               {` / `}
             </span>
           ))}

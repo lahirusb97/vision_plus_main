@@ -1,13 +1,24 @@
 import React, { useEffect, useState } from "react";
-import { Box, TextField, Button, Container, Paper } from "@mui/material";
+import { Box, TextField, Container, Paper } from "@mui/material";
 import axiosClient from "../../../axiosClient";
 import { toast } from "react-hot-toast";
 import { useNavigate, useParams } from "react-router";
-import { handleError } from "../../../utils/handleError";
+import { extractErrorMessage } from "../../../utils/extractErrorMessage";
+import { useAxiosPut } from "../../../hooks/useAxiosPut";
+import SaveButton from "../../../components/SaveButton";
+import TitleText from "../../../components/TitleText";
+import LoadingAnimation from "../../../components/LoadingAnimation";
+import DataLoadingError from "../../../components/common/DataLoadingError";
+interface LensBrandFormData {
+  name: string;
+}
 const LenseBrandEdit = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const [formData, setFormData] = useState({
+  const { putHandler, putHandlerloading } = useAxiosPut();
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setErrror] = useState<boolean>(false);
+  const [formData, setFormData] = useState<LensBrandFormData>({
     name: "",
   });
 
@@ -20,12 +31,17 @@ const LenseBrandEdit = () => {
   };
   useEffect(() => {
     const fetchLenseType = async () => {
+      setLoading(true);
+      setErrror(false);
       try {
         const response = await axiosClient.get(`/brands/${id}/`);
-        console.log(response.data);
         setFormData(response.data);
+        toast.success(`Ready to update lens factory - ${response.data.name}`);
       } catch (error) {
-        handleError(error, "Failed to recive Brand");
+        extractErrorMessage(error);
+        setErrror(true);
+      } finally {
+        setLoading(false);
       }
     };
     fetchLenseType();
@@ -34,23 +50,27 @@ const LenseBrandEdit = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await axiosClient.put(`/brands/${id}/`, {
-        ...formData,
-        brand_type: "lens",
-      });
-      toast.success("Lense Factory Added successfully");
-      navigate(-1);
+      await putHandler(`/brands/${id}/`, { ...formData, brand_type: "lens" });
+
+      toast.success("Lense Factory successfully Updated");
+      navigate("/stock/add_variation/");
       setFormData({
         name: "",
       });
     } catch (error) {
-      handleError(error, "Failed to recive lens Factory");
+      extractErrorMessage(error);
     }
   };
-
+  if (loading) {
+    return <LoadingAnimation loadingMsg="Loading Lense Factory" />;
+  }
+  if (!loading && error) {
+    return <DataLoadingError />;
+  }
   return (
     <Container maxWidth="sm">
       <Paper sx={{ p: 4, width: "300px" }}>
+        <TitleText title="Update Lense Factory" />
         <form onSubmit={handleSubmit}>
           <TextField
             fullWidth
@@ -62,9 +82,10 @@ const LenseBrandEdit = () => {
             required
           />
           <Box sx={{ mt: 2 }}>
-            <Button type="submit" variant="contained" color="primary">
-              Submit
-            </Button>
+            <SaveButton
+              btnText="Update Lens Factory"
+              loading={putHandlerloading}
+            />
           </Box>
         </form>
       </Paper>

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import axiosClient from "../axiosClient";
 import { extractErrorMessage } from "../utils/extractErrorMessage";
 import { getUserCurentBranch } from "../utils/authDataConver";
@@ -36,8 +36,15 @@ const useGetExpenseReport = () => {
   const [totalExpense, setTotalExpense] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const controllerRef = useRef<AbortController | null>(null);
 
   const loadData = useCallback(async () => {
+    if (controllerRef.current) {
+      controllerRef.current.abort(); // Cancel any previous request
+    }
+    const controller = new AbortController();
+    controllerRef.current = controller;
+
     setLoading(true);
     setError(null);
     try {
@@ -45,6 +52,7 @@ const useGetExpenseReport = () => {
         "/expenses/report/",
         {
           params: reportParams,
+          signal: controller.signal,
         }
       );
 

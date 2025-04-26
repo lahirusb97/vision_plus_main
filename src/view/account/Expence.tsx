@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Box,
   Typography,
@@ -11,13 +11,17 @@ import {
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import useGetSubExCategory from "../../hooks/useGetSubExCategory";
-import useGetExCategory from "../../hooks/useGetExCategory";
+
 import AutocompleteInputField from "../../components/inputui/DropdownInput";
 import axiosClient from "../../axiosClient";
 import { toast } from "react-hot-toast";
 import { getUserCurentBranch } from "../../utils/authDataConver";
 import useGetExpenseReport from "../../hooks/useGetExpenseReport";
+import { useGetSubExCategory } from "../../hooks/useGetSubExCategory";
+import { useGetExCategory } from "../../hooks/useGetExCategory";
+import { useNavigate } from "react-router";
+import useGetFinanceSummary from "../../hooks/useGetFinanceSummary";
+import dayjs from "dayjs";
 
 const expenseSchema = z.object({
   branch: z.number().default(1),
@@ -30,9 +34,11 @@ const expenseSchema = z.object({
 type ExpenseFormData = z.infer<typeof expenseSchema>;
 
 const Expence = () => {
+  const navigate = useNavigate();
   const { subExCategory, subExCategoryLoading } = useGetSubExCategory();
   const { exCategory, exCategoryLoading } = useGetExCategory();
-
+  const { financeSummary, financeSummaryLoading, setFinanceSummaryParams } =
+    useGetFinanceSummary();
   const [filteredSubCategories, setFilteredSubCategories] = React.useState<
     { id: number; name: string }[]
   >([]);
@@ -70,6 +76,11 @@ const Expence = () => {
       setFilteredSubCategories([]);
     }
   }, [selectedMainCategory, subExCategory, setValue]);
+  useEffect(() => {
+    const formattedDate = dayjs().format("YYYY-MM-DD"); // 👈 your required format
+
+    setFinanceSummaryParams({ date: formattedDate });
+  }, []);
 
   const onSubmit = async (data: ExpenseFormData) => {
     try {
@@ -90,10 +101,15 @@ const Expence = () => {
 
   return (
     <Box p={2}>
+      <Button variant="outlined" onClick={() => navigate("manage")}>
+        Manage Expence Category
+      </Button>
       <Paper elevation={3} sx={{ p: 2, mb: 2 }}>
         <Box sx={{ display: "flex", justifyContent: "space-between" }}>
           <Typography variant="body1">Total Expense: {totalExpense}</Typography>
-          <Typography variant="body1">Total Received: </Typography>
+          <Typography variant="body1">
+            Total Received: {financeSummary?.today_balance}{" "}
+          </Typography>
         </Box>
       </Paper>
 

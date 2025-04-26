@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Box, Button, Paper, Typography } from "@mui/material";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate } from "react-router";
 import { useDeleteDialog } from "../../../context/DeleteDialogContext";
 import AutocompleteInputField from "../../../components/inputui/DropdownInput";
 
@@ -21,7 +21,6 @@ interface ExSubCategoryCompProps {
   categoryList: Category[];
   subcategoryList: Subcategory[];
   refresh: () => void;
-  basePath?: string; // Add basePath prop for flexible routing
 }
 
 export default function ExSubCategoryComp({
@@ -29,15 +28,13 @@ export default function ExSubCategoryComp({
   categoryList,
   subcategoryList,
   refresh,
-  basePath = "add_catagory", // Default to your existing path
 }: ExSubCategoryCompProps) {
   const navigate = useNavigate();
-  const { id: categoryIdFromRoute } = useParams();
+
   const { openDialog } = useDeleteDialog();
-  console.log(subcategoryList);
 
   const [selectedCategory, setSelectedCategory] = React.useState<number | null>(
-    categoryIdFromRoute ? parseInt(categoryIdFromRoute) : null
+    null
   );
   const [selectedSubcategory, setSelectedSubcategory] = React.useState<
     number | null
@@ -49,14 +46,15 @@ export default function ExSubCategoryComp({
   useEffect(() => {
     if (selectedCategory) {
       setAvailableSubcategories(
-        subcategoryList.filter(
+        subcategoryList?.filter(
           (item) => item.main_category === selectedCategory
         )
       );
     } else {
       setAvailableSubcategories([]);
     }
-  }, [selectedCategory, subcategoryList]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedCategory]);
 
   return (
     <div>
@@ -83,7 +81,6 @@ export default function ExSubCategoryComp({
             labelName="Select Subcategory"
             defaultId={selectedSubcategory}
             onChange={(id) => setSelectedSubcategory(id)}
-            disabled={!selectedCategory}
           />
         </Box>
 
@@ -126,7 +123,10 @@ export default function ExSubCategoryComp({
                 openDialog(
                   `/expense-subcategories/${selectedSubcategory}/`,
                   `${textName} subcategory`,
-                  refresh
+                  () => {
+                    refresh();
+                    setSelectedCategory(null);
+                  }
                 );
               }
             }}

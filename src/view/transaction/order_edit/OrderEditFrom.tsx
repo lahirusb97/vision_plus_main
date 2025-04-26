@@ -156,7 +156,9 @@ export default function OrderEditFrom() {
               buyQty: item.quantity,
               price_per_unit: parseInt(item.price_per_unit),
               subtotal: parseInt(item.subtotal),
+              note: item.note,
               external_lens_details: {
+                //add branded none branded
                 brand_name: item?.brand_name,
                 type_name: item?.type_name,
                 coating_name: item?.coating_name,

@@ -7,7 +7,7 @@ import {
   SetStateAction,
   useEffect,
 } from "react";
-import { getCookie, removeCookie, setCookie } from "typescript-cookie";
+import { removeCookie } from "typescript-cookie";
 
 // Define the LoginResponse type
 type LoginResponse = {

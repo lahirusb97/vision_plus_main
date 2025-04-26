@@ -1,24 +1,29 @@
-import React from "react";
 import { Box } from "@mui/material";
 import AddVariationComp from "../stock/AddVariationComp";
-import CodeCRUD from "../stock/CodeCRUD";
-import useGetExCategory from "../../hooks/useGetExCategory";
+
 import ExSubCategoryComp from "./expencess_category/ExSubCategoryComp";
-import useGetSubExCategory from "../../hooks/useGetSubExCategory";
+import { useGetSubExCategory } from "../../hooks/useGetSubExCategory";
+import { useGetExCategory } from "../../hooks/useGetExCategory";
+import TitleText from "../../components/TitleText";
 
 const AddCatagory = () => {
   const { exCategory, exCategoryLoading, exCategoryRefresh } =
     useGetExCategory();
-  const { subExCategory, subExCategoryLoading, subExCategoryRefresh } =
-    useGetSubExCategory();
+  const { subExCategory, subExCategoryRefresh } = useGetSubExCategory();
+
   return (
-    <Box width={"600px"} p={2}>
+    <Box width={"600px"}>
+      <TitleText title="Manage Expence Category" />
       <AddVariationComp
-        textName="Main Category "
-        Urlpath="main"
+        textName="Expence Category "
+        Urlpath="main_category"
+        loading={exCategoryLoading}
         dataList={exCategory}
-        pathroute={"expense-categories/"}
-        refresh={exCategoryRefresh}
+        pathroute={"expense-categories"}
+        refresh={() => {
+          exCategoryRefresh();
+          subExCategoryRefresh(new AbortController().signal);
+        }}
       />
 
       <ExSubCategoryComp
@@ -26,7 +31,6 @@ const AddCatagory = () => {
         categoryList={exCategory}
         subcategoryList={subExCategory}
         refresh={exCategoryRefresh}
-        basePath="settings/categories"
       />
     </Box>
   );
