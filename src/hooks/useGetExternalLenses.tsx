@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axiosClient from "../axiosClient";
 import { ExternalLensFilterList } from "../model/ExternalLenseModel";
 import { extractErrorMessage } from "../utils/extractErrorMessage";
+import axios from "axios";
 interface FilterParams {
   lens_type?: number | null | undefined;
   coating?: number | null | undefined;
@@ -17,6 +18,8 @@ export const useGetExternalLenses = () => {
     brand: null,
   });
   useEffect(() => {
+    const controller = new AbortController();
+    const signal = controller.signal;
     const fetchLenses = async () => {
       setLoading(true);
       setError(false);
@@ -27,18 +30,21 @@ export const useGetExternalLenses = () => {
             ([, v]) => v !== undefined && v !== null
           )
         );
-        console.log("cleanParams", cleanParams);
 
         const response = await axiosClient.get<ExternalLensFilterList>(
           "external_lenses/",
           {
             params: cleanParams,
+            signal,
           }
         );
 
         setData(response.data);
         setError(false);
       } catch (err) {
+        if (axios.isCancel(err)) {
+          return;
+        }
         extractErrorMessage(err);
         setError(true);
         setData(null);
@@ -48,6 +54,9 @@ export const useGetExternalLenses = () => {
     };
 
     fetchLenses();
+    return () => {
+      controller.abort();
+    };
   }, [params.brand, params.coating, params.lens_type]);
   const setExternalLenseParams = (newParams: FilterParams) => {
     setParams((prev) => ({

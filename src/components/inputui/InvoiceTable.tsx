@@ -1,4 +1,3 @@
-import * as React from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -196,7 +195,11 @@ export default function InvoiceTable() {
                 </IconButton>
               </TableCell>
 
-              <TableCell>{`${row.external_lens_details.type_name} / ${row.external_lens_details.brand_name} /${row.external_lens_details.coating_name} `}</TableCell>
+              <TableCell>{`${row.external_lens_details.type_name} / ${
+                row.external_lens_details.brand_name
+              } /${row.external_lens_details.coating_name} /${
+                row.note !== null ? row.note : ""
+              } /${row.external_lens_details.branded}`}</TableCell>
 
               <TableCell align="center">
                 <IconButton

@@ -45,7 +45,7 @@ const theme = createTheme({
     MuiTableCell: {
       styleOverrides: {
         root: {
-          padding: 0, // Reduced padding (you can set to 0 for no padding)
+          padding: "0em .5em", // Reduced padding (you can set to 0 for no padding)
           margin: 0,
           // For even more compact cells
           "&.MuiTableCell-sizeSmall": {

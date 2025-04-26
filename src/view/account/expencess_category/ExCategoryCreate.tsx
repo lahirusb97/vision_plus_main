@@ -1,12 +1,13 @@
 import React, { useState } from "react";
-import { Box, TextField, Button, Container, Paper } from "@mui/material";
-import axiosClient from "../../../axiosClient";
+import { Box, TextField, Container, Paper } from "@mui/material";
 import { toast } from "react-hot-toast";
-import { useNavigate } from "react-router";
 import { extractErrorMessage } from "../../../utils/extractErrorMessage";
+import { useAxiosPost } from "../../../hooks/useAxiosPost";
+import SaveButton from "../../../components/SaveButton";
+import TitleText from "../../../components/TitleText";
+import BackButton from "../../../components/BackButton";
 const ExCategoryCreate = () => {
-  const navigate = useNavigate();
-
+  const { postHandler, postHandlerloading } = useAxiosPost();
   const [formData, setFormData] = useState({
     name: "",
   });
@@ -22,11 +23,11 @@ const ExCategoryCreate = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await axiosClient.post("expense-categories/", {
+      await postHandler("expense-categories/", {
         ...formData,
       });
-      toast.success("Lense Factory Added successfully");
-      navigate(-1);
+      toast.success("Expence Category Added successfully");
+
       setFormData({
         name: "",
       });
@@ -38,10 +39,12 @@ const ExCategoryCreate = () => {
   return (
     <Container maxWidth="sm">
       <Paper sx={{ p: 4, width: "300px" }}>
+        <BackButton />
+        <TitleText title="Create New Expence Category" />
         <form onSubmit={handleSubmit}>
           <TextField
             fullWidth
-            label="Lense Factory Name"
+            label="Expence category Name"
             name="name"
             value={formData.name}
             onChange={handleChange}
@@ -49,9 +52,10 @@ const ExCategoryCreate = () => {
             required
           />
           <Box sx={{ mt: 2 }}>
-            <Button type="submit" variant="contained" color="primary">
-              Submit
-            </Button>
+            <SaveButton
+              btnText="Create Expance category"
+              loading={postHandlerloading}
+            />
           </Box>
         </form>
       </Paper>

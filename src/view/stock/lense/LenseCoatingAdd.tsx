@@ -1,17 +1,17 @@
 import React, { useState } from "react";
-import { Box, TextField, Button, Container, Paper } from "@mui/material";
-import axiosClient from "../../../axiosClient";
+import { Box, TextField, Container, Paper } from "@mui/material";
 import { toast } from "react-hot-toast";
-import { useNavigate } from "react-router";
-import { handleError } from "../../../utils/handleError";
+import { extractErrorMessage } from "../../../utils/extractErrorMessage";
+import TitleText from "../../../components/TitleText";
+import { useAxiosPost } from "../../../hooks/useAxiosPost";
+import SaveButton from "../../../components/SaveButton";
 const LenseCoatingAdd = () => {
-  const navigate = useNavigate();
+  const { postHandler, postHandlerloading } = useAxiosPost();
 
   const [formData, setFormData] = useState({
     name: "",
     description: "",
   });
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({
@@ -23,25 +23,26 @@ const LenseCoatingAdd = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await axiosClient.post("/lens-coatings/", formData);
-      toast.success("Lense Coating added successfully");
-      navigate(-1);
+      const ress = await postHandler("/lens-coatings/", formData);
+      toast.success(`${ress.data.name} Lense Coating Created successfully`);
+
       setFormData({
         name: "",
         description: "",
       });
     } catch (error) {
-      handleError(error, "Failed to recive lens Coatings");
+      extractErrorMessage(error);
     }
   };
 
   return (
     <Container maxWidth="sm">
       <Paper sx={{ p: 4 }}>
+        <TitleText title="Create Lense Coating" />
         <form onSubmit={handleSubmit}>
           <TextField
             fullWidth
-            label="Name"
+            label="Coating Name"
             name="name"
             value={formData.name}
             onChange={handleChange}
@@ -50,19 +51,19 @@ const LenseCoatingAdd = () => {
           />
           <TextField
             fullWidth
-            label="Description"
+            label=" Coating Description"
             name="description"
             value={formData.description}
             onChange={handleChange}
             margin="normal"
             multiline
-            rows={4}
-            required
+            rows={2}
           />
           <Box sx={{ mt: 2 }}>
-            <Button type="submit" variant="contained" color="primary">
-              Submit
-            </Button>
+            <SaveButton
+              btnText="Create Lense Coating"
+              loading={postHandlerloading}
+            />
           </Box>
         </form>
       </Paper>

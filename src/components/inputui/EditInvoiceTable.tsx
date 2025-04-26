@@ -204,7 +204,11 @@ export default function EditInvoiceTable({ paymentList }: Props) {
                 </IconButton>
               </TableCell>
 
-              <TableCell>{`${row.external_lens_details.type_name} / ${row.external_lens_details.brand_name} /${row.external_lens_details.coating_name} `}</TableCell>
+              <TableCell>{`${row.external_lens_details.type_name} / ${
+                row.external_lens_details.brand_name
+              } /${row.external_lens_details.coating_name} /${
+                row.note !== null ? row.note : ""
+              }`}</TableCell>
 
               <TableCell align="center">
                 <IconButton

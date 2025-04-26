@@ -44,6 +44,8 @@ export interface FrameOrderItem {
   external_lens: null;
   external_lens_name: null;
   external_lens_powers: [];
+  note: string | null;
+
   // Other shared fields
   id: number;
   order: number;
@@ -60,6 +62,8 @@ export interface LensOrderItem {
   external_lens: null;
   external_lens_name: null;
   external_lens_powers: [];
+  note: string | null;
+
   // Other shared fields
   id: number;
   order: number;
@@ -77,6 +81,7 @@ export interface ExternalLensOrderItem {
   price_per_unit: string;
   subtotal: string;
   is_non_stock: boolean;
+  note: string | null;
 
   // Other shared fields
 

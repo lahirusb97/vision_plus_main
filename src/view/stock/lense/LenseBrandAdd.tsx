@@ -1,12 +1,14 @@
 import React, { useState } from "react";
-import { Box, TextField, Button, Container, Paper } from "@mui/material";
-import axiosClient from "../../../axiosClient";
-import { toast } from "react-hot-toast";
-import { useNavigate } from "react-router";
-import { handleError } from "../../../utils/handleError";
-const LenseBrandAdd = () => {
-  const navigate = useNavigate();
+import { Box, TextField, Container, Paper } from "@mui/material";
 
+import { toast } from "react-hot-toast";
+import { extractErrorMessage } from "../../../utils/extractErrorMessage";
+import { useAxiosPost } from "../../../hooks/useAxiosPost";
+import SaveButton from "../../../components/SaveButton";
+import TitleText from "../../../components/TitleText";
+import BackButton from "../../../components/BackButton";
+const LenseBrandAdd = () => {
+  const { postHandler, postHandlerloading } = useAxiosPost();
   const [formData, setFormData] = useState({
     name: "",
   });
@@ -22,23 +24,22 @@ const LenseBrandAdd = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await axiosClient.post("/brands/", {
-        ...formData,
-        brand_type: "lens",
-      });
+      await postHandler("brands/", { ...formData, brand_type: "lens" });
       toast.success("Lense Factory Added successfully");
-      navigate(-1);
+
       setFormData({
         name: "",
       });
     } catch (error) {
-      handleError(error, "Failed to recive lens Brand");
+      extractErrorMessage(error);
     }
   };
 
   return (
     <Container maxWidth="sm">
       <Paper sx={{ p: 4, width: "300px" }}>
+        <BackButton />
+        <TitleText title="Add Lense Factory" />
         <form onSubmit={handleSubmit}>
           <TextField
             fullWidth
@@ -50,9 +51,10 @@ const LenseBrandAdd = () => {
             required
           />
           <Box sx={{ mt: 2 }}>
-            <Button type="submit" variant="contained" color="primary">
-              Submit
-            </Button>
+            <SaveButton
+              btnText="Create Lense Factory"
+              loading={postHandlerloading}
+            />
           </Box>
         </form>
       </Paper>

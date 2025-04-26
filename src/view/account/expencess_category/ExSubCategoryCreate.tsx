@@ -1,15 +1,17 @@
 import React, { useState } from "react";
-import { Box, TextField, Button, Container, Paper } from "@mui/material";
-import axiosClient from "../../../axiosClient";
+import { Box, TextField, Container, Paper } from "@mui/material";
 import { toast } from "react-hot-toast";
 import { useNavigate, useSearchParams } from "react-router";
 import { extractErrorMessage } from "../../../utils/extractErrorMessage";
+import { useAxiosPost } from "../../../hooks/useAxiosPost";
+import SaveButton from "../../../components/SaveButton";
+import TitleText from "../../../components/TitleText";
 
 const ExSubCategoryCreate = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const categoryId = searchParams.get("category");
-
+  const { postHandler, postHandlerloading } = useAxiosPost();
   const [formData, setFormData] = useState({
     name: "",
     category: categoryId ? parseInt(categoryId) : "",
@@ -31,7 +33,7 @@ const ExSubCategoryCreate = () => {
         main_category: formData.category,
       };
 
-      await axiosClient.post("/expense-subcategories/", payload);
+      await postHandler("/expense-subcategories/", payload);
       toast.success("Subcategory created successfully");
       navigate(-1);
     } catch (error) {
@@ -40,12 +42,13 @@ const ExSubCategoryCreate = () => {
   };
 
   return (
-    <Container maxWidth="sm">
+    <Container sx={{ width: 500, mt: 1 }}>
       <Paper sx={{ p: 4 }}>
+        <TitleText title="Create New Sub Category" />
         <form onSubmit={handleSubmit}>
           <TextField
             fullWidth
-            label="Subcategory Name"
+            label="Sub Category Name"
             name="name"
             value={formData.name}
             onChange={handleChange}
@@ -69,16 +72,10 @@ const ExSubCategoryCreate = () => {
           )}
 
           <Box sx={{ mt: 2, display: "flex", gap: 2 }}>
-            <Button type="submit" variant="contained" color="primary">
-              Create Subcategory
-            </Button>
-            <Button
-              variant="outlined"
-              color="secondary"
-              onClick={() => navigate(-1)}
-            >
-              Cancel
-            </Button>
+            <SaveButton
+              btnText="Create Sub Category"
+              loading={postHandlerloading}
+            />
           </Box>
         </form>
       </Paper>

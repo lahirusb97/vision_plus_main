@@ -6,6 +6,7 @@ export interface ExternalLenseFilterModel {
   buyQty: number;
   price_per_unit: number;
   subtotal: number;
+  note: string | null;
   external_lens_details: {
     type_name: string;
     coating_name: string;
@@ -14,6 +15,7 @@ export interface ExternalLenseFilterModel {
 }
 function extractLenseDetail(lense: ExternalLenseFilterModel) {
   return {
+    note: lense.note,
     type_name: lense.external_lens_details?.type_name,
     coating_name: lense.external_lens_details?.coating_name,
     brand_name: lense.external_lens_details?.brand_name,

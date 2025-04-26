@@ -10,11 +10,10 @@ import {
 import axiosClient from "../../../axiosClient";
 import { toast } from "react-hot-toast";
 import { useNavigate, useParams } from "react-router";
-import { handleError } from "../../../utils/handleError";
 import { extractErrorMessage } from "../../../utils/extractErrorMessage";
 const ExCategoryUpdate = () => {
   const navigate = useNavigate();
-  const { id } = useParams();
+  const { main_cat_id } = useParams();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -30,19 +29,21 @@ const ExCategoryUpdate = () => {
   useEffect(() => {
     const fetchLenseType = async () => {
       try {
-        const response = await axiosClient.get(`/expense-categories/${id}/`);
+        const response = await axiosClient.get(
+          `/expense-categories/${main_cat_id}/`
+        );
         setFormData(response.data);
       } catch (error) {
         extractErrorMessage(error);
       }
     };
     fetchLenseType();
-  }, [id]);
+  }, [main_cat_id]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await axiosClient.put(`/expense-categories/${id}/`, formData);
+      await axiosClient.put(`/expense-categories/${main_cat_id}/`, formData);
       toast.success("Lense added successfully");
       navigate(-1);
       setFormData({

@@ -1,24 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { Box, TextField, Button, Container, Paper } from "@mui/material";
+import { Box, TextField, Container, Paper } from "@mui/material";
 import axiosClient from "../../../axiosClient";
 import { toast } from "react-hot-toast";
-import {
-  useLocation,
-  useNavigate,
-  useParams,
-  useSearchParams,
-} from "react-router";
-import { handleError } from "../../../utils/handleError";
+import { useLocation, useNavigate, useParams } from "react-router";
 import { extractErrorMessage } from "../../../utils/extractErrorMessage";
+import SaveButton from "../../../components/SaveButton";
+import { useAxiosPut } from "../../../hooks/useAxiosPut";
 
 const ExSubCategoryUpdate = () => {
   const navigate = useNavigate();
-  const { id } = useParams();
+  const { sub_cat_id } = useParams();
+  const { putHandler, putHandlerloading } = useAxiosPut();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const [searchParams] = useSearchParams();
   const categoryId = queryParams.get("category");
-  console.log(categoryId);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -36,7 +31,9 @@ const ExSubCategoryUpdate = () => {
   useEffect(() => {
     const fetchSubcategory = async () => {
       try {
-        const response = await axiosClient.get(`expense-subcategories/${id}/`);
+        const response = await axiosClient.get(
+          `expense-subcategories/${sub_cat_id}/`
+        );
         setFormData({
           name: response.data.name,
           category: response.data.category,
@@ -46,10 +43,10 @@ const ExSubCategoryUpdate = () => {
       }
     };
 
-    if (id) {
+    if (sub_cat_id) {
       fetchSubcategory();
     }
-  }, [id]);
+  }, [sub_cat_id]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,11 +55,10 @@ const ExSubCategoryUpdate = () => {
         name: formData.name,
         main_category: categoryId,
       };
-      console.log(payload);
 
-      if (id) {
+      if (sub_cat_id) {
         // Update existing subcategory
-        await axiosClient.put(`expense-subcategories/${id}/`, payload);
+        await putHandler(`expense-subcategories/${sub_cat_id}/`, payload);
         toast.success("Subcategory updated successfully");
       }
 
@@ -86,7 +82,7 @@ const ExSubCategoryUpdate = () => {
             required
           />
 
-          {!id && categoryId && (
+          {!sub_cat_id && categoryId && (
             <TextField
               fullWidth
               label="Category ID"
@@ -101,16 +97,10 @@ const ExSubCategoryUpdate = () => {
           )}
 
           <Box sx={{ mt: 2, display: "flex", gap: 2 }}>
-            <Button type="submit" variant="contained" color="primary">
-              {id ? "Update" : "Create"} Subcategory
-            </Button>
-            <Button
-              variant="outlined"
-              color="secondary"
-              onClick={() => navigate(-1)}
-            >
-              Cancel
-            </Button>
+            <SaveButton
+              btnText="Update Sub Category"
+              loading={putHandlerloading}
+            />
           </Box>
         </form>
       </Paper>

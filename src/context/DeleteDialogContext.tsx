@@ -24,7 +24,7 @@ export const DeleteDialogProvider: React.FC<{ children: React.ReactNode }> = ({
     open: false,
     path: "",
     itemName: undefined,
-    refresh: undefined,
+    refresh: () => {},
   });
 
   const openDialog = (
@@ -40,7 +40,7 @@ export const DeleteDialogProvider: React.FC<{ children: React.ReactNode }> = ({
       open: false,
       path: "",
       itemName: undefined,
-      refresh: undefined,
+      refresh: () => {},
     });
   };
 

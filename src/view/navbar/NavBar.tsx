@@ -28,35 +28,9 @@ import {
   getUserCurentBranch,
 } from "../../utils/authDataConver";
 import ReportsNav from "../reports/ReportsNav";
+import TabPanel from "./TabPanel";
 
 // TabPanel Component
-
-function TabPanel(props: {
-  children?: React.ReactNode;
-  index: number;
-  value: number;
-}) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <Paper>
-      <div
-        role="tabpanel"
-        hidden={value !== index}
-        id={`tabpanel-${index}`}
-        aria-labelledby={`tab-${index}`}
-        {...other}
-      >
-        {value === index && (
-          <>
-            {/* Remove Typography or change its component */}
-            {children}
-          </>
-        )}
-      </div>
-    </Paper>
-  );
-}
 
 export default function NavBar() {
   const tabs = [
@@ -122,14 +96,12 @@ export default function NavBar() {
   const location = useLocation();
   const firstSegment = location.pathname.split("/")[1] || "home"; // Default to 'home' if empty
 
-  console.log(tabs.findIndex((tab) => firstSegment.startsWith(tab.path)));
+  const matchedTab = tabs.find((tab) => {
+    const tabSegment = tab.path.split("/")[0];
+    return tabSegment === firstSegment;
+  });
 
-  const getTabIndexFromPath = (path: string) => {
-    const index = tabs.findIndex((tab) => path.startsWith(tab.path));
-    return index !== -1 ? index : 0; // Default to first tab if no match
-  };
-
-  const [value, setValue] = React.useState(getTabIndexFromPath(firstSegment));
+  const [value, setValue] = React.useState(matchedTab?.id || 0);
 
   const navigate = useNavigate();
   // Handle Tab Change
@@ -149,29 +121,33 @@ export default function NavBar() {
   };
   return (
     <Paper sx={{ width: "100%" }}>
-      <Tabs
-        value={value}
-        onChange={handleChange}
-        aria-label="icon label tabs example"
-        variant="scrollable"
-      >
-        {tabs.map((tab) => (
-          <Tab
-            key={tab.id}
-            icon={
-              <img
-                src={tab.icon}
-                alt={tab.label}
-                style={{ width: 24, height: 24 }}
-              />
-            }
-            label={tab.label}
-            sx={{
-              textTransform: "capitalize", // Capitalizes the first letter of each word
-            }}
-          />
-        ))}
+      {/* Wrap Tabs and Logout Button/User Info in a flex container */}
+      <Box sx={{ display: "flex", alignItems: "center" }}>
+        <Tabs
+          value={value}
+          onChange={handleChange}
+          aria-label="icon label tabs example"
+          variant="scrollable"
+        >
+          {tabs.map((tab) => (
+            <Tab
+              key={tab.id}
+              icon={
+                <img
+                  src={tab.icon}
+                  alt={tab.label}
+                  style={{ width: 24, height: 24 }}
+                />
+              }
+              label={tab.label}
+              sx={{
+                textTransform: "capitalize",
+              }}
+            />
+          ))}
+        </Tabs>
 
+        {/* Moved Logout Button and User Info outside Tabs */}
         <Button onClick={deleteCookie}>
           <LogoutOutlined />
         </Button>
@@ -192,9 +168,9 @@ export default function NavBar() {
             </strong>
           </Typography>
         </Box>
-      </Tabs>
+      </Box>
 
-      {/* Tab Panels */}
+      {/* Tab Panels (remain unchanged) */}
       {tabs.map((tab, index) => (
         <TabPanel key={index} value={value} index={index}>
           <Paper

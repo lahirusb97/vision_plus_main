@@ -1,50 +1,61 @@
 import { useState, useEffect, useCallback } from "react";
+import axios from "axios";
 import axiosClient from "../axiosClient";
+import { extractErrorMessage } from "../utils/extractErrorMessage";
 
-interface Colors {
+interface ExpenceCategory {
   id: number;
   name: string;
 }
 
-interface UseGetCoatingReturn {
-  exCategory: Colors[];
+interface UseGetExCategoryReturn {
+  exCategory: ExpenceCategory[];
   exCategoryLoading: boolean;
-  exCategoryError: string | null;
-  exCategoryRefresh: () => void;
+  exCategoryError: boolean;
+  exCategoryRefresh: (signal?: AbortSignal) => void;
 }
 
-const useGetExCategory = (): UseGetCoatingReturn => {
-  const [colors, setColors] = useState<Colors[]>([]);
-  const [colorsLoading, setColorsLoading] = useState<boolean>(true);
-  const [colorsError, setColorsError] = useState<string | null>(null);
+export function useGetExCategory(): UseGetExCategoryReturn {
+  const [exCategory, setExCategory] = useState<ExpenceCategory[]>([]);
+  const [exCategoryLoading, setExCategoryLoading] = useState(true);
+  const [exCategoryError, setExCategoryError] = useState(false);
 
-  const fetchColors = useCallback(async () => {
-    setColorsLoading(true);
-    setColorsError(null);
+  const fetchExCategory = useCallback(async (signal?: AbortSignal) => {
+    setExCategoryLoading(true);
+    setExCategoryError(false);
 
     try {
-      const response = await axiosClient.get<Colors[]>("expense-categories/");
-      setColors(response.data);
-    } catch (err: any) {
-      setColorsLoading(
-        err?.response?.data?.message || "Failed to fetch doctors."
+      const response = await axiosClient.get<ExpenceCategory[]>(
+        "expense-categories/",
+        { signal }
       );
+      setExCategory(response.data);
+    } catch (error) {
+      if (axios.isCancel(error)) {
+        // Request cancelled
+        return;
+      }
+      setExCategoryError(true);
+      extractErrorMessage(error);
+      setExCategory([]);
     } finally {
-      setColorsLoading(false);
+      setExCategoryLoading(false);
     }
   }, []);
 
-  // Automatically fetch data on mount
   useEffect(() => {
-    fetchColors();
-  }, [fetchColors]);
+    const controller = new AbortController();
+    fetchExCategory(controller.signal);
+
+    return () => {
+      controller.abort();
+    };
+  }, [fetchExCategory]);
 
   return {
-    exCategory: colors,
-    exCategoryLoading: colorsLoading,
-    exCategoryError: colorsError,
-    exCategoryRefresh: fetchColors,
+    exCategory,
+    exCategoryLoading,
+    exCategoryError,
+    exCategoryRefresh: fetchExCategory,
   };
-};
-
-export default useGetExCategory;
+}

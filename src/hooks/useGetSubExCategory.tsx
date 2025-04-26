@@ -1,52 +1,45 @@
 import { useState, useEffect, useCallback } from "react";
+import axios from "axios";
 import axiosClient from "../axiosClient";
 
-interface Colors {
-  id: number;
-  name: string;
-}
+export function useGetSubExCategory() {
+  const [subExCategories, setSubExCategories] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
 
-interface UseGetCoatingReturn {
-  subExCategory: Colors[];
-  subExCategoryLoading: boolean;
-  subExCategoryError: string | null;
-  subExCategoryRefresh: () => void;
-}
-
-const useGetSubExCategory = (): UseGetCoatingReturn => {
-  const [colors, setColors] = useState<Colors[]>([]);
-  const [colorsLoading, setColorsLoading] = useState<boolean>(true);
-  const [colorsError, setColorsError] = useState<string | null>(null);
-
-  const fetchColors = useCallback(async () => {
-    setColorsLoading(true);
-    setColorsError(null);
-
+  const fetchSubExCategories = useCallback(async (signal: AbortSignal) => {
+    setIsLoading(true);
+    setIsError(false);
     try {
-      const response = await axiosClient.get<Colors[]>(
-        "expense-subcategories/"
-      );
-      setColors(response.data);
-    } catch (err: any) {
-      setColorsLoading(
-        err?.response?.data?.message || "Failed to fetch doctors."
-      );
+      const response = await axiosClient.get("expense-subcategories/", {
+        signal,
+      });
+      setSubExCategories(response.data);
+    } catch (error) {
+      if (axios.isCancel(error)) {
+        return;
+      } else {
+        setIsError(true);
+      }
+      setSubExCategories([]);
     } finally {
-      setColorsLoading(false);
+      setIsLoading(false);
     }
   }, []);
 
-  // Automatically fetch data on mount
   useEffect(() => {
-    fetchColors();
-  }, [fetchColors]);
+    const controller = new AbortController();
+    fetchSubExCategories(controller.signal);
+
+    return () => {
+      controller.abort(); // Cancel the request if component unmounts
+    };
+  }, [fetchSubExCategories]);
 
   return {
-    subExCategory: colors,
-    subExCategoryLoading: colorsLoading,
-    subExCategoryError: colorsError,
-    subExCategoryRefresh: fetchColors,
+    subExCategory: subExCategories,
+    subExCategoryLoading: isLoading,
+    subExCategoryError: isError,
+    subExCategoryRefresh: fetchSubExCategories,
   };
-};
-
-export default useGetSubExCategory;
+}

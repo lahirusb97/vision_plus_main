@@ -10,6 +10,12 @@ import ExSubCategoryUpdate from "../../view/account/expencess_category/ExSubCate
 import BankAccountCreate from "../../view/account/bank_account/BankAccountCreate";
 import BankAccountIndex from "../../view/account/bank_account/BankAccountIndex";
 import BankAccountUpdate from "../../view/account/bank_account/BankAccountUpdate";
+import OtherIncomeIndex from "../../view/account/other_income/OtherIncomeIndex";
+import OtherIncomeUpdate from "../../view/account/other_income/OtherIncomeUpdate";
+import OtherincomeCreate from "../../view/account/other_income/OtherincomeCreate";
+import BankDepositCreate from "../../view/account/bank_deposite/BankDepositCreate";
+import BankDeposite from "../../view/account/bank_deposite/BankDeposite";
+import BankDepositeUpdate from "../../view/account/bank_deposite/BankDepositUpdate";
 
 export const accountRoutes: RouteObject[] = [
   {
@@ -28,7 +34,39 @@ export const accountRoutes: RouteObject[] = [
   },
   {
     path: "expence/", // you can add paths al you need for the UI
-    element: <Expence />, // create UI inside view/account folder then import to here
+    element: <ProtectedChildRoute />,
+    children: [
+      {
+        index: true,
+        element: <Expence />,
+      },
+      {
+        path: "manage/",
+        element: <ProtectedChildRoute />,
+        children: [
+          {
+            index: true,
+            element: <AddCatagory />,
+          },
+          {
+            path: "main_category",
+            element: <ExCategoryCreate />,
+          },
+          {
+            path: "main_category/:main_cat_id",
+            element: <ExCategoryUpdate />,
+          },
+          {
+            path: "sub/create/:main_cat_id",
+            element: <ExSubCategoryCreate />,
+          },
+          {
+            path: "sub/update/:sub_cat_id",
+            element: <ExSubCategoryUpdate />,
+          },
+        ],
+      },
+    ],
   },
   {
     path: "add_catagory/", // you can add paths al you need for the UI
@@ -71,6 +109,42 @@ export const accountRoutes: RouteObject[] = [
       {
         path: "update/:account_id",
         element: <BankAccountUpdate />,
+      },
+    ],
+  },
+  {
+    path: "other_income/",
+    element: <ProtectedChildRoute />,
+    children: [
+      {
+        index: true,
+        element: <OtherIncomeIndex />,
+      },
+      {
+        path: "create/",
+        element: <OtherincomeCreate />,
+      },
+      {
+        path: "update/:other_income_category_id",
+        element: <OtherIncomeUpdate />,
+      },
+    ],
+  },
+  {
+    path: "bank_deposite/",
+    element: <ProtectedChildRoute />,
+    children: [
+      {
+        index: true,
+        element: <BankDeposite />,
+      },
+      {
+        path: "create/",
+        element: <BankDepositCreate />,
+      },
+      {
+        path: "update/:bank_deposite_id",
+        element: <BankDepositeUpdate />,
       },
     ],
   },

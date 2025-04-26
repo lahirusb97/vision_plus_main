@@ -1,29 +1,28 @@
 import { useState, useEffect, useMemo } from "react";
 import { Autocomplete, CircularProgress, TextField } from "@mui/material";
+import { BankAccountModel } from "../../model/BankAccountModel";
 
 // Define the option type
-export interface Option {
-  id: number;
-  name: string;
-}
 
 // Define the props type for the component
 interface AutocompleteInputFieldProps {
-  options: Option[];
+  options: BankAccountModel[];
   onChange: (selectedId: number | null) => void;
   loading: boolean;
   labelName: string;
   defaultId?: number | null;
 }
 
-const AutocompleteInputField: React.FC<AutocompleteInputFieldProps> = ({
+const BankAutocomplete: React.FC<AutocompleteInputFieldProps> = ({
   options,
   onChange,
   loading,
   labelName,
   defaultId,
 }) => {
-  const [selectedOption, setSelectedOption] = useState<Option | null>(null);
+  const [selectedOption, setSelectedOption] = useState<BankAccountModel | null>(
+    null
+  );
 
   const defaultOption = useMemo(() => {
     if (!defaultId) return null;
@@ -32,11 +31,11 @@ const AutocompleteInputField: React.FC<AutocompleteInputFieldProps> = ({
   // Set the default option based on the passed id
   useEffect(() => {
     setSelectedOption(defaultOption);
-  }, [defaultOption, defaultId]);
+  }, [defaultOption]);
 
   const handleChange = (
-    _event: React.SyntheticEvent<Element, Event>,
-    newValue: Option | null
+    event: React.SyntheticEvent<Element, Event>,
+    newValue: BankAccountModel | null
   ) => {
     setSelectedOption(newValue);
     onChange(newValue ? newValue.id : null); // Pass only the selected option's id to parent
@@ -51,7 +50,7 @@ const AutocompleteInputField: React.FC<AutocompleteInputFieldProps> = ({
       onChange={handleChange}
       options={options}
       loading={loading}
-      getOptionLabel={(option) => option.name || ""} // Show the name in the dropdown
+      getOptionLabel={(option) => option.bank_name || ""} // Show the name in the dropdown
       isOptionEqualToValue={(option, value) => option.id === value?.id} // Compare by id
       renderInput={(params) => (
         <TextField
@@ -72,4 +71,4 @@ const AutocompleteInputField: React.FC<AutocompleteInputFieldProps> = ({
   );
 };
 
-export default AutocompleteInputField;
+export default BankAutocomplete;

@@ -70,6 +70,7 @@ export interface OrderItemExternalLens {
   quantity: number;
   price_per_unit: number;
   subtotal: number;
+  note: string | null;
   is_non_stock: boolean;
 }
 

@@ -25,6 +25,7 @@ export default function ExternalLense() {
 
   const [price, setPrice] = React.useState<string>(selectedprice);
   const [externalLensQty, setExternalLensQty] = React.useState<string>("0");
+  const [externalLensNote, setExternalLensNote] = React.useState<string>("");
   console.log("price", selectedprice);
   useEffect(() => {
     if (externaLenseList?.results.length === 1) {
@@ -44,6 +45,7 @@ export default function ExternalLense() {
             external_lens_id: selectedExternalLense.id,
             subtotal: parseInt(externalLensQty) * parseInt(price),
             price_per_unit: parseInt(price),
+            note: externalLensNote,
             external_lens_details: {
               brand_name: selectedExternalLense.brand_name,
               coating_name: selectedExternalLense.coating_name,
@@ -72,15 +74,32 @@ export default function ExternalLense() {
         <Box
           sx={{
             display: "flex",
-            justifyContent: "space-between",
+
             alignItems: "center",
             gap: 2,
           }}
         >
-          <ExternlLenseFilter
-            availableFilters={externaLenseList?.available_filters ?? null}
-            setExternalLenseParams={setExternalLenseParams}
-          />
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: 1,
+            }}
+          >
+            <ExternlLenseFilter
+              availableFilters={externaLenseList?.available_filters ?? null}
+              setExternalLenseParams={setExternalLenseParams}
+            />
+            <TextField
+              fullWidth
+              label="Lens note"
+              type="text"
+              size="small"
+              value={externalLensNote}
+              onChange={(e) => setExternalLensNote(e.target.value)}
+            />
+          </Box>
           <TextField
             sx={{ width: 100 }}
             type="number"
