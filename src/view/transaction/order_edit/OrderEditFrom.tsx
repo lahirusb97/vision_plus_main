@@ -86,6 +86,8 @@ export default function OrderEditFrom() {
       cash: 0,
       online_transfer: 0,
       discount: 0,
+      on_hold: false,
+      fitting_on_collection: false,
     },
   });
 
@@ -122,6 +124,11 @@ export default function OrderEditFrom() {
       methods.setValue(
         "discount",
         parseInt(invoiceDetail.order_details.discount)
+      );
+      methods.setValue("on_hold", invoiceDetail?.order_details?.on_hold);
+      methods.setValue(
+        "fitting_on_collection",
+        invoiceDetail?.order_details?.fitting_on_collection
       );
     }
     if (invoiceDetail && !invoiceDetailLoading && loadState === 0) {
@@ -401,12 +408,23 @@ export default function OrderEditFrom() {
             />
             <Box ml={1} display="flex" alignItems="center">
               <Typography variant="body1"> On Hold</Typography>
-              <Checkbox {...methods.register("on_hold")} />
+              <Checkbox
+                {...methods.register("on_hold")}
+                checked={methods.watch("on_hold") || false} // Add fallback to false
+                onChange={(e) => methods.setValue("on_hold", e.target.checked)}
+              />
             </Box>
 
             <Box display="flex" alignItems="center">
               <Typography variant="body1">| Fiting on Collection</Typography>
-              <Checkbox {...methods.register("fitting_on_collection")} />
+
+              <Checkbox
+                {...methods.register("fitting_on_collection")}
+                checked={methods.watch("fitting_on_collection") || false} // Add fallback to false
+                onChange={(e) =>
+                  methods.setValue("fitting_on_collection", e.target.checked)
+                }
+              />
             </Box>
             <HidenNoteDialog note={invoiceDetail?.refraction_details?.note} />
             <StockDrawerBtn />

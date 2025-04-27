@@ -86,7 +86,7 @@ export default function ExternalLensUpdate() {
       component={"form"}
       onSubmit={handleSubmit(createExternalLens)}
     >
-      <TitleText title="External Lens Create" />
+      <TitleText title="External Lens Update" />
       <Controller
         name="lens_type"
         control={control}

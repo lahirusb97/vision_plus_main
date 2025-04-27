@@ -199,7 +199,7 @@ export default function InvoiceTable() {
                 row.external_lens_details.brand_name
               } /${row.external_lens_details.coating_name} /${
                 row.note !== null ? row.note : ""
-              } /${row.external_lens_details.branded}`}</TableCell>
+              } `}</TableCell>
 
               <TableCell align="center">
                 <IconButton
