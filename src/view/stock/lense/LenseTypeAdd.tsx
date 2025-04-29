@@ -3,7 +3,7 @@ import { Box, TextField, Button, Container, Paper } from "@mui/material";
 import axiosClient from "../../../axiosClient";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router";
-import { handleError } from "../../../utils/handleError";
+import { extractErrorMessage } from "../../../utils/extractErrorMessage";
 const LenseTypeAdd = () => {
   const navigate = useNavigate();
 
@@ -31,7 +31,7 @@ const LenseTypeAdd = () => {
         description: "",
       });
     } catch (error) {
-      handleError(error, "Failed to recive lens type");
+      extractErrorMessage(error);
     }
   };
 

@@ -1,4 +1,4 @@
-import { useReducer, useState } from "react";
+import { useReducer } from "react";
 import { Box, TextField } from "@mui/material";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -7,7 +7,7 @@ import VarificationDialog from "../../../components/VarificationDialog";
 import { FormProvider, useForm } from "react-hook-form";
 import InvoiceOtherItems from "../../../components/InvoiceOtherItems";
 import NormalPatientDetail from "./NormalPatientDetail";
-import { OtherItemModel } from "../../../model/OtherItemModel";
+import { NormalOrderInputModel } from "../../../model/NormalOrderInputModel";
 import {
   NormalInvoiceFormModel,
   schemaNormalInvoiceFormModel,
@@ -17,9 +17,6 @@ import {
   InvoiceItemsState,
   normalOrderItemsReducer,
 } from "./normalOrderItemsReducer";
-import CardInput from "../../../components/inputui/CardInput";
-import OnlinePayInput from "../../../components/inputui/OnlinePayInput";
-import CashInput from "../../../components/inputui/CashInput";
 import SaveButton from "../../../components/SaveButton";
 import { getUserCurentBranch } from "../../../utils/authDataConver";
 import { formatUserPayments } from "../../../utils/formatUserPayments";
@@ -28,12 +25,20 @@ import axiosClient from "../../../axiosClient";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
 import { extractErrorMessage } from "../../../utils/extractErrorMessage";
+import { OtherItemModel } from "../../../model/OtherItemModel";
+import PaymentMethodsLayout from "../factory_layouts/PaymentMethodsLayout";
 
 const NormalInvoice = () => {
   const { prepareValidation, resetValidation, validationState } =
     useValidationState();
-  const methods = useForm({
+  const methods = useForm<NormalInvoiceFormModel>({
     resolver: zodResolver(schemaNormalInvoiceFormModel),
+    defaultValues: {
+      credit_card: 0,
+      cash: 0,
+      online_transfer: 0,
+      branch_id: getUserCurentBranch()?.id,
+    },
   });
   const navigate = useNavigate();
 
@@ -46,7 +51,7 @@ const NormalInvoice = () => {
     initialState
   );
 
-  const handleAddItem = (item, qty, price) => {
+  const handleAddItem = (item: OtherItemModel, qty: number, price: number) => {
     const newItem = {
       other_item: item.item.id, // Assuming 'item' has 'id' and 'name'
       name: item.item.name,
@@ -73,7 +78,7 @@ const NormalInvoice = () => {
       cash: data.cash,
       online_transfer: data.online_transfer,
     };
-    methods.getValues("total");
+
     const payload = {
       patient: {
         name: data.name,
@@ -97,11 +102,14 @@ const NormalInvoice = () => {
     };
 
     prepareValidation("create", async (verifiedUserId: number) => {
-      await sendDataToDb(payload, verifiedUserId);
+      await sendDataToDb(
+        payload as NormalOrderInputModel,
+        verifiedUserId as number
+      );
     });
   };
   const sendDataToDb = async (
-    payload: NormalInvoiceFormModel,
+    payload: NormalOrderInputModel,
     verifiedUserId: number
   ) => {
     try {
@@ -137,11 +145,7 @@ const NormalInvoice = () => {
           component={"form"}
         >
           {/* Row 1: Name, Phone No, Address, Sales Staff Code */}
-          <NormalPatientDetail
-            prescription={""}
-            refractionDetailLoading={false}
-            refractionNumber={""}
-          />
+          <NormalPatientDetail />
           <InvoiceOtherItems onAddItem={handleAddItem} />
 
           <InvoiceOtherItemsTable
@@ -153,10 +157,7 @@ const NormalInvoice = () => {
           />
 
           <Box sx={{ display: "flex", gap: 1, mt: 1 }}>
-            <OnlinePayInput />
-
-            <CardInput />
-            <CashInput />
+            <PaymentMethodsLayout />
           </Box>
           <TextField
             size="small"

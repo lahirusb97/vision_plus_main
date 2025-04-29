@@ -3,7 +3,8 @@ import { Box, TextField, Button, Container, Paper } from "@mui/material";
 import axiosClient from "../../../axiosClient";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router";
-import { handleError } from "../../../utils/handleError";
+
+import { extractErrorMessage } from "../../../utils/extractErrorMessage";
 const FrameBrandAdd = () => {
   const navigate = useNavigate();
 
@@ -32,7 +33,7 @@ const FrameBrandAdd = () => {
         name: "",
       });
     } catch (error) {
-      handleError(error, "Failed to recive lens Brand");
+      extractErrorMessage(error);
     }
   };
 

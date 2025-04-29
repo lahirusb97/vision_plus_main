@@ -21,7 +21,6 @@ import useGetRefraction from "../../hooks/useGetRefraction";
 import EditIcon from "@mui/icons-material/Edit";
 import { RefractionNumberModel } from "../../model/RefractionModel";
 import { teal } from "@mui/material/colors";
-import { dateAndTimeFormat } from "../../utils/dateAndTimeFormat";
 import TitleText from "../../components/TitleText";
 import { formatDateTimeByType } from "../../utils/formatDateTimeByType";
 

@@ -135,7 +135,7 @@ export default function RightEyeTable({
               color: "white",
             }}
           >
-            <Typography>right Side</Typography>
+            <Typography>Right Side</Typography>
           </Box>
         </Box>
       </Box>

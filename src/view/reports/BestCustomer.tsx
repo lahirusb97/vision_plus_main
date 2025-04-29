@@ -1,16 +1,12 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { MaterialReactTable } from "material-react-table";
 import { Box, Typography } from "@mui/material";
-import useGetFrames from "../../hooks/lense/useGetFrames";
-import { useNavigate } from "react-router";
-import { useDeleteDialog } from "../../context/DeleteDialogContext";
+
 import { DatePicker } from "@mui/x-date-pickers";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 const BestCustomer = () => {
-  const { frames, framesLoading, refresh } = useGetFrames();
-
   // Define columns
   const columns = useMemo(
     () => [
@@ -43,7 +39,7 @@ const BestCustomer = () => {
         header: "Price",
         accessorKey: "price",
         size: 60,
-      }
+      },
     ],
     []
   );

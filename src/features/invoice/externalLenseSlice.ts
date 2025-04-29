@@ -47,7 +47,15 @@ const externalLenseSlice = createSlice({
 
         state.externalLenseList[externalItem.external_lens_id].price_per_unit =
           externalItem.price_per_unit;
-        state.externalLenseSubTotal += externalItem.subtotal; // Update subtotal
+
+        state.externalLenseSubTotal -=
+          state.externalLenseList[externalItem.external_lens_id].subtotal;
+        //new qty price
+        state.externalLenseList[externalItem.external_lens_id].subtotal =
+          state.externalLenseList[externalItem.external_lens_id].buyQty *
+          externalItem.price_per_unit;
+        state.externalLenseSubTotal +=
+          state.externalLenseList[externalItem.external_lens_id].subtotal;
         //lense Details
         state.externalLenseList[
           externalItem.external_lens_id

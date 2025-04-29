@@ -3,20 +3,7 @@ import axiosClient from "../axiosClient";
 import { extractErrorMessage } from "../utils/extractErrorMessage";
 import { getUserCurentBranch } from "../utils/authDataConver";
 import toast from "react-hot-toast";
-
-interface ExpenseItem {
-  id: number;
-  created_at: string;
-  main_category_name: string;
-  sub_category_name: string;
-  amount: string;
-  note: string;
-}
-
-interface ExpenseReportResponse {
-  total_expense: number;
-  expenses: ExpenseItem[];
-}
+import { ExpenseItem, ExpenseReport } from "../model/ExpenceModel";
 
 interface ExpenseReportParams {
   start_date: string;
@@ -35,7 +22,7 @@ const useGetExpenseReport = () => {
   const [expenseList, setExpenseList] = useState<ExpenseItem[]>([]);
   const [totalExpense, setTotalExpense] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<boolean | null>(null);
   const controllerRef = useRef<AbortController | null>(null);
 
   const loadData = useCallback(async () => {
@@ -48,7 +35,7 @@ const useGetExpenseReport = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axiosClient.get<ExpenseReportResponse>(
+      const response = await axiosClient.get<ExpenseReport>(
         "/expenses/report/",
         {
           params: reportParams,

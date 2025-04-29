@@ -6,10 +6,11 @@ import { useFormContext } from "react-hook-form";
 const CashInput: React.FC = () => {
   const {
     register,
-    watch,
+
     setValue,
     formState: { errors },
   } = useFormContext();
+  const onlineTransferError = errors?.cash;
 
   return (
     <Box display="flex" alignItems="center" gap={2}>
@@ -36,6 +37,12 @@ const CashInput: React.FC = () => {
             setValue("cash", 0);
           }
         }}
+        error={!!onlineTransferError}
+        helperText={
+          typeof onlineTransferError?.message === "string"
+            ? onlineTransferError.message
+            : ""
+        }
       />
     </Box>
   );

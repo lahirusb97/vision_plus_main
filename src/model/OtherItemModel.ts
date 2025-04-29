@@ -9,6 +9,7 @@ type Stock = {
   other_item: Item;
   initial_count: number;
   qty: number;
+  limit: number;
 };
 export type OtherItemModel = {
   item: Item;

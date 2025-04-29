@@ -10,10 +10,11 @@ import {
   Box,
   IconButton,
   Tooltip,
-  TextField,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useFormContext } from "react-hook-form";
+import DiscountInput from "../../../components/inputui/DiscountInput";
+import { numberWithCommas } from "../../../utils/numberWithCommas";
 
 export interface InvoiceItem {
   other_item: number;
@@ -34,33 +35,18 @@ export default function InvoiceOtherItemsTable({
   total,
   onRemoveItem,
 }: InvoiceItemsTableProps) {
-  const {
-    register,
-    setValue,
-    watch,
-    formState: { errors },
-  } = useFormContext();
+  const { watch } = useFormContext();
   return (
     <Box sx={{ mt: 1 }}>
       <TableContainer component={Paper} elevation={3}>
         <Table size="small">
           <TableHead>
             <TableRow>
-              <TableCell align="center">
-                <strong>Action</strong>
-              </TableCell>
-              <TableCell align="right">
-                <strong>Item Name</strong>
-              </TableCell>
-              <TableCell align="right">
-                <strong>Quantity</strong>
-              </TableCell>
-              <TableCell align="right">
-                <strong>Unit Price (Rs)</strong>
-              </TableCell>
-              <TableCell align="right">
-                <strong>Subtotal (Rs)</strong>
-              </TableCell>
+              <TableCell align="center">Action</TableCell>
+              <TableCell align="right">Item Name</TableCell>
+              <TableCell align="right">Quantity</TableCell>
+              <TableCell align="right">Unit Price (Rs)</TableCell>
+              <TableCell align="right">Subtotal (Rs)</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -86,40 +72,17 @@ export default function InvoiceOtherItemsTable({
                 <TableCell sx={{ m: 0, p: 0 }} align="right">
                   {item.price_per_unit.toFixed(2)}
                 </TableCell>
-                <TableCell align="right">{item.subtotal.toFixed(2)}</TableCell>
+                <TableCell align="right">
+                  {numberWithCommas(item.subtotal)}
+                </TableCell>
               </TableRow>
             ))}
             <TableRow>
               <TableCell colSpan={4} align="right">
-                <Typography variant="subtitle1" fontWeight="bold">
-                  Discount
-                </Typography>
+                <Typography variant="subtitle1">Discount</Typography>
               </TableCell>
               <TableCell align="right">
-                <TextField
-                  size="small"
-                  inputProps={{
-                    min: 0,
-                    style: { textAlign: "right" }, // 👈 this aligns the input text to the right
-                  }}
-                  {...register("discount", { valueAsNumber: true })}
-                  label="Discount "
-                  type="number"
-                  fullWidth
-                  variant="outlined"
-                  error={!!errors.discount}
-                  helperText={errors.discount?.message}
-                  onFocus={(e) => {
-                    if (e.target.value === "0") {
-                      setValue("discount", "");
-                    }
-                  }}
-                  onBlur={(e) => {
-                    if (e.target.value === "") {
-                      setValue("discount", 0);
-                    }
-                  }}
-                />
+                <DiscountInput />
               </TableCell>
 
               <TableCell />
@@ -133,7 +96,7 @@ export default function InvoiceOtherItemsTable({
 
               <TableCell align="right">
                 <Typography variant="subtitle1" fontWeight="bold">
-                  Rs {total - watch("discount") || 0}
+                  Rs {numberWithCommas(total - watch("discount") || 0)}
                 </Typography>
               </TableCell>
               <TableCell />

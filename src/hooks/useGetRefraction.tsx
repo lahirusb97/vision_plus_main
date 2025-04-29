@@ -1,9 +1,10 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import axiosClient from "../axiosClient";
 import { PaginatedResponse } from "../model/PaginatedResponse";
 import { RefractionNumberModel } from "../model/RefractionModel";
 import { extractErrorMessage } from "../utils/extractErrorMessage";
 import { getUserCurentBranch } from "../utils/authDataConver";
+import axios from "axios";
 
 const useGetRefraction = () => {
   const limit = 10;
@@ -12,12 +13,26 @@ const useGetRefraction = () => {
   const [DataList, setDataList] = useState<RefractionNumberModel[]>([]);
   const [totalCount, setTotalCount] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<boolean>(false);
+  // Use a ref to store the current controller so we can access it for cancellation
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const loadData = useCallback(async () => {
+    // First, cancel any existing request
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    // Create a new controller for this request
+    const abortController = new AbortController();
+    abortControllerRef.current = abortController;
     setLoading(true);
+
     try {
+      setError(false);
+
       const response: { data: PaginatedResponse<RefractionNumberModel> } =
         await axiosClient.get(`refractions/`, {
+          signal: abortController.signal,
           params: {
             page: navigatePage,
             limit,
@@ -25,14 +40,29 @@ const useGetRefraction = () => {
             branch_id: getUserCurentBranch()?.id,
           },
         });
-      setDataList(response.data.results);
-      setTotalCount(response.data.count);
-    } catch (error) {
-      setDataList([]);
-      extractErrorMessage(error);
+      // Only update state if this request wasn't aborted
+      if (!abortController.signal.aborted) {
+        setDataList(response.data.results);
+        setTotalCount(response.data.count);
+      }
+    } catch (err) {
+      // Check if the error is a cancellation
+      if (axios.isCancel(err)) {
+        return;
+      }
+      // Only update error state if this request wasn't aborted
+      if (!abortController.signal.aborted) {
+        setDataList([]);
+        extractErrorMessage(err);
+        setError(true);
+      }
     } finally {
       setLoading(false);
     }
+
+    // return () => {
+    //   abortController.abort();
+    // };//! only need when useEffect des not use
   }, [navigatePage, searchQuary]);
 
   const handleSearch = (searchKeyWord: string) => {
@@ -44,7 +74,15 @@ const useGetRefraction = () => {
   };
 
   useEffect(() => {
+    // Call loadData directly - it will handle its own cleanup
     loadData();
+
+    // Return cleanup function for component unmount
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
   }, [loadData]);
 
   return {
@@ -55,6 +93,7 @@ const useGetRefraction = () => {
     refractionPageNavigation: handlePageNavigation,
     handleRefractionSearch: handleSearch,
     refreshRefractionList: loadData,
+    refractionsListerror: error,
   };
 };
 

@@ -33,7 +33,7 @@ export default function RegisterUser() {
   const handleRegister = async () => {
     setLoading(true);
     try {
-      const data = await axiosClient.post("/register/admin/", registerInput);
+      await axiosClient.post("/register/admin/", registerInput);
       // Handle the response (e.g., success message, navigate to login page, etc.)
       alert("Admin registered successfully!");
       navigate("/login"); // Redirect to login page after successful registration

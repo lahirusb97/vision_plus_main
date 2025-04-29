@@ -1,4 +1,3 @@
-import React from "react";
 import { Paper, Typography, Button, Box, Divider } from "@mui/material";
 import { useNavigate, useParams } from "react-router";
 import useGetSingleRefractionNumber from "../../hooks/useGetSingleRefractionNumber";

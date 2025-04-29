@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import axiosClient from "../../axiosClient";
-import { handleError } from "../../utils/handleError";
+
+import { extractErrorMessage } from "../../utils/extractErrorMessage";
 
 interface Brand {
   id: number;
@@ -34,11 +35,11 @@ const useGetBrands = ({
       });
       setBrands(response.data);
     } catch (err) {
-      handleError(err, "Failed to Recive Brands.");
-      console.log(err);
+      extractErrorMessage(err);
     } finally {
       setBrandsLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Automatically fetch data on mount

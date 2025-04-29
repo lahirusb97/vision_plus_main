@@ -7,9 +7,10 @@ const CardInput: React.FC = () => {
   const {
     register,
     setValue,
-    watch,
+
     formState: { errors },
   } = useFormContext();
+  const onlineTransferError = errors?.credit_card;
 
   return (
     <Box display="flex" alignItems="center" gap={2}>
@@ -39,6 +40,12 @@ const CardInput: React.FC = () => {
             setValue("credit_card", 0);
           }
         }}
+        error={!!onlineTransferError}
+        helperText={
+          typeof onlineTransferError?.message === "string"
+            ? onlineTransferError.message
+            : ""
+        }
       />
     </Box>
   );

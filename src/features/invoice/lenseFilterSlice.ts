@@ -48,13 +48,22 @@ const lenseFilterSlice = createSlice({
           lense.avilable_qty;
         state.selectedLensesList[lense.lense_id].price_per_unit =
           lense.price_per_unit;
-        state.lenseSubTotal += lense.subtotal; // Update subtotal
+        //handle edge case of total
+        state.lenseSubTotal -=
+          state.selectedLensesList[lense.lense_id].subtotal;
+        state.selectedLensesList[lense.lense_id].subtotal =
+          state.selectedLensesList[lense.lense_id].buyQty *
+          lense.price_per_unit;
+        //set sub total
+        state.lenseSubTotal +=
+          state.selectedLensesList[lense.lense_id].subtotal;
         //lense Details
         state.selectedLensesList[lense.lense_id].lense_detail =
           extractLenseDetail(lense);
         // } else {
         //   toast.error("Not enough stock available");
         // }
+        console.log(state.selectedLensesList);
       } else {
         // if (lense.avilable_qty >= lense.buyQty) {
         state.selectedLensesList[lense.lense_id] = lense;

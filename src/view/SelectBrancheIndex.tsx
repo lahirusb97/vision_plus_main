@@ -1,4 +1,3 @@
-import React from "react";
 import { Box, Typography, Button } from "@mui/material";
 import { getUserAuth, saveUserCurentBranch } from "../utils/authDataConver";
 import { useNavigate } from "react-router";

@@ -10,7 +10,7 @@ import { InvoicePaymentTable } from "../../hooks/InvoicePaymentTable";
 import useGetExpenseReport from "../../hooks/useGetExpenseReport";
 import useGetFinanceSummary from "../../hooks/useGetFinanceSummary";
 import useGetDailyOrderCount from "../../hooks/useGetDailyOrderCount";
-import TodayBankingTable from "../../components/common/ToDayBankingTable";
+import TodayBankingTable from "../../components/common/TodayBankingTable";
 
 const Dashboard = () => {
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(dayjs());
@@ -22,10 +22,8 @@ const Dashboard = () => {
   const { channelReports, channelReportsLoading } = useChannelReports({
     payment_date: formattedDate,
   });
-  const { financeSummary, financeSummaryLoading, setFinanceSummaryParams } =
-    useGetFinanceSummary();
-  const { dailyOrderCount, dailyOrderCountLoading, setdailyOrderCountParams } =
-    useGetDailyOrderCount();
+  const { financeSummary, setFinanceSummaryParams } = useGetFinanceSummary();
+  const { dailyOrderCount, setdailyOrderCountParams } = useGetDailyOrderCount();
   useEffect(() => {
     if (selectedDate) {
       handleDateRangeChange(formattedDate, formattedDate);

@@ -1,13 +1,13 @@
 import { useState, useEffect, useCallback } from "react";
 import axiosClient from "../../axiosClient";
-import { AxiosError } from "axios";
 import { FrameModel } from "../../model/FrameModel";
 import { getUserCurentBranch } from "../../utils/authDataConver";
+import { extractErrorMessage } from "../../utils/extractErrorMessage";
 
 interface UseGetSingleFrameReturn {
   singleFrame: FrameModel | null;
   singleFrameLoading: boolean;
-  singleFrameError: string | null;
+  singleFrameError: boolean;
   refresh: () => Promise<void>;
 }
 
@@ -17,7 +17,7 @@ const useGetSingleFrame = (
   const [state, setState] = useState<Omit<UseGetSingleFrameReturn, "refresh">>({
     singleFrame: null,
     singleFrameLoading: true,
-    singleFrameError: null,
+    singleFrameError: false,
   });
 
   const fetchSingleFrame = useCallback(async () => {
@@ -26,7 +26,7 @@ const useGetSingleFrame = (
         setState({
           singleFrame: null,
           singleFrameLoading: true,
-          singleFrameError: null,
+          singleFrameError: false,
         });
 
         const response = await axiosClient.get<FrameModel>(
@@ -41,19 +41,18 @@ const useGetSingleFrame = (
         setState({
           singleFrame: response.data,
           singleFrameLoading: false,
-          singleFrameError: null,
+          singleFrameError: false,
         });
       } catch (err) {
-        const error = err as AxiosError;
-        const errorMessage =
-          error.response?.data?.message || "Failed to fetch the singleFrame.";
+        extractErrorMessage(err);
         setState({
           singleFrame: null,
           singleFrameLoading: false,
-          singleFrameError: errorMessage,
+          singleFrameError: true,
         });
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

@@ -1,14 +1,6 @@
 import React from "react";
 import { styled, Input, Paper, Typography } from "@mui/material";
 
-// Styled Wrapper for Layout
-const StyledContainer = styled(Paper)(({ theme }) => ({
-  display: "flex",
-  alignItems: "center", // Aligns label and input horizontally
-  gap: theme.spacing(2), // Gap between label and input
-  marginBottom: theme.spacing(3), // Space between inputs when stacked
-}));
-
 // Styled Label
 const StyledLabel = styled("label")(({ theme, ...props }) => ({
   color: "#ffff",

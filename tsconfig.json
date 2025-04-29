@@ -12,6 +12,7 @@
       "@context/*": ["src/context/*"],
       "@hooks/*": ["src/hooks/*"],
       "@utils/*": ["src/utils/*"]
-    }
+    },
+    "types": ["vitest"]
   }
 }

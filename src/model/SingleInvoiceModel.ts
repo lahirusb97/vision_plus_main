@@ -35,17 +35,44 @@ interface FrameDetail {
   species: SpeciesType;
   image: string | null;
 }
+interface OtherItemDetail {
+  id: number;
+  name: string;
+  price: string;
+  is_active: boolean;
+}
 
 export interface FrameOrderItem {
   frame: number;
   frame_detail: FrameDetail;
   lens: null;
+  other_item: null;
   lens_detail: null;
+  lens_powers: [];
   external_lens: null;
   external_lens_name: null;
   external_lens_powers: [];
   note: string | null;
-
+  other_item_detail: null;
+  // Other shared fields
+  id: number;
+  order: number;
+  quantity: number;
+  price_per_unit: string;
+  subtotal: string;
+}
+export interface NormalOrderItem {
+  frame: null;
+  frame_detail: null;
+  lens: null;
+  other_item: number;
+  lens_powers: [];
+  lens_detail: null;
+  external_lens: null;
+  external_lens_name: null;
+  external_lens_powers: [];
+  other_item_detail: OtherItemDetail;
+  note: string | null;
   // Other shared fields
   id: number;
   order: number;
@@ -58,12 +85,13 @@ export interface LensOrderItem {
   lens_detail: LensDetail;
   lens_powers: Power[];
   frame: null;
+  other_item: null;
   frame_detail: null;
   external_lens: null;
   external_lens_name: null;
   external_lens_powers: [];
   note: string | null;
-
+  other_item_detail: null;
   // Other shared fields
   id: number;
   order: number;
@@ -78,11 +106,12 @@ export interface ExternalLensOrderItem {
   coating_name: string;
   brand_name: string;
   quantity: number;
+  other_item: null;
   price_per_unit: string;
   subtotal: string;
   is_non_stock: boolean;
   note: string | null;
-
+  other_item_detail: null;
   // Other shared fields
 
   frame: null;
@@ -95,7 +124,11 @@ export interface ExternalLensOrderItem {
   lens_powers: Power[] | null;
 }
 
-type OrderItem = FrameOrderItem | LensOrderItem | ExternalLensOrderItem;
+type OrderItem =
+  | FrameOrderItem
+  | LensOrderItem
+  | ExternalLensOrderItem
+  | NormalOrderItem;
 
 interface OrderDetails {
   id: number;

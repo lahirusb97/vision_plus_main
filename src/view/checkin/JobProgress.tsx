@@ -24,6 +24,7 @@ export default function JobProgress() {
     invoiceSearch,
     changePageSize,
     invoicePageNavigation,
+    invoiceLoading,
     invoiceTotalCount,
     invoiceListRefres,
   } = useGetFactoryInvoices();
@@ -74,7 +75,7 @@ export default function JobProgress() {
         </Box>
         <SelectableTable
           data={invoiceList}
-          loading={false}
+          loading={invoiceLoading}
           selectedIds={selectedIds}
           onSelectionChange={setSelectedIds}
         />

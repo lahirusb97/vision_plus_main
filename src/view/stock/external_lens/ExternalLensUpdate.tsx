@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import useGetSingleExternalLens from "../../../hooks/useGetSingleExternalLens";
 import { useParams } from "react-router";
 import DropdownInput from "../../../components/inputui/DropdownInput"; // Import your reusable dropdown component

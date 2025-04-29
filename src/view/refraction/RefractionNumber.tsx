@@ -9,15 +9,15 @@ import {
 import { useAxiosPost } from "../../hooks/useAxiosPost";
 import { extractErrorMessage } from "../../utils/extractErrorMessage";
 import toast from "react-hot-toast";
-import SaveButton from "../../components/SaveButton";
 import { RefractionNumberModel } from "../../model/RefractionModel";
 import { getUserCurentBranch } from "../../utils/authDataConver";
 import TitleText from "../../components/TitleText";
+import SubmitCustomBtn from "../../components/common/SubmiteCustomBtn";
 export default function RefractionNumber() {
   //API CALLS
   const navigate = useNavigate();
   //API CALLS
-  const { postHandler } = useAxiosPost();
+  const { postHandler, postHandlerloading, postHandlerError } = useAxiosPost();
 
   const {
     register,
@@ -126,7 +126,11 @@ export default function RefractionNumber() {
             helperText={errors.branch_id?.message}
             defaultValue={getUserCurentBranch()?.id}
           />
-          <SaveButton btnText="Genarate Refraction Number" loading={false} />
+          <SubmitCustomBtn
+            btnText="Genarate Refraction Number"
+            loading={postHandlerloading}
+            isError={postHandlerError}
+          />
         </form>
       </Paper>
     </Box>

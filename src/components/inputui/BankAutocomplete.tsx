@@ -34,7 +34,7 @@ const BankAutocomplete: React.FC<AutocompleteInputFieldProps> = ({
   }, [defaultOption]);
 
   const handleChange = (
-    event: React.SyntheticEvent<Element, Event>,
+    _event: React.SyntheticEvent<Element, Event>,
     newValue: BankAccountModel | null
   ) => {
     setSelectedOption(newValue);

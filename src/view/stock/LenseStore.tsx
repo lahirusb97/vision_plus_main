@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { MaterialReactTable } from "material-react-table";
 import { Box, IconButton, Typography } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -9,6 +9,7 @@ import { useNavigate } from "react-router";
 import useGetLenses from "../../hooks/lense/useGetLense";
 import { useDeleteDialog } from "../../context/DeleteDialogContext";
 import { addID, cylID, sphID } from "../../data/staticVariables";
+import { LenseModel } from "../../model/LenseModel";
 
 const LenseStore = () => {
   const { lenses, lensesLoading, refresh } = useGetLenses();
@@ -22,7 +23,7 @@ const LenseStore = () => {
       {
         header: "Action",
         id: "action",
-        Cell: ({ row }) => (
+        Cell: ({ row }: { row: { original: LenseModel } }) => (
           <Box>
             <IconButton
               size="small"
@@ -82,7 +83,8 @@ const LenseStore = () => {
       {
         header: "Side",
         id: "side",
-        Cell: ({ row }) => {
+
+        Cell: ({ row }: { row: { original: LenseModel } }) => {
           const sphEntry = row.original.powers.find((p) => p.power === sphID);
           return sphEntry && sphEntry.side ? sphEntry.side : "-";
         },
@@ -91,46 +93,60 @@ const LenseStore = () => {
       {
         header: "SPH",
         id: "sph",
-        Cell: ({ row }) => {
-          const sphEntry = row.original.powers.find((p) => p.power === sphID);
-          return sphEntry ? sphEntry.value : "-";
+
+        // Cell: ({ row }: { row: { original: LenseModel } }) => {
+        //   const sphEntry = row.original.powers.find((p) => p.power === sphID);
+        //   return sphEntry ? sphEntry.value : "-";
+        // },
+        accessorFn: (row: LenseModel) => {
+          const sph = row.powers.find((p) => p.power === sphID);
+          return sph ? parseFloat(sph.value) : null;
         },
         size: 30,
       },
       {
         header: "CYL",
         id: "cyl",
-        Cell: ({ row }) => {
-          const cylEntry = row.original.powers.find((p) => p.power === cylID);
-          return cylEntry ? cylEntry.value : "-";
+        // Cell: ({ row }: { row: { original: LenseModel } }) => {
+        //   const cylEntry = row.original.powers.find((p) => p.power === cylID);
+        //   return cylEntry ? cylEntry.value : "-";
+        // },
+        accessorFn: (row: LenseModel) => {
+          const cyl = row.powers.find((p) => p.power === cylID);
+          return cyl ? parseFloat(cyl.value) : null;
         },
         size: 30,
       },
       {
         header: "ADD",
         id: "add",
-        Cell: ({ row }) => {
-          const addEntry = row.original.powers.find((p) => p.power === addID);
-          return addEntry ? addEntry.value : "-";
+        // Cell: ({ row }: { row: { original: LenseModel } }) => {
+        //   const addEntry = row.original.powers.find((p) => p.power === addID);
+        //   return addEntry ? addEntry.value : "-";
+        // },
+        accessorFn: (row: LenseModel) => {
+          const add = row.powers.find((p) => p.power === addID);
+          return add ? parseFloat(add.value) : null;
         },
         size: 30,
       },
       {
         header: "Quantity",
-        accessorFn: (row) => row.stock?.[0]?.qty ?? 0,
+        accessorFn: (row: LenseModel) => row.stock?.[0]?.qty ?? 0,
         size: 50,
       },
       {
         header: "Stock Limit",
-        accessorFn: (row) => row.stock?.[0]?.limit ?? 0,
+        accessorFn: (row: LenseModel) => row.stock?.[0]?.limit ?? 0,
         size: 50,
       },
     ],
-    []
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [lenses]
   );
   const navigate = useNavigate();
   // Handlers for actions
-  const handleDelete = (row) => {
+  const handleDelete = (row: LenseModel) => {
     openDialog(
       `/lenses/${row.id}/`,
       `Lense of Type - ${row.type} & Brand - ${row.brand}`,
@@ -138,17 +154,17 @@ const LenseStore = () => {
     );
   };
 
-  const handleHistory = (id) => {
+  const handleHistory = (id: number) => {
     // Add history logic
     navigate(`history/${id}`);
   };
 
-  const handleEdit = (id) => {
+  const handleEdit = (id: number) => {
     // Add edit logic
     navigate(`edit/${id}`);
   };
 
-  const handleUpdate = (id) => {
+  const handleUpdate = (id: number) => {
     // Add update logic
     navigate(`update/${id}`);
   };
@@ -163,10 +179,22 @@ const LenseStore = () => {
         Lenses Store
       </Typography>
       <MaterialReactTable
+        enableColumnFilters // 👈 enables filters
+        enableFilters // 👈 required for custom filter functions
+        state={{
+          isLoading: lensesLoading,
+        }}
+        initialState={{
+          sorting: [
+            { id: "sph", desc: false },
+            { id: "cyl", desc: false },
+            { id: "add", desc: false },
+          ],
+          showColumnFilters: true,
+        }}
         columns={columns}
         data={lenses}
         enableColumnActions={false}
-        enableColumnFilters={false}
         enableSorting
         enablePagination
         muiTableProps={{

@@ -51,21 +51,21 @@ export interface ExternalLens {
 }
 
 // Order Item Model (Lens, Frame, External Lens)
-export interface OrderItemLens {
+export interface OrderItemLensInput {
   lens: number;
   quantity: number;
   price_per_unit: number;
   subtotal: number;
 }
 
-export interface OrderItemFrame {
+export interface OrderItemFrameInput {
   frame: number;
   quantity: number;
   price_per_unit: number;
   subtotal: number;
 }
 
-export interface OrderItemExternalLens {
+export interface OrderItemExternalLensInput {
   external_lens_data: ExternalLens;
   quantity: number;
   price_per_unit: number;
@@ -74,7 +74,10 @@ export interface OrderItemExternalLens {
   is_non_stock: boolean;
 }
 
-export type OrderItem = OrderItemLens | OrderItemFrame | OrderItemExternalLens;
+export type OrderItemInput =
+  | OrderItemLensInput
+  | OrderItemFrameInput
+  | OrderItemExternalLensInput;
 
 // Payment Model
 export interface OrderPayment {
@@ -87,6 +90,6 @@ export interface OrderPayment {
 export interface FactoryOrderInputModel {
   patient: Patient;
   order: Order;
-  order_items: OrderItem[];
+  order_items: OrderItemInput[];
   order_payments: OrderPayment[];
 }
