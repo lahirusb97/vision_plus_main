@@ -1,4 +1,3 @@
-import React from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -16,8 +15,14 @@ const searchSchema = z.object({
 });
 
 type SearchFormData = z.infer<typeof searchSchema>;
-
-export default function FactoryInvoiceSearch({ invoiceSearch }) {
+type searchParams = "invoice_number" | "mobile" | "nic" | "progress_status";
+//useGteFactoryinvoiceHook
+interface FactoryInvoiceSearchProps {
+  invoiceSearch: (searchOption: searchParams, searchTerm: string) => void;
+}
+export default function FactoryInvoiceSearch({
+  invoiceSearch,
+}: FactoryInvoiceSearchProps) {
   const {
     control,
     handleSubmit,

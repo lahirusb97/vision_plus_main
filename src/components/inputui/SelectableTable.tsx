@@ -1,5 +1,4 @@
 import {
-  Box,
   Checkbox,
   Table,
   TableBody,
@@ -9,7 +8,7 @@ import {
   TableRow,
   Paper,
 } from "@mui/material";
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 
 import { CheckinInvoiceModel } from "../../model/CheckinInvoiceModel";
 import { progressStatus } from "../../utils/progressState";
@@ -97,6 +96,11 @@ const SelectableTable = ({
           </TableRow>
         </TableHead>
         <TableBody>
+          {loading && (
+            <TableRow>
+              <TableCell colSpan={4}>Loading...</TableCell>
+            </TableRow>
+          )}
           {data.map((item) => (
             <TableRow key={item.id}>
               <TableCell sx={{ m: 0, p: 0 }}>

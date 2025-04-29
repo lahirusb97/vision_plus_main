@@ -1,6 +1,5 @@
 // features/counter/counterSlice.ts
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { FrameModel } from "../../model/FrameModel";
 
 // Define state interface
 

@@ -1,9 +1,7 @@
 import React, { useMemo } from "react";
 import { MaterialReactTable } from "material-react-table";
-import { Box, Typography } from "@mui/material";
-import useGetFrames from "../../hooks/lense/useGetFrames";
-import { useNavigate } from "react-router";
-import { useDeleteDialog } from "../../context/DeleteDialogContext";
+import { Box } from "@mui/material";
+
 import { DatePicker } from "@mui/x-date-pickers";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -11,12 +9,10 @@ import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 
 const InvoiceReport = () => {
-  const { frames, framesLoading, refresh } = useGetFrames();
-
   const [alignment, setAlignment] = React.useState("factory");
 
   const handleChange = (
-    event: React.MouseEvent<HTMLElement>,
+    _event: React.MouseEvent<HTMLElement>,
     newAlignment: string
   ) => {
     setAlignment(newAlignment);

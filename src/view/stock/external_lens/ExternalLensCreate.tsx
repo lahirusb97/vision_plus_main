@@ -11,7 +11,6 @@ import useGetBrands from "../../../hooks/lense/useGetBrand";
 import useGetCoatings from "../../../hooks/lense/useGetCoatings";
 import { useAxiosPost } from "../../../hooks/useAxiosPost";
 import {
-  Box,
   TextField,
   Radio,
   RadioGroup,
@@ -22,7 +21,6 @@ import {
 } from "@mui/material";
 import TitleText from "../../../components/TitleText";
 import SaveButton from "../../../components/SaveButton";
-import axiosClient from "../../../axiosClient";
 import { extractErrorMessage } from "../../../utils/extractErrorMessage";
 import toast from "react-hot-toast";
 

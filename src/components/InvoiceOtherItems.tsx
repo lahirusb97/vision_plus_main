@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import useGetOtherItem from "../hooks/useGetOtherItem";
 import {
   Box,
@@ -12,6 +12,7 @@ import {
   Grid,
 } from "@mui/material";
 import { OtherItemModel } from "../model/OtherItemModel";
+import { numberWithCommas } from "../utils/numberWithCommas";
 
 interface InvoiceOtherItemsProps {
   onAddItem: (item: OtherItemModel, qty: number, price: number) => void;
@@ -70,7 +71,7 @@ export default function InvoiceOtherItems({
             <Stack direction="row" justifyContent="space-between" width="100%">
               <Typography>{option.item.name}</Typography>
               <Chip
-                label={`Rs ${parseFloat(option.item.price).toFixed(2)}`}
+                label={`Rs ${numberWithCommas(option.item.price)}`}
                 size="small"
                 color="secondary"
               />

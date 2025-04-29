@@ -3,7 +3,8 @@ import { Box, TextField, Button, Container, Paper } from "@mui/material";
 import axiosClient from "../../../axiosClient";
 import { toast } from "react-hot-toast";
 import { useNavigate, useParams } from "react-router";
-import { handleError } from "../../../utils/handleError";
+
+import { extractErrorMessage } from "../../../utils/extractErrorMessage";
 const ColorsEdit = () => {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -25,7 +26,7 @@ const ColorsEdit = () => {
         const response = await axiosClient.get(`/colors/${id}/`);
         setFormData(response.data);
       } catch (error) {
-        handleError(error, "Failed to recive lens type");
+        extractErrorMessage(error);
       }
     };
     fetchLenseType();
@@ -41,7 +42,7 @@ const ColorsEdit = () => {
         name: "",
       });
     } catch (error) {
-      handleError(error, "Failed to recive lens type");
+      extractErrorMessage(error);
     }
   };
 

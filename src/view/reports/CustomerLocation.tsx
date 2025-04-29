@@ -1,11 +1,8 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { MaterialReactTable } from "material-react-table";
 import { Box, Typography } from "@mui/material";
-import useGetFrames from "../../hooks/lense/useGetFrames";
 
 const CustomerLocation = () => {
-  const { frames, framesLoading, refresh } = useGetFrames();
-
   // Define columns
   const columns = useMemo(
     () => [
@@ -43,7 +40,7 @@ const CustomerLocation = () => {
         header: "Age",
         accessorKey: "age",
         size: 60,
-      }
+      },
     ],
     []
   );
@@ -63,7 +60,7 @@ const CustomerLocation = () => {
           variant="h4"
           gutterBottom
         >
-           Customer Location
+          Customer Location
         </Typography>
         <Box
           sx={{
@@ -72,9 +69,7 @@ const CustomerLocation = () => {
             alignItems: "center",
             gap: 5,
           }}
-        >
-          
-        </Box>
+        ></Box>
       </Box>
 
       <MaterialReactTable

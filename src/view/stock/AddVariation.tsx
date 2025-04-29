@@ -7,14 +7,26 @@ import CodeCRUD from "./CodeCRUD";
 import { Box, Paper } from "@mui/material";
 // import useGetLenseTypes from "../../hooks/lense/useGetLenseType";
 export default function AddVariation() {
-  const { coatings, refresh: refreshCoatings } = useGetCoatings();
-  const { brands: lenseBrand, refresh: refreshLenseBrand } = useGetBrands({
+  const {
+    coatings,
+    coatingsLoading,
+    refresh: refreshCoatings,
+  } = useGetCoatings();
+  const {
+    brands: lenseBrand,
+    brandsLoading,
+    refresh: refreshLenseBrand,
+  } = useGetBrands({
     brand_type: "lens",
   });
-  const { brands: frameBrand, refresh: refreshFrameBrand } = useGetBrands({
+  const {
+    brands: frameBrand,
+    brandsLoading: frameBrandLoading,
+    refresh: refreshFrameBrand,
+  } = useGetBrands({
     brand_type: "frame",
   });
-  const { colors, refresh: refreshColors } = useGetColors();
+  const { colors, colorsLoading, refresh: refreshColors } = useGetColors();
   const { codes, refresh: refreshCodes } = useGetCodes();
   // const { lenseTypes, refresh: refreshLenseTypes } = useGetLenseTypes();
 
@@ -30,6 +42,7 @@ export default function AddVariation() {
         /> */}
 
         <AddVariationComp
+          loading={brandsLoading}
           textName="Lens Factory"
           Urlpath="lense_brand"
           dataList={lenseBrand}
@@ -37,6 +50,7 @@ export default function AddVariation() {
           refresh={refreshLenseBrand}
         />
         <AddVariationComp
+          loading={coatingsLoading}
           textName="Lense Coating"
           Urlpath="lens_coatings"
           dataList={coatings}
@@ -48,6 +62,7 @@ export default function AddVariation() {
         <AddVariationComp
           textName="Frames Brand"
           Urlpath="frame_brand"
+          loading={frameBrandLoading}
           dataList={frameBrand}
           pathroute={"brands"}
           refresh={refreshFrameBrand}
@@ -55,6 +70,7 @@ export default function AddVariation() {
         <AddVariationComp
           textName="Frame Colors"
           Urlpath="color"
+          loading={colorsLoading}
           dataList={colors}
           pathroute={"colors"}
           refresh={refreshColors}

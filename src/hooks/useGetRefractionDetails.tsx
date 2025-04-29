@@ -1,9 +1,9 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 
 import axiosClient from "../axiosClient";
 import axios from "axios";
-import toast from "react-hot-toast";
 import { RefractionDetailModel } from "../model/RefractionDetailModel";
+import { extractErrorMessage } from "../utils/extractErrorMessage";
 interface UseGetRefractionDetailReturn {
   refractionDetail: RefractionDetailModel | null;
   refractionDetailLoading: boolean;
@@ -24,25 +24,42 @@ const useGetRefractionDetails = (
     useState<boolean>(false);
   const [refractionDetailError, setRefractionDetailError] =
     useState<boolean>(false);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const fetchrefractionDetail = useCallback(async () => {
+    // First, cancel any existing request
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    // Create a new controller for this request
+    const abortController = new AbortController();
+    abortControllerRef.current = abortController;
     setrefractionDetailLoading(true);
 
     try {
       const response = await axiosClient.get<RefractionDetailModel>(
-        `/refraction-details/${refraction_id}/`
+        `/refraction-details/${refraction_id}/`,
+        {
+          signal: abortController.signal,
+        }
       );
-      setrefractionDetail(response.data);
-      setrefractionDetailExist(true);
-      toast.success("Previous Refraction Detail Found loading..");
+      if (!abortController.signal.aborted) {
+        setrefractionDetail(response.data);
+        setrefractionDetailExist(true);
 
-      setRefractionDetailError(false);
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        setrefractionDetailExist(false);
-        toast.error("Refraction Details Not Found");
+        setRefractionDetailError(false);
       }
-      setRefractionDetailError(true);
+    } catch (error) {
+      // Check if the error is a cancellation
+      if (axios.isCancel(error)) {
+        return;
+      }
+      if (!abortController.signal.aborted) {
+        extractErrorMessage(error);
+        setrefractionDetailExist(false);
+
+        setRefractionDetailError(true);
+      }
     } finally {
       setrefractionDetailLoading(false);
     }
@@ -50,7 +67,14 @@ const useGetRefractionDetails = (
 
   // Automatically fetch data on mount
   useEffect(() => {
+    // Call loadData directly - it will handle its own cleanup
     fetchrefractionDetail();
+
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
   }, [fetchrefractionDetail]);
 
   return {

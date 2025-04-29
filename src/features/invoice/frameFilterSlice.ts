@@ -1,7 +1,6 @@
 // features/counter/counterSlice.ts
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { SizeType, SpeciesType } from "../../model/FrameModel";
-import toast from "react-hot-toast";
 
 // Define state interface
 
@@ -47,20 +46,21 @@ const frameFilterSlice = createSlice({
     setFrame: (state, action: PayloadAction<FrameFilterModel>) => {
       const frame = action.payload;
       if (state.selectedFrameList[frame.frame_id]) {
-        // if (frame.avilable_qty >= frame.buyQty) {
-        // If frame already exists, increase buyQty
         state.selectedFrameList[frame.frame_id].buyQty += frame.buyQty;
+
         state.selectedFrameList[frame.frame_id].avilable_qty =
           frame.avilable_qty;
         state.selectedFrameList[frame.frame_id].price_per_unit =
           frame.price_per_unit;
-        state.framesubTotal += frame.subtotal; // Update subtotal
-        //Frame Details
+        //reset before add qty
+        state.framesubTotal -= state.selectedFrameList[frame.frame_id].subtotal;
+        //update qty with price
+        state.selectedFrameList[frame.frame_id].subtotal =
+          state.selectedFrameList[frame.frame_id].buyQty * frame.price_per_unit;
+
+        state.framesubTotal += state.selectedFrameList[frame.frame_id].subtotal;
         state.selectedFrameList[frame.frame_id].frame_detail =
           extractFrameDetail(frame);
-        // } else {
-        //   toast.error("Not enough stock available");
-        // }
       } else {
         // If lens is new, set data
         // if (frame.avilable_qty >= frame.buyQty) {

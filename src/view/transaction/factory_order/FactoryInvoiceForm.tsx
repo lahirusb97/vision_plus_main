@@ -177,7 +177,10 @@ export default function FactoryInvoiceForm() {
       ) {
         if (refractionDetail && !refractionDetailLoading) {
           prepareValidation("create", async (verifiedUserId: number) => {
-            await sendDataToDb(postData, verifiedUserId);
+            await sendDataToDb(
+              postData as FactoryOrderInputModel,
+              verifiedUserId
+            );
           });
           //TODO USE THIS AND CREATE THE SYSTEM ALL GOOD TO DO IF NO REFRACTION DETAILS NO DETAIL CREATINS
         } else {

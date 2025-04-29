@@ -78,7 +78,6 @@ export default function RefractionEdit() {
       note: null,
     },
   });
-  console.log(methods.formState.errors);
 
   const onSubmit = async (data: RefractionDetailsFormModel) => {
     // console.log(convertedData);

@@ -1,4 +1,4 @@
-import { ProgressStatus } from "../model/SingleInvoiceModel";
+import { ProgressStatus } from "../model/StaticTypeModels";
 
 export const progressStatus = (status: ProgressStatus): string => {
   const statusMap: Record<ProgressStatus, string> = {

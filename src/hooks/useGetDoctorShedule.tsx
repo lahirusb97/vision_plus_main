@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getUserCurentBranch } from "../utils/authDataConver";
 import { extractErrorMessage } from "../utils/extractErrorMessage";
 import { DoctorSchedule } from "../model/DoctorSchedule";
 import axiosClient from "../axiosClient";
+import axios from "axios";
 
 interface UseUpcomingSchedulesResult {
   doctorShedule: DoctorSchedule[];
@@ -12,7 +13,7 @@ interface UseUpcomingSchedulesResult {
 }
 
 export default function useUpcomingSchedules(
-  doctorId: number
+  doctorId: number | undefined
 ): UseUpcomingSchedulesResult {
   const [highlightedDates, setHighlightedDates] = useState<DoctorSchedule[]>(
     []
@@ -20,16 +21,25 @@ export default function useUpcomingSchedules(
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const branchId = getUserCurentBranch()?.id;
-
+  const abortControllerRef = useRef<AbortController | null>(null);
   const fetchDates = async () => {
     if (!doctorId || !branchId) return;
-
+    // First, cancel any existing request
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    // Create a new controller for this request
+    const abortController = new AbortController();
+    abortControllerRef.current = abortController;
     setLoading(true);
     setError(null);
 
     try {
       const res = await axiosClient.get(
-        `doctor-schedule/${doctorId}/upcoming/?branch_id=${branchId}`
+        `doctor-schedule/${doctorId}/upcoming/?branch_id=${branchId}`,
+        {
+          signal: abortController.signal,
+        }
       );
 
       // Ensure we always have an array, even if single object is returned
@@ -39,7 +49,13 @@ export default function useUpcomingSchedules(
 
       setHighlightedDates(dates);
     } catch (err) {
-      extractErrorMessage(err);
+      // Check if the error is a cancellation
+      if (axios.isCancel(err)) {
+        return;
+      }
+      if (!abortController.signal.aborted) {
+        extractErrorMessage(err);
+      }
     } finally {
       setLoading(false);
     }
@@ -47,6 +63,11 @@ export default function useUpcomingSchedules(
 
   useEffect(() => {
     fetchDates();
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
   }, [doctorId, branchId]);
 
   return {

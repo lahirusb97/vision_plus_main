@@ -19,9 +19,9 @@ import { useNavigate } from "react-router";
 import useGetRefraction from "../../hooks/useGetRefraction";
 import EditIcon from "@mui/icons-material/Edit";
 import { teal } from "@mui/material/colors";
-import { dateAndTimeFormat } from "../../utils/dateAndTimeFormat";
 import TitleText from "../../components/TitleText";
 import { formatDateTimeByType } from "../../utils/formatDateTimeByType";
+import DataLoadingError from "../../components/common/DataLoadingError";
 
 // import { useDeleteDialog } from "../../context/DeleteDialogContext";
 
@@ -40,6 +40,7 @@ export default function RefractionTable() {
     refractionPageNavigation,
     refractionLimit,
     totalRefractionCount,
+    refractionsListerror,
   } = useGetRefraction();
   // Safely access data and meta-information
 
@@ -54,7 +55,9 @@ export default function RefractionTable() {
       navigate(`/refraction/${selectedRow}/`);
     }
   };
-
+  if (!refractionLoading && refractionsListerror) {
+    return <DataLoadingError />;
+  }
   return (
     <Box>
       <TitleText title=" Select a Refraction Number to Add Refraction Details" />

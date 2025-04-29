@@ -1,17 +1,6 @@
-import { ChangeEvent, useEffect, useState } from "react";
-import {
-  Container,
-  TextField,
-  Button,
-  Typography,
-  Box,
-  Paper,
-} from "@mui/material";
+import { Container, Button, Typography, Box, Paper } from "@mui/material";
 import { useNavigate, useParams } from "react-router";
-import useGetInvoicePayments from "../../hooks/useGetInvoicePayments";
 import { FormProvider, useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as Yup from "yup";
 import CardInput from "../../components/inputui/CardInput";
 import CashInput from "../../components/inputui/CashInput";
 import OnlinePayInput from "../../components/inputui/OnlinePayInput";
@@ -22,85 +11,63 @@ import {
 import { formatPaymentMethod } from "../../utils/formatPaymentMethod";
 import { dateAndTimeFormat } from "../../utils/dateAndTimeFormat";
 import toast from "react-hot-toast";
-import { AxiosError } from "axios";
-import axiosClient from "../../axiosClient";
 import useGetSingleInvoice from "../../hooks/useGetSingleInvoice";
 import { extractErrorMessage } from "../../utils/extractErrorMessage";
-
+import { zodResolver } from "@hookform/resolvers/zod";
+import { formatUserPayments } from "../../utils/formatUserPayments";
+import { formatPreviusUserPayments } from "../../utils/formatPreviusUserPayments";
+import { useAxiosPut } from "../../hooks/useAxiosPut";
+import LoadingAnimation from "../../components/LoadingAnimation";
+import SubmitCustomBtn from "../../components/common/SubmiteCustomBtn";
+import DataLoadingError from "../../components/common/DataLoadingError";
+import {
+  PaymentFormData,
+  schemaPaymentForm,
+} from "../../validations/schemaPaymentForm";
 const RepaymentForm = () => {
   const navigate = useNavigate();
   const { invoice_number } = useParams();
-  const { invoiceData: invoiceDetail, invoiceLoading } = useGetSingleInvoice(
-    invoice_number || "",
-    "factory"
-  );
-  const { invoicePayments, invoicePaymentsLoading, invoicePaymentsError } =
-    useGetInvoicePayments(invoiceDetail ? invoiceDetail?.order : null);
+  const {
+    invoiceData: invoiceDetail,
+    invoiceLoading,
+    invoiceListRefres,
+  } = useGetSingleInvoice(invoice_number || "", "factory");
+  const { putHandler, putHandlerloading, putHandlerError } = useAxiosPut();
 
-  const [secondPayment, setSecondPayment] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
-  const fullAmount = 4000;
-  const discount = 1000;
-  const firstPayment = 1000;
-  const balance = fullAmount - discount - firstPayment;
-  const secondBalance = balance - (secondPayment ? parseInt(secondPayment) : 0);
   const methods = useForm({
     defaultValues: {
       credit_card: 0,
       cash: 0,
       online_transfer: 0,
     },
-    resolver: yupResolver(
-      Yup.object().shape({
-        credit_card: Yup.number(), // Add this line
-        cash: Yup.number(), // And this line
-        online_transfer: Yup.number(), // And this line
-      })
-    ),
+    resolver: zodResolver(schemaPaymentForm),
   });
 
-  const handleSecondPaymentChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setSecondPayment(event.target.value);
-  };
-
-  const submiteFromData = async (data) => {
-    function formatApiResponseToRequest(payments) {
-      return payments.map((payment) => ({
-        id: payment.id,
-        amount: parseFloat(payment.amount),
-        payment_method: payment.payment_method,
-        transaction_status: payment.transaction_status,
-      }));
-    }
-
-    function formatUserPayments(userPayments) {
-      return Object.keys(userPayments)
-        .filter((paymentMethod) => userPayments[paymentMethod] > 0) // Remove zero amounts
-        .map((paymentMethod) => ({
-          amount: userPayments[paymentMethod],
-          payment_method: paymentMethod,
-          transaction_status: "success", // Assuming success by default
-        }));
-    }
-    console.log(invoicePayments);
-
+  const submiteFromData = async (data: PaymentFormData) => {
     try {
       const postData = {
-        order_id: invoicePayments[0].order,
+        order_id: invoiceDetail?.order,
         payments: [
           ...formatUserPayments(data),
-          ...formatApiResponseToRequest(invoicePayments),
+          ...formatPreviusUserPayments(
+            invoiceDetail?.order_details?.order_payments || []
+          ),
         ],
       };
-      console.log("postData", postData);
-      await axiosClient.put(`/orders/update-payments/`, postData);
 
-      toast.success("Invoice Payment Updated...");
-      window.location.reload();
+      await putHandler(`/orders/update-payments/`, postData);
+      toast.success("Invoice Payment Updated");
+      invoiceListRefres();
     } catch (error) {
       extractErrorMessage(error);
     }
   };
+  if (invoiceLoading) {
+    return <LoadingAnimation loadingMsg="Invoice Searching.." />;
+  }
+  if (!invoiceDetail && !invoiceLoading) {
+    return <DataLoadingError />;
+  }
   return (
     <Container maxWidth="md" sx={{ borderRadius: 2, maxWidth: "1200px" }}>
       <Box
@@ -122,20 +89,20 @@ const RepaymentForm = () => {
             Name : {invoiceDetail?.customer_details.name}
           </Typography>
           <Typography sx={{ fontSize: 16 }}>
-            status: {invoiceDetail?.order_details.status}
+            Invoice No: <strong>{invoiceDetail?.invoice_number}</strong>
           </Typography>
           <Button
+            size="small"
+            disabled={!invoiceDetail}
             onClick={() => {
               const url = `?invoice_number=${encodeURIComponent(
-                invoiceDetail?.invoice_number
+                invoiceDetail?.invoice_number || ""
               )}`;
               navigate(
                 `/transaction/factory_order/create/${invoiceDetail?.customer_details.refraction_id}/view/${url}`
               );
             }}
             variant="contained"
-            color="success"
-            sx={{ height: "56px" }}
           >
             Show Receipt
           </Button>
@@ -242,7 +209,7 @@ const RepaymentForm = () => {
             padding: 1,
           }}
         >
-          <Typography sx={{ fontSize: 16 }}>Second Payment</Typography>
+          <Typography sx={{ fontSize: 16 }}>New Payment</Typography>
           <Typography sx={{ fontSize: 16 }}>
             {safeParseFloat(methods.watch("cash")) +
               safeParseFloat(methods.watch("credit_card")) +
@@ -259,7 +226,7 @@ const RepaymentForm = () => {
             padding: 1,
           }}
         >
-          <Typography sx={{ fontSize: 16 }}>Second Balance</Typography>
+          <Typography sx={{ fontSize: 16 }}>New Balance</Typography>
           <Typography sx={{ fontSize: 16 }}>
             {safeParseFloat(invoiceDetail?.order_details.total_price) -
               orderpaymentTotal(invoiceDetail?.order_details.order_payments) -
@@ -281,13 +248,14 @@ const RepaymentForm = () => {
           >
             <Box sx={{ display: "flex" }}>
               <OnlinePayInput />
-
               <CardInput />
               <CashInput />
             </Box>
-            <Button fullWidth variant="contained" color="primary" type="submit">
-              Save
-            </Button>
+            <SubmitCustomBtn
+              btnText="Add payment"
+              isError={putHandlerError}
+              loading={putHandlerloading}
+            />
           </Box>
         </FormProvider>
       </Box>

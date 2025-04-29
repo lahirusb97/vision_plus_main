@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
 import { FormProvider, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate } from "react-router";
 import { useEffect, useState } from "react";
 
 import toast from "react-hot-toast";
@@ -45,10 +45,9 @@ import PdAndHeightInputs from "../factory_layouts/PdAndHeightInputs";
 import PaymentMethodsLayout from "../factory_layouts/PaymentMethodsLayout";
 import { formatUserPayments } from "../../../utils/formatUserPayments";
 import EditInvoiceTable from "../../../components/inputui/EditInvoiceTable";
+import { FactoryOrderInputModel } from "../../../model/InvoiceInputModel";
 
 export default function OrderEditFrom() {
-  const { invoice_number } = useParams();
-
   const navigate = useNavigate();
   const dispatch = useDispatch();
   // SET VALUES FOR PATIENT TABLE
@@ -130,6 +129,22 @@ export default function OrderEditFrom() {
         "fitting_on_collection",
         invoiceDetail?.order_details?.fitting_on_collection
       );
+      methods.setValue(
+        "order_remark",
+        invoiceDetail?.order_details?.order_remark
+      );
+      methods.setValue("pd", invoiceDetail?.order_details?.pd);
+      methods.setValue("height", invoiceDetail?.order_details?.height);
+      methods.setValue(
+        "left_height",
+        invoiceDetail?.order_details?.left_height
+      );
+      methods.setValue(
+        "right_height",
+        invoiceDetail?.order_details?.right_height
+      );
+      methods.setValue("left_pd", invoiceDetail?.order_details?.left_pd);
+      methods.setValue("right_pd", invoiceDetail?.order_details?.right_pd);
     }
     if (invoiceDetail && !invoiceDetailLoading && loadState === 0) {
       invoiceDetail?.order_details.order_items
@@ -259,7 +274,6 @@ export default function OrderEditFrom() {
       order: {
         refraction: invoiceDetail?.customer_details.refraction_id,
         status: orderState,
-
         sub_total: subtotal,
         discount: discount,
         total_price: grandTotal,
@@ -311,16 +325,15 @@ export default function OrderEditFrom() {
       Object.keys(LenseInvoiceList).length > 0 ||
       Object.keys(FrameInvoiceList).length > 0
     ) {
-      prepareValidation("create", async (verifiedUserId: number) => {
-        await sendDataToDb(postData);
+      prepareValidation("create", async () => {
+        await sendDataToDb(postData as FactoryOrderInputModel);
       });
     } else {
       toast.error("No Items ware added");
     }
   };
-  console.log(invoiceDetail);
 
-  const sendDataToDb = async (postData) => {
+  const sendDataToDb = async (postData: FactoryOrderInputModel) => {
     try {
       // No refraction Data but have Refraction Number
       const responce = await axiosClient.put(

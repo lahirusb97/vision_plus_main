@@ -1,12 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { schemaUser, UserFormModel } from "../../validations/schemaUser";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import {
   TextField,
   Box,
   Typography,
-  FormControlLabel,
-  Checkbox,
+
   // InputLabel,
   // Select,
   // MenuItem,
@@ -16,7 +14,7 @@ import {
 import { extractErrorMessage } from "../../utils/extractErrorMessage";
 import toast from "react-hot-toast";
 import { useEffect } from "react";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import SaveButton from "../../components/SaveButton";
 import { useAxiosPut } from "../../hooks/useAxiosPut";
 import LoadingAnimation from "../../components/LoadingAnimation";
@@ -29,11 +27,10 @@ export default function UserUpdate() {
   const { putHandler, putHandlerloading } = useAxiosPut();
   // const [userRole, setUserRole] = useState("");
   const { singleBranch, singleBranchLoading } = useGetSingleBranch(branch_id);
-
+  const navigate = useNavigate();
   const {
     register,
     setValue,
-    control,
     watch,
     reset,
     handleSubmit,
@@ -43,26 +40,22 @@ export default function UserUpdate() {
   });
 
   const onSubmit = async (data: BranchModel) => {
-    console.log(data);
-
     try {
       await putHandler(`branches/${branch_id}/`, data);
       reset();
       toast.success(`Employee ${data.branch_name} updated successfully`);
+      navigate(-1);
     } catch (error) {
       extractErrorMessage(error);
     }
   };
 
   useEffect(() => {
-    if (singleBranch) {
-      Object.entries(singleBranch).forEach(([key, value]) => {
-        if (schemaBranch.shape[key as keyof BranchModel]) {
-          setValue(key as keyof BranchModel, value);
-        }
-      });
+    if (singleBranch && !singleBranchLoading) {
+      setValue("branch_name", singleBranch.branch_name);
+      setValue("location", singleBranch.location);
     }
-  }, [singleBranch, setValue]); // Runs when singleuser changes
+  }, [singleBranch, singleBranchLoading]);
 
   if (singleBranchLoading) {
     return <LoadingAnimation loadingMsg="Loading Branch Data" />;

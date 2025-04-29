@@ -27,12 +27,14 @@ const OtherItemCreate = () => {
       name: data.name,
       price: data.price,
       is_active: true,
-      stock: {
-        qty: data.qty,
-        initial_count: data.qty,
-        branch_id: data.branch_id,
-        limit: data.limit,
-      },
+      stock: [
+        {
+          qty: data.qty,
+          initial_count: data.qty,
+          branch_id: data.branch_id,
+          limit: data.limit,
+        },
+      ],
     };
 
     try {

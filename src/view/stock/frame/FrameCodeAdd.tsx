@@ -3,7 +3,8 @@ import { Box, TextField, Button, Container, Paper } from "@mui/material";
 import axiosClient from "../../../axiosClient";
 import { toast } from "react-hot-toast";
 import { useNavigate, useSearchParams } from "react-router";
-import { handleError } from "../../../utils/handleError";
+import { extractErrorMessage } from "../../../utils/extractErrorMessage";
+
 const FrameCodeAdd = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -35,7 +36,7 @@ const FrameCodeAdd = () => {
         name: "",
       });
     } catch (error) {
-      handleError(error, "Failed to recive lens type");
+      extractErrorMessage(error);
     }
   };
 

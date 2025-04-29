@@ -21,13 +21,7 @@ import { extractErrorMessage } from "../../../utils/extractErrorMessage";
 export default function BankDepositCreate() {
   const { postHandler, postHandlerloading } = useAxiosPost();
   const { bankAccountsList, bankAccountsListLoading } = useGetBankAccounts();
-  const {
-    register,
-    handleSubmit,
-    reset,
-    control,
-    formState: { errors, isSubmitting },
-  } = useForm<BankDepositForm>({
+  const { register, handleSubmit, reset, control } = useForm<BankDepositForm>({
     resolver: zodResolver(schemaBankDeposite),
     defaultValues: {
       branch: getUserCurentBranch()?.id ?? 1,
@@ -77,8 +71,6 @@ export default function BankDepositCreate() {
           label="Amount"
           type="number"
           {...register("amount", { valueAsNumber: true })}
-          error={!!errors.amount}
-          helperText={errors.amount?.message}
           InputLabelProps={{ shrink: true }}
         />
 
@@ -96,8 +88,6 @@ export default function BankDepositCreate() {
                 slotProps={{
                   textField: {
                     fullWidth: true,
-                    error: !!errors.date,
-                    helperText: errors.date?.message,
                   },
                 }}
               />
@@ -108,8 +98,6 @@ export default function BankDepositCreate() {
         <TextField
           label="Note"
           {...register("note")}
-          error={!!errors.note}
-          helperText={errors.note?.message}
           InputLabelProps={{ shrink: true }}
         />
         <TextField
@@ -125,11 +113,9 @@ export default function BankDepositCreate() {
           fullWidth
           margin="normal"
           variant="outlined"
-          error={!!errors.branch}
-          helperText={errors.branch?.message}
           defaultValue={getUserCurentBranch()?.id}
         />
-        <SaveButton loading={isSubmitting} btnText="Save Deposit" />
+        <SaveButton loading={postHandlerloading} btnText="Save Deposit" />
       </Box>
     </Paper>
   );

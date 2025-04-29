@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { MaterialReactTable } from "material-react-table";
 import { Box, IconButton, Typography } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -8,6 +8,7 @@ import LoopIcon from "@mui/icons-material/Loop";
 import useGetFrames from "../../hooks/lense/useGetFrames";
 import { useNavigate } from "react-router";
 import { useDeleteDialog } from "../../context/DeleteDialogContext";
+import { FrameModel } from "../../model/FrameModel";
 
 const FrameStore = () => {
   const { frames, framesLoading, refresh } = useGetFrames();
@@ -19,7 +20,7 @@ const FrameStore = () => {
       {
         header: "Action",
         id: "action",
-        Cell: ({ row }) => (
+        Cell: ({ row }: { row: { original: FrameModel } }) => (
           <Box>
             <IconButton
               color="error"
@@ -79,20 +80,20 @@ const FrameStore = () => {
       },
       {
         header: "Quantity",
-        accessorFn: (row) => row.stock?.[0]?.qty ?? 0,
+        accessorFn: (row: FrameModel) => row.stock?.[0]?.qty ?? 0,
         size: 50,
       },
       {
         header: "Stock Limit",
-        accessorFn: (row) => row.stock?.[0]?.limit ?? 0,
+        accessorFn: (row: FrameModel) => row.stock?.[0]?.limit ?? 0,
         size: 50,
       },
     ],
-    []
+    [frames]
   );
   const navigate = useNavigate();
   // Handlers for actions
-  const handleDelete = async (row) => {
+  const handleDelete = async (row: FrameModel) => {
     openDialog(
       `/frames/${row.id}/`,
       `Frame of Brand - ${row.brand_name} & Code - ${row.code_name}`,
@@ -100,19 +101,19 @@ const FrameStore = () => {
     );
   };
 
-  const handleHistory = (id) => {
+  const handleHistory = (id: number) => {
     // console.log(`View History for Frame ID: ${id}`);
     // Add history logic
     navigate(`./history/${id}`);
   };
 
-  const handleEdit = (id) => {
+  const handleEdit = (id: number) => {
     // console.log(`Edit Frame ID: ${id}`);
     // Add edit logic
     navigate(`./edit/${id}`);
   };
 
-  const handleUpdate = (id) => {
+  const handleUpdate = (id: number) => {
     // console.log(`Update Quantity for Frame ID: ${id}`);
     // Add update logic
     navigate(`./update/${id}`);
@@ -129,10 +130,12 @@ const FrameStore = () => {
       </Typography>
 
       <MaterialReactTable
+        enableColumnFilters // 👈 enables filters
+        enableFilters // 👈 required for custom filter functions
         columns={columns}
         data={frames}
         enableColumnActions={false}
-        enableColumnFilters={false}
+        state={{ isLoading: framesLoading }}
         enableSorting
         enablePagination
         muiTableProps={{

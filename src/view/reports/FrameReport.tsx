@@ -1,16 +1,12 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { MaterialReactTable } from "material-react-table";
 import { Box, Typography } from "@mui/material";
-import useGetFrames from "../../hooks/lense/useGetFrames";
-import { useNavigate } from "react-router";
-import { useDeleteDialog } from "../../context/DeleteDialogContext";
+
 import { DatePicker } from "@mui/x-date-pickers";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 const FrameReport = () => {
-  const { frames, framesLoading, refresh } = useGetFrames();
-
   // Define columns
   const columns = useMemo(
     () => [
@@ -44,16 +40,16 @@ const FrameReport = () => {
         accessorKey: "shape",
         size: 60,
       },
-      {
-        header: "Quantity",
-        accessorFn: (row) => row.stock?.[0]?.qty ?? 0,
-        size: 50,
-      },
-      {
-        header: "Stock Limit",
-        accessorFn: (row) => row.stock?.[0]?.limit ?? 0,
-        size: 50,
-      },
+      // {
+      //   header: "Quantity",
+      //   accessorFn: (row) => row.stock?.[0]?.qty ?? 0,
+      //   size: 50,
+      // },
+      // {
+      //   header: "Stock Limit",
+      //   accessorFn: (row) => row.stock?.[0]?.limit ?? 0,
+      //   size: 50,
+      // },
     ],
     []
   );

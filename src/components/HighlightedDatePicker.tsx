@@ -43,7 +43,6 @@ export default function HighlightedDatePicker({
   const {
     doctorShedule: schedules,
     doctorSheduleLoading,
-
     refetch,
   } = useGetDoctorShedule(doctorId);
 
@@ -52,6 +51,7 @@ export default function HighlightedDatePicker({
     if (isOpen) {
       refetch();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
   const scheduleMap = React.useMemo(
@@ -63,7 +63,7 @@ export default function HighlightedDatePicker({
     [schedules]
   );
 
-  const renderLoadingDay = (props: PickersDayProps<Dayjs>) => (
+  const renderLoadingDay = () => (
     <Box
       sx={{
         display: "flex",
@@ -94,7 +94,7 @@ export default function HighlightedDatePicker({
             const time = scheduleMap[dateStr];
 
             if (doctorSheduleLoading) {
-              return renderLoadingDay(props);
+              return renderLoadingDay();
             }
 
             if (time) {
