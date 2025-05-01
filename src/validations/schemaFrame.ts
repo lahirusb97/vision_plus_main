@@ -30,7 +30,7 @@ export const schemaFrame = z.object({
   initial_count: z
     .number({ invalid_type_error: "Quantity is required" })
     .optional(),
-  limit: z.number({ invalid_type_error: "Quantity is required" }),
+  limit: z.number({ invalid_type_error: "Quantity is required" }).optional(),
   branch_id: z.number({ invalid_type_error: "Quantity is required" }),
 });
 

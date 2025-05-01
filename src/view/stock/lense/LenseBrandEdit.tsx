@@ -5,17 +5,17 @@ import { toast } from "react-hot-toast";
 import { useNavigate, useParams } from "react-router";
 import { extractErrorMessage } from "../../../utils/extractErrorMessage";
 import { useAxiosPut } from "../../../hooks/useAxiosPut";
-import SaveButton from "../../../components/SaveButton";
 import TitleText from "../../../components/TitleText";
 import LoadingAnimation from "../../../components/LoadingAnimation";
 import DataLoadingError from "../../../components/common/DataLoadingError";
+import SubmitCustomBtn from "../../../components/common/SubmiteCustomBtn";
 interface LensBrandFormData {
   name: string;
 }
 const LenseBrandEdit = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const { putHandler, putHandlerloading } = useAxiosPut();
+  const { putHandler, putHandlerloading, putHandlerError } = useAxiosPut();
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setErrror] = useState<boolean>(false);
   const [formData, setFormData] = useState<LensBrandFormData>({
@@ -82,9 +82,10 @@ const LenseBrandEdit = () => {
             required
           />
           <Box sx={{ mt: 2 }}>
-            <SaveButton
+            <SubmitCustomBtn
               btnText="Update Lens Factory"
               loading={putHandlerloading}
+              isError={putHandlerError}
             />
           </Box>
         </form>

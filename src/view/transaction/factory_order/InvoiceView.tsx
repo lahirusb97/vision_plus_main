@@ -1,4 +1,14 @@
-import { Box, Typography, Button, CircularProgress } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Button,
+  CircularProgress,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+} from "@mui/material";
 import { useLocation } from "react-router";
 import { useRef } from "react";
 import { useReactToPrint } from "react-to-print";
@@ -50,7 +60,7 @@ const InvoiceView = () => {
       <Box
         sx={{
           padding: "4mm",
-          minwidth: "7cm", // A5 width
+          minwidth: "6cm", // A5 width
           minHeight: "10.5mc", // A5 height
           border: "1px solid #000",
           fontFamily: "Arial, sans-serif",
@@ -69,48 +79,28 @@ const InvoiceView = () => {
         <InvoiceAddress invoiceDetail={invoiceDetail} />
 
         {/* Table using CSS Grid */}
-        <Box
-          sx={{
-            display: "grid",
-            gridTemplateColumns: "2fr 1fr 21mm 21mm",
-            gap: "1px",
-
-            border: "2px solid #000",
-            mt: "2mm",
-          }}
-        >
-          {/* Table Header */}
-          <Box
-            sx={{
-              gridColumn: "1 / -1",
-              display: "grid",
-              gridTemplateColumns: "2fr 24mm 21mm 21mm",
-
-              fontWeight: "bold",
-              paddingY: "8px",
-              paddingX: "2mm",
-              borderBottom: "1px solid #000",
-            }}
-          >
-            <Box sx={{ marginLeft: "" }}>Item Name</Box>
-            <Box sx={{ textAlign: "center" }}>Qty</Box>
-            <Box sx={{ textAlign: "left" }}>Unit</Box>
-            <Box sx={{ textAlign: "right" }}>Value</Box>
-          </Box>
-          {/* Item List */}
-          <InvoiceLensDetails
-            order_items={invoiceDetail?.order_details?.order_items ?? []}
-          />
-          <InvoiceExternalLensDetails
-            order_items={invoiceDetail?.order_details?.order_items ?? []}
-          />
-          <InvoiceFrameDetails
-            order_items={invoiceDetail?.order_details?.order_items ?? []}
-          />
-
-          {/* Summary Section */}
-          <InvoiceTotalSummery invoiceDetail={invoiceDetail} />
-        </Box>
+        <Table sx={{ border: "2px solid #000" }}>
+          <TableHead>
+            <TableRow sx={{ borderBottom: "2px solid #000" }}>
+              <TableCell>Description</TableCell>
+              <TableCell align="center">Qty.</TableCell>
+              <TableCell align="right">Unit</TableCell>
+              <TableCell align="right">Sum</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            <InvoiceLensDetails
+              order_items={invoiceDetail?.order_details?.order_items ?? []}
+            />
+            <InvoiceFrameDetails
+              order_items={invoiceDetail?.order_details?.order_items ?? []}
+            />
+            <InvoiceExternalLensDetails
+              order_items={invoiceDetail?.order_details?.order_items ?? []}
+            />
+            <InvoiceTotalSummery invoiceDetail={invoiceDetail} />
+          </TableBody>
+        </Table>
 
         <InvoiceFooter />
       </Box>

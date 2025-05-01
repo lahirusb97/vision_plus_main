@@ -8,7 +8,6 @@ const LoginProtectedRoute: React.FC = () => {
   const user = getUserAuth();
 
   const curentBranch = getUserCurentBranch();
-  console.log(curentBranch);
 
   return user && curentBranch ? (
     <Paper

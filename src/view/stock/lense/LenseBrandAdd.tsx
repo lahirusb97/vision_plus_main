@@ -4,11 +4,13 @@ import { Box, TextField, Container, Paper } from "@mui/material";
 import { toast } from "react-hot-toast";
 import { extractErrorMessage } from "../../../utils/extractErrorMessage";
 import { useAxiosPost } from "../../../hooks/useAxiosPost";
-import SaveButton from "../../../components/SaveButton";
 import TitleText from "../../../components/TitleText";
 import BackButton from "../../../components/BackButton";
+import { useNavigate } from "react-router";
+import SubmitCustomBtn from "../../../components/common/SubmiteCustomBtn";
 const LenseBrandAdd = () => {
-  const { postHandler, postHandlerloading } = useAxiosPost();
+  const navigate = useNavigate();
+  const { postHandler, postHandlerloading, postHandlerError } = useAxiosPost();
   const [formData, setFormData] = useState({
     name: "",
   });
@@ -30,6 +32,7 @@ const LenseBrandAdd = () => {
       setFormData({
         name: "",
       });
+      navigate("/stock/add_variation");
     } catch (error) {
       extractErrorMessage(error);
     }
@@ -50,10 +53,11 @@ const LenseBrandAdd = () => {
             margin="normal"
             required
           />
-          <Box sx={{ mt: 2 }}>
-            <SaveButton
+          <Box>
+            <SubmitCustomBtn
               btnText="Create Lense Factory"
               loading={postHandlerloading}
+              isError={postHandlerError}
             />
           </Box>
         </form>

@@ -1,10 +1,14 @@
-import { FormProvider, useForm } from "react-hook-form";
+import { Controller, FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Box,
   Checkbox,
+  FormControl,
   FormControlLabel,
+  InputLabel,
+  MenuItem,
   Paper,
+  Select,
   TextField,
   Typography,
 } from "@mui/material";
@@ -24,12 +28,12 @@ import useGetSingleRefractionNumber from "../../hooks/useGetSingleRefractionNumb
 import { extractErrorMessage } from "../../utils/extractErrorMessage";
 import { useAxiosPost } from "../../hooks/useAxiosPost";
 import { useAxiosPut } from "../../hooks/useAxiosPut";
-import SaveButton from "../../components/SaveButton";
 import LoadingAnimation from "../../components/LoadingAnimation";
 import { useValidationState } from "../../hooks/validations/useValidationState";
 import VarificationDialog from "../../components/VarificationDialog";
 
 import { formatDateTimeByType } from "../../utils/formatDateTimeByType";
+import SubmitCustomBtn from "../../components/common/SubmiteCustomBtn";
 
 export default function RefractionEdit() {
   //USER VALIDATION HOOKS
@@ -44,8 +48,8 @@ export default function RefractionEdit() {
     useGetSingleRefractionNumber(refraction_id);
   const { refractionDetail, refractionDetailLoading, refractionDetailExist } =
     useGetRefractionDetails(refraction_id);
-  const { postHandler } = useAxiosPost();
-  const { putHandler } = useAxiosPut();
+  const { postHandler, postHandlerError, postHandlerloading } = useAxiosPost();
+  const { putHandler, putHandlerError, putHandlerloading } = useAxiosPut();
   const methods = useForm<RefractionDetailsFormModel>({
     resolver: zodResolver(schemaRefractionDetails),
     defaultValues: {
@@ -73,15 +77,14 @@ export default function RefractionEdit() {
       left_eye_near_sph: null,
       shuger: false,
       refraction_remark: null,
-      prescription: false,
+      prescription_type: "internal",
       cataract: false,
+      blepharitis: false,
       note: null,
     },
   });
 
   const onSubmit = async (data: RefractionDetailsFormModel) => {
-    // console.log(convertedData);
-
     if (refraction_id !== undefined && refraction_id !== null) {
       if (refractionDetailExist) {
         prepareValidation("update", async (verifiedUserId: number) => {
@@ -128,6 +131,8 @@ export default function RefractionEdit() {
           user: userId, // Include verified user ID,
           refraction: parseInt(refraction_id),
         };
+        console.log(payload);
+
         await postHandler(`/refraction-details/create/`, payload);
         toast.success("Refraction saved successfully");
         methods.reset();
@@ -140,7 +145,6 @@ export default function RefractionEdit() {
     }
   };
   //SEND DATA API CALLS
-
   useEffect(() => {
     if (refractionDetail && !refractionDetailLoading && refractionDetailExist) {
       methods.reset({
@@ -171,7 +175,8 @@ export default function RefractionEdit() {
         shuger: refractionDetail.shuger,
         cataract: refractionDetail.cataract,
         refraction_remark: refractionDetail.refraction_remark,
-        prescription: refractionDetail.prescription,
+        prescription_type: refractionDetail.prescription_type,
+        blepharitis: refractionDetail.blepharitis,
         note: refractionDetail.note,
       });
     }
@@ -267,18 +272,44 @@ export default function RefractionEdit() {
               <RefractionDetailsLeft />
             </Box>
 
-            {/* //TODO V2 */}
-            <TextField
-              {...methods.register("note")}
-              sx={{ my: 0.5 }}
-              size="small"
-              fullWidth
-              label="note"
-              multiline
-              InputLabelProps={{
-                shrink: Boolean(methods.watch("note")),
-              }}
-            />
+            <Box sx={{ display: "flex", gap: 1 }}>
+              <TextField
+                {...methods.register("note")}
+                size="small"
+                fullWidth
+                label="note"
+                multiline
+                InputLabelProps={{
+                  shrink: Boolean(methods.watch("note")),
+                }}
+              />
+              <FormControl sx={{ width: 300 }}>
+                <InputLabel id="prescription-type-label">
+                  Prescription Type
+                </InputLabel>
+                <Controller
+                  name="prescription_type"
+                  control={methods.control}
+                  defaultValue="internal"
+                  render={({ field }) => (
+                    <Select
+                      {...field}
+                      size="small"
+                      labelId="prescription-type-label"
+                      label="Prescription Type"
+                    >
+                      <MenuItem value="internal">
+                        Internal Prescription
+                      </MenuItem>
+                      <MenuItem value="vision_plus">
+                        Vision Plus Prescription
+                      </MenuItem>
+                      <MenuItem value="other">Other Prescription</MenuItem>
+                    </Select>
+                  )}
+                />
+              </FormControl>
+            </Box>
             <Box sx={{ display: "flex", gap: 1 }}>
               <TextField
                 {...methods.register("refraction_remark")}
@@ -311,16 +342,28 @@ export default function RefractionEdit() {
                 }
                 label="Cataract"
               />
+
               <FormControlLabel
                 control={
                   <Checkbox
-                    {...methods.register("prescription")}
-                    checked={methods.watch("prescription") === true}
+                    {...methods.register("blepharitis")}
+                    checked={methods.watch("blepharitis") === true}
                   />
                 }
-                label="Prescription"
+                label="Blepharitis"
               />
-              <SaveButton btnText="Save" loading={false} />
+              {/* <SaveButton btnText="Save" loading={false} /> */}
+              <SubmitCustomBtn
+                btnText={`${
+                  refractionDetailExist
+                    ? "Update Refraction Details"
+                    : "Create Refraction Details"
+                }`}
+                loading={
+                  refractionDetailExist ? putHandlerloading : postHandlerloading
+                }
+                isError={refractionDetail ? putHandlerError : postHandlerError}
+              />
             </Box>
           </form>
         </Box>

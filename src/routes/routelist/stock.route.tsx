@@ -31,7 +31,10 @@ import OtherItemCreate from "../../view/stock/otherItem/OtherItemCreate";
 import ExternalLensStore from "../../view/stock/external_lens/ExternalLensStore";
 import ExternalLensCreate from "../../view/stock/external_lens/ExternalLensCreate";
 import ExternalLensUpdate from "../../view/stock/external_lens/ExternalLensUpdate";
-
+import ExternalFactoryCreate from "../../view/stock/external_lens/external_factory/ExternalFactoryCreate";
+import ExternalFactoryUpdate from "../../view/stock/external_lens/external_factory/ExternalFactoryUpdate";
+import ExternalCoatingCreate from "../../view/stock/external_lens/external_coating/ExternalCoatingCreate";
+import ExternalCoatingUpdate from "../../view/stock/external_lens/external_coating/ExternalCoatingUpdate";
 export const stockRoutes: RouteObject[] = [
   {
     path: "add_frames",
@@ -216,7 +219,29 @@ export const stockRoutes: RouteObject[] = [
       },
       {
         path: "create",
-        element: <ExternalLensCreate />,
+        element: <ProtectedChildRoute />,
+        children: [
+          {
+            index: true,
+            element: <ExternalLensCreate />,
+          },
+          {
+            path: "lense_factory",
+            element: <ExternalFactoryCreate />,
+          },
+          {
+            path: "lense_factory/:lense_factory_id",
+            element: <ExternalFactoryUpdate />,
+          },
+          {
+            path: "lense_coating",
+            element: <ExternalCoatingCreate />,
+          },
+          {
+            path: "lense_coating/:lense_coating_id",
+            element: <ExternalCoatingUpdate />,
+          },
+        ],
       },
       {
         path: "update/:external_lens_id",

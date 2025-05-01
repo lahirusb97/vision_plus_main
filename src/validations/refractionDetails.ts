@@ -65,8 +65,11 @@ export const schemaRefractionDetails = z.object({
     .string()
     .max(100, "Refraction Remark be 10 characters or fewer")
     .nullable(),
-  prescription: z.boolean(),
+  prescription_type: z.enum(["internal", "vision_plus", "other"] as const, {
+    required_error: "Prescription type is required",
+  }),
   cataract: z.boolean(),
+  blepharitis: z.boolean(),
   note: z.string().max(100, "Note be 10 characters or fewer").nullable(),
 });
 

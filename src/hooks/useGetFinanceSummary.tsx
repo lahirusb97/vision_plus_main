@@ -1,10 +1,9 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import axiosClient from "../axiosClient";
 import { extractErrorMessage } from "../utils/extractErrorMessage";
-import toast from "react-hot-toast";
-
 import { getUserCurentBranch } from "../utils/authDataConver";
 import { FinanceSummary } from "../model/FinanceSummary";
+import axios from "axios";
 interface FilterParams {
   date: string | null;
 }
@@ -39,13 +38,15 @@ const useGetFinanceSummary = () => {
       );
 
       setData(response.data);
-      toast.success("Maching Invoice found ");
-
-      // setTotalCount(response.data.count);
     } catch (error) {
-      setData(null);
-      extractErrorMessage(error);
-      setError(true);
+      if (axios.isCancel(error)) {
+        return;
+      }
+      if (!controller.signal.aborted) {
+        setData(null);
+        extractErrorMessage(error);
+        setError(true);
+      }
     } finally {
       setLoading(false);
     }

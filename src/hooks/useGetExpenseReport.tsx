@@ -4,6 +4,7 @@ import { extractErrorMessage } from "../utils/extractErrorMessage";
 import { getUserCurentBranch } from "../utils/authDataConver";
 import toast from "react-hot-toast";
 import { ExpenseItem, ExpenseReport } from "../model/ExpenceModel";
+import axios from "axios";
 
 interface ExpenseReportParams {
   start_date: string;
@@ -52,11 +53,15 @@ const useGetExpenseReport = () => {
         toast.success(`Loaded ${response.data.expenses.length} expenses`);
       }
     } catch (err) {
-      setError(true);
-      setExpenseList([]);
-      setTotalExpense(0);
-      extractErrorMessage(err);
-      toast.error("Failed to load expense report");
+      if (axios.isCancel(err)) {
+        return;
+      }
+      if (!controller.signal.aborted) {
+        setError(true);
+        setExpenseList([]);
+        setTotalExpense(0);
+        extractErrorMessage(err);
+      }
     } finally {
       setLoading(false);
     }
@@ -91,6 +96,11 @@ const useGetExpenseReport = () => {
   // Load data when params change
   useEffect(() => {
     loadData();
+    return () => {
+      if (controllerRef.current) {
+        controllerRef.current.abort();
+      }
+    };
   }, [loadData]);
 
   return {

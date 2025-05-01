@@ -81,7 +81,7 @@ export default function NormalOrderInvoice() {
             align="center"
             fontWeight="bold"
           >
-            VISION PLUS OPTICIANS & EYE - CLINIC (PVT) LTD
+            VISION PLUS OPTICIANS & EYE CLINIC (PVT) LTD
           </Typography>
         </Box>
 

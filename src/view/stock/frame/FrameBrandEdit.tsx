@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Box, TextField, Button, Container, Paper } from "@mui/material";
+import { Box, TextField, Container, Paper } from "@mui/material";
 import axiosClient from "../../../axiosClient";
 import { toast } from "react-hot-toast";
 import { useNavigate, useParams } from "react-router";
 import { extractErrorMessage } from "../../../utils/extractErrorMessage";
+import { useAxiosPut } from "../../../hooks/useAxiosPut";
+import SubmitCustomBtn from "../../../components/common/SubmiteCustomBtn";
+import TitleText from "../../../components/TitleText";
 const FrameBrandEdit = () => {
   const navigate = useNavigate();
+  const { putHandler, putHandlerloading, putHandlerError } = useAxiosPut();
   const { id } = useParams();
   const [formData, setFormData] = useState({
     name: "",
@@ -33,7 +37,7 @@ const FrameBrandEdit = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await axiosClient.put(`/brands/${id}/`, {
+      await putHandler(`/brands/${id}/`, {
         ...formData,
         brand_type: "frame",
       });
@@ -50,6 +54,7 @@ const FrameBrandEdit = () => {
   return (
     <Container maxWidth="sm">
       <Paper sx={{ p: 4, width: "300px" }}>
+        <TitleText title="Update Frame Brand" />
         <form onSubmit={handleSubmit}>
           <TextField
             fullWidth
@@ -61,9 +66,11 @@ const FrameBrandEdit = () => {
             required
           />
           <Box sx={{ mt: 2 }}>
-            <Button type="submit" variant="contained" color="primary">
-              Submit
-            </Button>
+            <SubmitCustomBtn
+              btnText="Update Frame Brand"
+              loading={putHandlerloading}
+              isError={putHandlerError}
+            />
           </Box>
         </form>
       </Paper>

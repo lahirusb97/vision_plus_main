@@ -18,12 +18,10 @@ import { SearchSharp } from "@mui/icons-material";
 import { birthdayToAge } from "../utils/BirthdayToAge";
 interface PationtDetailsProps {
   prescription: string;
-  refractionDetailLoading: boolean;
   refractionNumber: string | null | undefined;
 }
 export default function PationtDetails({
   prescription,
-  refractionDetailLoading,
   refractionNumber,
 }: PationtDetailsProps) {
   const [openSearchDialog, setOpenSearchDialog] = useState({
@@ -71,11 +69,7 @@ export default function PationtDetails({
             R.N0: {refractionNumber ? refractionNumber : ""}
           </Typography>
           <Typography fontWeight={"bolder"} color="error">
-            {!refractionDetailLoading && prescription
-              ? "Prescription "
-              : !refractionDetailLoading && prescription
-              ? " "
-              : ""}{" "}
+            {prescription}
           </Typography>
         </Paper>
         <Paper>

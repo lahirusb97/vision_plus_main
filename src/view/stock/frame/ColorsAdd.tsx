@@ -1,12 +1,14 @@
 import React, { useState } from "react";
-import { Box, TextField, Button, Container, Paper } from "@mui/material";
-import axiosClient from "../../../axiosClient";
+import { Box, TextField, Container, Paper } from "@mui/material";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router";
 import { extractErrorMessage } from "../../../utils/extractErrorMessage";
+import { useAxiosPost } from "../../../hooks/useAxiosPost";
+import SubmitCustomBtn from "../../../components/common/SubmiteCustomBtn";
+import TitleText from "../../../components/TitleText";
 const ColorsAdd = () => {
   const navigate = useNavigate();
-
+  const { postHandler, postHandlerloading, postHandlerError } = useAxiosPost();
   const [formData, setFormData] = useState({
     name: "",
   });
@@ -22,7 +24,7 @@ const ColorsAdd = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await axiosClient.post("/colors/", formData);
+      await postHandler("/colors/", formData);
       toast.success("Color added successfully");
       navigate(-1);
       setFormData({
@@ -35,22 +37,24 @@ const ColorsAdd = () => {
 
   return (
     <Container maxWidth="sm">
-      <Paper sx={{ p: 4 }}>
+      <Paper sx={{ p: 4, width: "300px" }}>
+        <TitleText title="Create Frame Color" />
         <form onSubmit={handleSubmit}>
           <TextField
             fullWidth
-            label="Name"
+            label="Frame Color Name"
             name="name"
             value={formData.name}
             onChange={handleChange}
-            margin="normal"
             required
           />
 
-          <Box sx={{ mt: 2 }}>
-            <Button type="submit" variant="contained" color="primary">
-              Submit
-            </Button>
+          <Box>
+            <SubmitCustomBtn
+              btnText="Create Frame Color"
+              loading={postHandlerloading}
+              isError={postHandlerError}
+            />
           </Box>
         </form>
       </Paper>

@@ -1,14 +1,15 @@
 import React, { useState } from "react";
-import { Box, TextField, Button, Container, Paper } from "@mui/material";
-import axiosClient from "../../../axiosClient";
+import { Box, TextField, Container, Paper } from "@mui/material";
 import { toast } from "react-hot-toast";
 import { useNavigate, useSearchParams } from "react-router";
 import { extractErrorMessage } from "../../../utils/extractErrorMessage";
-
+import { useAxiosPost } from "../../../hooks/useAxiosPost";
+import SubmitCustomBtn from "../../../components/common/SubmiteCustomBtn";
+import TitleText from "../../../components/TitleText";
 const FrameCodeAdd = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-
+  const { postHandler, postHandlerloading, postHandlerError } = useAxiosPost();
   const paramName = searchParams.get("brand");
 
   const [formData, setFormData] = useState({
@@ -26,7 +27,7 @@ const FrameCodeAdd = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await axiosClient.post("/codes/", {
+      await postHandler("/codes/", {
         ...formData,
         brand: parseInt(paramName?.toString() ?? ""),
       });
@@ -42,7 +43,8 @@ const FrameCodeAdd = () => {
 
   return (
     <Container maxWidth="sm">
-      <Paper sx={{ p: 4 }}>
+      <Paper sx={{ p: 4, width: "300px" }}>
+        <TitleText title="Create Frame Code" />
         <form onSubmit={handleSubmit}>
           <TextField
             fullWidth
@@ -54,10 +56,12 @@ const FrameCodeAdd = () => {
             required
           />
 
-          <Box sx={{ mt: 2 }}>
-            <Button type="submit" variant="contained" color="primary">
-              Submit
-            </Button>
+          <Box>
+            <SubmitCustomBtn
+              btnText="Create Frame Code"
+              loading={postHandlerloading}
+              isError={postHandlerError}
+            />
           </Box>
         </form>
       </Paper>

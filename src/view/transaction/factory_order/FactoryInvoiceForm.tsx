@@ -266,15 +266,13 @@ export default function FactoryInvoiceForm() {
               </Box>
 
               {/* Passing The Note DAta to show in tthe dialog */}
-              <PationtDetails
-                prescription={
-                  !refractionDetailLoading && refractionDetail?.prescription
-                    ? "Prescription "
-                    : ""
-                }
-                refractionDetailLoading={refractionDetailLoading}
-                refractionNumber={singlerefractionNumber?.refraction_number}
-              />
+
+              {!refractionDetailLoading && refractionDetail && (
+                <PationtDetails
+                  prescription={refractionDetail?.prescription_type_display}
+                  refractionNumber={singlerefractionNumber?.refraction_number}
+                />
+              )}
             </Box>
             <Box
               sx={{
@@ -285,10 +283,13 @@ export default function FactoryInvoiceForm() {
                 alignItems: "center",
               }}
             >
-              <SugarCataractText
-                shuger={refractionDetail?.shuger}
-                cataract={refractionDetail?.cataract}
-              />
+              {refractionDetail && (
+                <SugarCataractText
+                  shuger={refractionDetail.shuger}
+                  cataract={refractionDetail.cataract}
+                  blepharitis={refractionDetail.blepharitis}
+                />
+              )}
 
               <Box ml={1} display="flex" alignItems="center">
                 <Typography variant="body1"> On Hold</Typography>

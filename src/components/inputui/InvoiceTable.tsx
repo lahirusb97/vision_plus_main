@@ -5,26 +5,14 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { Add, Delete, Remove } from "@mui/icons-material";
+import { Delete } from "@mui/icons-material";
 import { IconButton } from "@mui/material";
 import { RootState } from "../../store/store";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  frameQtyminus,
-  frameQtyPlus,
-  removeFrame,
-} from "../../features/invoice/frameFilterSlice";
-import {
-  lenseQtyminus,
-  lenseQtyPlus,
-  removeLense,
-} from "../../features/invoice/lenseFilterSlice";
+import { removeFrame } from "../../features/invoice/frameFilterSlice";
+import { removeLense } from "../../features/invoice/lenseFilterSlice";
 import { useFormContext } from "react-hook-form";
-import {
-  externalLenseQtyminus,
-  externalLenseQtyPlus,
-  removeexternalLense,
-} from "../../features/invoice/externalLenseSlice";
+import { removeexternalLense } from "../../features/invoice/externalLenseSlice";
 
 import DiscountInput from "./DiscountInput";
 
@@ -105,23 +93,7 @@ export default function InvoiceTable() {
               </TableCell>
 
               <TableCell>{`${row.frame_detail.brand_name} / ${row.frame_detail.code_name} / ${row.frame_detail.color_name} / ${row.frame_detail.species}`}</TableCell>
-              <TableCell align="center">
-                <IconButton
-                  onClick={() => dispatch(frameQtyPlus(row.frame_id))}
-                  color="primary"
-                  size="small"
-                >
-                  <Add sx={{ fontSize: 16 }} />
-                </IconButton>
-                {row.buyQty}
-                <IconButton
-                  onClick={() => dispatch(frameQtyminus(row.frame_id))}
-                  color="error"
-                  size="small"
-                >
-                  <Remove sx={{ fontSize: 16 }} />
-                </IconButton>
-              </TableCell>
+              <TableCell align="center">{row.buyQty}</TableCell>
               <TableCell align="right">{row.price_per_unit}</TableCell>
               <TableCell align="right">{row.subtotal}</TableCell>
             </TableRow>
@@ -155,23 +127,7 @@ export default function InvoiceTable() {
                   .join(" / ")} `}
               </TableCell>
 
-              <TableCell align="center">
-                <IconButton
-                  onClick={() => dispatch(lenseQtyPlus(row.lense_id))}
-                  color="primary"
-                  size="small"
-                >
-                  <Add sx={{ fontSize: 16 }} />
-                </IconButton>
-                {row.buyQty}
-                <IconButton
-                  onClick={() => dispatch(lenseQtyminus(row.lense_id))}
-                  color="error"
-                  size="small"
-                >
-                  <Remove sx={{ fontSize: 16 }} />
-                </IconButton>
-              </TableCell>
+              <TableCell align="center">{row.buyQty}</TableCell>
               <TableCell align="right">{row.price_per_unit}</TableCell>
               <TableCell align="right">{row.subtotal}</TableCell>
             </TableRow>
@@ -201,27 +157,7 @@ export default function InvoiceTable() {
                 row.note !== null ? row.note : ""
               } `}</TableCell>
 
-              <TableCell align="center">
-                <IconButton
-                  onClick={() =>
-                    dispatch(externalLenseQtyPlus(row.external_lens_id))
-                  }
-                  color="primary"
-                  size="small"
-                >
-                  <Add sx={{ fontSize: 16 }} />
-                </IconButton>
-                {row.buyQty}
-                <IconButton
-                  onClick={() =>
-                    dispatch(externalLenseQtyminus(row.external_lens_id))
-                  }
-                  color="error"
-                  size="small"
-                >
-                  <Remove sx={{ fontSize: 16 }} />
-                </IconButton>
-              </TableCell>
+              <TableCell align="center">{row.buyQty}</TableCell>
               <TableCell align="right">{row.price_per_unit}</TableCell>
               <TableCell align="right">{row.subtotal}</TableCell>
             </TableRow>

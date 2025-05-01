@@ -1,7 +1,8 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import axiosClient from "../../axiosClient";
 
 import { extractErrorMessage } from "../../utils/extractErrorMessage";
+import axios from "axios";
 
 interface Brand {
   id: number;
@@ -24,18 +25,36 @@ const useGetBrands = ({
   const [brands, setBrands] = useState<Brand[]>([]);
   const [brandsLoading, setBrandsLoading] = useState<boolean>(true);
   const [brandsError, setBrandsError] = useState<string | null>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const fetchBrands = useCallback(async () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    // Create a new controller for this request
+    const abortController = new AbortController();
+    abortControllerRef.current = abortController;
     setBrandsLoading(true);
     setBrandsError(null);
 
     try {
       const response = await axiosClient.get<Brand[]>("/brands/", {
         params: { brand_type },
+        signal: abortController.signal,
       });
-      setBrands(response.data);
+      // Only update state if this request wasn't aborted
+      if (!abortController.signal.aborted) {
+        setBrands(response.data);
+      }
     } catch (err) {
-      extractErrorMessage(err);
+      // Check if the error is a cancellation
+      if (axios.isCancel(err)) {
+        return;
+      }
+      // Only update error state if this request wasn't aborted
+      if (!abortController.signal.aborted) {
+        extractErrorMessage(err);
+      }
     } finally {
       setBrandsLoading(false);
     }
@@ -45,6 +64,11 @@ const useGetBrands = ({
   // Automatically fetch data on mount
   useEffect(() => {
     fetchBrands();
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
   }, [fetchBrands]);
 
   return {

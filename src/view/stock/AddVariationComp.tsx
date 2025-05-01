@@ -33,11 +33,11 @@ export default function AddVariationComp({
     <div>
       <Paper
         sx={{
-          padding: 2,
+          padding: 1,
           display: "flex",
           flexDirection: "column",
-          gap: "10px",
-          margin: "10px",
+          gap: 1,
+          margin: 1,
         }}
       >
         <Typography variant="h6">{textName}</Typography>

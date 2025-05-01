@@ -25,7 +25,6 @@ export const useGetBankAccounts = () => {
             signal,
           }
         );
-        console.log(response.data);
 
         setData(response.data);
         setError(false);

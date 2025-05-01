@@ -47,6 +47,7 @@ const theme = createTheme({
         root: {
           padding: "0em .5em", // Reduced padding (you can set to 0 for no padding)
           margin: 0,
+
           // For even more compact cells
           "&.MuiTableCell-sizeSmall": {
             // Targets cells in small tables

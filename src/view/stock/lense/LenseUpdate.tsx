@@ -1,7 +1,7 @@
-import { Box, Button, Chip, TextField, Typography, Paper } from "@mui/material";
+import { Box, Chip, TextField, Typography, Paper } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axiosClient from "../../../axiosClient";
+
 import { useNavigate, useParams } from "react-router";
 import toast from "react-hot-toast";
 
@@ -10,12 +10,16 @@ import { LenseFormModel, schemaLens } from "../../../validations/schemaLens";
 import { getUserCurentBranch } from "../../../utils/authDataConver";
 import { extractErrorMessage } from "../../../utils/extractErrorMessage";
 
+import { useAxiosPatch } from "../../../hooks/useAxiosPatch";
+import SubmitCustomBtn from "../../../components/common/SubmiteCustomBtn";
+
 const LenseUpdate = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
   const { singleLense, singleLenseLoading, refresh } = useGetSingleLense(id);
-
+  const { patchHandler, patchHandlerloading, patchHandlerError } =
+    useAxiosPatch();
   const {
     handleSubmit,
     formState: { errors },
@@ -31,7 +35,6 @@ const LenseUpdate = () => {
       branch_id: getUserCurentBranch()?.id,
     },
   });
-  console.log(singleLense);
 
   const submiteData = async (
     data: Pick<LenseFormModel, "limit" | "qty" | "branch_id">
@@ -54,7 +57,7 @@ const LenseUpdate = () => {
       };
 
       try {
-        await axiosClient.patch(`/lenses/${id}/`, postDAta);
+        await patchHandler(`/lenses/${id}/`, postDAta);
         toast.success("Lense Updated Successfully");
         reset();
         refresh();
@@ -107,7 +110,6 @@ const LenseUpdate = () => {
           fullWidth
           label="Quantity"
           variant="outlined"
-          inputProps={{ min: 0 }}
           type="number"
           {...register("qty", { valueAsNumber: true })}
           error={!!errors.qty}
@@ -120,7 +122,9 @@ const LenseUpdate = () => {
           label="Alert Level"
           inputProps={{ min: 0 }}
           variant="outlined"
-          {...register("limit", { valueAsNumber: true })}
+          {...register("limit", {
+            setValueAs: (value) => (value === "" ? undefined : Number(value)),
+          })}
           error={!!errors.limit}
           helperText={errors.limit?.message}
           sx={{ marginBottom: 2 }}
@@ -140,9 +144,11 @@ const LenseUpdate = () => {
           helperText={errors.branch_id?.message}
           defaultValue={getUserCurentBranch()?.id}
         />
-        <Button type="submit" variant="contained" fullWidth>
-          SAVE
-        </Button>
+        <SubmitCustomBtn
+          btnText="Update Lense Quantity"
+          isError={patchHandlerError}
+          loading={patchHandlerloading}
+        />
       </Paper>
     </Box>
   );

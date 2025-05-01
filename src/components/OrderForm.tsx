@@ -17,6 +17,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ invoiceDetail }) => {
   const RefractionDetails = invoiceDetail?.refraction_details;
 
   const reactToPrintFn = useReactToPrint({ contentRef: componentRef });
+  console.log(invoiceDetail);
 
   return (
     <>
@@ -93,34 +94,16 @@ const OrderForm: React.FC<OrderFormProps> = ({ invoiceDetail }) => {
                   Checked by:{" "}
                 </Typography>
                 <Box sx={{ display: "flex", gap: "0.2cm" }}>
-                  <Box
-                    sx={{
-                      width: "1cm",
-                      height: "1cm",
-                      border: "1px solid black",
-                    }}
-                  />
-                  <Box
-                    sx={{
-                      width: "1cm",
-                      height: "1cm",
-                      border: "1px solid black",
-                    }}
-                  />
-                  <Box
-                    sx={{
-                      width: "1cm",
-                      height: "1cm",
-                      border: "1px solid black",
-                    }}
-                  />
-                  <Box
-                    sx={{
-                      width: "1cm",
-                      height: "1cm",
-                      border: "1px solid black",
-                    }}
-                  />
+                  {[...Array(4)].map((_, idx) => (
+                    <Box
+                      key={idx}
+                      sx={{
+                        width: ".7cm",
+                        height: ".7cm",
+                        border: "1px solid black",
+                      }}
+                    />
+                  ))}
                 </Box>
               </Box>
             </Box>
@@ -160,10 +143,11 @@ const OrderForm: React.FC<OrderFormProps> = ({ invoiceDetail }) => {
                     sx={{ fontWeight: "bold", marginTop: "0.2cm" }}
                   >
                     Refraction by:{" "}
-                    {invoiceDetail?.refraction_details?.prescription &&
-                      "Prescription"}
-                    {!invoiceDetail?.refraction_details?.prescription &&
-                      invoiceDetail?.refraction_details?.username}
+                    {invoiceDetail?.refraction_details?.prescription_type ===
+                    "internal"
+                      ? invoiceDetail?.refraction_details?.username
+                      : invoiceDetail?.refraction_details
+                          ?.prescription_type_display}
                   </Typography>
                   <Typography
                     variant="body2"
@@ -221,7 +205,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ invoiceDetail }) => {
                 Payment Details:
               </Typography>
               <Typography variant="body2">
-                Full Amount - Rs. {invoiceDetail?.order_details.total_price}
+                Total Amount - Rs. {invoiceDetail?.order_details.total_price}
               </Typography>
               <Typography variant="body2">
                 Total Payment - Rs.{" "}

@@ -8,15 +8,15 @@ import useGetSingleFrame from "../../../hooks/lense/useGetSingleFrame";
 import { FrameFormModel, schemaFrame } from "../../../validations/schemaFrame";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { getUserCurentBranch } from "../../../utils/authDataConver";
-import SaveButton from "../../../components/SaveButton";
 import { useAxiosPut } from "../../../hooks/useAxiosPut";
+import SubmitCustomBtn from "../../../components/common/SubmiteCustomBtn";
 
 const FrameUpdate = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
   const { singleFrame, singleFrameLoading } = useGetSingleFrame(id);
-  const { putHandler, putHandlerloading } = useAxiosPut();
+  const { putHandler, putHandlerloading, putHandlerError } = useAxiosPut();
   const {
     handleSubmit,
     formState: { errors },
@@ -124,7 +124,6 @@ const FrameUpdate = () => {
           fullWidth
           label="Quantity"
           variant="outlined"
-          inputProps={{ min: 0 }}
           type="number"
           {...register("qty", {
             setValueAs: (value) => (value === "" ? undefined : Number(value)),
@@ -163,7 +162,11 @@ const FrameUpdate = () => {
           helperText={errors.branch_id?.message}
           defaultValue={getUserCurentBranch()?.id}
         />
-        <SaveButton btnText="Save" loading={putHandlerloading} />
+        <SubmitCustomBtn
+          btnText="Update Frame Quantity"
+          loading={putHandlerloading}
+          isError={putHandlerError}
+        />
       </Paper>
     </Box>
   );

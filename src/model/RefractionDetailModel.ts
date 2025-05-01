@@ -1,3 +1,5 @@
+export type TypePrescription = "internal" | "vision_plus" | "other";
+
 export interface RefractionDetailModel {
   id: number;
   refraction: number; //ID
@@ -24,12 +26,14 @@ export interface RefractionDetailModel {
   left_eye_dist_cyl: string | null;
   left_eye_dist_axis: string | null;
   left_eye_near_sph: string | null;
-  prescription: boolean;
+  prescription_type: TypePrescription;
+  prescription_type_display: string;
   shuger: boolean;
   refraction_remark: string | null;
   note: string | null;
   is_manual: boolean;
   cataract: boolean;
+  blepharitis: boolean;
   user: number;
   username: string;
 }

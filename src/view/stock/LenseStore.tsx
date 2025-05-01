@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { MaterialReactTable } from "material-react-table";
-import { Box, IconButton, Typography } from "@mui/material";
+import { Box, IconButton } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import HistoryIcon from "@mui/icons-material/History";
@@ -10,6 +10,7 @@ import useGetLenses from "../../hooks/lense/useGetLense";
 import { useDeleteDialog } from "../../context/DeleteDialogContext";
 import { addID, cylID, sphID } from "../../data/staticVariables";
 import { LenseModel } from "../../model/LenseModel";
+import TitleText from "../../components/TitleText";
 
 const LenseStore = () => {
   const { lenses, lensesLoading, refresh } = useGetLenses();
@@ -31,7 +32,7 @@ const LenseStore = () => {
               title="Delete"
               onClick={() => handleDelete(row.original)}
             >
-              <DeleteIcon />
+              <DeleteIcon sx={{ fontSize: "1.4rem" }} />
             </IconButton>
             <IconButton
               size="small"
@@ -39,7 +40,7 @@ const LenseStore = () => {
               title="History"
               onClick={() => handleHistory(row.original.id)}
             >
-              <HistoryIcon />
+              <HistoryIcon sx={{ fontSize: "1.4rem" }} />
             </IconButton>
             <IconButton
               size="small"
@@ -47,7 +48,7 @@ const LenseStore = () => {
               title="Edit"
               onClick={() => handleEdit(row.original.id)}
             >
-              <EditIcon />
+              <EditIcon sx={{ fontSize: "1.4rem" }} />
             </IconButton>
             <IconButton
               size="small"
@@ -55,7 +56,7 @@ const LenseStore = () => {
               title="Update Quantity"
               onClick={() => handleUpdate(row.original.id)}
             >
-              <LoopIcon />
+              <LoopIcon sx={{ fontSize: "1.4rem" }} />
             </IconButton>
           </Box>
         ),
@@ -171,13 +172,7 @@ const LenseStore = () => {
 
   return (
     <Box sx={{ padding: 4, maxWidth: "1200px" }}>
-      <Typography
-        sx={{ marginBottom: 2, fontWeight: "bold" }}
-        variant="h4"
-        gutterBottom
-      >
-        Lenses Store
-      </Typography>
+      <TitleText title="  Lenses Store" />
       <MaterialReactTable
         enableColumnFilters // 👈 enables filters
         enableFilters // 👈 required for custom filter functions
@@ -191,16 +186,17 @@ const LenseStore = () => {
             { id: "add", desc: false },
           ],
           showColumnFilters: true,
+          density: "compact",
+          pagination: { pageIndex: 0, pageSize: 15 },
         }}
         columns={columns}
         data={lenses}
         enableColumnActions={false}
         enableSorting
         enablePagination
-        muiTableProps={{
+        muiTableBodyCellProps={{
           sx: {
-            borderRadius: 2,
-            overflow: "hidden",
+            padding: 0,
           },
         }}
       />

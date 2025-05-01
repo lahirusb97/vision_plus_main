@@ -23,6 +23,7 @@ const Dashboard = () => {
     payment_date: formattedDate,
   });
   const { financeSummary, setFinanceSummaryParams } = useGetFinanceSummary();
+
   const { dailyOrderCount, setdailyOrderCountParams } = useGetDailyOrderCount();
   useEffect(() => {
     if (selectedDate) {

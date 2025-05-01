@@ -4,9 +4,12 @@ import { toast } from "react-hot-toast";
 import { extractErrorMessage } from "../../../utils/extractErrorMessage";
 import TitleText from "../../../components/TitleText";
 import { useAxiosPost } from "../../../hooks/useAxiosPost";
-import SaveButton from "../../../components/SaveButton";
+
+import { useNavigate } from "react-router";
+import SubmitCustomBtn from "../../../components/common/SubmiteCustomBtn";
 const LenseCoatingAdd = () => {
-  const { postHandler, postHandlerloading } = useAxiosPost();
+  const navigate = useNavigate();
+  const { postHandler, postHandlerloading, postHandlerError } = useAxiosPost();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -30,6 +33,7 @@ const LenseCoatingAdd = () => {
         name: "",
         description: "",
       });
+      navigate(-1);
     } catch (error) {
       extractErrorMessage(error);
     }
@@ -60,9 +64,10 @@ const LenseCoatingAdd = () => {
             rows={2}
           />
           <Box sx={{ mt: 2 }}>
-            <SaveButton
+            <SubmitCustomBtn
               btnText="Create Lense Coating"
               loading={postHandlerloading}
+              isError={postHandlerError}
             />
           </Box>
         </form>

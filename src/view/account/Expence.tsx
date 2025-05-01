@@ -10,10 +10,7 @@ import {
 } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-
 import AutocompleteInputField from "../../components/inputui/DropdownInput";
-import axiosClient from "../../axiosClient";
 import { toast } from "react-hot-toast";
 import { getUserCurentBranch } from "../../utils/authDataConver";
 import useGetExpenseReport from "../../hooks/useGetExpenseReport";
@@ -25,22 +22,26 @@ import dayjs from "dayjs";
 import { ExpenceSubCategory } from "../../model/ExpenceModel";
 import { ExpensesTable } from "../../components/ExpensesTable";
 import { extractErrorMessage } from "../../utils/extractErrorMessage";
-
-const expenseSchema = z.object({
-  branch: z.number().default(1),
-  main_category: z.number().min(1, "Main category is required").nullable(),
-  sub_category: z.number().min(1, "Sub category is required").nullable(),
-  amount: z.number().min(1, "Amount must be greater than 0"),
-  note: z.string(),
-});
-
-type ExpenseFormData = z.infer<typeof expenseSchema>;
+import {
+  expenseSchema,
+  ExpenseFormData,
+} from "../../validations/expenseSchema";
+import { useAxiosPost } from "../../hooks/useAxiosPost";
+import SubmitCustomBtn from "../../components/common/SubmiteCustomBtn";
 
 const Expence = () => {
   const navigate = useNavigate();
+  const { postHandler, postHandlerloading, postHandlerError } = useAxiosPost();
   const { subExCategory, subExCategoryLoading } = useGetSubExCategory();
   const { exCategory, exCategoryLoading } = useGetExCategory();
-  const { financeSummary, setFinanceSummaryParams } = useGetFinanceSummary();
+  const { financeSummary, setFinanceSummaryParams, financeSummaryRefres } =
+    useGetFinanceSummary();
+  const {
+    expenseList,
+    loading: expenseListLoading,
+    totalExpense,
+    refreshReport,
+  } = useGetExpenseReport();
   const [filteredSubCategories, setFilteredSubCategories] = React.useState<
     { id: number; name: string }[]
   >([]);
@@ -56,19 +57,13 @@ const Expence = () => {
     resolver: zodResolver(expenseSchema),
     defaultValues: {
       branch: getUserCurentBranch()?.id,
-      main_category: 0,
-      sub_category: 0,
-      amount: 0,
+      main_category: undefined,
+      sub_category: undefined,
       note: "",
     },
   });
 
   const selectedMainCategory = watch("main_category");
-  const {
-    expenseList,
-    loading: expenseListLoading,
-    totalExpense,
-  } = useGetExpenseReport();
 
   React.useEffect(() => {
     if (selectedMainCategory && subExCategory) {
@@ -92,8 +87,10 @@ const Expence = () => {
 
   const onSubmit = async (data: ExpenseFormData) => {
     try {
-      await axiosClient.post("/expenses/", data);
+      await postHandler("/expenses/", data);
       toast.success("Expense recorded successfully");
+      financeSummaryRefres();
+      refreshReport();
       reset(); // Reset the form after successful submission
     } catch (error) {
       extractErrorMessage(error);
@@ -195,14 +192,11 @@ const Expence = () => {
               defaultValue={getUserCurentBranch()?.id}
             />
             <Grid item xs={12}>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                fullWidth
-              >
-                Save
-              </Button>
+              <SubmitCustomBtn
+                btnText="Add Expence"
+                isError={postHandlerError}
+                loading={postHandlerloading}
+              />
             </Grid>
           </Grid>
         </form>

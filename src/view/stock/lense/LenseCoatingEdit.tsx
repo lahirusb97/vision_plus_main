@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { Box, TextField, Button, Container, Paper } from "@mui/material";
+import { Box, TextField, Container, Paper } from "@mui/material";
 import axiosClient from "../../../axiosClient";
 import { toast } from "react-hot-toast";
 import { useNavigate, useParams } from "react-router";
 import { extractErrorMessage } from "../../../utils/extractErrorMessage";
+import { useAxiosPut } from "../../../hooks/useAxiosPut";
+import TitleText from "../../../components/TitleText";
+import SubmitCustomBtn from "../../../components/common/SubmiteCustomBtn";
 const LenseCoatingEdit = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-
+  const { putHandler, putHandlerloading, putHandlerError } = useAxiosPut();
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -35,7 +38,7 @@ const LenseCoatingEdit = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await axiosClient.put(`/lens-coatings/${id}/`, formData);
+      await putHandler(`/lens-coatings/${id}/`, formData);
       toast.success("Lense added successfully");
       navigate(-1);
       setFormData({
@@ -49,15 +52,16 @@ const LenseCoatingEdit = () => {
 
   return (
     <Container maxWidth="sm">
-      <Paper sx={{ p: 4 }}>
+      <Paper sx={{ p: 4, width: "300px" }}>
+        <TitleText title="Update Lense Coating" />
         <form onSubmit={handleSubmit}>
           <TextField
             fullWidth
             label="Name"
             name="name"
+            margin="normal"
             value={formData.name}
             onChange={handleChange}
-            margin="normal"
             required
           />
           <TextField
@@ -68,13 +72,14 @@ const LenseCoatingEdit = () => {
             onChange={handleChange}
             margin="normal"
             multiline
-            rows={4}
-            required
+            rows={2}
           />
-          <Box sx={{ mt: 2 }}>
-            <Button type="submit" variant="contained" color="primary">
-              Submit
-            </Button>
+          <Box>
+            <SubmitCustomBtn
+              btnText="Update Lense Coating"
+              loading={putHandlerloading}
+              isError={putHandlerError}
+            />
           </Box>
         </form>
       </Paper>

@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { MaterialReactTable } from "material-react-table";
-import { Box, IconButton, Typography } from "@mui/material";
+import { Box, IconButton } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import HistoryIcon from "@mui/icons-material/History";
@@ -9,6 +9,7 @@ import useGetFrames from "../../hooks/lense/useGetFrames";
 import { useNavigate } from "react-router";
 import { useDeleteDialog } from "../../context/DeleteDialogContext";
 import { FrameModel } from "../../model/FrameModel";
+import TitleText from "../../components/TitleText";
 
 const FrameStore = () => {
   const { frames, framesLoading, refresh } = useGetFrames();
@@ -23,32 +24,36 @@ const FrameStore = () => {
         Cell: ({ row }: { row: { original: FrameModel } }) => (
           <Box>
             <IconButton
+              size="small"
               color="error"
               title="Delete"
               onClick={() => handleDelete(row.original)}
             >
-              <DeleteIcon />
+              <DeleteIcon sx={{ fontSize: "1.4rem" }} />
             </IconButton>
             <IconButton
+              size="small"
               color="info"
               title="History"
               onClick={() => handleHistory(row.original.id)}
             >
-              <HistoryIcon />
+              <HistoryIcon sx={{ fontSize: "1.4rem" }} />
             </IconButton>
             <IconButton
+              size="small"
               color="warning"
               title="Edit"
               onClick={() => handleEdit(row.original.id)}
             >
-              <EditIcon />
+              <EditIcon sx={{ fontSize: "1.4rem" }} />
             </IconButton>
             <IconButton
+              size="small"
               color="warning"
               title="Update Quantity"
               onClick={() => handleUpdate(row.original.id)}
             >
-              <LoopIcon />
+              <LoopIcon sx={{ fontSize: "1.4rem" }} />
             </IconButton>
           </Box>
         ),
@@ -121,13 +126,7 @@ const FrameStore = () => {
 
   return (
     <Box sx={{ padding: 4, maxWidth: "1200px" }}>
-      <Typography
-        sx={{ marginBottom: 2, fontWeight: "bold" }}
-        variant="h4"
-        gutterBottom
-      >
-        Frame Store
-      </Typography>
+      <TitleText title="  Frame Store" />
 
       <MaterialReactTable
         enableColumnFilters // 👈 enables filters
@@ -136,12 +135,21 @@ const FrameStore = () => {
         data={frames}
         enableColumnActions={false}
         state={{ isLoading: framesLoading }}
+        initialState={{
+          density: "compact",
+          pagination: { pageIndex: 0, pageSize: 15 },
+        }}
         enableSorting
         enablePagination
         muiTableProps={{
           sx: {
             borderRadius: 2,
             overflow: "hidden",
+          },
+        }}
+        muiTableBodyCellProps={{
+          sx: {
+            padding: 0,
           },
         }}
       />

@@ -394,17 +394,14 @@ export default function OrderEditFrom() {
             </Box>
 
             {/* sending data trugh invoide details with usefrom hook */}
-            <PationtDetails
-              prescription={
-                !refractionDetailLoading && refractionDetail?.prescription
-                  ? "Prescription "
-                  : ""
-              }
-              refractionDetailLoading={refractionDetailLoading}
-              refractionNumber={
-                invoiceDetail?.customer_details?.refraction_number
-              }
-            />
+            {!refractionDetailLoading && refractionDetail && (
+              <PationtDetails
+                prescription={refractionDetail?.prescription_type_display}
+                refractionNumber={
+                  invoiceDetail?.customer_details?.refraction_number
+                }
+              />
+            )}
           </Box>
           <Box
             sx={{
@@ -415,10 +412,13 @@ export default function OrderEditFrom() {
               alignItems: "center",
             }}
           >
-            <SugarCataractText
-              shuger={refractionDetail?.shuger}
-              cataract={refractionDetail?.cataract}
-            />
+            {refractionDetail && (
+              <SugarCataractText
+                shuger={refractionDetail.shuger}
+                cataract={refractionDetail.cataract}
+                blepharitis={refractionDetail.blepharitis}
+              />
+            )}
             <Box ml={1} display="flex" alignItems="center">
               <Typography variant="body1"> On Hold</Typography>
               <Checkbox

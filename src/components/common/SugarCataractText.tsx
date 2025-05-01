@@ -1,24 +1,40 @@
-import { Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 interface SugarCataractTextProps {
-  shuger: boolean | undefined;
-  cataract: boolean | undefined;
+  shuger: boolean;
+  cataract: boolean;
+  blepharitis: boolean;
 }
 export default function SugarCataractText({
   shuger,
   cataract,
+  blepharitis,
 }: SugarCataractTextProps) {
-  if (!shuger && !cataract) {
-    return null; // Render nothing if both props are false or undefined
-  }
   return (
-    <Typography
-      fontWeight={600}
-      variant="subtitle1"
-      color="error"
-      sx={{ mr: 1 }}
-    >
-      {shuger ? "Sugar" : ""}
-      {cataract ? `${shuger ? " | " : ""}Cataract` : ""}
-    </Typography>
+    <Box sx={{ display: "flex", rowGap: 2 }}>
+      <Typography
+        fontWeight={600}
+        variant="subtitle1"
+        color="error"
+        sx={{ mr: 1 }}
+      >
+        {shuger ? "Sugar" : ""}
+      </Typography>
+      <Typography
+        fontWeight={600}
+        variant="subtitle1"
+        color="error"
+        sx={{ mr: 1 }}
+      >
+        {cataract ? `Cataract` : ""}
+      </Typography>
+      <Typography
+        fontWeight={600}
+        variant="subtitle1"
+        color="error"
+        sx={{ mr: 1 }}
+      >
+        {blepharitis ? `Blepharitis` : ""}
+      </Typography>
+    </Box>
   );
 }

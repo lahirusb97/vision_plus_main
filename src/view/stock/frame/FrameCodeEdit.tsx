@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { Box, TextField, Button, Container, Paper } from "@mui/material";
-import axiosClient from "../../../axiosClient";
+import { Box, TextField, Container, Paper } from "@mui/material";
 import { toast } from "react-hot-toast";
 import { useNavigate, useParams, useSearchParams } from "react-router";
 import { extractErrorMessage } from "../../../utils/extractErrorMessage";
-
+import { useAxiosPut } from "../../../hooks/useAxiosPut";
+import SubmitCustomBtn from "../../../components/common/SubmiteCustomBtn";
+import TitleText from "../../../components/TitleText";
+import axiosClient from "../../../axiosClient";
 const FrameCodeEdit = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-
+  const { putHandler, putHandlerloading, putHandlerError } = useAxiosPut();
   const [searchParams] = useSearchParams();
 
   const paramName = searchParams.get("brand");
@@ -39,7 +41,7 @@ const FrameCodeEdit = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await axiosClient.put(`/codes/${id}/`, {
+      await putHandler(`/codes/${id}/`, {
         ...formData,
         paramName: parseInt(paramName?.toString() ?? ""),
       });
@@ -55,11 +57,12 @@ const FrameCodeEdit = () => {
 
   return (
     <Container maxWidth="sm">
-      <Paper sx={{ p: 4 }}>
+      <Paper sx={{ p: 4, width: "300px" }}>
+        <TitleText title="Update Frame Code" />
         <form onSubmit={handleSubmit}>
           <TextField
             fullWidth
-            label="Name"
+            label="Frame Code Name"
             name="name"
             value={formData.name}
             onChange={handleChange}
@@ -67,10 +70,12 @@ const FrameCodeEdit = () => {
             required
           />
 
-          <Box sx={{ mt: 2 }}>
-            <Button type="submit" variant="contained" color="primary">
-              Submit
-            </Button>
+          <Box>
+            <SubmitCustomBtn
+              btnText="Update Frame Code"
+              loading={putHandlerloading}
+              isError={putHandlerError}
+            />
           </Box>
         </form>
       </Paper>

@@ -1,3 +1,4 @@
+import { Edit } from "@mui/icons-material";
 import {
   Skeleton,
   Table,
@@ -7,8 +8,10 @@ import {
   TableHead,
   TableRow,
   Paper,
+  IconButton,
 } from "@mui/material";
 import dayjs from "dayjs";
+import { useNavigate } from "react-router";
 
 interface ExpenseItem {
   id: number;
@@ -25,6 +28,7 @@ interface ExpensesTableProps {
 }
 
 export const ExpensesTable = ({ data, loading }: ExpensesTableProps) => {
+  const navigate = useNavigate();
   // Format time from ISO string to readable format
   const formatTime = (isoString: string) => {
     return dayjs(isoString).format("h:mm A");
@@ -35,6 +39,7 @@ export const ExpensesTable = ({ data, loading }: ExpensesTableProps) => {
       <Table size="small">
         <TableHead>
           <TableRow sx={{ bgcolor: "orange" }}>
+            <TableCell>action</TableCell>
             <TableCell>Time</TableCell>
             <TableCell>Main Category</TableCell>
             <TableCell>Sub Category</TableCell>
@@ -66,6 +71,23 @@ export const ExpensesTable = ({ data, loading }: ExpensesTableProps) => {
           ) : (
             data.map((item) => (
               <TableRow key={item.id}>
+                <TableCell>
+                  <IconButton
+                    onClick={() => {
+                      const params = new URLSearchParams({
+                        created_at: item.created_at,
+                        main_category_name: item.main_category_name,
+                        sub_category_name: item.sub_category_name,
+                        note: item.note,
+                        amount: item.amount,
+                      }).toString();
+                      navigate(`/account/expence/update/${item.id}/?${params}`);
+                    }}
+                    size="small"
+                  >
+                    <Edit sx={{ fontSize: "1rem" }} />
+                  </IconButton>
+                </TableCell>
                 <TableCell>{formatTime(item.created_at)}</TableCell>
                 <TableCell>{item.main_category_name}</TableCell>
                 <TableCell>{item.sub_category_name}</TableCell>

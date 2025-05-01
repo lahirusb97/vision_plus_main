@@ -34,7 +34,7 @@ export default function BankDepositCreate() {
 
   const onSubmit = async (data: BankDepositForm) => {
     try {
-      await postHandler("bank-deposits/", data);
+      await postHandler("bank-deposits/", { ...data });
       toast.success("Bank Deposit saved Successfully");
       reset();
     } catch (error) {

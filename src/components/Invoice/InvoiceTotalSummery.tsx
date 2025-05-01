@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { TableCell, TableRow } from "@mui/material";
 import { numberWithCommas } from "../../utils/numberWithCommas";
 import { customerPaymentTotal } from "../../utils/customerPaymentTotal";
 import { Invoice } from "../../model/SingleInvoiceModel";
@@ -11,170 +11,63 @@ export default function InvoiceTotalSummery({
 }: InvoiceSummeryProps) {
   return (
     <>
-      <Box
-        sx={{
-          gridColumn: "1 / -1",
-          display: "grid",
-          gridTemplateColumns: "2fr 1fr 24mm 21mm ",
-          backgroundColor: "#fff",
-        }}
-      >
-        <Box
-          sx={{
-            gridColumn: "3/4",
-            padding: "1mm",
-
-            borderBottom: "1px solid #000",
-            borderLeft: "1px solid #000",
-          }}
-        >
+      <TableRow>
+        <TableCell sx={{ border: "none" }} align="right" colSpan={3}>
           Subtotal
-        </Box>
+        </TableCell>
 
-        <Box
-          sx={{
-            textAlign: "right",
-            gridColumn: "4 / 6",
-            padding: "1mm",
-            borderBottom: "1px solid #000",
-          }}
-        >
+        <TableCell align="right">
           {numberWithCommas(invoiceDetail?.order_details.sub_total)}
-        </Box>
-      </Box>
-      <Box
-        sx={{
-          gridColumn: "1 / -1",
-          display: "grid",
-          gridTemplateColumns: "2fr 1fr 24mm 21mm ",
-          backgroundColor: "#fff",
-        }}
-      >
-        <Box
-          sx={{
-            gridColumn: "3 / 4",
-            padding: "1mm",
-            borderBottom: "1px solid #000",
-
-            paddingLeft: "1mm",
-            borderLeft: "1px solid #000",
-          }}
-        >
+        </TableCell>
+      </TableRow>
+      <TableRow>
+        <TableCell sx={{ border: "none" }} align="right" colSpan={3}>
           Discounts
-        </Box>
-        <Box
-          sx={{
-            textAlign: "right",
-            gridColumn: "4 / 6",
-            padding: "1mm",
-            borderBottom: "1px solid #000",
-          }}
-        >
+        </TableCell>
+
+        <TableCell align="right">
           {numberWithCommas(invoiceDetail?.order_details.discount)}
-        </Box>
-      </Box>
-      <Box
-        sx={{
-          gridColumn: "1 / -1",
-          display: "grid",
-          gridTemplateColumns: "2fr 1fr 24mm 21mm ",
-          backgroundColor: "#fff",
-        }}
-      >
-        <Box
-          sx={{
-            gridColumn: "3 / 4",
-            fontWeight: "bold",
-            textAlign: "left",
-            padding: "1mm",
-
-            borderBottom: "1px solid #000",
-
-            paddingLeft: "1mm",
-            borderLeft: "1px solid #000",
-          }}
-        >
-          Total
-        </Box>
-        <Box
-          sx={{
-            textAlign: "right",
-            gridColumn: "4 / 6",
-            padding: "1mm",
-
-            borderBottom: "1px solid #000",
-          }}
-        >
+        </TableCell>
+      </TableRow>
+      <TableRow>
+        <TableCell sx={{ border: "none" }} align="right" colSpan={3}>
+          <strong>Total</strong>
+        </TableCell>
+        <TableCell align="right">
           <strong>
             {numberWithCommas(invoiceDetail?.order_details.total_price)}
           </strong>
-        </Box>
-      </Box>
-      <Box
-        sx={{
-          gridColumn: "1 / -1",
-          display: "grid",
-          gridTemplateColumns: "2fr 1fr 24mm 21mm",
-          backgroundColor: "#fff",
-        }}
-      >
-        <Box
-          sx={{
-            gridColumn: "3 / 4",
-
-            borderBottom: "1px solid #000",
-            paddingLeft: "1mm",
-            borderLeft: "1px solid #000",
-          }}
-        >
+        </TableCell>
+      </TableRow>
+      <TableRow>
+        <TableCell sx={{ border: "none" }} align="right" colSpan={3}>
           Payment
-        </Box>
-        <Box
+        </TableCell>
+        <TableCell
           sx={{
             textAlign: "right",
-            gridColumn: "4 / 6",
-            padding: "1mm",
-
-            borderBottom: "1px solid #000",
           }}
         >
           {numberWithCommas(
             customerPaymentTotal(invoiceDetail?.order_details.order_payments)
           )}
-        </Box>
-      </Box>
-      <Box
-        sx={{
-          gridColumn: "1 / -1",
-          display: "grid",
-          gridTemplateColumns: "2fr 1fr 24mm 21mm",
-          backgroundColor: "#fff",
-        }}
-      >
-        <Box
-          sx={{
-            gridColumn: "3 / 4",
-            fontWeight: "bold",
-            paddingLeft: "1mm",
-            borderLeft: "1px solid #000",
-          }}
-        >
+        </TableCell>
+      </TableRow>
+      <TableRow>
+        <TableCell sx={{ border: "none" }} align="right" colSpan={3}>
           Balance
-        </Box>
-        <Box
+        </TableCell>
+        <TableCell
           sx={{
             textAlign: "right",
-            gridColumn: "4 / 6",
-            fontWeight: "bold",
-            padding: "1mm",
           }}
         >
           {numberWithCommas(
             parseInt(invoiceDetail?.order_details?.total_price || "0") -
               customerPaymentTotal(invoiceDetail?.order_details.order_payments)
           )}
-        </Box>
-      </Box>
+        </TableCell>
+      </TableRow>
     </>
   );
 }

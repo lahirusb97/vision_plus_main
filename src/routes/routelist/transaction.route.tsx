@@ -11,6 +11,10 @@ import FactoryOrderUpdate from "../../view/transaction/factory_order/FactoryOrde
 import NormalInvoice from "../../view/transaction/normal_order/NormalInvoice";
 import NormalOrderInvoice from "../../view/transaction/normal_order/NormalOrderInvoice";
 import InvoiceSearchIndex from "../../view/transaction/InvoiceSearchIndex";
+import FrameOnlyOrderCreate from "../../view/transaction/frameonly/FrameOnlyOrderCreate";
+import BusTitleIndex from "../../view/transaction/bus/BusTitleIndex";
+import BusTitleUpdate from "../../view/transaction/bus/BusTitleUpdate";
+import { BusTitleCreate } from "../../view/transaction/bus/BusTitleCreate";
 
 export const transactionRoutes: RouteObject[] = [
   {
@@ -74,6 +78,16 @@ export const transactionRoutes: RouteObject[] = [
     ],
   },
   {
+    path: "frame_only_order",
+    element: <ProtectedChildRoute />,
+    children: [
+      {
+        index: true,
+        element: <FrameOnlyOrderCreate />,
+      },
+    ],
+  },
+  {
     path: "repayment",
     element: <ProtectedChildRoute />,
     children: [
@@ -90,5 +104,23 @@ export const transactionRoutes: RouteObject[] = [
   {
     path: "invoice/search",
     element: <InvoiceSearchIndex />,
+  },
+  {
+    path: "bus/",
+    element: <ProtectedChildRoute />,
+    children: [
+      {
+        index: true,
+        element: <BusTitleIndex />,
+      },
+      {
+        path: "create",
+        element: <BusTitleCreate />,
+      },
+      {
+        path: "update/:id",
+        element: <BusTitleUpdate />,
+      },
+    ],
   },
 ];

@@ -1,12 +1,4 @@
-import {
-  Box,
-  Button,
-  Chip,
-  TextField,
-  Typography,
-  Paper,
-  CircularProgress,
-} from "@mui/material";
+import { Box, Chip, TextField, Typography, Paper } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router";
 import toast from "react-hot-toast";
@@ -20,13 +12,15 @@ import { extractErrorMessage } from "../../../utils/extractErrorMessage";
 import LoadingAnimation from "../../../components/LoadingAnimation";
 import { useAxiosPatch } from "../../../hooks/useAxiosPatch";
 import { getUserCurentBranch } from "../../../utils/authDataConver";
+import SubmitCustomBtn from "../../../components/common/SubmiteCustomBtn";
 
 const OtherItemQtyUpdate = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
   const { singleotherItem, singleotherItemLoading } = useGetSingleOtherItem(id);
-  const { patchHandler, patchHandlerloading } = useAxiosPatch();
+  const { patchHandler, patchHandlerloading, patchHandlerError } =
+    useAxiosPatch();
   const {
     handleSubmit,
     formState: { errors },
@@ -125,7 +119,6 @@ const OtherItemQtyUpdate = () => {
           fullWidth
           label="Enter Quantity Amount"
           variant="outlined"
-          inputProps={{ min: 0 }}
           type="number"
           {...register("qty", { valueAsNumber: true, min: 0, required: true })}
           error={!!errors.qty}
@@ -139,9 +132,7 @@ const OtherItemQtyUpdate = () => {
           inputProps={{ min: 0 }}
           type="number"
           {...register("limit", {
-            valueAsNumber: true,
-            min: 0,
-            required: true,
+            setValueAs: (value) => (value === "" ? undefined : Number(value)),
           })}
           error={!!errors.limit}
           helperText={errors.limit?.message}
@@ -164,18 +155,11 @@ const OtherItemQtyUpdate = () => {
           helperText={errors.branch_id?.message}
           defaultValue={getUserCurentBranch()?.id}
         />
-        <Button
-          disabled={patchHandlerloading}
-          type="submit"
-          variant="contained"
-          fullWidth
-        >
-          {patchHandlerloading ? (
-            <CircularProgress size={24} />
-          ) : (
-            "Update Quantity"
-          )}
-        </Button>
+        <SubmitCustomBtn
+          btnText="Update Other Item Quantity"
+          isError={patchHandlerError}
+          loading={patchHandlerloading}
+        />
       </Paper>
     </Box>
   );

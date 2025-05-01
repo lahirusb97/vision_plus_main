@@ -40,7 +40,7 @@ export const schemaLens = z.object({
     .transform((val) =>
       val === "" || isUndefined(val) || isUndefined(val) ? null : val
     ),
-  limit: z.number({ invalid_type_error: "Quantity is required" }).positive(),
+  limit: z.number({ invalid_type_error: "Alert is required" }).optional(),
   branch_id: z.number({ invalid_type_error: "Branch ID is required" }),
 });
 

@@ -1,13 +1,14 @@
 import React, { useState } from "react";
-import { Box, TextField, Button, Container, Paper } from "@mui/material";
-import axiosClient from "../../../axiosClient";
+import { Box, TextField, Container, Paper } from "@mui/material";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router";
 
 import { extractErrorMessage } from "../../../utils/extractErrorMessage";
+import { useAxiosPost } from "../../../hooks/useAxiosPost";
+import SubmitCustomBtn from "../../../components/common/SubmiteCustomBtn";
 const FrameBrandAdd = () => {
   const navigate = useNavigate();
-
+  const { postHandler, postHandlerloading, postHandlerError } = useAxiosPost();
   const [formData, setFormData] = useState({
     name: "",
   });
@@ -23,7 +24,7 @@ const FrameBrandAdd = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await axiosClient.post("/brands/", {
+      await postHandler("/brands/", {
         ...formData,
         brand_type: "frame",
       });
@@ -52,9 +53,11 @@ const FrameBrandAdd = () => {
           />
 
           <Box sx={{ mt: 2 }}>
-            <Button type="submit" variant="contained" color="primary">
-              Submit
-            </Button>
+            <SubmitCustomBtn
+              btnText="Create Frame Brand"
+              loading={postHandlerloading}
+              isError={postHandlerError}
+            />
           </Box>
         </form>
       </Paper>
