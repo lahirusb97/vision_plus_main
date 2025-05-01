@@ -15,6 +15,8 @@ import FrameOnlyOrderCreate from "../../view/transaction/frameonly/FrameOnlyOrde
 import BusTitleIndex from "../../view/transaction/bus/BusTitleIndex";
 import BusTitleUpdate from "../../view/transaction/bus/BusTitleUpdate";
 import { BusTitleCreate } from "../../view/transaction/bus/BusTitleCreate";
+import NormalOrderEdit from "../../view/transaction/normal_order/NormalOrderEdit";
+import NormalOrderEditIndex from "../../view/transaction/normal_order/NormalOrderEditIndex";
 
 export const transactionRoutes: RouteObject[] = [
   {
@@ -58,8 +60,16 @@ export const transactionRoutes: RouteObject[] = [
         element: <NormalInvoice />,
       },
       {
+        path: "search",
+        element: <NormalOrderEditIndex />,
+      },
+      {
         path: ":invoice_number",
         element: <NormalOrderInvoice />,
+      },
+      {
+        path: "edit/:invoice_number",
+        element: <NormalOrderEdit />,
       },
     ],
   },
@@ -104,6 +114,10 @@ export const transactionRoutes: RouteObject[] = [
   {
     path: "invoice/search",
     element: <InvoiceSearchIndex />,
+  },
+  {
+    path: "invoice/view/:invoice_number",
+    element: <InvoiceView />,
   },
   {
     path: "bus/",

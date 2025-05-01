@@ -155,6 +155,7 @@ interface OrderDetails {
   fitting_on_collection: false;
   on_hold: false;
   sales_staff_username: string;
+  user_date: string | null;
 }
 
 interface Invoice {

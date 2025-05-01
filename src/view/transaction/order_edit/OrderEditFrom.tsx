@@ -1,5 +1,5 @@
 import Box from "@mui/material/Box";
-import { FormProvider, useForm } from "react-hook-form";
+import { Controller, FormProvider, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import { useEffect, useState } from "react";
@@ -46,6 +46,9 @@ import PaymentMethodsLayout from "../factory_layouts/PaymentMethodsLayout";
 import { formatUserPayments } from "../../../utils/formatUserPayments";
 import EditInvoiceTable from "../../../components/inputui/EditInvoiceTable";
 import { FactoryOrderInputModel } from "../../../model/InvoiceInputModel";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
 
 export default function OrderEditFrom() {
   const navigate = useNavigate();
@@ -145,6 +148,7 @@ export default function OrderEditFrom() {
       );
       methods.setValue("left_pd", invoiceDetail?.order_details?.left_pd);
       methods.setValue("right_pd", invoiceDetail?.order_details?.right_pd);
+      methods.setValue("user_date", invoiceDetail?.order_details?.user_date);
     }
     if (invoiceDetail && !invoiceDetailLoading && loadState === 0) {
       invoiceDetail?.order_details.order_items
@@ -288,6 +292,7 @@ export default function OrderEditFrom() {
         left_height: data.left_height,
         fitting_on_collection: data.fitting_on_collection,
         on_hold: data.on_hold,
+        user_date: data.user_date,
       },
       order_items: [
         ...Object.values(LenseInvoiceList).map((item) => ({
@@ -440,7 +445,30 @@ export default function OrderEditFrom() {
               />
             </Box>
             <HidenNoteDialog note={invoiceDetail?.refraction_details?.note} />
+
             <StockDrawerBtn />
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <Controller
+                name="user_date"
+                control={methods.control}
+                render={({ field }) => (
+                  <DatePicker
+                    sx={{ mx: 1, width: 150 }}
+                    label="Deliver Date"
+                    value={field.value ? dayjs(field.value) : null}
+                    onChange={(date) => {
+                      field.onChange(date?.format("YYYY-MM-DD"));
+                    }}
+                    slotProps={{
+                      textField: {
+                        fullWidth: false,
+                        size: "small",
+                      },
+                    }}
+                  />
+                )}
+              />
+            </LocalizationProvider>
           </Box>
           <EditInvoiceTable
             paymentList={invoiceDetail?.order_details?.order_payments ?? []}

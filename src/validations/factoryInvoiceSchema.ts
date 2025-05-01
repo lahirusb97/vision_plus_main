@@ -28,6 +28,7 @@ export const schemaFactoryInvoice = z.object({
   height: z.string().nullable().optional(),
   left_height: z.string().nullable().optional(),
   right_height: z.string().nullable().optional(),
+  user_date: z.string().nullable().optional(),
   branch_id: z.number(),
 });
 export type FactoryInvoiceFormModel = z.infer<typeof schemaFactoryInvoice>;

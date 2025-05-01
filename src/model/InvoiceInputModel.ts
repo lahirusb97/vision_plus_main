@@ -33,6 +33,7 @@ export interface Order {
   fitting_on_collection: boolean;
   on_hold: boolean;
   branch_id: number;
+  user_date: string | null;
 }
 
 // External Lens Model

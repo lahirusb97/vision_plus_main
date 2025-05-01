@@ -6,7 +6,6 @@ import { Controller, useFormContext } from "react-hook-form";
 
 export default function DateInput() {
   const {
-    register,
     control,
     watch,
     formState: { errors },
@@ -15,7 +14,7 @@ export default function DateInput() {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Controller
-        {...register("dob")}
+        name="dob"
         control={control}
         defaultValue={null} // Default to empty
         rules={{ required: "Date is required" }}

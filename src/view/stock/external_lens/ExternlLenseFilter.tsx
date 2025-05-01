@@ -1,9 +1,9 @@
 import { useMemo, useState } from "react";
 import { Box, Button } from "@mui/material";
 import AutocompleteInputField from "../../../components/inputui/DropdownInput";
-import useGetCoatings from "../../../hooks/lense/useGetCoatings";
-import useGetBrands from "../../../hooks/lense/useGetBrand";
 import useGetLenseTypes from "../../../hooks/lense/useGetLenseType";
+import useGetExternalFactorys from "../../../hooks/lense/useGetExternalFactorys";
+import useGetExternalCoating from "../../../hooks/lense/useGetExternalCoating";
 export interface ExternlLenseFilterProps {
   availableFilters: {
     lens_types: number[];
@@ -31,9 +31,9 @@ export default function ExternlLenseFilter({
     brand: null,
   });
   const { lenseTypes, lenseTypesLoading } = useGetLenseTypes();
-  const { brands, brandsLoading } = useGetBrands({ brand_type: "lens" });
-  const { coatings, coatingsLoading } = useGetCoatings();
-
+  const { externalFactorys, externalFactorysLoading } =
+    useGetExternalFactorys();
+  const { externalCoatings, externalCoatingsLoading } = useGetExternalCoating();
   const filteredLenseTypes = useMemo(() => {
     if (!availableFilters) return lenseTypes;
     return lenseTypes.filter((type) =>
@@ -47,16 +47,16 @@ export default function ExternlLenseFilter({
   //   }, [brands, availableFilters]);
 
   const filteredCoatings = useMemo(() => {
-    if (!availableFilters) return coatings;
-    return coatings.filter((coating) =>
+    if (!availableFilters) return externalCoatings;
+    return externalCoatings.filter((coating) =>
       availableFilters.coatings.includes(coating.id)
     );
-  }, [coatings, availableFilters]);
+  }, [externalCoatings, availableFilters]);
 
   return (
     <Box width={"800px"} display="flex" alignItems={"center"} gap={2}>
       <AutocompleteInputField
-        options={brands}
+        options={externalFactorys}
         onChange={(id) => {
           setExternalLenseParams({ brand: id });
           setFilterTypes({
@@ -66,7 +66,7 @@ export default function ExternlLenseFilter({
           });
         }}
         labelName="Lens Factory"
-        loading={brandsLoading}
+        loading={externalFactorysLoading}
         defaultId={filterTypes.brand}
       />
       <AutocompleteInputField
@@ -86,7 +86,7 @@ export default function ExternlLenseFilter({
           setFilterTypes((prev) => ({ ...prev, coating: id }));
         }}
         labelName="Coating"
-        loading={coatingsLoading || !availableFilters}
+        loading={externalCoatingsLoading || !availableFilters}
         defaultId={filterTypes.coating}
       />
       <Button

@@ -9,8 +9,11 @@ import {
   TableRow,
   Paper,
 } from "@mui/material";
+import { useEffect, useState } from "react";
+import CustomerPagination from "../components/CustomPagination";
 
 interface InvoiceTableProps {
+  accountDate: string;
   data: Array<{
     invoice_number: string;
     total_online_payment: number;
@@ -21,9 +24,30 @@ interface InvoiceTableProps {
   loading: boolean;
 }
 
-export const InvoicePaymentTable = ({ data, loading }: InvoiceTableProps) => {
-  const totalPayment = data.reduce((sum, item) => sum + item.total_payment, 0);
+export const InvoicePaymentTable = ({
+  data,
+  loading,
+  accountDate,
+}: InvoiceTableProps) => {
+  const [page, setPage] = useState(1); // Note: CustomPagination uses 1-based indexing
+  const [pageSize, setPageSize] = useState(10);
+  const paginatedInvoice = data.slice(
+    (page - 1) * pageSize, // Adjust for 1-based indexing
+    (page - 1) * pageSize + pageSize
+  );
+  const handlePageNavigation = (newPage: number) => {
+    setPage(newPage);
+  };
 
+  // Handle page size change
+  const handlePageSizeChange = (newSize: number) => {
+    setPageSize(newSize);
+    setPage(1);
+  };
+  useEffect(() => {
+    handlePageSizeChange(10);
+    console.log(accountDate);
+  }, [accountDate]);
   return (
     <TableContainer component={Paper}>
       <Table size="small">
@@ -58,7 +82,7 @@ export const InvoicePaymentTable = ({ data, loading }: InvoiceTableProps) => {
               </TableCell>
             </TableRow>
           ) : (
-            data.map((row, index) => (
+            paginatedInvoice.map((row, index) => (
               <TableRow key={index}>
                 <TableCell>{row.invoice_number}</TableCell>
                 <TableCell>{row.total_online_payment}</TableCell>
@@ -68,14 +92,14 @@ export const InvoicePaymentTable = ({ data, loading }: InvoiceTableProps) => {
               </TableRow>
             ))
           )}
-          <TableRow>
-            <TableCell colSpan={4} align="right">
-              <strong>Total</strong>
-            </TableCell>
-            <TableCell>{totalPayment}</TableCell>
-          </TableRow>
         </TableBody>
       </Table>
+      <CustomerPagination
+        totalCount={data.length}
+        handlePageNavigation={handlePageNavigation}
+        changePageSize={handlePageSizeChange}
+        page_size={pageSize}
+      />
     </TableContainer>
   );
 };

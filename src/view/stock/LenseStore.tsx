@@ -16,7 +16,6 @@ const LenseStore = () => {
   const { lenses, lensesLoading, refresh } = useGetLenses();
 
   const { openDialog } = useDeleteDialog();
-  console.log(lenses);
 
   // Define columns
   const columns = useMemo(
@@ -149,7 +148,7 @@ const LenseStore = () => {
   // Handlers for actions
   const handleDelete = (row: LenseModel) => {
     openDialog(
-      `/lenses/${row.id}/`,
+      `lenses/${row.id}/`,
       `Lense of Type - ${row.type} & Brand - ${row.brand}`,
       refresh
     );

@@ -9,8 +9,11 @@ import {
   TableRow,
   Paper,
 } from "@mui/material";
+import { useEffect, useState } from "react";
+import CustomerPagination from "./CustomPagination";
 
 interface ChannelTableProps {
+  accountDate: string;
   data: Array<{
     channel_no: number;
     amount_cash: number;
@@ -22,7 +25,30 @@ interface ChannelTableProps {
   loading: boolean;
 }
 
-export const ChannelPaymentTable = ({ data, loading }: ChannelTableProps) => {
+export const ChannelPaymentTable = ({
+  data,
+  loading,
+  accountDate,
+}: ChannelTableProps) => {
+  const [page, setPage] = useState(1); // Note: CustomPagination uses 1-based indexing
+  const [pageSize, setPageSize] = useState(10);
+
+  const paginatedChannel = data.slice(
+    (page - 1) * pageSize, // Adjust for 1-based indexing
+    (page - 1) * pageSize + pageSize
+  );
+  const handlePageNavigation = (newPage: number) => {
+    setPage(newPage);
+  };
+
+  // Handle page size change
+  const handlePageSizeChange = (newSize: number) => {
+    setPageSize(newSize);
+    setPage(1);
+  };
+  useEffect(() => {
+    setPage(1);
+  }, [accountDate]);
   return (
     <TableContainer component={Paper}>
       <Table size="small">
@@ -58,7 +84,7 @@ export const ChannelPaymentTable = ({ data, loading }: ChannelTableProps) => {
               </TableCell>
             </TableRow>
           ) : (
-            data.map((row, index) => (
+            paginatedChannel.map((row, index) => (
               <TableRow key={index}>
                 <TableCell>{row.channel_no}</TableCell>
                 <TableCell>{row.amount_cash}</TableCell>
@@ -71,6 +97,12 @@ export const ChannelPaymentTable = ({ data, loading }: ChannelTableProps) => {
           )}
         </TableBody>
       </Table>
+      <CustomerPagination
+        totalCount={data.length}
+        handlePageNavigation={handlePageNavigation}
+        changePageSize={handlePageSizeChange}
+        page_size={pageSize}
+      />
     </TableContainer>
   );
 };

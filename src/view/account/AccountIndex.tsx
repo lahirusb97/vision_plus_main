@@ -18,7 +18,11 @@ const Dashboard = () => {
   const { invoiceReport, invoiceReportLoading } = useInvoiceReports({
     payment_date: formattedDate,
   });
-  const { expenseList, handleDateRangeChange } = useGetExpenseReport();
+  const {
+    expenseList,
+    handleDateRangeChange,
+    loading: expenseListLoading,
+  } = useGetExpenseReport();
   const { channelReports, channelReportsLoading } = useChannelReports({
     payment_date: formattedDate,
   });
@@ -33,7 +37,7 @@ const Dashboard = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDate]);
-
+  //! BUG WHEN NAGICATE PAGINATION VALUES DES NOT REST
   return (
     <Box p={2} minWidth="1000px" minHeight="50vh">
       <Grid container spacing={2}>
@@ -44,7 +48,11 @@ const Dashboard = () => {
             <Typography variant="h6" gutterBottom>
               Expenses
             </Typography>
-            <ExpensesTable data={expenseList} loading={false} />
+            <ExpensesTable
+              accountDate={formattedDate}
+              data={expenseList}
+              loading={expenseListLoading}
+            />
           </Paper>
 
           {/* Invoice Section */}
@@ -53,6 +61,7 @@ const Dashboard = () => {
               Invoice
             </Typography>
             <InvoicePaymentTable
+              accountDate={formattedDate}
               data={invoiceReport}
               loading={invoiceReportLoading}
             />
@@ -66,6 +75,7 @@ const Dashboard = () => {
                 Channel
               </Typography>
               <ChannelPaymentTable
+                accountDate={formattedDate}
                 data={channelReports}
                 loading={channelReportsLoading}
               />

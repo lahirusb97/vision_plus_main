@@ -1,5 +1,10 @@
 import { useState, useEffect, useMemo } from "react";
-import { Autocomplete, CircularProgress, TextField } from "@mui/material";
+import {
+  Autocomplete,
+  CircularProgress,
+  TextField,
+  Typography,
+} from "@mui/material";
 
 // Define the option type
 export interface Option {
@@ -57,6 +62,7 @@ const AutocompleteInputField: React.FC<AutocompleteInputFieldProps> = ({
         <TextField
           {...params}
           label={labelName}
+          size="small"
           InputProps={{
             ...params.InputProps,
             endAdornment: (
@@ -68,6 +74,26 @@ const AutocompleteInputField: React.FC<AutocompleteInputFieldProps> = ({
           }}
         />
       )}
+      renderOption={(props, option) => {
+        // Destructure key from props
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { key, ...otherProps } = props;
+
+        return (
+          <li key={option.id} {...otherProps}>
+            <Typography
+              sx={{
+                fontSize: "14px",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}
+            >
+              {option.name}
+            </Typography>
+          </li>
+        );
+      }}
     />
   );
 };

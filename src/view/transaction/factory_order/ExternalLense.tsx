@@ -25,7 +25,7 @@ export default function ExternalLense() {
   const [price, setPrice] = React.useState<string>(selectedprice);
   const [externalLensQty, setExternalLensQty] = React.useState<string>("0");
   const [externalLensNote, setExternalLensNote] = React.useState<string>("");
-  console.log("price", selectedprice);
+
   useEffect(() => {
     if (externaLenseList?.results.length === 1) {
       setPrice(selectedprice);

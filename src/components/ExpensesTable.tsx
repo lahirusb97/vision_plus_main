@@ -11,7 +11,9 @@ import {
   IconButton,
 } from "@mui/material";
 import dayjs from "dayjs";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
+import CustomerPagination from "./CustomPagination";
 
 interface ExpenseItem {
   id: number;
@@ -25,15 +27,38 @@ interface ExpenseItem {
 interface ExpensesTableProps {
   data: ExpenseItem[];
   loading: boolean;
+  accountDate: string;
 }
 
-export const ExpensesTable = ({ data, loading }: ExpensesTableProps) => {
+export const ExpensesTable = ({
+  data,
+  loading,
+  accountDate,
+}: ExpensesTableProps) => {
   const navigate = useNavigate();
+  const [page, setPage] = useState(1); // Note: CustomPagination uses 1-based indexing
+  const [pageSize, setPageSize] = useState(10);
+
   // Format time from ISO string to readable format
   const formatTime = (isoString: string) => {
     return dayjs(isoString).format("h:mm A");
   };
+  const paginatedExpenses = data.slice(
+    (page - 1) * pageSize, // Adjust for 1-based indexing
+    (page - 1) * pageSize + pageSize
+  );
+  const handlePageNavigation = (newPage: number) => {
+    setPage(newPage);
+  };
 
+  // Handle page size change
+  const handlePageSizeChange = (newSize: number) => {
+    setPageSize(newSize);
+    setPage(1);
+  };
+  useEffect(() => {
+    setPage(1);
+  }, [accountDate]);
   return (
     <TableContainer component={Paper}>
       <Table size="small">
@@ -69,7 +94,7 @@ export const ExpensesTable = ({ data, loading }: ExpensesTableProps) => {
               </TableCell>
             </TableRow>
           ) : (
-            data.map((item) => (
+            paginatedExpenses.map((item) => (
               <TableRow key={item.id}>
                 <TableCell>
                   <IconButton
@@ -98,6 +123,12 @@ export const ExpensesTable = ({ data, loading }: ExpensesTableProps) => {
           )}
         </TableBody>
       </Table>
+      <CustomerPagination
+        totalCount={data.length}
+        handlePageNavigation={handlePageNavigation}
+        changePageSize={handlePageSizeChange}
+        page_size={pageSize}
+      />
     </TableContainer>
   );
 };

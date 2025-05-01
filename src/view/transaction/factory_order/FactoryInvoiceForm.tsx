@@ -1,5 +1,5 @@
 import Box from "@mui/material/Box";
-import { FormProvider, useForm } from "react-hook-form";
+import { Controller, FormProvider, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router";
 import { useEffect } from "react";
@@ -36,6 +36,9 @@ import PdAndHeightInputs from "../factory_layouts/PdAndHeightInputs";
 import PaymentMethodsLayout from "../factory_layouts/PaymentMethodsLayout";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FactoryOrderInputModel } from "../../../model/InvoiceInputModel";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
 
 export default function FactoryInvoiceForm() {
   const { prepareValidation, resetValidation, validationState } =
@@ -142,6 +145,7 @@ export default function FactoryInvoiceForm() {
           fitting_on_collection: data.fitting_on_collection,
           on_hold: data.on_hold,
           branch_id: data.branch_id,
+          user_date: data.user_date,
         },
         order_items: [
           ...Object.values(LenseInvoiceList).map((item) => ({
@@ -303,6 +307,28 @@ export default function FactoryInvoiceForm() {
 
               <HidenNoteDialog note={refractionDetail?.note} />
               <StockDrawerBtn />
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <Controller
+                  name="user_date"
+                  control={methods.control}
+                  render={({ field }) => (
+                    <DatePicker
+                      sx={{ mx: 1, width: 150 }}
+                      label="Deliver Date"
+                      value={field.value ? dayjs(field.value) : null}
+                      onChange={(date) => {
+                        field.onChange(date?.format("YYYY-MM-DD"));
+                      }}
+                      slotProps={{
+                        textField: {
+                          fullWidth: false,
+                          size: "small",
+                        },
+                      }}
+                    />
+                  )}
+                />
+              </LocalizationProvider>
             </Box>
 
             <InvoiceTable />

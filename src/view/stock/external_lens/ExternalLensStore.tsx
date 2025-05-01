@@ -4,15 +4,30 @@ import { useGetExternalLenses } from "../../../hooks/useGetExternalLenses";
 import { MaterialReactTable, MRT_ColumnDef } from "material-react-table";
 import { ExternalLensModel } from "../../../model/ExternalLenseModel";
 import { numberWithCommas } from "../../../utils/numberWithCommas";
-import { Edit } from "@mui/icons-material";
+import { Delete, Edit } from "@mui/icons-material";
 import { useNavigate } from "react-router";
 import { formatBrandedText } from "../../../validations/formatBrandedText";
 import ExternlLenseFilter from "./ExternlLenseFilter";
+import { useDeleteDialog } from "../../../context/DeleteDialogContext";
 
 const ExternalLensStore = () => {
   const navigate = useNavigate();
   const { externaLenseList, externaLenseListLoading, setExternalLenseParams } =
     useGetExternalLenses();
+  const { openDialog } = useDeleteDialog();
+  const handleDelete = (row: ExternalLensModel) => {
+    openDialog(
+      `external_lenses/${row.id}/`,
+      `External Lense of Type - ${row.lens_type_name} & Brand - ${row.brand_name}`,
+      () => {
+        setExternalLenseParams({
+          brand: row.brand,
+          lens_type: row.lens_type,
+          coating: row.coating,
+        });
+      }
+    );
+  };
 
   const columns = useMemo<MRT_ColumnDef<ExternalLensModel>[]>(
     () => [
@@ -29,9 +44,22 @@ const ExternalLensStore = () => {
           };
 
           return (
-            <IconButton color="primary" size="small" onClick={handleEditClick}>
-              <Edit sx={{ fontSize: "1rem" }} />
-            </IconButton>
+            <>
+              <IconButton
+                color="primary"
+                size="small"
+                onClick={handleEditClick}
+              >
+                <Edit sx={{ fontSize: "1.2rem" }} />
+              </IconButton>
+              <IconButton
+                color="error"
+                size="small"
+                onClick={() => handleDelete(row.original)}
+              >
+                <Delete sx={{ fontSize: "1.2rem" }} />
+              </IconButton>
+            </>
           );
         },
       },

@@ -40,13 +40,25 @@ const CustomerPagination: React.FC<CustomerPaginationProps> = ({
       sx={{
         display: "flex",
         alignItems: "center",
-
-        padding: 2,
+        marginTop: 1,
       }}
     >
-      <FormControl size="small" sx={{ minWidth: 50 }}>
+      <FormControl
+        size="small"
+        sx={{
+          minWidth: 40, // Reduced minimum width
+          "& .MuiInputLabel-root": {
+            fontSize: "0.75rem", // Smaller label
+          },
+          "& .MuiSelect-select": {
+            py: 0.5, // Reduced vertical padding
+            px: 1, // Reduced horizontal padding
+          },
+        }}
+      >
         <InputLabel id="page-size-label">Rows</InputLabel>
         <Select
+          size="small"
           labelId="page-size-label"
           value={pageSize}
           defaultValue={pageSize}
@@ -54,7 +66,11 @@ const CustomerPagination: React.FC<CustomerPaginationProps> = ({
           onChange={handlePageSizeChange}
         >
           {[1, 2, 10, 25, 50].map((size) => (
-            <MenuItem key={size} value={size}>
+            <MenuItem
+              key={size}
+              value={size}
+              sx={{ py: 0.5, minHeight: "auto" }}
+            >
               {size}
             </MenuItem>
           ))}
@@ -68,7 +84,13 @@ const CustomerPagination: React.FC<CustomerPaginationProps> = ({
         onChange={handlePageChange}
         shape="rounded"
         color="primary"
-        sx={{ marginTop: 1 }}
+        sx={{
+          "& .MuiPaginationItem-root": {
+            minWidth: 25, // Smaller pagination buttons
+            height: 25, // Smaller pagination buttons
+            fontSize: "0.75rem", // Smaller font
+          },
+        }}
       />
     </Box>
   );

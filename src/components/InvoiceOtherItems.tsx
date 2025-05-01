@@ -66,18 +66,26 @@ export default function InvoiceOtherItems({
             color="primary"
           />
         )}
-        renderOption={(props, option) => (
-          <li {...props}>
-            <Stack direction="row" justifyContent="space-between" width="100%">
-              <Typography>{option.item.name}</Typography>
-              <Chip
-                label={`Rs ${numberWithCommas(option.item.price)}`}
-                size="small"
-                color="secondary"
-              />
-            </Stack>
-          </li>
-        )}
+        renderOption={(props, option) => {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const { key, ...otherProps } = props;
+          return (
+            <li key={option.item.id} {...otherProps}>
+              <Stack
+                direction="row"
+                justifyContent="space-between"
+                width="100%"
+              >
+                <Typography>{option.item.name}</Typography>
+                <Chip
+                  label={`Rs ${numberWithCommas(option.item.price)}`}
+                  size="small"
+                  color="secondary"
+                />
+              </Stack>
+            </li>
+          );
+        }}
       />
 
       {selectedItem && (

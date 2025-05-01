@@ -7,6 +7,7 @@ import OrderFormRemark from "./OrderFormRemark";
 import OrderFromRemarkDetails from "./orderform/OrderFromRemarkDetails";
 import { customerPaymentTotal } from "../utils/customerPaymentTotal";
 import OrderFromVisionTable from "./orderform/OrderFromVisionTable";
+import { formatDateTimeByType } from "../utils/formatDateTimeByType";
 
 interface OrderFormProps {
   invoiceDetail: Invoice | null;
@@ -138,10 +139,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ invoiceDetail }) => {
                     boxShadow: "none",
                   }}
                 >
-                  <Typography
-                    variant="body2"
-                    sx={{ fontWeight: "bold", marginTop: "0.2cm" }}
-                  >
+                  <Typography variant="body2" sx={{ fontWeight: "bold" }}>
                     Refraction by:{" "}
                     {invoiceDetail?.refraction_details?.prescription_type ===
                     "internal"
@@ -149,27 +147,25 @@ const OrderForm: React.FC<OrderFormProps> = ({ invoiceDetail }) => {
                       : invoiceDetail?.refraction_details
                           ?.prescription_type_display}
                   </Typography>
-                  <Typography
-                    variant="body2"
-                    sx={{ fontWeight: "bold", marginTop: "0.2cm" }}
-                  >
+                  <Typography variant="body2" sx={{ fontWeight: "bold" }}>
                     Refraction No:{" "}
                     {invoiceDetail?.customer_details.refraction_number}
                   </Typography>
-                  <Typography
-                    variant="body2"
-                    sx={{ fontWeight: "bold", marginTop: "0.2cm" }}
-                  >
+                  <Typography variant="body2" sx={{ fontWeight: "bold" }}>
                     Staff Member:
                     {invoiceDetail?.order_details.sales_staff_username}
                   </Typography>
                   <hr></hr>
-                  <Typography
-                    variant="body2"
-                    sx={{ fontWeight: "bold", marginTop: "0.2cm" }}
-                  >
+                  <Typography variant="body2" sx={{ fontWeight: "bold" }}>
                     Name{` : `}
                     {invoiceDetail?.customer_details.name}
+                  </Typography>
+                  <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+                    Deliver Date{` : `}
+                    {formatDateTimeByType(
+                      invoiceDetail?.order_details.user_date,
+                      "date"
+                    )}
                   </Typography>
                   <hr></hr>
                   <OrderFromRemarkDetails invoiceDetail={invoiceDetail} />

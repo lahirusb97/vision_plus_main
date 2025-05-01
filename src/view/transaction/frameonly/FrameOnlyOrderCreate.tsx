@@ -94,8 +94,10 @@ export default function FrameOnlyOrderCreate() {
       const url = `?invoice_number=${encodeURIComponent(
         responce.data.invoice_number
       )}`;
-      //send to invoice view
-      navigate(`view/${url}`);
+      // //send to invoice view
+      navigate(
+        `/transaction/invoice/view/${responce.data.invoice_number}${url}`
+      );
     } catch (error) {
       extractErrorMessage(error);
     }

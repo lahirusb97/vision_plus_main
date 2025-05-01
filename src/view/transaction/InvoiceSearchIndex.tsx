@@ -29,7 +29,7 @@ export default function InvoiceSearchIndex() {
     if (invoiceType === "normal") {
       path = `/transaction/normal_order/view/${queryParam}`;
     } else {
-      path = `/transaction/factory_order/create/1/view/${queryParam}`;
+      path = `/transaction/invoice/view/${searchQuery}${queryParam}`;
     }
 
     navigate(path);

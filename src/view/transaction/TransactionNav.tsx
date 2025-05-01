@@ -10,7 +10,11 @@ export default function TransactionNav() {
         path={"/transaction/frame_only_order"}
       />
       <NavButton name="Normal Order" path={"/transaction/normal_order"} />
-      <NavButton name="Order Edit" path={"/transaction/order_edit"} />
+      <NavButton name="Factory Order Edit" path={"/transaction/order_edit"} />
+      <NavButton
+        name="Normal Order Edit"
+        path={"/transaction/normal_order/search"}
+      />
       <NavButton
         name="Factory Order RePayment"
         path={"/transaction/repayment"}
