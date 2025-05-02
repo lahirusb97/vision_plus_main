@@ -9,7 +9,6 @@ import {
   TableRow,
   Paper,
   CircularProgress,
-  IconButton,
 } from "@mui/material";
 import { useNavigate } from "react-router";
 import useGetBankDesposites from "../../../hooks/useGetBankDesposites";
@@ -18,7 +17,6 @@ import { useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import { useGetBankAccounts } from "../../../hooks/useGetBankAccounts";
 import AutocompleteInputField from "../../../components/inputui/DropdownInput";
-import EditIcon from "@mui/icons-material/Edit";
 
 export default function BankDeposite() {
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(dayjs());
@@ -72,8 +70,7 @@ export default function BankDeposite() {
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
               <TableRow>
-                <TableCell>Actions</TableCell>
-
+                <TableCell></TableCell>
                 <TableCell>Bank Name</TableCell>
                 <TableCell>Account Number</TableCell>
                 <TableCell>Amount</TableCell>
@@ -85,20 +82,11 @@ export default function BankDeposite() {
             <TableBody>
               {bankDepositeList?.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={7}>No Deposite Found</TableCell>
+                  <TableCell colSpan={6}>No Deposite Found</TableCell>
                 </TableRow>
               )}
               {bankDepositeList?.map((deposit) => (
                 <TableRow key={deposit.id}>
-                  <TableCell>
-                    <IconButton
-                      size="small"
-                      color="primary"
-                      onClick={() => navigation(`update/${deposit.id}`)}
-                    >
-                      <EditIcon sx={{ fontSize: "1.2rem" }} />
-                    </IconButton>
-                  </TableCell>
                   <TableCell>{deposit.bank_name}</TableCell>
                   <TableCell>{deposit.account_number}</TableCell>
                   <TableCell>{deposit.amount}</TableCell>

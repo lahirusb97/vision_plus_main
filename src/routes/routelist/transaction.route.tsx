@@ -132,7 +132,7 @@ export const transactionRoutes: RouteObject[] = [
         element: <BusTitleCreate />,
       },
       {
-        path: "update/:id",
+        path: "update/:bus_title_id",
         element: <BusTitleUpdate />,
       },
     ],

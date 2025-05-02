@@ -5,6 +5,7 @@ export const busTitleSchema = z.object({
     .string()
     .min(1, "Title is required")
     .max(100, "Title must be less than 100 characters"),
+  is_active: z.boolean(),
 });
 
 export type BusTitleForm = z.infer<typeof busTitleSchema>;

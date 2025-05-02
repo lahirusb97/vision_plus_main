@@ -156,6 +156,7 @@ interface OrderDetails {
   on_hold: false;
   sales_staff_username: string;
   user_date: string | null;
+  bus_title?: string;
 }
 
 interface Invoice {

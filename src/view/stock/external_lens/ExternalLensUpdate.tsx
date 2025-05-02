@@ -88,19 +88,6 @@ export default function ExternalLensUpdate() {
     >
       <TitleText title="External Lens Update" />
       <Controller
-        name="lens_type"
-        control={control}
-        render={({ field }) => (
-          <DropdownInput
-            options={lenseTypes}
-            onChange={field.onChange}
-            labelName="Lens Type"
-            loading={lenseTypesLoading}
-            defaultId={field.value}
-          />
-        )}
-      />
-      <Controller
         name="brand"
         control={control}
         render={({ field }) => (
@@ -113,6 +100,20 @@ export default function ExternalLensUpdate() {
           />
         )}
       />
+      <Controller
+        name="lens_type"
+        control={control}
+        render={({ field }) => (
+          <DropdownInput
+            options={lenseTypes}
+            onChange={field.onChange}
+            labelName="Lens Type"
+            loading={lenseTypesLoading}
+            defaultId={field.value}
+          />
+        )}
+      />
+
       <Controller
         name="coating"
         control={control}

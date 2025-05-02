@@ -1,12 +1,23 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { MaterialReactTable } from "material-react-table";
 import { Box, Typography } from "@mui/material";
 
 import { DatePicker } from "@mui/x-date-pickers";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import useFrameReports from "../../hooks/report/useFrameReports";
 
 const FrameReport = () => {
+  const { frameReportData, setParamsData } = useFrameReports();
+
+  useEffect(() => {
+    setParamsData({
+      start_date: "2025-04-01",
+      end_date: "2025-05-10",
+    });
+  }, []);
+  console.log(frameReportData);
+
   // Define columns
   const columns = useMemo(
     () => [

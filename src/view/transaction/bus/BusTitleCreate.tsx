@@ -2,7 +2,13 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { useNavigate } from "react-router";
-import { TextField, Box, Paper } from "@mui/material";
+import {
+  TextField,
+  Box,
+  Paper,
+  Checkbox,
+  FormControlLabel,
+} from "@mui/material";
 import {
   BusTitleForm,
   busTitleSchema,
@@ -40,11 +46,16 @@ export const BusTitleCreate = () => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <TextField
             fullWidth
-            label="Title"
+            label="Bus Title"
             {...register("title")}
             error={!!errors.title}
             helperText={errors.title?.message}
             margin="normal"
+          />
+
+          <FormControlLabel
+            control={<Checkbox {...register("is_active")} />}
+            label="Activate Title Now "
           />
           <Box sx={{ mt: 1, display: "flex", gap: 2 }}>
             <SubmitCustomBtn

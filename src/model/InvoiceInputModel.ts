@@ -34,6 +34,7 @@ export interface Order {
   on_hold: boolean;
   branch_id: number;
   user_date: string | null;
+  bus_title: number | null;
 }
 
 // External Lens Model

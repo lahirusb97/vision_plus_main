@@ -31,8 +31,9 @@ const CustomerPagination: React.FC<CustomerPaginationProps> = ({
 
   const handlePageSizeChange = (event: SelectChangeEvent<number>) => {
     setPageSize(Number(event.target.value));
-    setPage(1); // Reset to the first page whenever the page size changes
+    // setPage(1); // Reset to the first page whenever the page size changes
     changePageSize(Number(event.target.value)); // Notify parent component about page size change
+    handlePageChange({} as ChangeEvent<unknown>, 1);
   };
 
   return (

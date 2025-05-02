@@ -93,19 +93,6 @@ export default function ExternalLensCreate() {
       >
         <TitleText title="External Lens Create" />
         <Controller
-          name="lens_type"
-          control={control}
-          render={({ field }) => (
-            <DropdownInput
-              options={lenseTypes}
-              onChange={field.onChange}
-              labelName="Lens Type"
-              loading={lenseTypesLoading}
-              defaultId={field.value}
-            />
-          )}
-        />
-        <Controller
           name="brand"
           control={control}
           render={({ field }) => (
@@ -118,6 +105,20 @@ export default function ExternalLensCreate() {
             />
           )}
         />
+        <Controller
+          name="lens_type"
+          control={control}
+          render={({ field }) => (
+            <DropdownInput
+              options={lenseTypes}
+              onChange={field.onChange}
+              labelName="Lens Type"
+              loading={lenseTypesLoading}
+              defaultId={field.value}
+            />
+          )}
+        />
+
         <Controller
           name="coating"
           control={control}

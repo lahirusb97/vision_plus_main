@@ -39,7 +39,9 @@ import { FactoryOrderInputModel } from "../../../model/InvoiceInputModel";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
-
+import useGetBusTitles from "../../../hooks/useGetBusTitles";
+import { BUSID } from "../../../data/staticVariables";
+import AutocompleteInputField from "../../../components/inputui/DropdownInput";
 export default function FactoryInvoiceForm() {
   const { prepareValidation, resetValidation, validationState } =
     useValidationState();
@@ -50,7 +52,15 @@ export default function FactoryInvoiceForm() {
   //HOOKS
   const { singlerefractionNumber, refractionDetail, refractionDetailLoading } =
     useFactoryOrderContext();
-
+  const { busTitlesList, handleBusTitleFilterParams, busTitlesLoading } =
+    useGetBusTitles();
+  const currentBranch = getUserCurentBranch()?.id;
+  useEffect(() => {
+    if (currentBranch === BUSID) {
+      handleBusTitleFilterParams({ search: null, is_active: true });
+      console.log("busTitlesList", busTitlesList);
+    }
+  }, []);
   //Store Data
 
   const FrameInvoiceList = useSelector(
@@ -146,6 +156,7 @@ export default function FactoryInvoiceForm() {
           on_hold: data.on_hold,
           branch_id: data.branch_id,
           user_date: data.user_date,
+          bus_title: BUSID === currentBranch ? data.bus_title : null,
         },
         order_items: [
           ...Object.values(LenseInvoiceList).map((item) => ({
@@ -329,6 +340,26 @@ export default function FactoryInvoiceForm() {
                   )}
                 />
               </LocalizationProvider>
+              {BUSID === currentBranch && (
+                <Box sx={{ width: 300 }}>
+                  <Controller
+                    name="bus_title"
+                    control={methods.control}
+                    render={({ field }) => (
+                      <AutocompleteInputField
+                        options={busTitlesList.map((title) => ({
+                          name: title.title,
+                          id: title.id,
+                        }))}
+                        onChange={field.onChange}
+                        labelName="Lens Factory"
+                        loading={busTitlesLoading}
+                        defaultId={busTitlesList[0]?.id}
+                      />
+                    )}
+                  />
+                </Box>
+              )}
             </Box>
 
             <InvoiceTable />
