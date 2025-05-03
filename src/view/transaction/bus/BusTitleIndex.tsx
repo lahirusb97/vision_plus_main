@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Table,
   TableBody,
@@ -23,6 +23,7 @@ import { useNavigate } from "react-router";
 export default function BusTitleIndex() {
   const navigate = useNavigate();
   const [title, setTitle] = useState("");
+  const staticParam = useMemo(() => ({ is_active: true }), []);
   const {
     busTitlesList,
     busTitlesLoading,
@@ -33,20 +34,20 @@ export default function BusTitleIndex() {
     busTitlePageNavigation,
     busTitlePageSize,
     busTitlesListRefresh,
-  } = useGetBusTitles();
+  } = useGetBusTitles(staticParam);
 
   return (
     <div>
       <TitleText title="Mobile Unit Title of the Day" />
-      <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+      <Box sx={{ display: "flex", gap: 1, alignItems: "center", m: ".5rem 0" }}>
         <TextField
-          fullWidth
           size="small"
           label="Mobile Unit Title Name"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
         <Button
+          size="small"
           variant="contained"
           onClick={() =>
             handleBusTitleFilterParams({ search: title, is_active: null })
@@ -55,6 +56,7 @@ export default function BusTitleIndex() {
           Search
         </Button>
         <Button
+          size="small"
           variant="outlined"
           color="info"
           onClick={() => {
@@ -65,7 +67,15 @@ export default function BusTitleIndex() {
         >
           Reset
         </Button>
+        <Button
+          size="small"
+          variant="contained"
+          onClick={() => navigate(`/transaction/bus/create`)}
+        >
+          Create New Title
+        </Button>
       </Box>
+
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>

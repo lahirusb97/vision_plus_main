@@ -2,9 +2,19 @@ import Box from "@mui/material/Box";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import toast from "react-hot-toast";
-import { Button, Checkbox, TextField, Typography } from "@mui/material";
+import {
+  Button,
+  Checkbox,
+  FormControl,
+  InputLabel,
+  CircularProgress,
+  MenuItem,
+  Select,
+  TextField,
+  Typography,
+} from "@mui/material";
 import {
   FactoryInvoiceFormModel,
   schemaFactoryInvoice,
@@ -41,7 +51,6 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import useGetBusTitles from "../../../hooks/useGetBusTitles";
 import { BUSID } from "../../../data/staticVariables";
-import AutocompleteInputField from "../../../components/inputui/DropdownInput";
 export default function FactoryInvoiceForm() {
   const { prepareValidation, resetValidation, validationState } =
     useValidationState();
@@ -52,16 +61,9 @@ export default function FactoryInvoiceForm() {
   //HOOKS
   const { singlerefractionNumber, refractionDetail, refractionDetailLoading } =
     useFactoryOrderContext();
-  const { busTitlesList, handleBusTitleFilterParams, busTitlesLoading } =
-    useGetBusTitles();
+  const staticTitleParam = useMemo(() => ({ is_active: true }), []);
+  const { busTitlesList, busTitlesLoading } = useGetBusTitles(staticTitleParam);
   const currentBranch = getUserCurentBranch()?.id;
-  useEffect(() => {
-    if (currentBranch === BUSID) {
-      handleBusTitleFilterParams({ search: null, is_active: true });
-      console.log("busTitlesList", busTitlesList);
-    }
-  }, []);
-  //Store Data
 
   const FrameInvoiceList = useSelector(
     (state: RootState) => state.invoice_frame_filer.selectedFrameList
@@ -93,7 +95,14 @@ export default function FactoryInvoiceForm() {
     },
   });
   const discount = methods.watch("discount");
+  // Set defaultId when list is available
+  useEffect(() => {
+    if (busTitlesList.length > 0) {
+      methods.setValue("bus_title", busTitlesList[0].id);
+    }
+  }, [busTitlesList]);
 
+  //Store Data
   useEffect(() => {
     if (singlerefractionNumber) {
       methods.setValue("name", singlerefractionNumber.customer_full_name);
@@ -184,6 +193,7 @@ export default function FactoryInvoiceForm() {
         ],
         order_payments: formatUserPayments(userPayments),
       };
+      console.log("postData", postData);
 
       if (
         Object.keys(externalLenseInvoiceList).length > 0 ||
@@ -278,6 +288,34 @@ export default function FactoryInvoiceForm() {
                 >
                   Refraction Remark - {refractionDetail?.refraction_remark}
                 </Typography>
+
+                <Box
+                  sx={{
+                    display: "flex",
+                    rowGap: 1,
+                    alignItems: "center",
+                    ml: 1,
+                  }}
+                >
+                  {refractionDetail && (
+                    <SugarCataractText
+                      shuger={refractionDetail.shuger}
+                      cataract={refractionDetail.cataract}
+                      blepharitis={refractionDetail.blepharitis}
+                    />
+                  )}
+                  <Box display="flex" alignItems="center">
+                    <Typography variant="body1"> On Hold</Typography>
+                    <Checkbox {...methods.register("on_hold")} />
+                  </Box>
+
+                  <Box display="flex" alignItems="center">
+                    <Typography variant="body1">
+                      | Fiting on Collection
+                    </Typography>
+                    <Checkbox {...methods.register("fitting_on_collection")} />
+                  </Box>
+                </Box>
               </Box>
 
               {/* Passing The Note DAta to show in tthe dialog */}
@@ -296,26 +334,9 @@ export default function FactoryInvoiceForm() {
                 margin: "0 auto",
                 display: "flex",
                 alignItems: "center",
+                justifyContent: "center",
               }}
             >
-              {refractionDetail && (
-                <SugarCataractText
-                  shuger={refractionDetail.shuger}
-                  cataract={refractionDetail.cataract}
-                  blepharitis={refractionDetail.blepharitis}
-                />
-              )}
-
-              <Box ml={1} display="flex" alignItems="center">
-                <Typography variant="body1"> On Hold</Typography>
-                <Checkbox {...methods.register("on_hold")} />
-              </Box>
-
-              <Box display="flex" alignItems="center">
-                <Typography variant="body1">| Fiting on Collection</Typography>
-                <Checkbox {...methods.register("fitting_on_collection")} />
-              </Box>
-
               <HidenNoteDialog note={refractionDetail?.note} />
               <StockDrawerBtn />
               <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -330,6 +351,7 @@ export default function FactoryInvoiceForm() {
                       onChange={(date) => {
                         field.onChange(date?.format("YYYY-MM-DD"));
                       }}
+                      format="YYYY-MM-DD"
                       slotProps={{
                         textField: {
                           fullWidth: false,
@@ -346,16 +368,31 @@ export default function FactoryInvoiceForm() {
                     name="bus_title"
                     control={methods.control}
                     render={({ field }) => (
-                      <AutocompleteInputField
-                        options={busTitlesList.map((title) => ({
-                          name: title.title,
-                          id: title.id,
-                        }))}
-                        onChange={field.onChange}
-                        labelName="Lens Factory"
-                        loading={busTitlesLoading}
-                        defaultId={busTitlesList[0]?.id}
-                      />
+                      <FormControl fullWidth size="small">
+                        <InputLabel id="bus-title-label">
+                          Lens Factory
+                        </InputLabel>
+                        <Select
+                          fullWidth
+                          labelId="bus-title-label"
+                          label="Lens Factory"
+                          {...field}
+                          value={field.value ?? ""}
+                          disabled={busTitlesLoading}
+                        >
+                          {busTitlesLoading ? (
+                            <MenuItem value="">
+                              <CircularProgress size={20} />
+                            </MenuItem>
+                          ) : (
+                            busTitlesList.map((title) => (
+                              <MenuItem key={title.id} value={title.id}>
+                                {title.title}
+                              </MenuItem>
+                            ))
+                          )}
+                        </Select>
+                      </FormControl>
                     )}
                   />
                 </Box>

@@ -16,28 +16,32 @@ export default function OrderFormRemark({ invoiceDetail }: InvoiceProps) {
     <div>
       <Typography variant="body2">
         <strong> Lens Details : </strong>
-        {invoiceDetail?.order_details?.order_items
-          ?.filter((item: OrderItem) => item.lens !== null) // Get only items with a lens
-          ?.map((item: OrderItem, index: number) => (
-            <span key={index}>
-              {item.lens_detail?.type_name || "No Type Available"} {` / `}
-              {item.lens_detail?.brand_name || "No Brand Available"} {` / `}
-              {item.lens_detail?.coating_name || "No Coating Available"}
-              {` / `}
-            </span>
-          ))}
+        {
+          invoiceDetail?.order_details?.order_items
+            ?.filter((item: OrderItem) => item.lens !== null) // Get only items with a lens
+            ?.map((item: OrderItem, index: number) => (
+              <span key={index}>
+                {item.lens_detail?.type_name || "No Type Available"} {` / `}
+                {item.lens_detail?.brand_name || "No Brand Available"} {` / `}
+                {item.lens_detail?.coating_name || "No Coating Available"}
+                {` / `}
+              </span>
+            ))[0]
+        }
 
-        {invoiceDetail?.order_details?.order_items
-          ?.filter((item: OrderItem) => item.external_lens !== null) // Get only items with a lens
-          ?.map((item: ExternalLensOrderItem, index: number) => (
-            <span key={index}>
-              {item.type_name || "No Type Available"} {` / `}
-              {item.brand_name || "No Brand Available"} {` / `}
-              {item.coating_name || "No Coating Available"} {` / `}
-              {item.note !== null ? item.note : ""}
-              {` / `}
-            </span>
-          ))}
+        {
+          invoiceDetail?.order_details?.order_items
+            ?.filter((item: OrderItem) => item.external_lens !== null) // Get only items with a lens
+            ?.map((item: ExternalLensOrderItem, index: number) => (
+              <span key={index}>
+                {item.type_name || "No Type Available"} {` / `}
+                {item.brand_name || "No Brand Available"} {` / `}
+                {item.coating_name || "No Coating Available"} {` / `}
+                {item.note !== null ? item.note : ""}
+                {` / `}
+              </span>
+            ))[0] //! Show only one Lense TYPE,COADING FACTORY
+        }
       </Typography>
       <Typography variant="body2">
         {invoiceDetail.order_details?.pd &&

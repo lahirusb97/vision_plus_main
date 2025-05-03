@@ -36,6 +36,7 @@ export default function InvoiceOtherItemsTable({
   onRemoveItem,
 }: InvoiceItemsTableProps) {
   const { watch } = useFormContext();
+  const grandTotal = total - (watch("discount") || 0);
   return (
     <Box sx={{ mt: 1 }}>
       <TableContainer component={Paper} elevation={3}>
@@ -100,6 +101,17 @@ export default function InvoiceOtherItemsTable({
                 </Typography>
               </TableCell>
               <TableCell />
+            </TableRow>
+            <TableRow>
+              <TableCell colSpan={4} sx={{ fontWeight: "bold" }} align="right">
+                Balance
+              </TableCell>
+              <TableCell sx={{ fontWeight: "bold" }} align="right">
+                {grandTotal -
+                  (parseInt(watch("online_transfer") || 0) +
+                    parseInt(watch("credit_card") || 0) +
+                    parseInt(watch("cash") || 0))}
+              </TableCell>
             </TableRow>
           </TableBody>
         </Table>

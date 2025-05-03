@@ -17,6 +17,7 @@ import { useAxiosPost } from "../../../hooks/useAxiosPost";
 import SubmitCustomBtn from "../../../components/common/SubmiteCustomBtn";
 import { extractErrorMessage } from "../../../utils/extractErrorMessage";
 import TitleText from "../../../components/TitleText";
+import BackButton from "../../../components/BackButton";
 
 export const BusTitleCreate = () => {
   const navigate = useNavigate();
@@ -42,6 +43,7 @@ export const BusTitleCreate = () => {
   return (
     <Box sx={{ minWidth: 400, mx: "auto", mt: 4 }}>
       <Paper elevation={1} sx={{ p: 1 }}>
+        <BackButton />
         <TitleText title="Create Bus Title" />
         <form onSubmit={handleSubmit(onSubmit)}>
           <TextField

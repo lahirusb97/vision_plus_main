@@ -148,7 +148,8 @@ export default function OrderFromVisionTable({
                   textAlign: "center",
                 }}
               >
-                {RefractionDetails?.right_eye_dist_axis}
+                {planoConvert(RefractionDetails?.right_eye_dist_axis)}
+                {/* Right AXIS */}
               </TableCell>
 
               {/* Left Eye Data */}
@@ -160,7 +161,7 @@ export default function OrderFromVisionTable({
                   textAlign: "center",
                 }}
               >
-                {RefractionDetails?.left_eye_dist_sph}
+                {planoConvert(RefractionDetails?.left_eye_dist_sph)}
                 {/* sph */}
               </TableCell>
               <TableCell
@@ -171,7 +172,7 @@ export default function OrderFromVisionTable({
                   textAlign: "center",
                 }}
               >
-                {RefractionDetails?.left_eye_dist_cyl} {/* cyl */}
+                {planoConvert(RefractionDetails?.left_eye_dist_cyl)} {/* cyl */}
               </TableCell>
               <TableCell
                 sx={{
@@ -181,7 +182,7 @@ export default function OrderFromVisionTable({
                   textAlign: "center",
                 }}
               >
-                {RefractionDetails?.left_eye_dist_axis}
+                {planoConvert(RefractionDetails?.left_eye_dist_axis)}
                 {/* axis */}
               </TableCell>
             </TableRow>
@@ -194,7 +195,9 @@ export default function OrderFromVisionTable({
                   textAlign: "center",
                 }}
               >
-                {RefractionDetails?.right_eye_near_sph || "\u00A0"}
+                {planoConvert(RefractionDetails?.right_eye_near_sph) ||
+                  "\u00A0"}
+                {/* Right AXIS  */}
               </TableCell>
               <TableCell
                 colSpan={2}
@@ -208,7 +211,8 @@ export default function OrderFromVisionTable({
                   textAlign: "center",
                 }}
               >
-                {RefractionDetails?.left_eye_near_sph || "\u00A0"}
+                {planoConvert(RefractionDetails?.left_eye_near_sph) || "\u00A0"}
+                {/* Left AXIS  */}
               </TableCell>
             </TableRow>
           </TableBody>

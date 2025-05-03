@@ -31,13 +31,10 @@ const useFrameReports = () => {
     setLoading(true);
     try {
       //TODO ASS MODEL
-      const response: { data: Invoice } = await axiosClient.get(
-        `frames/report/`,
-        {
-          params: params,
-          signal: controller.signal,
-        }
-      );
+      const response = await axiosClient.get(`frames/report/`, {
+        params: params,
+        signal: controller.signal,
+      });
       // Only update state if this request wasn't aborted
       if (!controller.signal.aborted) {
         setData(response.data);

@@ -181,7 +181,7 @@ export default function PowerToLenseFilter({
           );
 
           setSelectedLenseRight(responce.data);
-          setRightPrice(responce.data.price || "0");
+          setRightPrice(parseInt(responce.data.price).toString() || "0");
           toast.success("Sujested Lens Match Found Plese Check Lense Powers");
         } catch (error) {
           extractErrorMessage(error);
@@ -232,7 +232,7 @@ export default function PowerToLenseFilter({
           );
 
           setSelectedLenseLeft(responce.data);
-          setLeftPrice(responce.data.price || "0");
+          setLeftPrice(parseInt(responce.data.price).toString() || "0");
           toast.success("Sujested Lens Match Found Plese Check Lense Powers");
         } catch (error) {
           if (error instanceof AxiosError) {

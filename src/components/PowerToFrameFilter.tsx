@@ -108,7 +108,7 @@ export default function PowerToFrameFilter() {
           item.color === searchFrame.color
       );
       if (matchingItems.length === 1) {
-        setPrice(matchingItems[0].price);
+        setPrice(parseInt(matchingItems[0].price).toString());
         setSelectedFrame({ ...matchingItems[0] });
       } else if (matchingItems.length > 1) {
         toast.error("Multiple frames found check the stock ");

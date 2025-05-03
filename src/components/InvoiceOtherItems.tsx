@@ -90,7 +90,7 @@ export default function InvoiceOtherItems({
 
       {selectedItem && (
         <Box mt={2} display="flex" gap={1} alignItems="center">
-          <Grid container spacing={2}>
+          <Grid container spacing={2} alignItems="center">
             <Grid item xs={4}>
               <TextField
                 size="small"
@@ -110,7 +110,7 @@ export default function InvoiceOtherItems({
                 size="small"
                 label="Unit Price"
                 type="number"
-                value={price.toFixed(2)}
+                value={price}
                 onChange={(e) => setPrice(Math.max(0, Number(e.target.value)))}
                 InputProps={{
                   startAdornment: <Typography>Rs</Typography>,
@@ -122,18 +122,9 @@ export default function InvoiceOtherItems({
             </Grid>
 
             <Grid item xs={4}>
-              <TextField
-                size="small"
-                label="Subtotal"
-                value={(qty * price).toFixed(2)}
-                InputProps={{
-                  readOnly: true,
-                  startAdornment: <Typography>Rs</Typography>,
-                }}
-                fullWidth
-                variant="outlined"
-                color="primary"
-              />
+              <Typography>
+                Subtotal : Rs. {numberWithCommas(qty * price)}
+              </Typography>
             </Grid>
           </Grid>
         </Box>

@@ -16,4 +16,4 @@ export const frameSizeHalf: string = "Half";
 export const frameSizeFull: string = "Full";
 export const frameSizeRimless: string = "Rimless";
 
-export const BUSID: number = 1;
+export const BUSID: number = 3;

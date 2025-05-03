@@ -13,14 +13,14 @@ interface PaginationParams {
   page_size: number;
   page: number;
 }
-const useGetBusTitles = () => {
+const useGetBusTitles = ({ is_active }: { is_active: boolean | null }) => {
   //use null or [] base on scenario
   const [Data, setData] = useState<BusTitleModel[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<boolean>(false);
   const [params, setParams] = useState<FilterParams>({
-    is_active: null,
+    is_active: is_active,
     search: null,
   });
   const [paginationParams, setPaginationParams] = useState<PaginationParams>({

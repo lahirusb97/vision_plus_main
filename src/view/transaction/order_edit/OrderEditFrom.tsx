@@ -2,10 +2,20 @@ import Box from "@mui/material/Box";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import toast from "react-hot-toast";
-import { Button, Checkbox, TextField, Typography } from "@mui/material";
+import {
+  Button,
+  Checkbox,
+  CircularProgress,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+  Typography,
+} from "@mui/material";
 import {
   FactoryInvoiceFormModel,
   schemaFactoryInvoice,
@@ -49,13 +59,21 @@ import { FactoryOrderInputModel } from "../../../model/InvoiceInputModel";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
+import useGetBusTitles from "../../../hooks/useGetBusTitles";
+import { BUSID } from "../../../data/staticVariables";
+import { getUserCurentBranch } from "../../../utils/authDataConver";
 
 export default function OrderEditFrom() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   // SET VALUES FOR PATIENT TABLE
+
+  const staticTitleParam = useMemo(() => ({ is_active: true }), []);
+  const { busTitlesList, busTitlesLoading } = useGetBusTitles(staticTitleParam);
   const { prepareValidation, resetValidation, validationState } =
     useValidationState();
+  const currentBranch = getUserCurentBranch()?.id;
+
   const {
     invoiceDetail,
     invoiceDetailLoading,
@@ -149,6 +167,11 @@ export default function OrderEditFrom() {
       methods.setValue("left_pd", invoiceDetail?.order_details?.left_pd);
       methods.setValue("right_pd", invoiceDetail?.order_details?.right_pd);
       methods.setValue("user_date", invoiceDetail?.order_details?.user_date);
+
+      methods.setValue(
+        "bus_title",
+        BUSID === currentBranch ? invoiceDetail.order_details.bus_title : null
+      );
     }
     if (invoiceDetail && !invoiceDetailLoading && loadState === 0) {
       invoiceDetail?.order_details.order_items
@@ -293,6 +316,7 @@ export default function OrderEditFrom() {
         fitting_on_collection: data.fitting_on_collection,
         on_hold: data.on_hold,
         user_date: data.user_date,
+        bus_title: BUSID === currentBranch ? data.bus_title : null,
       },
       order_items: [
         ...Object.values(LenseInvoiceList).map((item) => ({
@@ -396,6 +420,49 @@ export default function OrderEditFrom() {
               >
                 Refraction Remark - {refractionDetail?.refraction_remark}
               </Typography>
+              <Box
+                sx={{
+                  display: "flex",
+                  rowGap: 1,
+                  alignItems: "center",
+                  ml: 1,
+                }}
+              >
+                {refractionDetail && (
+                  <SugarCataractText
+                    shuger={refractionDetail.shuger}
+                    cataract={refractionDetail.cataract}
+                    blepharitis={refractionDetail.blepharitis}
+                  />
+                )}
+                <Box ml={1} display="flex" alignItems="center">
+                  <Typography variant="body1"> On Hold</Typography>
+                  <Checkbox
+                    {...methods.register("on_hold")}
+                    checked={methods.watch("on_hold") || false} // Add fallback to false
+                    onChange={(e) =>
+                      methods.setValue("on_hold", e.target.checked)
+                    }
+                  />
+                </Box>
+
+                <Box display="flex" alignItems="center">
+                  <Typography variant="body1">
+                    | Fiting on Collection
+                  </Typography>
+
+                  <Checkbox
+                    {...methods.register("fitting_on_collection")}
+                    checked={methods.watch("fitting_on_collection") || false} // Add fallback to false
+                    onChange={(e) =>
+                      methods.setValue(
+                        "fitting_on_collection",
+                        e.target.checked
+                      )
+                    }
+                  />
+                </Box>
+              </Box>
             </Box>
 
             {/* sending data trugh invoide details with usefrom hook */}
@@ -415,35 +482,9 @@ export default function OrderEditFrom() {
               margin: "0 auto",
               display: "flex",
               alignItems: "center",
+              justifyContent: "center",
             }}
           >
-            {refractionDetail && (
-              <SugarCataractText
-                shuger={refractionDetail.shuger}
-                cataract={refractionDetail.cataract}
-                blepharitis={refractionDetail.blepharitis}
-              />
-            )}
-            <Box ml={1} display="flex" alignItems="center">
-              <Typography variant="body1"> On Hold</Typography>
-              <Checkbox
-                {...methods.register("on_hold")}
-                checked={methods.watch("on_hold") || false} // Add fallback to false
-                onChange={(e) => methods.setValue("on_hold", e.target.checked)}
-              />
-            </Box>
-
-            <Box display="flex" alignItems="center">
-              <Typography variant="body1">| Fiting on Collection</Typography>
-
-              <Checkbox
-                {...methods.register("fitting_on_collection")}
-                checked={methods.watch("fitting_on_collection") || false} // Add fallback to false
-                onChange={(e) =>
-                  methods.setValue("fitting_on_collection", e.target.checked)
-                }
-              />
-            </Box>
             <HidenNoteDialog note={invoiceDetail?.refraction_details?.note} />
 
             <StockDrawerBtn />
@@ -459,6 +500,7 @@ export default function OrderEditFrom() {
                     onChange={(date) => {
                       field.onChange(date?.format("YYYY-MM-DD"));
                     }}
+                    format="YYYY-MM-DD"
                     slotProps={{
                       textField: {
                         fullWidth: false,
@@ -469,6 +511,39 @@ export default function OrderEditFrom() {
                 )}
               />
             </LocalizationProvider>
+            {BUSID === currentBranch && (
+              <Box sx={{ width: 300 }}>
+                <Controller
+                  name="bus_title"
+                  control={methods.control}
+                  render={({ field }) => (
+                    <FormControl fullWidth size="small">
+                      <InputLabel id="bus-title-label">Lens Factory</InputLabel>
+                      <Select
+                        fullWidth
+                        labelId="bus-title-label"
+                        label="Lens Factory"
+                        {...field}
+                        value={field.value ?? ""}
+                        disabled={busTitlesLoading}
+                      >
+                        {busTitlesLoading ? (
+                          <MenuItem value="">
+                            <CircularProgress size={20} />
+                          </MenuItem>
+                        ) : (
+                          busTitlesList.map((title) => (
+                            <MenuItem key={title.id} value={title.id}>
+                              {title.title}
+                            </MenuItem>
+                          ))
+                        )}
+                      </Select>
+                    </FormControl>
+                  )}
+                />
+              </Box>
+            )}
           </Box>
           <EditInvoiceTable
             paymentList={invoiceDetail?.order_details?.order_payments ?? []}

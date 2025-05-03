@@ -131,6 +131,26 @@ export default function InvoiceOtherItemsTableEdit({
               </TableCell>
               <TableCell />
             </TableRow>
+            <TableRow>
+              <TableCell
+                sx={{ fontWeight: "bold", border: "none" }}
+                align="right"
+                colSpan={4}
+              >
+                Balance
+              </TableCell>
+              <TableCell
+                sx={{ fontWeight: "bold", border: "none" }}
+                align="right"
+                colSpan={5}
+              >
+                {grandTotal -
+                  totalPrePayments -
+                  (parseInt(watch("online_transfer") || 0) +
+                    parseInt(watch("credit_card") || 0) +
+                    parseInt(watch("cash") || 0))}
+              </TableCell>
+            </TableRow>
           </TableBody>
         </Table>
       </TableContainer>
