@@ -261,39 +261,6 @@ export default function LensFilter({
         <Box>
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
             <LensFilterPowers
-              side="left"
-              sph={lensState.leftLens.left_sph}
-              cyl={lensState.leftLens.left_cyl}
-              add={lensState.leftLens.left_add}
-              nameSph="left_sph"
-              nameCyl="left_cyl"
-              nameAdd="left_add"
-              handleLensInputChange={handleLeftLensChange}
-              namePrice="left_price"
-              price={lensState.leftLens.left_price}
-            />
-            <TextField
-              sx={{ width: 80, height: 32, mb: 2 }}
-              size="small"
-              label="Left Qty"
-              type="number"
-              variant="outlined"
-              value={leftByQty}
-              onChange={(e) => setLeftByQty(parseInt(e.target.value))}
-              inputProps={{ min: 0 }}
-            />
-            <Typography variant="body2">
-              Quantity : {lensState.leftQty || "N/A"}
-            </Typography>
-            <IconButton onClick={handleLeftLensSearch}>
-              <Search />
-            </IconButton>
-            <Button onClick={handleLeftLenseAddToCart} variant="contained">
-              Add
-            </Button>
-          </Box>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            <LensFilterPowers
               side="right"
               sph={lensState.rightLens.right_sph}
               cyl={lensState.rightLens.right_cyl}
@@ -322,6 +289,39 @@ export default function LensFilter({
               <Search />
             </IconButton>
             <Button onClick={handleRightLenseAddToCart} variant="contained">
+              Add
+            </Button>
+          </Box>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <LensFilterPowers
+              side="left"
+              sph={lensState.leftLens.left_sph}
+              cyl={lensState.leftLens.left_cyl}
+              add={lensState.leftLens.left_add}
+              nameSph="left_sph"
+              nameCyl="left_cyl"
+              nameAdd="left_add"
+              handleLensInputChange={handleLeftLensChange}
+              namePrice="left_price"
+              price={lensState.leftLens.left_price}
+            />
+            <TextField
+              sx={{ width: 80, height: 32, mb: 2 }}
+              size="small"
+              label="Left Qty"
+              type="number"
+              variant="outlined"
+              value={leftByQty}
+              onChange={(e) => setLeftByQty(parseInt(e.target.value))}
+              inputProps={{ min: 0 }}
+            />
+            <Typography variant="body2">
+              Quantity : {lensState.leftQty || "N/A"}
+            </Typography>
+            <IconButton onClick={handleLeftLensSearch}>
+              <Search />
+            </IconButton>
+            <Button onClick={handleLeftLenseAddToCart} variant="contained">
               Add
             </Button>
           </Box>
