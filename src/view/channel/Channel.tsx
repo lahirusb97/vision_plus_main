@@ -32,9 +32,17 @@ import HighlightedDatePicker from "../../components/HighlightedDatePicker";
 import OnlinePayInput from "../../components/inputui/OnlinePayInput";
 import { formatUserPayments } from "../../utils/formatUserPayments";
 import AppointmentDatePicker from "../../components/AppointmentDatePicker";
+import useGetAppointmentSlots from "../../hooks/useGetAppointmentSlots";
+import { useEffect } from "react";
 
 const Channel = () => {
   const { data: doctorList, loading } = useGetDoctors();
+  const {
+    appointmentSlots,
+    setappointmentSlotsParams,
+    appointmentSlotsError,
+    appointmentSlotsLoading,
+  } = useGetAppointmentSlots();
   const navigate = useNavigate();
   const methods = useForm<ChannelAppointmentForm>({
     resolver: zodResolver(ChannelAppointmentSchema),
@@ -80,6 +88,14 @@ const Channel = () => {
   const cashAmount = Number(methods.watch("cash") || 0);
   const cardAmount = Number(methods.watch("credit_card") || 0);
   const onlineAmount = Number(methods.watch("online_transfer") || 0);
+  useEffect(() => {
+    if (watch("doctor_id") && watch("channel_date")) {
+      setappointmentSlotsParams({
+        doctor_id: watch("doctor_id"),
+        date: dayjs(watch("channel_date")).format("YYYY-MM-DD"),
+      });
+    }
+  }, [watch("doctor_id"), watch("channel_date")]);
   return (
     <FormProvider {...methods}>
       <Box
@@ -106,31 +122,6 @@ const Channel = () => {
           {/* Doctor Name */}
 
           <ChannelPatientDetail />
-          {/* <Box sx={{ display: "flex", gap: 2, mt: 1 }}>
-            <TextField
-              size="small"
-              variant="outlined"
-              fullWidth
-              label="Patient Name"
-              {...methods.register("name")}
-            />
-            <TextField
-              size="small"
-              variant="outlined"
-              fullWidth
-              label="Patient Contact"
-              {...methods.register("contact_number")}
-            />
-          </Box> */}
-
-          {/* <TextField
-            size="small"
-            variant="outlined"
-            fullWidth
-            label="Patient Address"
-            {...methods.register("address")}
-            sx={{ mt: 1, mb: 1 }}
-          /> */}
 
           <Controller
             name="doctor_id" // Field name in the form
@@ -168,7 +159,13 @@ const Channel = () => {
                 )}
               />
             </LocalizationProvider>
-
+            <Typography>
+              Next Number{" "}
+              {watch("doctor_id") && watch("channel_date")
+                ? (appointmentSlots?.total_appointments || 0) + 1
+                : 0}
+              {console.log(appointmentSlots)}
+            </Typography>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <Controller
                 name="time"

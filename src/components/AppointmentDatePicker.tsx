@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   DatePicker,
   LocalizationProvider,
@@ -39,12 +39,9 @@ export default function AppointmentDatePicker({
   label = "Select Date",
   doctorId, // Default doctorId
 }: HighlightedDatePickerProps) {
-  const [isOpen, setIsOpen] = useState(false);
-  const {
-    doctorShedule: schedules,
-    doctorSheduleLoading,
-    error,
-  } = useGetDoctorShedule(doctorId);
+  // const [isOpen, setIsOpen] = useState(false);
+  const { doctorShedule: schedules, doctorSheduleLoading } =
+    useGetDoctorShedule(doctorId);
 
   // Fetch data when date picker opens
 
@@ -80,8 +77,8 @@ export default function AppointmentDatePicker({
           onDateChange(newValue ? newValue.format("YYYY-MM-DD") : null);
         }}
         disabled={!doctorId}
-        onOpen={() => setIsOpen(true)}
-        onClose={() => setIsOpen(false)}
+        // onOpen={() => setIsOpen(true)}
+        // onClose={() => setIsOpen(false)}
         slots={{
           day: (props) => {
             const dateStr = dayjs(props.day).format("YYYY-MM-DD");
@@ -103,6 +100,10 @@ export default function AppointmentDatePicker({
 
             return <PickersDay {...props} />;
           },
+        }}
+        shouldDisableDate={(date) => {
+          const dateStr = dayjs(date).format("YYYY-MM-DD");
+          return !scheduleMap[dateStr]; // disables dates not in the schedule
         }}
         slotProps={{
           textField: {

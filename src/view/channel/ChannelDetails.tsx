@@ -47,7 +47,7 @@ function ChannelDetails() {
   } = useGetChannelDetails();
 
   //handle Filters
-
+  console.log(channelList);
   const handleFilter = () => {
     searchChannels({
       doctor: doctorInput,

@@ -11,11 +11,14 @@ import {
   CircularProgress,
   Box,
   Typography,
+  IconButton,
 } from "@mui/material";
+import { Edit } from "@mui/icons-material";
 
 import { useGetOtherIncomes } from "../../../hooks/useGetOtherIncomes";
+import { OtherIncomeCategory } from "../../../model/OtherIncomeCategory";
 
-export default function OtherIncomeIndex() {
+export default function OtherIncomeManage() {
   const navigate = useNavigate();
   const { otherIncomeList, otherIncomeListLoading } = useGetOtherIncomes();
 
@@ -27,7 +30,7 @@ export default function OtherIncomeIndex() {
         alignItems="center"
         mb={2}
       >
-        <Typography variant="h6">Recived Other Incomes</Typography>
+        <Typography variant="h6">Other Income Categories</Typography>
       </Box>
       <Box
         display="flex"
@@ -35,14 +38,8 @@ export default function OtherIncomeIndex() {
         alignItems="center"
         mb={2}
       >
-        <Button
-          variant="contained"
-          onClick={() => navigate("add_other_income")}
-        >
-          Add New Income
-        </Button>
-        <Button variant="outlined" onClick={() => navigate("manage")}>
-          Manage Income Category
+        <Button variant="contained" onClick={() => navigate("create")}>
+          Create New Income Category
         </Button>
       </Box>
 
@@ -61,11 +58,28 @@ export default function OtherIncomeIndex() {
               </TableRow>
             </TableHead>
             <TableBody>
-              <TableRow>
-                <TableCell colSpan={3} align="center">
-                  In Development
-                </TableCell>
-              </TableRow>
+              {otherIncomeList?.map((income: OtherIncomeCategory) => (
+                <TableRow key={income.id}>
+                  <TableCell align="left">
+                    <IconButton
+                      size="small"
+                      onClick={() => navigate(`update/${income.id}`)}
+                    >
+                      <Edit sx={{ fontSize: "1rem" }} />
+                    </IconButton>
+                  </TableCell>
+                  <TableCell>{income.name}</TableCell>
+                  <TableCell>{income.description}</TableCell>
+                </TableRow>
+              ))}
+
+              {otherIncomeList?.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={3} align="center">
+                    No income categories found.
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </TableContainer>

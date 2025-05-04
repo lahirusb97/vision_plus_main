@@ -1,27 +1,31 @@
-import React from "react";
-import { useGetOtherIncomes } from "../../../hooks/useGetOtherIncomes";
-import AutocompleteInputField from "../../../components/inputui/DropdownInput";
-import { Controller, useForm } from "react-hook-form";
+import React, { useEffect } from "react";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useParams } from "react-router";
+import { Paper, TextField } from "@mui/material";
+import AutocompleteInputField from "../../../components/inputui/DropdownInput";
+import SubmitCustomBtn from "../../../components/common/SubmiteCustomBtn";
+import TitleText from "../../../components/TitleText";
+import { useGetOtherIncomes } from "../../../hooks/useGetOtherIncomes";
+import { useAxiosPost } from "../../../hooks/useAxiosPost";
 import {
   AddOtherIncomeModel,
   schemaAddOtherIncome,
 } from "../../../validations/schemaAddOtherIncome";
 import { getUserCurentBranch } from "../../../utils/authDataConver";
-import { Paper, TextField } from "@mui/material";
-import SubmitCustomBtn from "../../../components/common/SubmiteCustomBtn";
-import { useAxiosPost } from "../../../hooks/useAxiosPost";
-import { extractErrorMessage } from "../../../utils/extractErrorMessage";
-import TitleText from "../../../components/TitleText";
 import toast from "react-hot-toast";
-export default function AddOtherIncome() {
+import axios from "axios";
+import { extractErrorMessage } from "../../../utils/extractErrorMessage";
+
+export default function UpdateOtherIncomePayment() {
+  const { id } = useParams(); // assumes route is /other-incomes/:id/edit
   const { otherIncomeList, otherIncomeListLoading } = useGetOtherIncomes();
-  const { postHandler, postHandlerError, postHandlerloading } = useAxiosPost();
+  const { postHandlerError, postHandlerloading } = useAxiosPost();
+
   const {
     control,
     handleSubmit,
     formState: { errors },
-
     register,
     reset,
   } = useForm<AddOtherIncomeModel>({
@@ -33,20 +37,39 @@ export default function AddOtherIncome() {
       note: "",
     },
   });
-  const onSubmit = async (data: AddOtherIncomeModel) => {
-    console.log(data);
-    try {
-      await postHandler(`other-incomes/`, data);
 
-      reset();
-      toast.success("Saved");
+  // Fetch existing data
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const res = await axios.get(`/other-incomes/${id}/`);
+        const data = res.data;
+        reset({
+          branch: data.branch,
+          category: data.category,
+          amount: data.amount,
+          note: data.note || "",
+        });
+      } catch (error) {
+        extractErrorMessage(error);
+      }
+    }
+    if (id) fetchData();
+  }, [id]);
+
+  // Update handler
+  const onSubmit = async (data: AddOtherIncomeModel) => {
+    try {
+      await axios.put(`/other-incomes/${id}/`, data);
+      toast.success("Updated successfully");
     } catch (error) {
       extractErrorMessage(error);
     }
   };
+
   return (
     <div>
-      <TitleText title="Place New Other Income" />
+      <TitleText title="Update Other Income" />
       <Paper
         component={"form"}
         onSubmit={handleSubmit(onSubmit)}
@@ -75,19 +98,14 @@ export default function AddOtherIncome() {
         />
         <TextField
           sx={{ display: "none" }}
-          inputProps={{
-            min: 0,
-          }}
-          {...register("branch", {
-            setValueAs: (value) => (value === "" ? undefined : Number(value)),
-          })}
+          inputProps={{ min: 0 }}
+          {...register("branch")}
           label="Branch Id"
           type="number"
           fullWidth
           variant="outlined"
           error={!!errors.branch}
           helperText={errors.branch?.message}
-          defaultValue={getUserCurentBranch()?.id}
         />
         <TextField
           size="small"
@@ -109,7 +127,7 @@ export default function AddOtherIncome() {
           helperText={errors.note?.message}
         />
         <SubmitCustomBtn
-          btnText="Add Other Income"
+          btnText="Update Other Income"
           loading={postHandlerloading}
           isError={postHandlerError}
         />
