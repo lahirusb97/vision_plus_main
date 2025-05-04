@@ -103,7 +103,7 @@ const CheckInIndex = () => {
                     ) : (
                       <CircleIcon sx={{ color: "green", fontSize: "1rem" }} />
                     )}
-                    {!row.fitting_on_collection && (
+                    {row.fitting_on_collection && (
                       <CircleIcon sx={{ color: "blue", fontSize: "1rem" }} />
                     )}
                   </Box>

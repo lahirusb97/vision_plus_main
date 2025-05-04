@@ -12,6 +12,7 @@ import { useState, useEffect, useRef } from "react";
 
 import { CheckinInvoiceModel } from "../../model/CheckinInvoiceModel";
 import { progressStatus } from "../../utils/progressState";
+import { formatDateTimeByType } from "../../utils/formatDateTimeByType";
 interface SelectableTableProps {
   data: CheckinInvoiceModel[];
   loading: boolean;
@@ -90,9 +91,14 @@ const SelectableTable = ({
                 onChange={handleSelectAll}
               />
             </TableCell>
-            <TableCell>Invoice</TableCell>
             <TableCell>Date</TableCell>
-            <TableCell>Status</TableCell>
+
+            <TableCell>Invoice</TableCell>
+
+            <TableCell>Progress</TableCell>
+            <TableCell>
+              <b>Status</b>
+            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -111,10 +117,20 @@ const SelectableTable = ({
                   onChange={() => handleSelectItem(item.id)}
                 />
               </TableCell>
+              <TableCell sx={{ m: 0, p: 0 }}>
+                {formatDateTimeByType(item.invoice_date)}
+              </TableCell>
+
               <TableCell sx={{ m: 0, p: 0 }}>{item.invoice_number}</TableCell>
-              <TableCell sx={{ m: 0, p: 0 }}>{item.invoice_date}</TableCell>
               <TableCell sx={{ m: 0, p: 0 }}>
                 {progressStatus(item.progress_status)}
+              </TableCell>
+              <TableCell>
+                {item.lens_arrival_status == null
+                  ? "_"
+                  : item.lens_arrival_status == "received"
+                  ? "Received"
+                  : "Not Received"}
               </TableCell>
             </TableRow>
           ))}

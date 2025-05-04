@@ -54,7 +54,7 @@ export const ChannelPaymentTable = ({
       <Table size="small">
         <TableHead>
           <TableRow sx={{ bgcolor: "orange" }}>
-            <TableCell>Channel No</TableCell>
+            <TableCell>Channel ID</TableCell>
             <TableCell>Cash</TableCell>
             <TableCell>Card</TableCell>
             <TableCell>Online</TableCell>
@@ -86,7 +86,7 @@ export const ChannelPaymentTable = ({
           ) : (
             paginatedChannel.map((row, index) => (
               <TableRow key={index}>
-                <TableCell>{row.channel_no}</TableCell>
+                <TableCell>{row.appointment_id}</TableCell>
                 <TableCell>{row.amount_cash}</TableCell>
                 <TableCell>{row.amount_credit_card}</TableCell>
                 <TableCell>{row.amount_online}</TableCell>

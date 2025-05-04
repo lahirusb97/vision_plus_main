@@ -31,6 +31,7 @@ import ChannelPatientDetail from "./apointments/ChannelPatientDetail";
 import HighlightedDatePicker from "../../components/HighlightedDatePicker";
 import OnlinePayInput from "../../components/inputui/OnlinePayInput";
 import { formatUserPayments } from "../../utils/formatUserPayments";
+import AppointmentDatePicker from "../../components/AppointmentDatePicker";
 
 const Channel = () => {
   const { data: doctorList, loading } = useGetDoctors();
@@ -152,7 +153,7 @@ const Channel = () => {
                 name="channel_date"
                 control={control}
                 render={({ field }) => (
-                  <HighlightedDatePicker
+                  <AppointmentDatePicker
                     selectedDate={
                       field.value
                         ? dayjs(field.value).format("YYYY-MM-DD")
