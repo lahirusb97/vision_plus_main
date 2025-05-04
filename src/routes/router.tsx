@@ -16,6 +16,7 @@ import SelectBrancheIndex from "../view/SelectBrancheIndex";
 import { reportRoutes } from "./routelist/reports.route";
 import Login from "../view/auth/login";
 import RegisterUser from "../view/auth/RegisterUser";
+import CheckInIndex from "../view/checkin/CheckInIndex";
 
 export const router = createBrowserRouter([
   {
@@ -32,6 +33,10 @@ export const router = createBrowserRouter([
         path: "transaction",
         element: <ProtectedChildRoute />,
         children: transactionRoutes,
+      },
+      {
+        path: "search",
+        element: <CheckInIndex />,
       },
       {
         path: "checkin",

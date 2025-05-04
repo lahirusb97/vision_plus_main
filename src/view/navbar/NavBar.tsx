@@ -8,6 +8,7 @@ import MasterIcon from "../../assets/icons/navbar/Master.png";
 import MessangerIcon from "../../assets/icons/navbar/Messenger.png";
 import RefractionIcon from "../../assets/icons/navbar/Refraction.png";
 import ReportsIcon from "../../assets/icons/navbar/Reports.png";
+import Search from "../../assets/icons/navbar/Search.png";
 import StockIcon from "../../assets/icons/navbar/Stock.png";
 import TransationIcon from "../../assets/icons/navbar/Transation.png";
 import UserIcon from "../../assets/icons/navbar/User.png";
@@ -21,6 +22,7 @@ import { LogoutOutlined } from "@mui/icons-material";
 import { useLocation, useNavigate } from "react-router";
 import UserNav from "../user/UserNav";
 import CheckInNav from "../checkin/CheckInNav";
+import SearchNav from "../search/SearchNav";
 import AccountNav from "../account/AccountNav";
 import {
   deleteUserData,
@@ -47,6 +49,13 @@ export default function NavBar() {
       icon: TransationIcon,
       label: "Transaction",
       nav: TransactionNav,
+    },
+    {
+      id: 2,
+      path: "search",
+      icon: Search,
+      label: "Search ",
+      nav: SearchNav,
     },
     {
       id: 2,

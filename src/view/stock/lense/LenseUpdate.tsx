@@ -83,7 +83,7 @@ const LenseUpdate = () => {
         elevation={3}
       >
         <Typography variant="h6" fontWeight="bold" paddingLeft="9px">
-          Lense Update
+          Lense Quantity Update
         </Typography>
 
         <Box sx={{ marginY: 2 }}>
