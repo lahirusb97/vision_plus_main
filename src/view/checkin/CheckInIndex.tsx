@@ -16,12 +16,12 @@ import useGetFactoryInvoices from "../../hooks/useGetFactoryInvoices";
 import { dateAndTimeFormat } from "../../utils/dateAndTimeFormat";
 import { progressStatus } from "../../utils/progressState";
 import CustomerPagination from "../../components/CustomPagination";
-import { useNavigate } from "react-router";
 import FactoryInvoiceSearch from "../../hooks/FactoryInvoiceSearch";
 import ProgressStagesColors from "../../components/ProgressStagesColors";
+import { customerPaymentTotal } from "../../utils/customerPaymentTotal";
+import { numberWithCommas } from "../../utils/numberWithCommas";
 
 const CheckInIndex = () => {
-  const navigate = useNavigate();
   const {
     invoiceList,
     invoiceLimit,
@@ -50,6 +50,12 @@ const CheckInIndex = () => {
                 <b>Invoice</b>
               </TableCell>
               <TableCell>
+                <b>Total</b>
+              </TableCell>
+              <TableCell>
+                <b>Balance</b>
+              </TableCell>
+              <TableCell>
                 <b>Progress</b>
               </TableCell>
               {/* <TableCell>
@@ -59,10 +65,10 @@ const CheckInIndex = () => {
                 <b>Arrival Status</b>
               </TableCell>
               <TableCell>
-                <b>Details</b>
+                <b>Status</b>
               </TableCell>
               <TableCell>
-                <b>Status</b>
+                <b>Details</b>
               </TableCell>
             </TableRow>
           </TableHead>
@@ -72,6 +78,16 @@ const CheckInIndex = () => {
                 <TableCell>{row.customer}</TableCell>
                 <TableCell>{dateAndTimeFormat(row.invoice_date)}</TableCell>
                 <TableCell>{row.invoice_number}</TableCell>
+                <TableCell>
+                  Rs.{numberWithCommas(customerPaymentTotal(row.payments))}
+                </TableCell>
+                <TableCell>
+                  Rs.
+                  {numberWithCommas(
+                    parseInt(row.total_price) -
+                      customerPaymentTotal(row.payments)
+                  )}
+                </TableCell>
                 <TableCell>{progressStatus(row.progress_status)}</TableCell>
                 {/* <TableCell>{row.notes}</TableCell> */}
                 <TableCell>
@@ -83,20 +99,6 @@ const CheckInIndex = () => {
                 </TableCell>
 
                 <TableCell>
-                  <IconButton
-                    size="small"
-                    sx={{ p: 0 }}
-                    onClick={() =>
-                      navigate(
-                        `/transaction/factory_order/create/2/view/?invoice_number=${row.invoice_number}`
-                      )
-                    }
-                    color="inherit"
-                  >
-                    <AssignmentIcon fontSize="small" />
-                  </IconButton>
-                </TableCell>
-                <TableCell>
                   <Box sx={{ display: "flex", flexDirection: "rows" }}>
                     {row.on_hold ? (
                       <CircleIcon sx={{ color: "red", fontSize: "1rem" }} />
@@ -107,6 +109,19 @@ const CheckInIndex = () => {
                       <CircleIcon sx={{ color: "blue", fontSize: "1rem" }} />
                     )}
                   </Box>
+                </TableCell>
+
+                <TableCell>
+                  <a
+                    href={`/transaction/invoice/view/${row.invoice_number}/?invoice_number=${row.invoice_number}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ textDecoration: "none", color: "inherit" }} // Optional: keep icon color
+                  >
+                    <IconButton size="small" sx={{ p: 0 }} color="inherit">
+                      <AssignmentIcon fontSize="small" />
+                    </IconButton>
+                  </a>
                 </TableCell>
               </TableRow>
             ))}

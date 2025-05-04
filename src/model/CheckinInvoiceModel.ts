@@ -1,3 +1,4 @@
+import { PaymentModel } from "./PaymentModel";
 import { InvoiceType, ProgressStatus } from "./StaticTypeModels";
 
 export interface CheckinInvoiceModel {
@@ -13,4 +14,6 @@ export interface CheckinInvoiceModel {
   whatsapp_sent: boolean;
   fitting_on_collection: boolean | null;
   on_hold: boolean | null;
+  payments: PaymentModel[];
+  total_price: string;
 }
