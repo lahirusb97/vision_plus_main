@@ -8,6 +8,7 @@ import OrderFromRemarkDetails from "./orderform/OrderFromRemarkDetails";
 import { customerPaymentTotal } from "../utils/customerPaymentTotal";
 import OrderFromVisionTable from "./orderform/OrderFromVisionTable";
 import { formatDateTimeByType } from "../utils/formatDateTimeByType";
+import { numberWithCommas } from "../utils/numberWithCommas";
 
 interface OrderFormProps {
   invoiceDetail: Invoice | null;
@@ -127,7 +128,10 @@ const OrderForm: React.FC<OrderFormProps> = ({ invoiceDetail }) => {
                 }}
               >
                 <strong>
-                  {invoiceDetail?.order_details.on_hold && "On Hold /"}
+                  {invoiceDetail?.order_details.on_hold && "On Hold"}
+                  {invoiceDetail?.order_details.on_hold &&
+                    invoiceDetail?.order_details.fitting_on_collection &&
+                    " / "}
                   {invoiceDetail?.order_details.fitting_on_collection &&
                     "Fitting on Collection"}
                 </strong>
@@ -201,20 +205,25 @@ const OrderForm: React.FC<OrderFormProps> = ({ invoiceDetail }) => {
                 Payment Details:
               </Typography>
               <Typography variant="body2">
-                Total Amount - Rs. {invoiceDetail?.order_details.total_price}
+                Total Amount - Rs.{" "}
+                {numberWithCommas(invoiceDetail?.order_details.total_price)}
               </Typography>
               <Typography variant="body2">
                 Total Payment - Rs.{" "}
-                {customerPaymentTotal(
-                  invoiceDetail?.order_details.order_payments
+                {numberWithCommas(
+                  customerPaymentTotal(
+                    invoiceDetail?.order_details.order_payments
+                  )
                 )}
               </Typography>
               <Typography variant="body2">
                 Balance - Rs.
-                {parseInt(invoiceDetail?.order_details?.total_price ?? "0") -
-                  customerPaymentTotal(
-                    invoiceDetail?.order_details.order_payments
-                  )}
+                {numberWithCommas(
+                  parseInt(invoiceDetail?.order_details?.total_price ?? "0") -
+                    customerPaymentTotal(
+                      invoiceDetail?.order_details.order_payments
+                    )
+                )}
               </Typography>
             </Box>
 

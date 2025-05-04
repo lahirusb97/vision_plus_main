@@ -28,7 +28,7 @@ import { getUserCurentBranch } from "../../utils/authDataConver";
 import CashInput from "../../components/inputui/CashInput";
 import CardInput from "../../components/inputui/CardInput";
 import ChannelPatientDetail from "./apointments/ChannelPatientDetail";
-import HighlightedDatePicker from "../../components/HighlightedDatePicker";
+
 import OnlinePayInput from "../../components/inputui/OnlinePayInput";
 import { formatUserPayments } from "../../utils/formatUserPayments";
 import AppointmentDatePicker from "../../components/AppointmentDatePicker";

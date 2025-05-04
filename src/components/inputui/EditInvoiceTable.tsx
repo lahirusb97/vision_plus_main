@@ -207,7 +207,16 @@ export default function EditInvoiceTable({ paymentList }: Props) {
               </TableCell>
             </TableRow>
           ))}
-
+          <TableRow>
+            <TableCell sx={{ fontWeight: "bold" }} align="right" colSpan={4}>
+              Current Payment
+            </TableCell>
+            <TableCell sx={{ fontWeight: "bold" }} align="right">
+              {parseInt(watch("online_transfer") || 0) +
+                parseInt(watch("credit_card") || 0) +
+                parseInt(watch("cash") || 0)}
+            </TableCell>
+          </TableRow>
           <TableRow>
             <TableCell
               sx={{ fontWeight: "bold", border: "none" }}

@@ -93,11 +93,37 @@ const LenseUpdate = () => {
             sx={{ marginX: 0.5, backgroundColor: "#237ADE", color: "white" }}
           />
           <Chip
+            label={`Lense Type  - ${singleLense?.type_name}`}
+            color="primary"
+            sx={{ margin: 0.5, backgroundColor: "#237ADE", color: "white" }}
+          />
+          <Chip
             label={`Coating - ${singleLense?.coating_name}`}
             color="primary"
             sx={{ marginX: 0.5, backgroundColor: "#237ADE", color: "white" }}
           />
         </Box>
+        <Paper
+          sx={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: 1,
+            p: 1,
+            alignItems: "center",
+          }}
+        >
+          <Typography>Powers</Typography>
+          {singleLense?.powers.map((power) => (
+            <Chip
+              label={`${power.power_name.toLocaleUpperCase()}: ${power.value}`}
+              sx={{
+                marginX: 0.5,
+                backgroundColor: "#131e36",
+                color: "white",
+              }}
+            />
+          ))}
+        </Paper>
         <Typography
           marginY={1}
           variant="body1"

@@ -1,13 +1,16 @@
-import { Box, Button, Chip, TextField, Typography, Paper } from "@mui/material";
+import { Box, Chip, TextField, Typography, Paper } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import axiosClient from "../../../axiosClient";
+
 import { useParams } from "react-router";
 import toast from "react-hot-toast";
-import { AxiosError } from "axios";
+
 import useGetSingleLense from "../../../hooks/lense/useGetSingleLense";
 import LoadingAnimation from "../../../components/LoadingAnimation";
+import { extractErrorMessage } from "../../../utils/extractErrorMessage";
+import { useAxiosPut } from "../../../hooks/useAxiosPut";
+import SubmitCustomBtn from "../../../components/common/SubmiteCustomBtn";
 
 interface Stock {
   price: number;
@@ -16,6 +19,7 @@ const LenseEdit = () => {
   const { id } = useParams();
   const { singleLense, singleLenseLoading, refresh } = useGetSingleLense(id);
 
+  const { putHandler, putHandlerloading, putHandlerError } = useAxiosPut();
   const schema = yup.object().shape({
     price: yup
       .number()
@@ -41,19 +45,12 @@ const LenseEdit = () => {
     };
 
     try {
-      await axiosClient.put(`/lenses/${id}/`, postDAta);
+      await putHandler(`/lenses/${id}/`, postDAta);
       toast.success("Lense Saved Successfully");
       reset();
       refresh();
     } catch (error) {
-      if (error instanceof AxiosError) {
-        // Safely access error.response.data.message
-        toast.error(error.response?.data?.message || "Something went wrong");
-      } else {
-        // Handle non-Axios errors (e.g., network errors, syntax errors, etc.)
-        toast.error("Something went wrong");
-      }
-      console.log(error);
+      extractErrorMessage(error);
     }
   };
   if (singleLenseLoading) {
@@ -80,21 +77,43 @@ const LenseEdit = () => {
 
         <Box sx={{ marginY: 2, display: "flex", flexWrap: "wrap", gap: 1 }}>
           <Chip
-            label={`Type - ${singleLense?.type_name}`}
-            color="primary"
-            sx={{ marginX: 0.5, backgroundColor: "#237ADE", color: "white" }}
-          />
-          <Chip
             label={`Factory - ${singleLense?.brand_name}`}
             color="primary"
             sx={{ marginX: 0.5, backgroundColor: "#237ADE", color: "white" }}
           />
+          <Chip
+            label={`Type - ${singleLense?.type_name}`}
+            color="primary"
+            sx={{ marginX: 0.5, backgroundColor: "#237ADE", color: "white" }}
+          />
+
           <Chip
             label={`Coating - ${singleLense?.coating_name}`}
             color="primary"
             sx={{ marginX: 0.5, backgroundColor: "#237ADE", color: "white" }}
           />
         </Box>
+        <Paper
+          sx={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: 1,
+            p: 1,
+            alignItems: "center",
+          }}
+        >
+          <Typography>Powers</Typography>
+          {singleLense?.powers.map((power) => (
+            <Chip
+              label={`${power.power_name.toLocaleUpperCase()}: ${power.value}`}
+              sx={{
+                marginX: 0.5,
+                backgroundColor: "#131e36",
+                color: "white",
+              }}
+            />
+          ))}
+        </Paper>
         <Typography
           marginY={1}
           variant="body1"
@@ -117,9 +136,11 @@ const LenseEdit = () => {
           sx={{ marginBottom: 2 }}
         />
 
-        <Button type="submit" variant="contained" fullWidth>
-          SAVE
-        </Button>
+        <SubmitCustomBtn
+          btnText="Update Price"
+          loading={putHandlerloading}
+          isError={putHandlerError}
+        />
       </Paper>
     </Box>
   );

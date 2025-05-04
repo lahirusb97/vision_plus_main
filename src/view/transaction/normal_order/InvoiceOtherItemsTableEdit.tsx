@@ -132,6 +132,16 @@ export default function InvoiceOtherItemsTableEdit({
               <TableCell />
             </TableRow>
             <TableRow>
+              <TableCell colSpan={4} sx={{ fontWeight: "bold" }} align="right">
+                Current Payment
+              </TableCell>
+              <TableCell sx={{ fontWeight: "bold" }} align="right">
+                {parseInt(watch("online_transfer") || 0) +
+                  parseInt(watch("credit_card") || 0) +
+                  parseInt(watch("cash") || 0)}
+              </TableCell>
+            </TableRow>
+            <TableRow>
               <TableCell
                 sx={{ fontWeight: "bold", border: "none" }}
                 align="right"
