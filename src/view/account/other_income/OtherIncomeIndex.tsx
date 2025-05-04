@@ -31,8 +31,21 @@ export default function OtherIncomeIndex() {
         mb={2}
       >
         <Typography variant="h6">Other Income Categories</Typography>
-        <Button variant="contained" onClick={() => navigate("create")}>
-          Create New Income
+      </Box>
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={2}
+      >
+        <Button
+          variant="contained"
+          onClick={() => navigate("add_other_income")}
+        >
+          Place New Income
+        </Button>
+        <Button variant="outlined" onClick={() => navigate("create")}>
+          Create New Income Category
         </Button>
       </Box>
 

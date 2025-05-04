@@ -17,6 +17,7 @@ import BankDepositCreate from "../../view/account/bank_deposite/BankDepositCreat
 import BankDeposite from "../../view/account/bank_deposite/BankDeposite";
 import BankDepositeUpdate from "../../view/account/bank_deposite/BankDepositUpdate";
 import ExpenceUpdate from "../../view/account/expencess_category/ExpenceUpdate";
+import AddOtherIncome from "../../view/account/other_income/AddOtherIncome";
 
 export const accountRoutes: RouteObject[] = [
   {
@@ -128,6 +129,10 @@ export const accountRoutes: RouteObject[] = [
       {
         path: "create/",
         element: <OtherincomeCreate />,
+      },
+      {
+        path: "add_other_income/",
+        element: <AddOtherIncome />,
       },
       {
         path: "update/:other_income_category_id",

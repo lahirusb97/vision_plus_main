@@ -7,8 +7,10 @@ import {
   TableHead,
   TableRow,
   Paper,
+  Box,
 } from "@mui/material";
 import { useState, useEffect, useRef } from "react";
+import CircleIcon from "@mui/icons-material/Circle";
 
 import { CheckinInvoiceModel } from "../../model/CheckinInvoiceModel";
 import { progressStatus } from "../../utils/progressState";
@@ -96,9 +98,8 @@ const SelectableTable = ({
             <TableCell>Invoice</TableCell>
 
             <TableCell>Progress</TableCell>
-            <TableCell>
-              <b>Status</b>
-            </TableCell>
+            <TableCell>Status</TableCell>
+            <TableCell>Details</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -131,6 +132,18 @@ const SelectableTable = ({
                   : item.lens_arrival_status == "received"
                   ? "Received"
                   : "Not Received"}
+              </TableCell>
+              <TableCell>
+                <Box sx={{ display: "flex", flexDirection: "rows" }}>
+                  {item.on_hold ? (
+                    <CircleIcon sx={{ color: "red", fontSize: "1rem" }} />
+                  ) : (
+                    <CircleIcon sx={{ color: "green", fontSize: "1rem" }} />
+                  )}
+                  {item.fitting_on_collection && (
+                    <CircleIcon sx={{ color: "blue", fontSize: "1rem" }} />
+                  )}
+                </Box>
               </TableCell>
             </TableRow>
           ))}
