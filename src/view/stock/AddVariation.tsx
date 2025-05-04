@@ -5,6 +5,7 @@ import useGetColors from "../../hooks/lense/useGetColors";
 import useGetCodes from "../../hooks/lense/useGetCode";
 import CodeCRUD from "./CodeCRUD";
 import { Box, Paper } from "@mui/material";
+import TitleText from "../../components/TitleText";
 // import useGetLenseTypes from "../../hooks/lense/useGetLenseType";
 export default function AddVariation() {
   const {
@@ -33,6 +34,7 @@ export default function AddVariation() {
   return (
     <Box sx={{ display: "flex", gap: 2 }}>
       <Paper variant="outlined" sx={{ width: "600px" }}>
+        <TitleText title="In Stock Lense Variations" />
         {/* <AddVariationComp
           textName="Lense Types"
           Urlpath="lense_type"
@@ -59,6 +61,7 @@ export default function AddVariation() {
         />
       </Paper>
       <Paper variant="outlined" sx={{ width: "600px" }}>
+        <TitleText title="In Stock Frame Variations" />
         <AddVariationComp
           textName="Frames Brand"
           Urlpath="frame_brand"

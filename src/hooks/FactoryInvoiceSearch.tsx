@@ -7,6 +7,8 @@ import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormControl from "@mui/material/FormControl";
 import { Box, Button, TextField } from "@mui/material";
+import { useEffect } from "react";
+import { getBranchName } from "../utils/branchName";
 
 // Define Zod schema for form validation
 const searchSchema = z.object({
@@ -27,11 +29,13 @@ export default function FactoryInvoiceSearch({
     control,
     handleSubmit,
     register,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm<SearchFormData>({
     resolver: zodResolver(searchSchema),
     defaultValues: {
-      searchTerm: "",
+      searchTerm: "searchOption",
       searchOption: "invoice_number",
     },
   });
@@ -39,6 +43,13 @@ export default function FactoryInvoiceSearch({
   const onSubmit = (data: SearchFormData) => {
     invoiceSearch(data.searchOption, data.searchTerm);
   };
+  useEffect(() => {
+    if (watch("searchOption") === "invoice_number") {
+      setValue("searchTerm", getBranchName());
+    } else {
+      setValue("searchTerm", "");
+    }
+  }, [watch("searchOption")]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>

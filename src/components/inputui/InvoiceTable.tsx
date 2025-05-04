@@ -78,6 +78,7 @@ export default function InvoiceTable() {
             <TableRow key={index}>
               <TableCell>
                 <IconButton
+                  size="small"
                   onClick={() => {
                     if (
                       window.confirm(
@@ -88,7 +89,7 @@ export default function InvoiceTable() {
                     }
                   }}
                 >
-                  <Delete color="error" />
+                  <Delete sx={{ fontSize: "1rem" }} color="error" />
                 </IconButton>
               </TableCell>
 
@@ -103,6 +104,7 @@ export default function InvoiceTable() {
             <TableRow key={row.lense_id}>
               <TableCell>
                 <IconButton
+                  size="small"
                   onClick={() => {
                     if (
                       window.confirm(
@@ -113,7 +115,7 @@ export default function InvoiceTable() {
                     }
                   }}
                 >
-                  <Delete color="error" />
+                  <Delete sx={{ fontSize: "1rem" }} color="error" />
                 </IconButton>
               </TableCell>
 
@@ -137,6 +139,7 @@ export default function InvoiceTable() {
             <TableRow key={index}>
               <TableCell>
                 <IconButton
+                  size="small"
                   onClick={() => {
                     if (
                       window.confirm(
@@ -147,7 +150,7 @@ export default function InvoiceTable() {
                     }
                   }}
                 >
-                  <Delete color="error" />
+                  <Delete sx={{ fontSize: "1rem" }} color="error" />
                 </IconButton>
               </TableCell>
 
@@ -192,6 +195,16 @@ export default function InvoiceTable() {
           </TableRow>
           <TableRow>
             <TableCell sx={{ fontWeight: "bold" }} align="right" colSpan={2}>
+              Current Payment
+            </TableCell>
+            <TableCell sx={{ fontWeight: "bold" }} align="right">
+              {parseInt(watch("online_transfer") || 0) +
+                parseInt(watch("credit_card") || 0) +
+                parseInt(watch("cash") || 0)}
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell sx={{ fontWeight: "bold" }} align="right" colSpan={4}>
               Balance
             </TableCell>
             <TableCell sx={{ fontWeight: "bold" }} align="right">

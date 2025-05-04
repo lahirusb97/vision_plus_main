@@ -60,14 +60,15 @@ const LenseStore = () => {
           </Box>
         ),
       },
-      {
-        header: "Lense Type",
-        accessorKey: "type_name",
-        size: 130,
-      },
+
       {
         header: "Lense Factory",
         accessorKey: "brand_name",
+        size: 130,
+      },
+      {
+        header: "Lense Type",
+        accessorKey: "type_name",
         size: 130,
       },
       {
