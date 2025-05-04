@@ -370,12 +370,12 @@ export default function FactoryInvoiceForm() {
                     render={({ field }) => (
                       <FormControl fullWidth size="small">
                         <InputLabel id="bus-title-label">
-                          Lens Factory
+                          Select To day Title
                         </InputLabel>
                         <Select
                           fullWidth
                           labelId="bus-title-label"
-                          label="Lens Factory"
+                          label="Select To day Title"
                           {...field}
                           value={field.value ?? ""}
                           disabled={busTitlesLoading}

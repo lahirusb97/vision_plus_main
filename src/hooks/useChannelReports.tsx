@@ -4,29 +4,22 @@ import { extractErrorMessage } from "../utils/extractErrorMessage";
 import toast from "react-hot-toast";
 import dayjs from "dayjs";
 import { getUserCurentBranch } from "../utils/authDataConver";
+import { ChannelPaymentReport } from "../model/ChannelReportModel";
 
 // Type definitions
-interface ChannelReport {
-  channel_id: number;
-  channel_no: number;
-  amount_cash: number;
-  amount_credit_card: number;
-  amount_online: number;
-  total_paid: number;
-  total_due: number;
-  balance: number;
-}
 
 interface UseChannelReportsParams {
   payment_date: string; // Format: "YYYY-MM-DD"
 }
 
 const useChannelReports = ({ payment_date }: UseChannelReportsParams) => {
-  const [channelReports, setChannelReports] = useState<ChannelReport[]>([]);
+  const [channelReports, setChannelReports] = useState<ChannelPaymentReport[]>(
+    []
+  );
   const [channelReportsLoading, setChannelReportsLoading] =
     useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-
+  console.log(channelReports);
   const fetchChannelReports = useCallback(async () => {
     setChannelReportsLoading(true);
     setError(null);
@@ -37,7 +30,7 @@ const useChannelReports = ({ payment_date }: UseChannelReportsParams) => {
         throw new Error("Invalid date format. Use YYYY-MM-DD");
       }
 
-      const response = await axiosClient.get<ChannelReport[]>(
+      const response = await axiosClient.get<ChannelPaymentReport[]>(
         "reports/channels/",
         {
           params: {

@@ -61,7 +61,6 @@ const Dashboard = () => {
               Invoice
             </Typography>
             <InvoicePaymentTable
-              accountDate={formattedDate}
               data={invoiceReport}
               loading={invoiceReportLoading}
             />
@@ -70,12 +69,11 @@ const Dashboard = () => {
           {/* Channel Section and Financial Buttons */}
           <Box sx={{ display: "flex", gap: 1, my: 1 }}>
             {/* Channel Section */}
-            <Paper elevation={3} sx={{ flex: 1 }}>
+            <Paper elevation={3}>
               <Typography variant="h6" gutterBottom>
                 Channel
               </Typography>
               <ChannelPaymentTable
-                accountDate={formattedDate}
                 data={channelReports}
                 loading={channelReportsLoading}
               />

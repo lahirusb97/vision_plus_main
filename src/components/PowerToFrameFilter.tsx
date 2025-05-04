@@ -124,7 +124,12 @@ export default function PowerToFrameFilter() {
 
   const addFrameByList = () => {
     if (selectedFrame) {
-      if (parseInt(price) > 0 && selectedFrame.id) {
+      if (
+        parseInt(price) > 0 &&
+        selectedFrame.id &&
+        selectedFrame?.stock[0]?.qty > 0 &&
+        selectedFrame?.stock[0]?.qty >= frameByQty
+      ) {
         dispatch(
           setFrame({
             frame_id: selectedFrame.id,
@@ -152,7 +157,21 @@ export default function PowerToFrameFilter() {
         });
         dispatch(closeStockDrawer());
       } else {
-        toast.error("Price must be greater than 0");
+        if (parseInt(price) < 0) {
+          toast.error("Price must be greater than 0");
+        } else if (!selectedFrame) {
+          toast.error("No Frame Selected");
+        } else if (!selectedFrame?.stock[0]?.qty) {
+          toast.error("Selected Frame is out of stock");
+        } else if (selectedFrame?.stock[0]?.qty < frameByQty) {
+          toast.error(
+            "Selected Frame only has " +
+              selectedFrame?.stock[0]?.qty +
+              " in stock"
+          );
+        } else {
+          toast.error("Something went wrong");
+        }
       }
     } else {
       toast.error("No Frame Selected");

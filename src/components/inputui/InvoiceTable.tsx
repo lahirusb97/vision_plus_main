@@ -151,7 +151,12 @@ export default function InvoiceTable() {
                 </IconButton>
               </TableCell>
 
-              <TableCell>{`${row.external_lens_details.type_name} / ${
+              <TableCell
+                sx={{
+                  whiteSpace: "normal",
+                  wordBreak: "break-word", // ensures long words or URLs break to the next line
+                }}
+              >{`${row.external_lens_details.type_name} / ${
                 row.external_lens_details.brand_name
               } /${row.external_lens_details.coating_name} /${
                 row.note !== null ? row.note : ""

@@ -15,7 +15,6 @@ import InvoiceExternalLenseItem from "../../../components/InvoiceExternalLenseIt
 export default function ExternalLense() {
   const dispatch = useDispatch();
   const { externaLenseList, setExternalLenseParams } = useGetExternalLenses();
-  console.log("externalLenseList", externaLenseList);
 
   const externalLenseInvoiceList = useSelector(
     (state: RootState) => state.invoice_external_lense.externalLenseList

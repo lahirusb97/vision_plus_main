@@ -1,108 +1,75 @@
-// ChannelTable.tsx
-import {
-  Skeleton,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-} from "@mui/material";
-import { useEffect, useState } from "react";
-import CustomerPagination from "./CustomPagination";
-
+import { useMemo } from "react";
+import { MaterialReactTable, MRT_ColumnDef } from "material-react-table";
+import { ChannelPaymentReport } from "../model/ChannelReportModel";
+import { Box } from "@mui/material";
 interface ChannelTableProps {
-  accountDate: string;
-  data: Array<{
-    channel_no: number;
-    amount_cash: number;
-    amount_credit_card: number;
-    amount_online: number;
-    total_paid: number;
-    balance: number;
-  }>;
+  data: ChannelPaymentReport[];
   loading: boolean;
 }
 
-export const ChannelPaymentTable = ({
-  data,
-  loading,
-  accountDate,
-}: ChannelTableProps) => {
-  const [page, setPage] = useState(1); // Note: CustomPagination uses 1-based indexing
-  const [pageSize, setPageSize] = useState(10);
-
-  const paginatedChannel = data.slice(
-    (page - 1) * pageSize, // Adjust for 1-based indexing
-    (page - 1) * pageSize + pageSize
+export const ChannelPaymentTable = ({ data, loading }: ChannelTableProps) => {
+  const columns = useMemo<MRT_ColumnDef<ChannelPaymentReport>[]>(
+    () => [
+      {
+        accessorKey: "appointment_id",
+        header: "Channel ID",
+        size: 100,
+      },
+      {
+        accessorKey: "amount_cash",
+        header: "Cash",
+        size: 100,
+      },
+      {
+        accessorKey: "amount_credit_card",
+        header: "Card",
+        size: 100,
+      },
+      {
+        accessorKey: "amount_online",
+        header: "Online",
+        size: 100,
+      },
+      {
+        accessorKey: "total_paid",
+        header: "Total Paid",
+        size: 100,
+      },
+      {
+        accessorKey: "balance",
+        header: "Balance",
+        size: 100,
+      },
+    ],
+    [data]
   );
-  const handlePageNavigation = (newPage: number) => {
-    setPage(newPage);
-  };
 
-  // Handle page size change
-  const handlePageSizeChange = (newSize: number) => {
-    setPageSize(newSize);
-    setPage(1);
-  };
-  useEffect(() => {
-    setPage(1);
-  }, [accountDate]);
   return (
-    <TableContainer component={Paper}>
-      <Table size="small">
-        <TableHead>
-          <TableRow sx={{ bgcolor: "orange" }}>
-            <TableCell>Channel ID</TableCell>
-            <TableCell>Cash</TableCell>
-            <TableCell>Card</TableCell>
-            <TableCell>Online</TableCell>
-            <TableCell>Total Paid</TableCell>
-            <TableCell>Balance</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {loading ? (
-            Array(5)
-              .fill(0)
-              .map((_, index) => (
-                <TableRow key={index}>
-                  {Array(6)
-                    .fill(0)
-                    .map((_, i) => (
-                      <TableCell key={i}>
-                        <Skeleton variant="text" width="100%" />
-                      </TableCell>
-                    ))}
-                </TableRow>
-              ))
-          ) : data.length === 0 ? (
-            <TableRow>
-              <TableCell colSpan={6} align="center">
-                No channel data available
-              </TableCell>
-            </TableRow>
-          ) : (
-            paginatedChannel.map((row, index) => (
-              <TableRow key={index}>
-                <TableCell>{row.appointment_id}</TableCell>
-                <TableCell>{row.amount_cash}</TableCell>
-                <TableCell>{row.amount_credit_card}</TableCell>
-                <TableCell>{row.amount_online}</TableCell>
-                <TableCell>{row.total_paid}</TableCell>
-                <TableCell>{row.balance}</TableCell>
-              </TableRow>
-            ))
-          )}
-        </TableBody>
-      </Table>
-      <CustomerPagination
-        totalCount={data.length}
-        handlePageNavigation={handlePageNavigation}
-        changePageSize={handlePageSizeChange}
-        page_size={pageSize}
+    <Box>
+      <MaterialReactTable
+        columns={columns}
+        data={data}
+        enableColumnActions={false}
+        state={{ isLoading: loading }}
+        enableTopToolbar={false}
+        initialState={{
+          density: "compact",
+          pagination: { pageIndex: 0, pageSize: 15 },
+        }}
+        enableSorting
+        enablePagination
+        muiTableProps={{
+          sx: {
+            borderRadius: 2,
+            overflow: "hidden",
+          },
+        }}
+        muiTableBodyCellProps={{
+          sx: {
+            padding: "0px 10px",
+          },
+        }}
       />
-    </TableContainer>
+    </Box>
   );
 };
