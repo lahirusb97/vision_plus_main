@@ -191,18 +191,6 @@ const AddFrames = () => {
             <Typography color="error">{errors.color.message}</Typography>
           )}
 
-          {/* Price Field */}
-          <TextField
-            label="Price"
-            size="small"
-            type="number"
-            fullWidth
-            variant="outlined"
-            error={!!errors.price}
-            helperText={errors.price?.message}
-            {...register("price", { valueAsNumber: true })}
-          />
-
           {/* Species Dropdown */}
           <Controller
             name="size"
@@ -256,7 +244,17 @@ const AddFrames = () => {
           {errors.species && (
             <Typography color="error">{errors.species.message}</Typography>
           )}
-
+          {/* Price Field */}
+          <TextField
+            label="Price"
+            size="small"
+            type="number"
+            fullWidth
+            variant="outlined"
+            error={!!errors.price}
+            helperText={errors.price?.message}
+            {...register("price", { valueAsNumber: true })}
+          />
           {/* Quantity Field */}
           <TextField
             size="small"

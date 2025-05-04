@@ -30,7 +30,7 @@ const CheckInIndex = () => {
     invoicePageNavigation,
     invoiceTotalCount,
   } = useGetFactoryInvoices();
-
+  console.log(invoiceList);
   return (
     <div style={{ padding: 20, maxWidth: "1200px", minWidth: "900px" }}>
       <FactoryInvoiceSearch invoiceSearch={invoiceSearch} />

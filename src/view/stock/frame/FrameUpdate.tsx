@@ -92,24 +92,47 @@ const FrameUpdate = () => {
         elevation={3}
       >
         <Typography variant="h6" fontWeight="bold" paddingLeft="9px">
-          Frames Updates
+          Frames Quantity Updates
         </Typography>
 
-        <Box sx={{ marginY: 2 }}>
+        <Box
+          sx={{
+            marginY: 2,
+            display: "flex",
+            flexDirection: "row",
+            flexWrap: "wrap",
+            gap: 1,
+          }}
+        >
           <Chip
             label={`Brand - ${singleFrame?.brand_name}`}
             color="primary"
-            sx={{ marginX: 0.5, backgroundColor: "#237ADE", color: "white" }}
+            sx={{ backgroundColor: "#237ADE", color: "white" }}
           />
           <Chip
             label={`Code - ${singleFrame?.code_name}`}
             color="primary"
-            sx={{ marginX: 0.5, backgroundColor: "#237ADE", color: "white" }}
+            sx={{ backgroundColor: "#237ADE", color: "white" }}
+          />
+          <Chip
+            label={`Color - ${singleFrame?.species}`}
+            color="primary"
+            sx={{ backgroundColor: "#237ADE", color: "white" }}
+          />
+          <Chip
+            label={`Color - ${singleFrame?.size}`}
+            color="primary"
+            sx={{ backgroundColor: "#237ADE", color: "white" }}
           />
           <Chip
             label={`Color - ${singleFrame?.color_name}`}
             color="primary"
-            sx={{ marginX: 0.5, backgroundColor: "#237ADE", color: "white" }}
+            sx={{ backgroundColor: "#237ADE", color: "white" }}
+          />
+          <Chip
+            label={`Color - ${singleFrame?.brand_type_display}`}
+            color="primary"
+            sx={{ backgroundColor: "#237ADE", color: "white" }}
           />
         </Box>
         <Typography
