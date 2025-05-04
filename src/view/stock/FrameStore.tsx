@@ -79,6 +79,11 @@ const FrameStore = () => {
         size: 130,
       },
       {
+        header: "Branded",
+        accessorKey: "brand_type_display",
+        size: 100,
+      },
+      {
         header: "Price",
         accessorKey: "price",
         size: 60,

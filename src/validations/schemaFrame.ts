@@ -31,6 +31,7 @@ export const schemaFrame = z.object({
     .number({ invalid_type_error: "Quantity is required" })
     .optional(),
   limit: z.number({ invalid_type_error: "Quantity is required" }).optional(),
+  brand_type: z.enum(["non_branded", "branded"]),
   branch_id: z.number({ invalid_type_error: "Quantity is required" }),
 });
 

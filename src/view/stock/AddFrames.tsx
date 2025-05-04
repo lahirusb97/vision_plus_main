@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import {
   FormControl,
+  FormControlLabel,
   InputLabel,
   MenuItem,
   Paper,
+  Radio,
+  RadioGroup,
   Select,
   TextField,
   Typography,
@@ -57,6 +60,7 @@ const AddFrames = () => {
       qty: undefined,
       limit: undefined,
       branch_id: getUserCurentBranch()?.id,
+      brand_type: "non_branded",
     },
   });
   const [avilableCodes, setAvilableCodes] = useState<CodeModel[]>([]);
@@ -71,8 +75,6 @@ const AddFrames = () => {
 
   // Submit handler
   const submitData = async (frameData: FrameFormModel) => {
-    console.log(frameData);
-
     const postData = {
       frame: {
         brand: frameData.brand,
@@ -81,6 +83,7 @@ const AddFrames = () => {
         price: frameData.price,
         size: frameData.size,
         species: frameData.species,
+        brand_type: frameData.brand_type,
       },
       stock: [
         {
@@ -91,6 +94,7 @@ const AddFrames = () => {
         },
       ],
     };
+
     try {
       await postHandler("frames/", postData);
       toast.success("Frame added successfully");
@@ -279,6 +283,25 @@ const AddFrames = () => {
             variant="outlined"
             error={!!errors.limit}
             helperText={errors.limit?.message}
+          />
+          <Controller
+            name="brand_type"
+            control={control}
+            render={({ field }) => (
+              <RadioGroup row {...field}>
+                <FormControlLabel
+                  value="branded"
+                  control={<Radio />}
+                  label="Branded"
+                />
+                <FormControlLabel
+                  defaultChecked
+                  value="non_branded"
+                  control={<Radio />}
+                  label="Non-Branded"
+                />
+              </RadioGroup>
+            )}
           />
           <TextField
             size="small"

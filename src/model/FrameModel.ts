@@ -1,3 +1,5 @@
+import { TypeBraned } from "./StaticTypeModels";
+
 export type SpeciesType = "Metal" | "Plastic" | "Metal/Plastic";
 export type SizeType = "Half" | "Full" | "Rimless";
 interface FrameStockModel {
@@ -23,6 +25,8 @@ interface FrameModel {
   species: SpeciesType; // Species (e.g., "Metal", "Plastic")
   image: string | null; // Optional image URL or null if no image
   stock: FrameStockModel[]; // Stock details for this frame
+  brand_type: TypeBraned;
+  brand_type_display: string;
 }
 
 export type { FrameModel, FrameStockModel };
