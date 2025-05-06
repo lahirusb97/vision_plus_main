@@ -40,36 +40,18 @@ const CheckInIndex = () => {
         <Table size="small">
           <TableHead>
             <TableRow sx={{ backgroundColor: "#f5f5f5" }}>
-              <TableCell>
-                <b>Patient Name</b>
-              </TableCell>
-              <TableCell>
-                <b>Date</b>
-              </TableCell>
-              <TableCell>
-                <b>Invoice</b>
-              </TableCell>
-              <TableCell>
-                <b>Total</b>
-              </TableCell>
-              <TableCell>
-                <b>Balance</b>
-              </TableCell>
-              <TableCell>
-                <b>Progress</b>
-              </TableCell>
+              <TableCell>Patient Name</TableCell>
+              <TableCell>Date </TableCell>
+              <TableCell>Invoice</TableCell>
+              <TableCell>Total</TableCell>
+              <TableCell>Balance</TableCell>
+              <TableCell>Progress</TableCell>
               {/* <TableCell>
                 <b>Notes</b>
               </TableCell> */}
-              <TableCell>
-                <b>Arrival Status</b>
-              </TableCell>
-              <TableCell>
-                <b>Status</b>
-              </TableCell>
-              <TableCell>
-                <b>Details</b>
-              </TableCell>
+              <TableCell>Arrival Status</TableCell>
+              <TableCell>Status</TableCell>
+              <TableCell>Details</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

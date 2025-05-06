@@ -1,9 +1,10 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 
 import { extractErrorMessage } from "../utils/extractErrorMessage";
 import { getUserCurentBranch } from "../utils/authDataConver";
 import toast from "react-hot-toast";
 import axiosClient from "../axiosClient";
+import axios from "axios";
 
 type ChannelModel = {
   id: number;
@@ -29,7 +30,14 @@ const useGetChannelDetails = () => {
   const [searchParams, setSearchParams] = useState<ChannelSearchParams>({});
   const [initialLoad, setInitialLoad] = useState(true);
 
+  const abortControllerRef = useRef<AbortController | null>(null);
+
   const loadChannels = useCallback(async () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
     setLoading(true);
     setError(false);
 
@@ -41,16 +49,22 @@ const useGetChannelDetails = () => {
           ...(searchParams.date ? { date: searchParams.date } : {}),
           ...(searchParams.search ? { search: searchParams.search } : {}),
         },
+        signal: controller.signal,
       });
 
-      if (response.data?.length > 0) {
-        setChannelList(response.data);
-        toast.success("Channels loaded successfully");
-      } else {
-        setChannelList([]);
-        toast.error("No channels found");
+      if (!controller.signal.aborted) {
+        if (response.data?.length > 0) {
+          setChannelList(response.data);
+          toast.success("Channels loaded successfully");
+        } else {
+          setChannelList([]);
+          toast.error("No channels found");
+        }
       }
     } catch (error) {
+      if (axios.isCancel(error)) {
+        return;
+      }
       setChannelList([]);
       extractErrorMessage(error);
       setError(true);
@@ -66,6 +80,11 @@ const useGetChannelDetails = () => {
   useEffect(() => {
     if (!initialLoad) loadChannels();
     // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
   }, [loadChannels]);
 
   useEffect(() => {

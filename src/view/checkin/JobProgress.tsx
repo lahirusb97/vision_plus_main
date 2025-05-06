@@ -6,40 +6,49 @@ import {
   Paper,
   Select,
   SelectChangeEvent,
-  TableContainer,
 } from "@mui/material";
 import { useState } from "react";
-import useGetFactoryInvoices from "../../hooks/useGetFactoryInvoices";
-
 import CustomerPagination from "../../components/CustomPagination";
 import ProgressStagesColors from "../../components/ProgressStagesColors";
 import FactoryInvoiceSearch from "../../hooks/FactoryInvoiceSearch";
-import { BulkUpdateProgress } from "../../components/BulkUpdateProgress";
-import SelectableTable from "../../components/inputui/SelectableTable";
-
+import useGetCheckinInvoiceList from "../../hooks/useGetCheckinInvoiceList";
+import { ProgressStatus } from "../../model/StaticTypeModels";
+import CheckBoxTable from "../../components/inputui/CheckBoxTable";
+interface SelectedInvoices {
+  id: number;
+  invoice_number: string;
+}
 export default function JobProgress() {
   const {
     invoiceList,
     invoiceLimit,
-    invoiceSearch,
-    changePageSize,
-    invoicePageNavigation,
-    invoiceLoading,
-    invoiceTotalCount,
+    invoiceListSearch,
+    invoiceListChangePageSize,
+    invoiceListPageNavigation,
+    invoiceListLoading,
+    invoiceListTotalCount,
     invoiceListRefres,
-  } = useGetFactoryInvoices();
+  } = useGetCheckinInvoiceList();
 
   const [orderProgress, setOrderProgress] = useState("");
 
   const handleChange = (event: SelectChangeEvent) => {
     setOrderProgress(event.target.value as string);
-    invoiceSearch("progress_status", event.target.value);
+    invoiceListSearch({
+      progress_status: event.target.value as ProgressStatus,
+      search: null,
+      invoice_number: null,
+      mobile: null,
+      nic: null,
+      page_size: 10,
+      page: 1,
+    });
   };
-  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const [selectedIds, setSelectedIds] = useState<SelectedInvoices[]>([]);
 
   return (
     <Box sx={{ display: "flex" }}>
-      <TableContainer sx={{ mt: 2 }} elevation={3} component={Paper}>
+      <Box sx={{ mt: 2 }} elevation={3} component={Paper}>
         <Box
           sx={{
             display: "flex",
@@ -70,30 +79,29 @@ export default function JobProgress() {
               <MenuItem value={"issue_to_customer"}>Issue to Customer</MenuItem>
             </Select>
           </FormControl>
-          <FactoryInvoiceSearch invoiceSearch={invoiceSearch} />
+          <FactoryInvoiceSearch invoiceListSearch={invoiceListSearch} />
           <ProgressStagesColors />
         </Box>
-        <SelectableTable
-          data={invoiceList}
-          loading={invoiceLoading}
-          selectedIds={selectedIds}
-          onSelectionChange={setSelectedIds}
+        <CheckBoxTable
+          invoiceListRefres={invoiceListRefres}
+          invoiceList={invoiceList}
+          loading={invoiceListLoading}
         />
         <CustomerPagination
-          totalCount={invoiceTotalCount}
-          handlePageNavigation={invoicePageNavigation}
-          changePageSize={changePageSize}
+          totalCount={invoiceListTotalCount}
+          handlePageNavigation={invoiceListPageNavigation}
+          changePageSize={invoiceListChangePageSize}
           page_size={invoiceLimit}
         />
-      </TableContainer>
-
-      <Box sx={{ minHeight: "10vh" }}>
+      </Box>
+      {/* <Box sx={{ minHeight: "10vh" }}>
         <BulkUpdateProgress
-          selectedIds={selectedIds}
+          selectedIds={selectedIds.map((id) => id.id)}
           onUpdateSuccess={invoiceListRefres} // Refresh data after update
           onClearSelection={() => setSelectedIds([])} // Clear selection
+          invoiceList={selectedIds}
         />
-      </Box>
+      </Box> */}
     </Box>
   );
 }

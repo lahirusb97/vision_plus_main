@@ -9,6 +9,7 @@ import FormControl from "@mui/material/FormControl";
 import { Box, Button, TextField } from "@mui/material";
 import { useEffect } from "react";
 import { getBranchName } from "../utils/branchName";
+import { CheckinInvoiceListParams } from "./useGetCheckinInvoiceList";
 
 // Define Zod schema for form validation
 const searchSchema = z.object({
@@ -17,13 +18,11 @@ const searchSchema = z.object({
 });
 
 type SearchFormData = z.infer<typeof searchSchema>;
-type searchParams = "invoice_number" | "mobile" | "nic" | "progress_status";
-//useGteFactoryinvoiceHook
 interface FactoryInvoiceSearchProps {
-  invoiceSearch: (searchOption: searchParams, searchTerm: string) => void;
+  invoiceListSearch: (filterParams: CheckinInvoiceListParams) => void;
 }
 export default function FactoryInvoiceSearch({
-  invoiceSearch,
+  invoiceListSearch,
 }: FactoryInvoiceSearchProps) {
   const {
     control,
@@ -41,7 +40,17 @@ export default function FactoryInvoiceSearch({
   });
 
   const onSubmit = (data: SearchFormData) => {
-    invoiceSearch(data.searchOption, data.searchTerm);
+    const filterParams: CheckinInvoiceListParams = {
+      page_size: 10,
+      page: 1,
+      search: null,
+      invoice_number: null,
+      mobile: null,
+      nic: null,
+      progress_status: null,
+      [data.searchOption]: data.searchTerm, // dynamically assign value
+    };
+    invoiceListSearch(filterParams);
   };
   useEffect(() => {
     if (watch("searchOption") === "invoice_number") {
@@ -49,8 +58,15 @@ export default function FactoryInvoiceSearch({
     } else {
       setValue("searchTerm", "");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [watch("searchOption")]);
 
+  function formatSearchOption(option: string): string {
+    return option
+      .split("_")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  }
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Box
@@ -68,7 +84,7 @@ export default function FactoryInvoiceSearch({
           <TextField
             sx={{ width: 220 }}
             size="small"
-            label="Search"
+            label={`Enter Patient ${formatSearchOption(watch("searchOption"))}`}
             error={!!errors.searchTerm}
             helperText={errors.searchTerm?.message}
             {...register("searchTerm")}

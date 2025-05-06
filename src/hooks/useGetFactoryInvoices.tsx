@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import axiosClient from "../axiosClient";
 import { PaginatedResponse } from "../model/PaginatedResponse";
 import { extractErrorMessage } from "../utils/extractErrorMessage";
@@ -19,7 +19,14 @@ const useGetFactoryInvoices = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [initialLoad, setInitialLoad] = useState<boolean>(true);
 
+  const abortControllerRef = useRef<AbortController | null>(null);
+
   const loadData = useCallback(async () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
     setLoading(true);
     try {
       const response: { data: PaginatedResponse<CheckinInvoiceModel> } =
@@ -37,6 +44,7 @@ const useGetFactoryInvoices = () => {
               : {}),
             branch_id: getUserCurentBranch()?.id,
           },
+          signal: controller.signal,
         });
 
       if (response.data?.results.length > 0) {
@@ -74,6 +82,11 @@ const useGetFactoryInvoices = () => {
     if (!initialLoad) loadData();
     //!initialLoad not inluded in the array to stock initial loadData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
   }, [loadData]);
 
   return {

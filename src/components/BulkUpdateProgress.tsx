@@ -14,8 +14,12 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import axiosClient from "../axiosClient";
 import { extractErrorMessage } from "../utils/extractErrorMessage";
-
+interface SelectedInvoices {
+  id: number;
+  invoice_number: string;
+}
 interface BulkUpdateProgressProps {
+  invoiceList: SelectedInvoices[];
   selectedIds: number[];
   onUpdateSuccess?: () => void;
   onClearSelection?: () => void;
@@ -29,6 +33,7 @@ const progressOptions = [
 ];
 
 export const BulkUpdateProgress = ({
+  invoiceList,
   selectedIds,
   onUpdateSuccess,
   onClearSelection,
@@ -118,7 +123,10 @@ export const BulkUpdateProgress = ({
           {selectedIds.length} item(s) selected
         </Typography>
       )}
-
+      {invoiceList?.map((invoice) => (
+        <Typography key={invoice.id}>{invoice.invoice_number}</Typography>
+      ))}
+      {console.log(invoiceList)}
       {selectedIds.length > 0 && (
         <Button
           variant="outlined"
