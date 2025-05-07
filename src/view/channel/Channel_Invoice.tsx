@@ -68,7 +68,7 @@ const ChannelInvoice = () => {
         <Box display="flex" justifyContent="space-between">
           <Typography variant="body2">Channele No:</Typography>
           <Typography variant="h6" fontWeight={"bold"}>
-            {1}
+            {singleAppointment?.channel_no}
           </Typography>
         </Box>
         <Box display="flex" justifyContent="space-between">

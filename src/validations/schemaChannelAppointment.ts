@@ -6,9 +6,6 @@ export const ChannelAppointmentSchema = z.object({
   address: z.string().min(1, "Patient Address is required"),
   phone_number: z.string().min(1, "Patient Contact is required"),
   channel_date: z.date().or(z.string()),
-  time: z.string().regex(/^\d{2}:\d{2}:\d{2}$/, {
-    message: "Time must be in HH:MM:SS format",
-  }),
   channeling_fee: z.number().min(0, "Channeling Fee is required"),
   branch_id: z.number({ invalid_type_error: "Branch is required" }),
   cash: z.number().min(0, "Cash Amount is required"),

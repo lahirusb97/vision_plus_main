@@ -20,39 +20,39 @@ import useGetDoctors from "../../hooks/useGetDoctors";
 import useGetChannelDetails from "../../hooks/useGetChannelDetails";
 import HighlightedDatePicker from "../../components/HighlightedDatePicker";
 import { useNavigate } from "react-router";
-
-interface ChannelData {
-  id: number;
-  address: string;
-  doctor_name: string;
-  contact_number: string;
-  patient_name: string;
-  channel_no: number;
-  first_payment: number;
-  date: string;
-}
+import CustomerPagination from "../../components/CustomPagination";
 
 function ChannelDetails() {
   const navigate = useNavigate();
   const { data: doctorList, loading: loadingDoctors } = useGetDoctors();
   const [searchText, setSearchText] = useState<string>("");
+  const [invoice_number, setInvoiceNumber] = useState<string | null>(null);
   //handle Filters
   const [dateInput, setDateInput] = useState<string | null>(null);
   const [doctorInput, setDoctorInput] = useState<number | undefined>(undefined);
 
   const {
     channelList,
-    loading: loadingchannelList,
-    searchChannels,
+    channelListLimit,
+    channelListLoading,
+    channelListError,
+    channelListTotalCount,
+    channelListRefresh,
+    channelListSearch,
+    channelListPageNavigation,
+    channelListChangePageSize,
   } = useGetChannelDetails();
 
   //handle Filters
-  console.log(channelList);
+
   const handleFilter = () => {
-    searchChannels({
-      doctor: doctorInput,
+    channelListSearch({
+      doctor: doctorInput || null,
       date: dateInput,
       search: searchText,
+      invoice_number: invoice_number ? Number(invoice_number) : null,
+      page: 1,
+      page_size: 10,
     });
   };
 
@@ -67,7 +67,15 @@ function ChannelDetails() {
           marginBottom: 3,
         }}
       >
-        {/* Doctor dropdown */}
+        <TextField
+          type="text"
+          sx={{ width: 150 }}
+          onChange={(e) => setInvoiceNumber(e.target.value)}
+          value={invoice_number}
+          label=" Invoice Number"
+          size="small"
+          variant="outlined"
+        />
         <TextField
           type="text"
           onChange={(e) => setSearchText(e.target.value)}
@@ -76,6 +84,7 @@ function ChannelDetails() {
           size="small"
           variant="outlined"
         />
+        {/* Doctor dropdown */}
 
         <Box sx={{ width: "200px" }}>
           <AutocompleteInputField
@@ -135,32 +144,32 @@ function ChannelDetails() {
           <TableHead>
             <TableRow sx={{ padding: 0, margin: 0 }}>
               <TableCell sx={tableStyles}>Action</TableCell>
-              <TableCell sx={tableStyles}>ID</TableCell>
-              <TableCell sx={tableStyles} align="right">
+              <TableCell sx={tableStyles}>Invoice Number </TableCell>
+              <TableCell sx={tableStyles} align="left">
                 Address
               </TableCell>
-              <TableCell sx={tableStyles} align="right">
+              <TableCell sx={tableStyles} align="left">
                 Doctor Name
               </TableCell>
-              <TableCell sx={tableStyles} align="right">
+              <TableCell sx={tableStyles} align="left">
                 Contact Number
               </TableCell>
-              <TableCell sx={tableStyles} align="right">
+              <TableCell sx={tableStyles} align="left">
                 Patient Name
               </TableCell>
-              <TableCell sx={tableStyles} align="right">
+              <TableCell sx={tableStyles} align="center">
                 Channel No
               </TableCell>
-              <TableCell sx={tableStyles} align="right">
+              <TableCell sx={tableStyles} align="left">
                 First Payment
               </TableCell>
-              <TableCell sx={tableStyles} align="right">
+              <TableCell sx={tableStyles} align="left">
                 Date
               </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {channelList.map((row: ChannelData) => (
+            {channelList.results.map((row) => (
               <TableRow
                 key={row.id}
                 sx={{
@@ -189,45 +198,66 @@ function ChannelDetails() {
                 </TableCell>
 
                 <TableCell sx={tableStyles} component="th" scope="row">
-                  {row.id}
+                  {row.invoice_number}
                 </TableCell>
-                <TableCell sx={tableStyles} align="right">
+                <TableCell sx={tableStyles} align="left">
                   {row.address}
                 </TableCell>
-                <TableCell sx={tableStyles} align="right">
+                <TableCell sx={tableStyles} align="left">
                   {row.doctor_name}
                 </TableCell>
-                <TableCell sx={tableStyles} align="right">
+                <TableCell sx={tableStyles} align="left">
                   {row.contact_number}
                 </TableCell>
-                <TableCell sx={tableStyles} align="right">
+                <TableCell sx={tableStyles} align="left">
                   {row.patient_name}
                 </TableCell>
-                <TableCell sx={tableStyles} align="right">
+                <TableCell sx={tableStyles} align="center">
                   {row.channel_no}
                 </TableCell>
-                <TableCell sx={tableStyles} align="right">
+                <TableCell sx={tableStyles} align="left">
                   {row.first_payment}
                 </TableCell>
-                <TableCell sx={tableStyles} align="right">
+                <TableCell sx={tableStyles} align="left">
                   {row.date}
                 </TableCell>
               </TableRow>
             ))}
-            {loadingchannelList && (
-              <TableRow>
-                <TableCell colSpan={8}>Loading...</TableCell>
-              </TableRow>
-            )}
-            {channelList.length === 0 && (
+            {channelListLoading && (
               <TableRow>
                 <TableCell align="center" colSpan={9}>
-                  No data...
+                  Loading...
+                </TableCell>
+              </TableRow>
+            )}
+            {channelList.results.length === 0 && (
+              <TableRow>
+                <TableCell align="center" colSpan={9}>
+                  {channelListError ? "Error loading data " : "No data..."}
+                  {channelListError && (
+                    <>
+                      <Button
+                        size="small"
+                        color="error"
+                        variant="contained"
+                        onClick={channelListRefresh}
+                        sx={{ mx: "1rem" }}
+                      >
+                        Retry
+                      </Button>
+                    </>
+                  )}
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
+        <CustomerPagination
+          totalCount={channelListTotalCount}
+          handlePageNavigation={channelListPageNavigation}
+          changePageSize={channelListChangePageSize}
+          page_size={channelListLimit}
+        />
       </TableContainer>
     </Box>
   );

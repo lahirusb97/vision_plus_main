@@ -9,32 +9,40 @@ import {
   TableContainer,
 } from "@mui/material";
 import { useState } from "react";
-import useGetFactoryInvoices from "../../hooks/useGetFactoryInvoices";
 
 import CustomerPagination from "../../components/CustomPagination";
 import ProgressStagesColors from "../../components/ProgressStagesColors";
 import FactoryInvoiceSearch from "../../hooks/FactoryInvoiceSearch";
-import { BulkUpdateProgress } from "../../components/BulkUpdateProgress";
-import SelectableTable from "../../components/inputui/SelectableTable";
+import useGetCheckinInvoiceList from "../../hooks/useGetCheckinInvoiceList";
+import { ProgressStatus } from "../../model/StaticTypeModels";
 
 export default function JobProgress() {
   const {
     invoiceList,
     invoiceLimit,
-    invoiceSearch,
-    changePageSize,
-    invoicePageNavigation,
-    invoiceTotalCount,
+    invoiceListSearch,
+    invoiceListChangePageSize,
+    invoiceListPageNavigation,
+    invoiceListLoading,
+    invoiceListTotalCount,
     invoiceListRefres,
-  } = useGetFactoryInvoices();
+  } = useGetCheckinInvoiceList();
+
 
   const [orderProgress, setOrderProgress] = useState("");
 
   const handleChange = (event: SelectChangeEvent) => {
     setOrderProgress(event.target.value as string);
-    invoiceSearch("progress_status", event.target.value);
+    invoiceListSearch({
+         progress_status: event.target.value as ProgressStatus,
+         search: null,
+         invoice_number: null,
+         mobile: null,
+         nic: null,
+         page_size: 10,
+         page: 1,
+       });
   };
-  const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
   // Persist selections in localStorage/sessionStorage
 
@@ -71,30 +79,19 @@ export default function JobProgress() {
               <MenuItem value={"issue_to_customer"}>Issue to Customer</MenuItem>
             </Select>
           </FormControl>
-          <FactoryInvoiceSearch invoiceSearch={invoiceSearch} />
+          <FactoryInvoiceSearch invoiceListSearch={invoiceListSearch} />
           <ProgressStagesColors />
         </Box>
-        <SelectableTable
-          data={invoiceList}
-          loading={false}
-          selectedIds={selectedIds}
-          onSelectionChange={setSelectedIds}
-        />
+        
         <CustomerPagination
-          totalCount={invoiceTotalCount}
-          handlePageNavigation={invoicePageNavigation}
-          changePageSize={changePageSize}
+          totalCount={invoiceListTotalCount}
+          handlePageNavigation={invoiceListPageNavigation}
+          changePageSize={invoiceListChangePageSize}
           page_size={invoiceLimit}
         />
       </TableContainer>
 
-      <Box sx={{ minHeight: "10vh" }}>
-        <BulkUpdateProgress
-          selectedIds={selectedIds}
-          onUpdateSuccess={invoiceListRefres} // Refresh data after update
-          onClearSelection={() => setSelectedIds([])} // Clear selection
-        />
-      </Box>
+      
     </Box>
   );
 }

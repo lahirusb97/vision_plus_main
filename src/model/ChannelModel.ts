@@ -1,6 +1,6 @@
 import { PaymentMethodTypes, TransactionStatusTypes } from "./StaticTypeModels";
-
-export interface PaymentModel {
+//TODO NEED TO CHANGE IT this new rq body is large
+interface PaymentModel {
   id: number;
   appointment: number;
   appointment_details: string;
@@ -28,5 +28,6 @@ export interface ChannelFullDetailModel {
   status: TransactionStatusTypes;
   amount: string; // Consider using number if needed
   channel_no: number;
+  invoice_number: number;
   payments: PaymentModel[];
 }

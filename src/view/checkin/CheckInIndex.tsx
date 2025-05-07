@@ -8,11 +8,10 @@ import {
   TableRow,
   Paper,
   IconButton,
+  CircularProgress,
 } from "@mui/material";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import CircleIcon from "@mui/icons-material/Circle";
-import useGetFactoryInvoices from "../../hooks/useGetFactoryInvoices";
-
 import { dateAndTimeFormat } from "../../utils/dateAndTimeFormat";
 import { progressStatus } from "../../utils/progressState";
 import CustomerPagination from "../../components/CustomPagination";
@@ -20,20 +19,22 @@ import FactoryInvoiceSearch from "../../hooks/FactoryInvoiceSearch";
 import ProgressStagesColors from "../../components/ProgressStagesColors";
 import { customerPaymentTotal } from "../../utils/customerPaymentTotal";
 import { numberWithCommas } from "../../utils/numberWithCommas";
+import useGetCheckinInvoiceList from "../../hooks/useGetCheckinInvoiceList";
 
 const CheckInIndex = () => {
   const {
     invoiceList,
     invoiceLimit,
-    invoiceSearch,
-    changePageSize,
-    invoicePageNavigation,
-    invoiceTotalCount,
-  } = useGetFactoryInvoices();
-  console.log(invoiceList);
+    invoiceListSearch,
+    invoiceListChangePageSize,
+    invoiceListPageNavigation,
+    invoiceListLoading,
+    invoiceListTotalCount,
+  
+  } = useGetCheckinInvoiceList();
   return (
     <div style={{ padding: 20, maxWidth: "1200px", minWidth: "900px" }}>
-      <FactoryInvoiceSearch invoiceSearch={invoiceSearch} />
+      <FactoryInvoiceSearch invoiceListSearch={invoiceListSearch} />
       {/* Status Indicators */}
       <ProgressStagesColors />
       <TableContainer component={Paper}>
@@ -55,6 +56,13 @@ const CheckInIndex = () => {
             </TableRow>
           </TableHead>
           <TableBody>
+               {invoiceListLoading && (
+                          <TableRow>
+                            <TableCell colSpan={10} align="center">
+                              <CircularProgress />
+                            </TableCell>
+                          </TableRow>
+                        )}
             {invoiceList.map((row, index) => (
               <TableRow key={index}>
                 <TableCell>{row.customer}</TableCell>
@@ -107,15 +115,23 @@ const CheckInIndex = () => {
                 </TableCell>
               </TableRow>
             ))}
+            {!invoiceListLoading && invoiceList.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={9} rowSpan={6} align="center">
+                  No data found
+                </TableCell>
+              </TableRow>
+            )}
+            
           </TableBody>
         </Table>
       </TableContainer>
       <CustomerPagination
-        totalCount={invoiceTotalCount}
-        handlePageNavigation={invoicePageNavigation}
-        changePageSize={changePageSize}
-        page_size={invoiceLimit}
-      />
+          totalCount={invoiceListTotalCount}
+          handlePageNavigation={invoiceListPageNavigation}
+          changePageSize={invoiceListChangePageSize}
+          page_size={invoiceLimit}
+        />
     </div>
   );
 };

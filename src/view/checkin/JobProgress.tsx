@@ -14,10 +14,7 @@ import FactoryInvoiceSearch from "../../hooks/FactoryInvoiceSearch";
 import useGetCheckinInvoiceList from "../../hooks/useGetCheckinInvoiceList";
 import { ProgressStatus } from "../../model/StaticTypeModels";
 import CheckBoxTable from "../../components/inputui/CheckBoxTable";
-interface SelectedInvoices {
-  id: number;
-  invoice_number: string;
-}
+
 export default function JobProgress() {
   const {
     invoiceList,
@@ -44,8 +41,7 @@ export default function JobProgress() {
       page: 1,
     });
   };
-  const [selectedIds, setSelectedIds] = useState<SelectedInvoices[]>([]);
-
+ 
   return (
     <Box sx={{ display: "flex" }}>
       <Box sx={{ mt: 2 }} elevation={3} component={Paper}>
@@ -94,14 +90,7 @@ export default function JobProgress() {
           page_size={invoiceLimit}
         />
       </Box>
-      {/* <Box sx={{ minHeight: "10vh" }}>
-        <BulkUpdateProgress
-          selectedIds={selectedIds.map((id) => id.id)}
-          onUpdateSuccess={invoiceListRefres} // Refresh data after update
-          onClearSelection={() => setSelectedIds([])} // Clear selection
-          invoiceList={selectedIds}
-        />
-      </Box> */}
+     
     </Box>
   );
 }
