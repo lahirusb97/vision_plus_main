@@ -12,7 +12,8 @@ import {
   Paper,
   IconButton,
 } from "@mui/material";
-import { Edit, PaymentOutlined, Print } from "@mui/icons-material";
+import { Edit, Print } from "@mui/icons-material";
+import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import AutocompleteInputField from "../../components/inputui/DropdownInput";
@@ -146,6 +147,7 @@ function ChannelDetails() {
           <TableHead>
             <TableRow sx={{ padding: 0, margin: 0 }}>
               <TableCell sx={tableStyles}>Action</TableCell>
+              <TableCell sx={tableStyles}>Repayment</TableCell>
               <TableCell sx={tableStyles}>Invoice Number </TableCell>
 
               <TableCell sx={tableStyles} align="left">
@@ -166,7 +168,7 @@ function ChannelDetails() {
               </TableCell>
 
               <TableCell sx={tableStyles} align="left">
-                First Payment
+                Total Payment
               </TableCell>
 
               <TableCell sx={tableStyles} align="left">
@@ -201,16 +203,23 @@ function ChannelDetails() {
                   >
                     <Print sx={{ fontSize: 15 }} />
                   </IconButton>
+                </TableCell>
+
+                <TableCell
+                  sx={tableStyles}
+                  align="center"
+                  component="th"
+                  scope="row"
+                >
                   <IconButton
                     onClick={() =>
                       navigate(`/channel/channel_payment/${row.id}`)
                     }
                     size="small"
                   >
-                    <PaymentOutlined sx={{ fontSize: 15 }} />
+                    <PointOfSaleIcon color="error" sx={{ fontSize: 15 }} />
                   </IconButton>
                 </TableCell>
-
                 <TableCell
                   sx={tableStyles}
                   align="center"
@@ -228,7 +237,6 @@ function ChannelDetails() {
                 <TableCell sx={tableStyles} align="left">
                   {row.patient_name}
                 </TableCell>
-
                 <TableCell sx={tableStyles} align="left">
                   {row.doctor_name}
                 </TableCell>
@@ -239,7 +247,7 @@ function ChannelDetails() {
                 <TableCell sx={tableStyles} align="left">
                   {row.first_payment}
                 </TableCell>
-
+                {/* {console.log(row)} */}
                 <TableCell sx={tableStyles} align="left">
                   {row.address}
                 </TableCell>

@@ -30,6 +30,7 @@ import {
 import { useAxiosPost } from "../../hooks/useAxiosPost";
 import SubmitCustomBtn from "../../components/common/SubmiteCustomBtn";
 import TitleText from "../../components/TitleText";
+import { ExpencePaymentTable } from "../../components/ExpencePaymentTable";
 
 const Expence = () => {
   const navigate = useNavigate();
@@ -214,7 +215,7 @@ const Expence = () => {
           </Grid>
         </form>
       </Paper>
-      <ExpensesTable data={expenseList} loading={expenseListLoading} />
+      <ExpencePaymentTable data={expenseList} loading={expenseListLoading} />
     </Box>
   );
 };

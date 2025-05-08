@@ -12,7 +12,6 @@ export default function BranchAddress() {
         <>
           <Typography variant="body2">No: 34, Aluthgama Road</Typography>
           <Typography variant="body2">Mathugama</Typography>
-          <Typography variant="body2">Sri Lanka</Typography>
         </>
       )}
       {getUserCurentBranch()?.id === BRANCH_ALUTHGAMA_ID && (
@@ -21,7 +20,6 @@ export default function BranchAddress() {
             No.268/B, Jayasooriya Building,
           </Typography>
           <Typography variant="body2"> Galle Road, Aluthgama</Typography>
-          <Typography variant="body2">Sri Lanka</Typography>
         </>
       )}
       {getUserCurentBranch()?.id === BUSID && (
@@ -30,7 +28,6 @@ export default function BranchAddress() {
             No.268/B, Jayasooriya Building,
           </Typography>
           <Typography variant="body2"> Galle Road, Aluthgama</Typography>
-          <Typography variant="body2">Sri Lanka</Typography>
         </>
       )}
     </div>

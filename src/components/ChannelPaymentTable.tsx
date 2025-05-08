@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { MaterialReactTable, MRT_ColumnDef } from "material-react-table";
 import { ChannelPaymentReport } from "../model/ChannelReportModel";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 interface ChannelTableProps {
   data: ChannelPaymentReport[];
   loading: boolean;
@@ -13,7 +13,7 @@ export const ChannelPaymentTable = ({ data, loading }: ChannelTableProps) => {
       {
         accessorKey: "appointment_id",
         header: "Channel ID",
-        size: 100,
+        size: 50,
       },
       {
         accessorKey: "amount_cash",
@@ -54,7 +54,7 @@ export const ChannelPaymentTable = ({ data, loading }: ChannelTableProps) => {
         enableTopToolbar={false}
         initialState={{
           density: "compact",
-          pagination: { pageIndex: 0, pageSize: 15 },
+          pagination: { pageIndex: 0, pageSize: 5 },
         }}
         enableSorting
         enablePagination
@@ -69,6 +69,20 @@ export const ChannelPaymentTable = ({ data, loading }: ChannelTableProps) => {
             padding: "0px 10px",
           },
         }}
+        renderEmptyRowsFallback={() => (
+          <Box
+            sx={{
+              minHeight: "30px", // Set empty rows height
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Typography variant="body2" color="text.secondary">
+              No expenses found
+            </Typography>
+          </Box>
+        )}
       />
     </Box>
   );

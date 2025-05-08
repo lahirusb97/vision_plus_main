@@ -1,5 +1,5 @@
 // InvoiceTable.tsx
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { useMemo } from "react";
 import { MaterialReactTable, MRT_ColumnDef } from "material-react-table";
 import { InvoicePaymentReport } from "../model/InvoicePaymentReport";
@@ -56,7 +56,7 @@ export const InvoicePaymentTable = ({ data, loading }: InvoiceTableProps) => {
         enableTopToolbar={false}
         initialState={{
           density: "compact",
-          pagination: { pageIndex: 0, pageSize: 15 },
+          pagination: { pageIndex: 0, pageSize: 5 },
         }}
         enableSorting
         enablePagination
@@ -71,6 +71,20 @@ export const InvoicePaymentTable = ({ data, loading }: InvoiceTableProps) => {
             padding: "0px 10px",
           },
         }}
+        renderEmptyRowsFallback={() => (
+          <Box
+            sx={{
+              minHeight: "30px", // Set empty rows height
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Typography variant="body2" color="text.secondary">
+              No expenses found
+            </Typography>
+          </Box>
+        )}
       />
     </Box>
   );
