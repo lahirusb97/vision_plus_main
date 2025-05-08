@@ -19,6 +19,7 @@ import BankDepositeUpdate from "../../view/account/bank_deposite/BankDepositUpda
 import ExpenceUpdate from "../../view/account/expencess_category/ExpenceUpdate";
 import AddOtherIncome from "../../view/account/other_income/AddOtherIncome";
 import OtherIncomeManage from "../../view/account/other_income/OtherIncomeManage";
+import SafeIndex from "../../view/account/safe/SafeIndex";
 
 export const accountRoutes: RouteObject[] = [
   {
@@ -167,6 +168,16 @@ export const accountRoutes: RouteObject[] = [
       {
         path: "update/:bank_deposite_id",
         element: <BankDepositeUpdate />,
+      },
+    ],
+  },
+  {
+    path: "safe/",
+    element: <ProtectedChildRoute />,
+    children: [
+      {
+        index: true,
+        element: <SafeIndex />,
       },
     ],
   },

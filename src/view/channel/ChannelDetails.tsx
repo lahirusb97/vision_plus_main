@@ -99,6 +99,7 @@ function ChannelDetails() {
         {/* Date Picker */}
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <HighlightedDatePicker
+            sheduleStatus={"Available"}
             onDateChange={(date) => setDateInput(date)}
             doctorId={doctorInput}
             label="Select Date"

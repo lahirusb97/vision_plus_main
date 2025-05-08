@@ -14,15 +14,7 @@ import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import CustomerPagination from "./CustomPagination";
-
-interface ExpenseItem {
-  id: number;
-  created_at: string;
-  main_category_name: string;
-  sub_category_name: string;
-  amount: string;
-  note: string;
-}
+import { ExpenseItem } from "../model/ExpenceModel";
 
 interface ExpensesTableProps {
   data: ExpenseItem[];
@@ -70,6 +62,7 @@ export const ExpensesTable = ({
             <TableCell>Sub Category</TableCell>
             <TableCell>Note</TableCell>
             <TableCell>Amount (Rs.)</TableCell>
+            <TableCell>Paid From</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -118,6 +111,9 @@ export const ExpensesTable = ({
                 <TableCell>{item.sub_category_name}</TableCell>
                 <TableCell>{item.note}</TableCell>
                 <TableCell>{item.amount}</TableCell>
+                <TableCell>
+                  {item.paid_from_safe ? "Safe" : "Cashier"}
+                </TableCell>
               </TableRow>
             ))
           )}

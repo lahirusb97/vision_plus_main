@@ -9,7 +9,6 @@ import LoadingAnimation from "../../components/LoadingAnimation";
 import DataLoadingError from "../../components/common/DataLoadingError";
 import BranchMobileNum from "../../components/common/BranchMobileNum";
 import BranchAddress from "../../components/common/BranchAddress";
-import { formatDateTimeByType } from "../../utils/formatDateTimeByType";
 
 const ChannelInvoice = () => {
   const componentRef = useRef(null);
@@ -97,9 +96,9 @@ const ChannelInvoice = () => {
               fontWeight={"bold"}
               variant="h6"
             >
-              {formatDateTimeByType(singleAppointment?.date, "date")}
+              {singleAppointment?.date}
               {` - `}
-              {formatDateTimeByType(singleAppointment?.time, "time")}
+              {singleAppointment?.time}
             </Typography>
           </Box>
           <Box display="flex" justifyContent="space-between" sx={{ mt: 2 }}>

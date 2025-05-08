@@ -62,8 +62,7 @@ export default function ChannelRepayment() {
     const totalPayment = data.credit_card + data.cash + data.online_transfer;
     if (
       parseInt(singleAppointment?.amount || "0") -
-        totalPreViusPayment +
-        totalPayment <=
+        (totalPreViusPayment + totalPayment) >=
       0
     ) {
       if (

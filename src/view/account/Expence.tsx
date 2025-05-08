@@ -7,6 +7,7 @@ import {
   Grid,
   Paper,
   Divider,
+  Checkbox,
 } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -28,6 +29,7 @@ import {
 } from "../../validations/expenseSchema";
 import { useAxiosPost } from "../../hooks/useAxiosPost";
 import SubmitCustomBtn from "../../components/common/SubmiteCustomBtn";
+import TitleText from "../../components/TitleText";
 
 const Expence = () => {
   const navigate = useNavigate();
@@ -105,7 +107,8 @@ const Expence = () => {
 
   return (
     <Box sx={{ display: "flex" }} p={1}>
-      <Paper elevation={1} sx={{ p: 1 }}>
+      <Paper elevation={1} sx={{ p: 1, width: "600px" }}>
+        <TitleText title="Place New Expense" />
         <Box>
           <Button
             size="small"
@@ -191,6 +194,16 @@ const Expence = () => {
               variant="outlined"
               defaultValue={getUserCurentBranch()?.id}
             />
+            <Box ml={1} display="flex" alignItems="center">
+              <Typography variant="body1"> Paid From Safe</Typography>
+
+              <Checkbox
+                {...register("paid_from_safe")}
+                checked={watch("paid_from_safe") || false} // Add fallback to false
+                onChange={(e) => setValue("paid_from_safe", e.target.checked)}
+              />
+            </Box>
+
             <Grid item xs={12}>
               <SubmitCustomBtn
                 btnText="Add Expence"

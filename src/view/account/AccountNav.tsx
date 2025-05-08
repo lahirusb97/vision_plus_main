@@ -9,6 +9,7 @@ export default function AccountNav() {
       <NavButton name="Other Income" path={"/account/other_income/"} />
       <NavButton name="Bank Deposite" path={"/account/bank_deposite/"} />
       <NavButton name="Bank Accounts" path={"/account/bank_accounts/"} />
+      <NavButton name="Safe" path={"/account/safe/"} />
     </>
   );
 }

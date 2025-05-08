@@ -14,7 +14,6 @@ import useGetDoctors from "../../../hooks/useGetDoctors";
 import { useAxiosPost } from "../../../hooks/useAxiosPost";
 import SaveButton from "../../../components/SaveButton";
 import { extractErrorMessage } from "../../../utils/extractErrorMessage";
-import toast from "react-hot-toast";
 import HighlightedDatePicker from "../../../components/HighlightedDatePicker";
 import { CustomToast } from "../../../utils/customToast";
 
@@ -50,20 +49,11 @@ export default function DoctorAbsent() {
     };
 
     try {
-      const docTransfter = CustomToast.loading("Transferring schedule...");
-
       await postHandler("doctor-schedule/transfer/", payload);
-      toast.dismiss(docTransfter);
-
-      const appointmentTransfer = CustomToast.loading(
-        "Transferring appointments..."
-      );
-      await postHandler("doctor/transfer-appointments/", payload);
-      toast.dismiss(appointmentTransfer);
       reset();
-      CustomToast.success("Transfer completed");
+      CustomToast.success("Schedule Transfer completed");
     } catch (error) {
-      CustomToast.error("Transfer failed Use Manual Transfer");
+      CustomToast.error("Schedule Transfer failed");
       extractErrorMessage(error);
     }
   };

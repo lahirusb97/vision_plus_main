@@ -108,6 +108,7 @@ const PatientShedule = () => {
                 control={control}
                 render={({ field }) => (
                   <HighlightedDatePicker
+                    sheduleStatus={"Available"}
                     selectedDate={
                       field.value
                         ? dayjs(field.value).format("YYYY-MM-DD")
