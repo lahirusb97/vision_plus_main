@@ -20,21 +20,6 @@ interface HighlightedDatePickerProps {
   sheduleStatus: DoctorScheduleStatus | null;
 }
 
-const HighlightedPickersDay = styled(PickersDay)<PickersDayProps<Dayjs>>(
-  ({ theme }) => ({
-    backgroundColor: "#C41E3A", // or "#FFE082"
-    color: theme.palette.getContrastText(theme.palette.primary.light),
-    fontWeight: "bold",
-    "&:hover, &:focus": {
-      backgroundColor: theme.palette.primary.main,
-    },
-    "&.Mui-selected": {
-      backgroundColor: theme.palette.primary.main,
-      color: theme.palette.primary.contrastText,
-    },
-  })
-);
-
 export default function HighlightedDatePicker({
   selectedDate,
   onDateChange,
@@ -48,7 +33,20 @@ export default function HighlightedDatePicker({
     doctorSheduleListLoading,
     getDoctorShedule,
   } = useGetDoctorShedule();
-
+  const HighlightedPickersDay = styled(PickersDay)<PickersDayProps<Dayjs>>(
+    ({ theme }) => ({
+      backgroundColor: sheduleStatus === "Available" ? "#C41E3A" : "#C49d1e", // or "#FFE082"
+      color: theme.palette.getContrastText(theme.palette.primary.light),
+      fontWeight: "bold",
+      "&:hover, &:focus": {
+        backgroundColor: theme.palette.primary.main,
+      },
+      "&.Mui-selected": {
+        backgroundColor: theme.palette.primary.main,
+        color: theme.palette.primary.contrastText,
+      },
+    })
+  );
   const scheduleMap = React.useMemo(
     () =>
       doctorSheduleList.reduce((acc, { date, start_time }) => {
