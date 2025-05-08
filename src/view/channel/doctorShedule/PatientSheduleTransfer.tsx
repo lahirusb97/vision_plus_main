@@ -1,21 +1,21 @@
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TextField, Paper, Typography } from "@mui/material";
-import { TimePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import {
-  DoctorArrivalForm,
-  doctorArrivalSchema,
-} from "../../../validations/schemaDoctorArrival";
+  doctorAbsentSchema,
+  DoctorAbsentForm,
+} from "../../../validations/schemaDoctorAbsent";
 import { getUserCurentBranch } from "../../../utils/authDataConver";
 import AutocompleteInputField from "../../../components/inputui/DropdownInput";
 import useGetDoctors from "../../../hooks/useGetDoctors";
 import { useAxiosPost } from "../../../hooks/useAxiosPost";
 import SaveButton from "../../../components/SaveButton";
 import { extractErrorMessage } from "../../../utils/extractErrorMessage";
-import toast from "react-hot-toast";
 import HighlightedDatePicker from "../../../components/HighlightedDatePicker";
+import { CustomToast } from "../../../utils/customToast";
 
 const flexBoxStyle = {
   display: "flex",
@@ -25,37 +25,35 @@ const flexBoxStyle = {
   minWidth: "300px",
 };
 
-export default function DoctorArival() {
+export default function PatientSheduleTransfer() {
   const { data: doctorList, loading } = useGetDoctors();
   const { postHandler, postHandlerloading } = useAxiosPost();
+
   const { control, handleSubmit, register, reset, watch } =
-    useForm<DoctorArrivalForm>({
-      resolver: zodResolver(doctorArrivalSchema),
+    useForm<DoctorAbsentForm>({
+      resolver: zodResolver(doctorAbsentSchema),
       defaultValues: {
         doctor_id: undefined,
         branch_id: getUserCurentBranch()?.id,
-        date: undefined,
-        start_time: undefined,
+        from_date: undefined,
+        to_date: undefined,
       },
     });
 
-  const onSubmit = async (data: DoctorArrivalForm) => {
-    const arivalDate = dayjs(data.date).format("YYYY-MM-DD");
-    const arivalTime = dayjs(data.start_time, "HH:mm:ss", true).format(
-      "HH:mm:ss"
-    );
+  const onSubmit = async (data: DoctorAbsentForm) => {
     const payload = {
       doctor_id: data.doctor_id,
       branch_id: data.branch_id,
-      date: arivalDate,
-      start_time: arivalTime,
+      from_date: dayjs(data.from_date).format("YYYY-MM-DD"),
+      to_date: dayjs(data.to_date).format("YYYY-MM-DD"),
     };
 
     try {
-      await postHandler("doctor-schedule/create/", payload);
-      toast.success("Doctor Arrival Created Successfully");
+      await postHandler("doctor/transfer-appointments/", payload);
+      CustomToast.success("Transfer completed");
       reset();
     } catch (error) {
+      CustomToast.error("Transfer failed Use Manual Transfer");
       extractErrorMessage(error);
     }
   };
@@ -66,25 +64,47 @@ export default function DoctorArival() {
       onSubmit={handleSubmit(onSubmit)}
       sx={flexBoxStyle}
     >
-      <Typography variant="h6">Add new Shedule date for a doctor</Typography>
+      <Typography variant="h6">
+        Change Patient Appointments Shedules{" "}
+      </Typography>
 
       <Controller
-        name="doctor_id" // Field name in the form
-        control={control} // Pass the control from useForm
+        name="doctor_id"
+        control={control}
         render={({ field }) => (
           <AutocompleteInputField
-            {...field} // Spread the field props (value and onChange)
-            options={doctorList} // Pass the options array
-            loading={loading} // Pass the loading state
-            labelName="Choose a Doctor" // Label for the input field
-            defaultId={watch("doctor_id") || undefined} // Optionally pass a default selected ID
+            {...field}
+            options={doctorList}
+            loading={loading}
+            labelName="Choose a Doctor"
+            defaultId={watch("doctor_id") || undefined}
           />
         )}
       />
 
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <Controller
-          name="date"
+          name="from_date"
+          control={control}
+          render={({ field }) => (
+            <HighlightedDatePicker
+              sheduleStatus={"Unavailable"}
+              selectedDate={
+                field.value ? dayjs(field.value).format("YYYY-MM-DD") : null
+              }
+              onDateChange={(newValue) => {
+                field.onChange(newValue); // Pass selected date to react-hook-form
+              }}
+              label="From Date"
+              doctorId={watch("doctor_id") || undefined} // Set doctorId or pass it as a prop
+            />
+          )}
+        />
+      </LocalizationProvider>
+
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <Controller
+          name="to_date"
           control={control}
           render={({ field }) => (
             <HighlightedDatePicker
@@ -95,55 +115,27 @@ export default function DoctorArival() {
               onDateChange={(newValue) => {
                 field.onChange(newValue); // Pass selected date to react-hook-form
               }}
-              label="Date"
+              label=" To Date"
               doctorId={watch("doctor_id") || undefined} // Set doctorId or pass it as a prop
             />
           )}
         />
       </LocalizationProvider>
 
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <Controller
-          name="start_time"
-          control={control}
-          render={({ field, fieldState: { error } }) => (
-            <TimePicker
-              {...register("start_time")}
-              {...field}
-              label="Start Time"
-              format="HH:mm:ss"
-              value={field.value ? dayjs(field.value, "HH:mm:ss") : null}
-              onChange={(newValue) => {
-                const formatted = newValue
-                  ? dayjs(newValue).format("HH:mm:ss")
-                  : "";
-                field.onChange(formatted);
-              }}
-              slotProps={{
-                textField: {
-                  error: !!error,
-                  helperText: error?.message,
-                },
-              }}
-            />
-          )}
-        />
-      </LocalizationProvider>
       <TextField
         sx={{ display: "none" }}
-        inputProps={{
-          min: 0,
-        }}
+        inputProps={{ min: 0 }}
         {...register("branch_id", {
           setValueAs: (value) => (value === "" ? undefined : Number(value)),
         })}
-        label="Branch Id"
+        label="Branch ID"
         type="number"
         fullWidth
         margin="normal"
         variant="outlined"
         defaultValue={getUserCurentBranch()?.id}
       />
+
       <SaveButton btnText="Save" loading={postHandlerloading} />
     </Paper>
   );

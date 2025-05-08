@@ -16,6 +16,7 @@ import SaveButton from "../../../components/SaveButton";
 import { extractErrorMessage } from "../../../utils/extractErrorMessage";
 import toast from "react-hot-toast";
 import HighlightedDatePicker from "../../../components/HighlightedDatePicker";
+import { CustomToast } from "../../../utils/customToast";
 
 const flexBoxStyle = {
   display: "flex",
@@ -49,10 +50,20 @@ export default function DoctorAbsent() {
     };
 
     try {
+      const docTransfter = CustomToast.loading("Transferring schedule...");
+
       await postHandler("doctor-schedule/transfer/", payload);
-      toast.success("Doctor Absent Range Saved Successfully");
+      toast.dismiss(docTransfter);
+
+      const appointmentTransfer = CustomToast.loading(
+        "Transferring appointments..."
+      );
+      await postHandler("doctor/transfer-appointments/", payload);
+      toast.dismiss(appointmentTransfer);
       reset();
+      CustomToast.success("Transfer completed");
     } catch (error) {
+      CustomToast.error("Transfer failed Use Manual Transfer");
       extractErrorMessage(error);
     }
   };
@@ -63,7 +74,7 @@ export default function DoctorAbsent() {
       onSubmit={handleSubmit(onSubmit)}
       sx={flexBoxStyle}
     >
-      <Typography variant="h6">Doctor Absent Management</Typography>
+      <Typography variant="h6">Change Exsisting Doctor Shedule </Typography>
 
       <Controller
         name="doctor_id"
@@ -85,13 +96,14 @@ export default function DoctorAbsent() {
           control={control}
           render={({ field }) => (
             <HighlightedDatePicker
+              sheduleStatus={"Available"}
               selectedDate={
                 field.value ? dayjs(field.value).format("YYYY-MM-DD") : null
               }
               onDateChange={(newValue) => {
                 field.onChange(newValue); // Pass selected date to react-hook-form
               }}
-              label="Date"
+              label="From Date"
               doctorId={watch("doctor_id") || undefined} // Set doctorId or pass it as a prop
             />
           )}
@@ -104,13 +116,14 @@ export default function DoctorAbsent() {
           control={control}
           render={({ field }) => (
             <HighlightedDatePicker
+              sheduleStatus={"Available"}
               selectedDate={
                 field.value ? dayjs(field.value).format("YYYY-MM-DD") : null
               }
               onDateChange={(newValue) => {
                 field.onChange(newValue); // Pass selected date to react-hook-form
               }}
-              label="Date"
+              label="To Date"
               doctorId={watch("doctor_id") || undefined} // Set doctorId or pass it as a prop
             />
           )}

@@ -1,3 +1,5 @@
+export type DoctorScheduleStatus = "Available" | "Unavailable" | "Booked";
+
 export interface DoctorSchedule {
   id: number;
   doctor: number;
@@ -6,7 +8,7 @@ export interface DoctorSchedule {
   branch_name: string;
   date: string; // Format: YYYY-MM-DD
   start_time: string; // Format: HH:mm:ss
-  status: "Available" | "NotAvailable" | string; // You can refine enum based on real values
+  status: DoctorScheduleStatus; // You can refine enum based on real values
   created_at: string; // ISO timestamp
   updated_at: string; // ISO timestamp
 }

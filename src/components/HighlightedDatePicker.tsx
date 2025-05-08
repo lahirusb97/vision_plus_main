@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import {
   DatePicker,
   LocalizationProvider,
@@ -10,12 +10,14 @@ import { Tooltip, CircularProgress, Box } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import dayjs, { Dayjs } from "dayjs";
 import useGetDoctorShedule from "../hooks/useGetDoctorShedule";
+import { DoctorScheduleStatus } from "../model/DoctorSchedule";
 
 interface HighlightedDatePickerProps {
   selectedDate: string | null;
   onDateChange: (value: string | null) => void;
   label?: string;
   doctorId?: number; // Make doctorId configurable
+  sheduleStatus: DoctorScheduleStatus | null;
 }
 
 const HighlightedPickersDay = styled(PickersDay)<PickersDayProps<Dayjs>>(
@@ -38,31 +40,28 @@ export default function HighlightedDatePicker({
   onDateChange,
   label = "Select Date",
   doctorId, // Default doctorId
+  sheduleStatus,
 }: HighlightedDatePickerProps) {
-  const [isOpen, setIsOpen] = useState(false);
   const {
-    doctorShedule: schedules,
-    doctorSheduleLoading,
-    refetch,
-  } = useGetDoctorShedule(doctorId);
-
-  // Fetch data when date picker opens
-  useEffect(() => {
-    if (isOpen) {
-      refetch();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen]);
+    doctorSheduleList,
+    doctorSheduleListError,
+    doctorSheduleListLoading,
+    getDoctorShedule,
+  } = useGetDoctorShedule();
 
   const scheduleMap = React.useMemo(
     () =>
-      schedules.reduce((acc, { date, start_time }) => {
+      doctorSheduleList.reduce((acc, { date, start_time }) => {
         acc[date] = start_time;
         return acc;
       }, {} as Record<string, string>),
-    [schedules]
+    [doctorSheduleList]
   );
-
+  useEffect(() => {
+    if (doctorId) {
+      getDoctorShedule(doctorId, sheduleStatus);
+    }
+  }, [doctorId, sheduleStatus]);
   const renderLoadingDay = () => (
     <Box
       sx={{
@@ -85,21 +84,24 @@ export default function HighlightedDatePicker({
         onChange={(newValue: Dayjs | null) => {
           onDateChange(newValue ? newValue.format("YYYY-MM-DD") : null);
         }}
-        disabled={!doctorId}
-        onOpen={() => setIsOpen(true)}
-        onClose={() => setIsOpen(false)}
+        disabled={
+          !doctorId || doctorSheduleListLoading || doctorSheduleListError
+        }
         slots={{
           day: (props) => {
             const dateStr = dayjs(props.day).format("YYYY-MM-DD");
             const time = scheduleMap[dateStr];
 
-            if (doctorSheduleLoading) {
+            if (doctorSheduleListLoading) {
               return renderLoadingDay();
             }
 
             if (time) {
               return (
-                <Tooltip title={`Available at ${time}`} arrow>
+                <Tooltip
+                  title={`${sheduleStatus ? sheduleStatus : ""} at ${time}`}
+                  arrow
+                >
                   <span>
                     <HighlightedPickersDay {...props} />
                   </span>

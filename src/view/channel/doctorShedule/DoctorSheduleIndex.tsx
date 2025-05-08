@@ -1,12 +1,16 @@
 import DoctorArival from "./DoctorArival";
 import DoctorAbsent from "./DoctorAbsent";
-
+import PatientSheduleTransfer from "./PatientSheduleTransfer";
 import { Box } from "@mui/material";
 export default function DoctorSheduleIndex() {
   return (
-    <Box sx={{ display: "flex", gap: 2, mt: 4 }}>
+    <Box>
       <DoctorArival />
-      <DoctorAbsent />
+
+      <Box sx={{ display: "flex", gap: 2, mt: 4 }}>
+        <DoctorAbsent />
+        <PatientSheduleTransfer />
+      </Box>
     </Box>
   );
 }

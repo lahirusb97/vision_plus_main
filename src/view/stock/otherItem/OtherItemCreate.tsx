@@ -56,7 +56,7 @@ const OtherItemCreate = () => {
           borderRadius: 3,
           width: "400px",
           display: "flex",
-          gap: 2,
+          gap: 1,
           flexDirection: "column",
         }}
       >

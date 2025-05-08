@@ -144,6 +144,7 @@ const AddLens = () => {
         justifyContent: "center",
         padding: 2,
         width: "500px",
+        gap: 1,
       }}
     >
       <Controller
@@ -162,7 +163,7 @@ const AddLens = () => {
       {errors.lensType && (
         <Typography color="error">{errors.lensType.message}</Typography>
       )}
-      <Box my={1} width="100%">
+      <Box width="100%">
         <Controller
           name="brand"
           control={control}
@@ -235,7 +236,7 @@ const AddLens = () => {
       </Box>
 
       {lensTypeValue === progresiveID && (
-        <FormControl fullWidth margin="normal">
+        <FormControl fullWidth>
           <InputLabel>Lens Side</InputLabel>
           <Controller
             name="side"
@@ -259,7 +260,6 @@ const AddLens = () => {
         type="number"
         inputProps={{ min: 0 }}
         fullWidth
-        margin="normal"
         {...register("price", { valueAsNumber: true })}
         error={!!errors.price}
         helperText={errors.price?.message}
@@ -271,7 +271,6 @@ const AddLens = () => {
         type="number"
         inputProps={{ min: 1 }}
         fullWidth
-        margin="normal"
         {...register("qty", { valueAsNumber: true })}
         error={!!errors.qty}
         helperText={errors.qty?.message}
@@ -282,7 +281,6 @@ const AddLens = () => {
         type="number"
         inputProps={{ min: 1 }}
         fullWidth
-        margin="normal"
         {...register("limit", { valueAsNumber: true })}
         error={!!errors.limit}
         helperText={errors.limit?.message}
@@ -315,7 +313,6 @@ const AddLens = () => {
         label="Branch Id"
         type="number"
         fullWidth
-        margin="normal"
         variant="outlined"
         error={!!errors.branch_id}
         helperText={errors.branch_id?.message}

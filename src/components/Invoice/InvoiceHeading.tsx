@@ -1,6 +1,7 @@
 import log from "../../assets/defalt/Rectangle 522.png";
 import { Box, Typography } from "@mui/material";
 import { formatDateTimeByType } from "../../utils/formatDateTimeByType";
+import BranchMobileNum from "../common/BranchMobileNum";
 
 interface InvoiceHeadingProps {
   invoiceDate: string;
@@ -25,9 +26,8 @@ export default function InvoiceHeading({ invoiceDate }: InvoiceHeadingProps) {
         </Typography>
       </Box>
 
-      <Typography variant="body2" align="center">
-        Tel: 034 2247466 / 071 7513639
-      </Typography>
+      <BranchMobileNum />
+
       <Typography variant="body2" align="center">
         Date: {formatDateTimeByType(invoiceDate, "date")}
       </Typography>

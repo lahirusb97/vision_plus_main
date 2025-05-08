@@ -72,6 +72,7 @@ const AutocompleteInputField: React.FC<AutocompleteInputFieldProps> = ({
               </>
             ),
           }}
+          data-testid={`${labelName}_dropdown`}
         />
       )}
       renderOption={(props, option) => {

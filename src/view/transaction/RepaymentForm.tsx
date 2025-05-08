@@ -24,6 +24,7 @@ import {
   PaymentFormData,
   schemaPaymentForm,
 } from "../../validations/schemaPaymentForm";
+import { numberWithCommas } from "../../utils/numberWithCommas";
 const RepaymentForm = () => {
   const navigate = useNavigate();
   const { invoice_number } = useParams();
@@ -165,7 +166,9 @@ const RepaymentForm = () => {
               {formatPaymentMethod(item.payment_method)} /{" "}
               {dateAndTimeFormat(item.payment_date)}
             </Typography>
-            <Typography sx={{ fontSize: 16 }}>{item.amount}</Typography>
+            <Typography sx={{ fontSize: 16 }}>
+              {numberWithCommas(item.amount)}
+            </Typography>
           </Paper>
         ))}
         <Paper

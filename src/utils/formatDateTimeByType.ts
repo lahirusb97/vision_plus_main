@@ -9,12 +9,17 @@ export const formatDateTimeByType = (
     time: "N/A",
     both: "N/A - N/A",
   };
+  console.log(isoString);
 
   if (!isoString || typeof isoString !== "string") {
     return fallback[type];
   }
 
-  const date = dayjs(isoString);
+  const date = dayjs(isoString, [
+    "YYYY-MM-DDTHH:mm:ss",
+    "HH:mm:ss",
+    "YYYY-MM-DD",
+  ]);
   if (!date.isValid()) {
     return fallback[type];
   }

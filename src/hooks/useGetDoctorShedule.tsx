@@ -1,29 +1,33 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { getUserCurentBranch } from "../utils/authDataConver";
 import { extractErrorMessage } from "../utils/extractErrorMessage";
-import { DoctorSchedule } from "../model/DoctorSchedule";
+import { DoctorSchedule, DoctorScheduleStatus } from "../model/DoctorSchedule";
 import axiosClient from "../axiosClient";
 import axios from "axios";
+import { paramsNullCleaner } from "../utils/paramsNullCleaner";
 
 interface UseUpcomingSchedulesResult {
-  doctorShedule: DoctorSchedule[];
-  doctorSheduleLoading: boolean;
-  error: string | null;
-  refetch: () => Promise<void>;
+  doctorSheduleList: DoctorSchedule[];
+  doctorSheduleListLoading: boolean;
+  doctorSheduleListError: boolean;
+  getDoctorShedule: (
+    doctor: number,
+    status: DoctorScheduleStatus | null
+  ) => Promise<void>;
 }
 
-export default function useUpcomingSchedules(
-  doctorId: number | undefined
-): UseUpcomingSchedulesResult {
+export default function useUpcomingSchedules(): UseUpcomingSchedulesResult {
   const [highlightedDates, setHighlightedDates] = useState<DoctorSchedule[]>(
     []
   );
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const branchId = getUserCurentBranch()?.id;
+  const [error, setError] = useState<boolean>(false);
+
   const abortControllerRef = useRef<AbortController | null>(null);
-  const fetchDates = async () => {
-    if (!doctorId || !branchId) return;
+  const fetchDates = async (
+    doctor: number,
+    status: DoctorScheduleStatus | null
+  ) => {
     // First, cancel any existing request
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
@@ -32,22 +36,19 @@ export default function useUpcomingSchedules(
     const abortController = new AbortController();
     abortControllerRef.current = abortController;
     setLoading(true);
-    setError(null);
+    setError(false);
 
     try {
-      const res = await axiosClient.get(
-        `doctor-schedule/${doctorId}/upcoming/?branch_id=${branchId}`,
-        {
-          signal: abortController.signal,
-        }
-      );
-
-      // Ensure we always have an array, even if single object is returned
-      const dates = Array.isArray(res.data)
-        ? res.data
-        : [res.data].filter(Boolean);
-
-      setHighlightedDates(dates);
+      const res = await axiosClient.get(`doctor-schedule/${doctor}/upcoming/`, {
+        params: {
+          ...paramsNullCleaner({ status: status }),
+          branch_id: getUserCurentBranch()?.id,
+        },
+        signal: abortController.signal,
+      });
+      if (!abortController.signal.aborted) {
+        setHighlightedDates(res.data);
+      }
     } catch (err) {
       // Check if the error is a cancellation
       if (axios.isCancel(err)) {
@@ -55,25 +56,17 @@ export default function useUpcomingSchedules(
       }
       if (!abortController.signal.aborted) {
         extractErrorMessage(err);
+        setError(true);
       }
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchDates();
-    return () => {
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-      }
-    };
-  }, [doctorId, branchId]);
-
   return {
-    doctorShedule: highlightedDates,
-    doctorSheduleLoading: loading,
-    error,
-    refetch: fetchDates,
+    doctorSheduleList: highlightedDates,
+    doctorSheduleListLoading: loading,
+    doctorSheduleListError: error,
+    getDoctorShedule: fetchDates,
   };
 }

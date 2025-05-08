@@ -12,7 +12,7 @@ import {
   Paper,
   IconButton,
 } from "@mui/material";
-import { Edit, Print } from "@mui/icons-material";
+import { Edit, PaymentOutlined, Print } from "@mui/icons-material";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import AutocompleteInputField from "../../components/inputui/DropdownInput";
@@ -25,7 +25,7 @@ import CustomerPagination from "../../components/CustomPagination";
 function ChannelDetails() {
   const navigate = useNavigate();
   const { data: doctorList, loading: loadingDoctors } = useGetDoctors();
-  const [searchText, setSearchText] = useState<string>("");
+  const [searchText, setSearchText] = useState<string | null>(null);
   const [invoice_number, setInvoiceNumber] = useState<string | null>(null);
   //handle Filters
   const [dateInput, setDateInput] = useState<string | null>(null);
@@ -42,7 +42,7 @@ function ChannelDetails() {
     channelListPageNavigation,
     channelListChangePageSize,
   } = useGetChannelDetails();
-
+  console.log(channelList);
   //handle Filters
 
   const handleFilter = () => {
@@ -115,7 +115,8 @@ function ChannelDetails() {
           onClick={() => {
             setDateInput(null);
             setDoctorInput(undefined);
-            setSearchText("");
+            setSearchText(null);
+            setInvoiceNumber(null);
           }}
         >
           Clear Date
@@ -145,26 +146,30 @@ function ChannelDetails() {
             <TableRow sx={{ padding: 0, margin: 0 }}>
               <TableCell sx={tableStyles}>Action</TableCell>
               <TableCell sx={tableStyles}>Invoice Number </TableCell>
+
               <TableCell sx={tableStyles} align="left">
-                Address
+                Date
               </TableCell>
+              <TableCell sx={tableStyles} align="center">
+                Channel No
+              </TableCell>
+              <TableCell sx={tableStyles} align="left">
+                Patient Name
+              </TableCell>
+
               <TableCell sx={tableStyles} align="left">
                 Doctor Name
               </TableCell>
               <TableCell sx={tableStyles} align="left">
                 Contact Number
               </TableCell>
-              <TableCell sx={tableStyles} align="left">
-                Patient Name
-              </TableCell>
-              <TableCell sx={tableStyles} align="center">
-                Channel No
-              </TableCell>
+
               <TableCell sx={tableStyles} align="left">
                 First Payment
               </TableCell>
+
               <TableCell sx={tableStyles} align="left">
-                Date
+                Address
               </TableCell>
             </TableRow>
           </TableHead>
@@ -195,31 +200,47 @@ function ChannelDetails() {
                   >
                     <Print sx={{ fontSize: 15 }} />
                   </IconButton>
+                  <IconButton
+                    onClick={() =>
+                      navigate(`/channel/channel_payment/${row.id}`)
+                    }
+                    size="small"
+                  >
+                    <PaymentOutlined sx={{ fontSize: 15 }} />
+                  </IconButton>
                 </TableCell>
 
-                <TableCell sx={tableStyles} component="th" scope="row">
+                <TableCell
+                  sx={tableStyles}
+                  align="center"
+                  component="th"
+                  scope="row"
+                >
                   {row.invoice_number}
                 </TableCell>
                 <TableCell sx={tableStyles} align="left">
-                  {row.address}
+                  {row.date}
                 </TableCell>
+                <TableCell sx={tableStyles} align="center">
+                  {row.channel_no}
+                </TableCell>
+                <TableCell sx={tableStyles} align="left">
+                  {row.patient_name}
+                </TableCell>
+
                 <TableCell sx={tableStyles} align="left">
                   {row.doctor_name}
                 </TableCell>
                 <TableCell sx={tableStyles} align="left">
                   {row.contact_number}
                 </TableCell>
-                <TableCell sx={tableStyles} align="left">
-                  {row.patient_name}
-                </TableCell>
-                <TableCell sx={tableStyles} align="center">
-                  {row.channel_no}
-                </TableCell>
+
                 <TableCell sx={tableStyles} align="left">
                   {row.first_payment}
                 </TableCell>
+
                 <TableCell sx={tableStyles} align="left">
-                  {row.date}
+                  {row.address}
                 </TableCell>
               </TableRow>
             ))}

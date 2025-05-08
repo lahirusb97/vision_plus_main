@@ -8,6 +8,7 @@ import DoctorUpdate from "../../view/channel/doctor/DoctorUpdate";
 import DoctorCreate from "../../view/channel/doctor/DoctorCreate";
 import DoctorSheduleIndex from "../../view/channel/doctorShedule/DoctorSheduleIndex";
 import PatientShedule from "../../view/channel/PatientShedule";
+import ChannelRepayment from "../../view/channel/ChannelRepayment";
 
 export const channelRoutes: RouteObject[] = [
   {
@@ -55,7 +56,11 @@ export const channelRoutes: RouteObject[] = [
     element: <ChannelDetails />,
   },
   {
-    path: "channel_invoice/:channel_id",
+    path: "channel_invoice/:appointment_id",
     element: <Channel_Invoice />,
+  },
+  {
+    path: "channel_payment/:appointment_id",
+    element: <ChannelRepayment />,
   },
 ];

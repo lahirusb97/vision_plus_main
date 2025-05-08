@@ -16,4 +16,7 @@ export const frameSizeHalf: string = "Half";
 export const frameSizeFull: string = "Full";
 export const frameSizeRimless: string = "Rimless";
 
+//!BRAND IDS
 export const BUSID: number = 3;
+export const BRANCH_MATHUGAMA_ID: number = 1;
+export const BRANCH_ALUTHGAMA_ID: number = 2;

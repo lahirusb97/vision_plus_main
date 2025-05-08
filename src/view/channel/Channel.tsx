@@ -161,6 +161,7 @@ const Channel = () => {
                         ? dayjs(field.value).format("YYYY-MM-DD")
                         : null
                     }
+                    sheduleStatus="Available"
                     onDateChange={(newValue) => {
                       field.onChange(newValue); // Pass selected date to react-hook-form
                       if (newValue && watch("doctor_id")) {
@@ -197,7 +198,7 @@ const Channel = () => {
                       <Typography>
                         {appointmentSlots?.total_appointments
                           ? appointmentSlots?.total_appointments + 1
-                          : "N/A"}
+                          : "1"}
                       </Typography>
                       <Typography>Time</Typography>
                       <Typography>

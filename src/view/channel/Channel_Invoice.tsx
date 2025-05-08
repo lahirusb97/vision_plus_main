@@ -3,148 +3,217 @@ import { Container, Typography, Box, Divider, Button } from "@mui/material";
 import { useParams } from "react-router";
 import { useReactToPrint } from "react-to-print";
 import useGetSingleAppointment from "../../hooks/useGetSingleAppointment";
-import { formatPaymentMethod } from "../../utils/formatPaymentMethod";
 import { dateAndTimeFormat } from "../../utils/dateAndTimeFormat";
 import { numberWithCommas } from "../../utils/numberWithCommas";
+import LoadingAnimation from "../../components/LoadingAnimation";
+import DataLoadingError from "../../components/common/DataLoadingError";
+import BranchMobileNum from "../../components/common/BranchMobileNum";
+import BranchAddress from "../../components/common/BranchAddress";
+import { formatDateTimeByType } from "../../utils/formatDateTimeByType";
 
 const ChannelInvoice = () => {
   const componentRef = useRef(null);
 
   const reactToPrintFn = useReactToPrint({ contentRef: componentRef });
 
-  const { channel_id } = useParams();
-  const { singleAppointment, singleAppointmentLoading } =
-    useGetSingleAppointment(channel_id);
+  const { appointment_id } = useParams();
+  const {
+    singleAppointment,
+    singleAppointmentLoading,
+    singleAppointmentError,
+  } = useGetSingleAppointment(appointment_id);
 
   if (singleAppointmentLoading) {
-    return <div>Loading...</div>;
+    return <LoadingAnimation loadingMsg="Loading Appointment Recipt" />;
   }
-  if (!singleAppointment && !singleAppointmentLoading) {
-    return <div>No Data Found</div>;
+  if (singleAppointmentError && !singleAppointmentLoading) {
+    return <DataLoadingError />;
   }
   // Calculate the total of payments
   const totalAmount =
     (singleAppointment?.payments || []).reduce((total, payment) => {
-      return total + parseFloat(payment.amount);
+      return total + parseInt(payment.amount);
     }, 0) || 0;
 
   return (
-    <Container
-      sx={{
-        padding: "4mm",
-        minwidth: "7cm", // A5 width
-        minHeight: "10.5mc", // A5 height
-        border: "1px solid #000",
-        fontFamily: "Arial, sans-serif",
-        "@media print": {
-          minWidth: "14cm",
-          minHeight: "21cm",
-          border: "none",
-          margin: "1rem",
+    <div>
+      <Container
+        sx={{
           padding: "1rem",
-        },
-      }}
-    >
-      <Box ref={componentRef} sx={{ borderRadius: 2, padding: 2 }}>
-        <Typography
-          sx={{ fontFamily: "Algerian", fontSize: "6mm" }}
-          variant="h6"
-          align="center"
-          fontWeight="bold"
-        >
-          VISION PLUS OPTICIANS (PVT) LTD
-        </Typography>
-        <Typography fontWeight={"bold"} variant="body2" align="center">
-          (CHANNELED CONSULTATIONS SERVICE)
-        </Typography>
-        <Typography variant="body2" align="center">
-          34, Aluthgama Road, Mathugama
-        </Typography>
-
-        <Typography variant="body2" align="center" gutterBottom>
-          Tel: 034 - 2247466 / 071 - 7513639
-        </Typography>
-
-        <Box display="flex" justifyContent="space-between">
-          <Typography variant="body2">Channele No:</Typography>
-          <Typography variant="h6" fontWeight={"bold"}>
-            {singleAppointment?.channel_no}
+          minwidth: "7cm", // A5 width
+          minHeight: "10.5mc", // A5 height
+          border: "1px solid #000",
+          fontFamily: "Arial, sans-serif",
+          "@media print": {
+            minWidth: "10cm",
+            minHeight: "14cm",
+            border: "none",
+            margin: "1rem",
+          },
+        }}
+        ref={componentRef}
+      >
+        <Box>
+          <Typography
+            sx={{ fontFamily: "Algerian", fontSize: "6mm" }}
+            variant="h6"
+            align="center"
+            fontWeight="bold"
+          >
+            VISION PLUS OPTICIANS (PVT) LTD
           </Typography>
-        </Box>
-        <Box display="flex" justifyContent="space-between">
-          <Typography variant="body2">Channel Date:</Typography>
-          <Typography fontSize={"1.5 rem"} fontWeight={"bold"} variant="h6">
-            {singleAppointment?.date}/{singleAppointment?.time}
+          <Typography fontWeight={"bold"} variant="body2" align="center">
+            (CHANNELED CONSULTATIONS SERVICE)
           </Typography>
-        </Box>
-        <Box display="flex" justifyContent="space-between" sx={{ mt: 2 }}>
-          <Typography variant="body2">Channel Id:</Typography>
-          <Typography variant="body2">{singleAppointment?.id}</Typography>
-        </Box>
+          <BranchMobileNum />
 
-        <Box display="flex" justifyContent="space-between">
-          <Typography variant="body2">Patient Name:</Typography>
-          <Typography variant="body2">
-            {singleAppointment?.patient_name}
-          </Typography>
-        </Box>
+          <Box textAlign={"center"}>
+            <BranchAddress />
+          </Box>
 
-        <Divider sx={{ my: 2 }} />
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems={"center"}
+          >
+            <Typography variant="body2">Channele No</Typography>
+            <Typography
+              data-testid="channel_no"
+              variant="h6"
+              fontWeight={"bold"}
+            >
+              {singleAppointment?.channel_no}
+            </Typography>
+          </Box>
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems={"center"}
+          >
+            <Typography variant="body2">Appointment </Typography>
+            <Typography
+              data-testid="appointment_date"
+              fontSize={"1.2 rem"}
+              fontWeight={"bold"}
+              variant="h6"
+            >
+              {formatDateTimeByType(singleAppointment?.date, "date")}
+              {` - `}
+              {formatDateTimeByType(singleAppointment?.time, "time")}
+            </Typography>
+          </Box>
+          <Box display="flex" justifyContent="space-between" sx={{ mt: 2 }}>
+            <Typography variant="body2">Invoice Number</Typography>
+            <Typography variant="body2">
+              {singleAppointment?.invoice_number}
+            </Typography>
+          </Box>
 
-        <Divider sx={{ my: 2 }} />
+          <Box display="flex" justifyContent="space-between">
+            <Typography variant="body2">Patient Name</Typography>
+            <Typography data-testid="patient_name" variant="body2">
+              {singleAppointment?.patient_name}
+            </Typography>
+          </Box>
 
-        <Box display="flex" justifyContent="space-between">
-          <Typography variant="body2">Name of Doctor:</Typography>
-          <Typography variant="body2">
-            {singleAppointment?.doctor_name}
-          </Typography>
-        </Box>
+          <Divider sx={{ my: 1 }} />
 
-        <Box display="flex" justifyContent="space-between">
-          <Typography variant="body2">Consultant Fee:</Typography>
-          <Typography variant="body2">
-            {numberWithCommas(singleAppointment?.amount)}
-          </Typography>{" "}
-          {/* Dummy Consultant Fee */}
-        </Box>
+          <Box display="flex" justifyContent="space-between">
+            <Typography variant="body2">Name of Doctor:</Typography>
+            <Typography data-testid="doctor_name" variant="body2">
+              {singleAppointment?.doctor_name}
+            </Typography>
+          </Box>
 
-        {/* <Box display="flex" justifyContent="space-between">
-          <Typography variant="body2">Establishment Fee:</Typography>
-          <Typography variant="body2">{singleAppointment}</Typography>
-        </Box> */}
+          <Box display="flex" justifyContent="space-between">
+            <Typography variant="body2">Consultant Fee:</Typography>
+            <Typography data-testid="consultant_fee" variant="body2">
+              Rs.{numberWithCommas(singleAppointment?.amount)}
+            </Typography>{" "}
+          </Box>
 
-        {singleAppointment?.payments.map((payment) => (
+          {/* {singleAppointment?.payments.map((payment) => (
           <Box display="flex" justifyContent="space-between" gap={1}>
             <Typography variant="body2">
-              {formatPaymentMethod(payment.payment_method)} -
-              {dateAndTimeFormat(payment.created_at)}
+              {"Payment - "}
+              {formatDateTimeByType(payment.created_at, "date")}
             </Typography>
 
             <Typography variant="body2">
               {numberWithCommas(payment.amount)}
             </Typography>
           </Box>
-        ))}
-        <Box display="flex" justifyContent="space-between">
-          <Typography variant="body2">Total:</Typography>
-          <Typography variant="body2">
-            {numberWithCommas(totalAmount)}
-          </Typography>
-        </Box>
-        <Box display="flex" justifyContent="space-between">
-          <Typography variant="body2">Balance</Typography>
-          <Typography variant="body2">
-            {numberWithCommas(
-              parseInt(singleAppointment?.amount || "0") - totalAmount
-            )}
-          </Typography>
-        </Box>
-        <Divider sx={{ my: 2 }} />
+        ))} */}
+          <Box display="flex" justifyContent="space-between">
+            <Typography variant="body2" fontWeight="bold">
+              Total Payments
+            </Typography>
+            <Typography
+              data-testid="total_payments"
+              variant="body2"
+              fontWeight="bold"
+            >
+              Rs.{numberWithCommas(totalAmount)}
+            </Typography>
+          </Box>
+          <Box display="flex" justifyContent="space-between">
+            <Typography variant="body2" fontWeight="bold">
+              Balance
+            </Typography>
+            <Typography data-testid="balance" variant="body2" fontWeight="bold">
+              Rs.
+              {numberWithCommas(
+                parseInt(singleAppointment?.amount || "0") - totalAmount
+              )}
+            </Typography>
+          </Box>
+          <Divider sx={{ my: 2 }} />
 
-        <Typography variant="body2" align="right" sx={{ fontStyle: "italic" }}>
-          For Authorized Office
-        </Typography>
-      </Box>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "end",
+            }}
+          >
+            <Box>
+              <Typography variant="body2" fontStyle={"italic"} align="left">
+                Recived Payment With Thanks
+              </Typography>
+              <Typography variant="body2" fontStyle={"italic"} align="left">
+                No Refund No Cancelation
+              </Typography>
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
+              <Box
+                sx={{
+                  fontStyle: "italic",
+                  borderTop: "2px dotted black",
+                  width: "100%",
+                }}
+              ></Box>
+              <Typography variant="body2" align="right">
+                For Authorized Office
+              </Typography>
+            </Box>
+          </Box>
+          <Typography
+            variant="body2"
+            align="center"
+            sx={{ fontSize: "12px", mt: 1 }}
+          >
+            Bill Printed On{" "}
+            <span style={{ margin: "0 1mm", fontWeight: "bold" }}>:</span>{" "}
+            {dateAndTimeFormat(new Date().toISOString())}
+          </Typography>
+        </Box>
+      </Container>
       <Button
         variant="contained"
         color="primary"
@@ -153,7 +222,7 @@ const ChannelInvoice = () => {
       >
         Print Invoice
       </Button>
-    </Container>
+    </div>
   );
 };
 

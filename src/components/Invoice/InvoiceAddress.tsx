@@ -1,5 +1,6 @@
 import { Box, Typography } from "@mui/material";
 import { Invoice } from "../../model/SingleInvoiceModel";
+import BranchAddress from "../common/BranchAddress";
 interface InvoiceAddressProps {
   invoiceDetail: Invoice | null;
 }
@@ -46,9 +47,7 @@ export default function InvoiceAddress({ invoiceDetail }: InvoiceAddressProps) {
               {/* //!Order ID as Invoice Number */}
             </span>
           </Typography>
-          <Typography variant="body2">No: 34, Aluthgama Road</Typography>
-          <Typography variant="body2">Mathugama</Typography>
-          <Typography variant="body2">Sri Lanka</Typography>
+          <BranchAddress />
         </Box>
       </Box>
     </div>
