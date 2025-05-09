@@ -19,7 +19,18 @@ export default function RightEyeTable({
   refractionDetail,
 }: RightEyeTableProps) {
   if (!refractionDetail) {
-    return <p>No refraction details available</p>;
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "200px",
+        }}
+      >
+        <Typography>No refraction details available</Typography>
+      </Box>
+    );
   }
   const showDashEmptyVisionValues = (
     visionValue: string | null | undefined

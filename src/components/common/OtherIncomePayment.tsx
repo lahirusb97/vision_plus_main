@@ -1,37 +1,25 @@
-import React from "react";
 import { Box, Typography } from "@mui/material";
 import { useMemo } from "react";
 import { MaterialReactTable, MRT_ColumnDef } from "material-react-table";
-
-// Define the TypeScript type
-interface TodayBankingItem {
-  bank_name: string;
-  account_number: string;
-  amount: number;
-  is_confirmed: boolean;
-}
+import { OtherIncomeReport } from "../../model/OtherIncomeReport";
 
 interface TodayBankingTableProps {
-  data: TodayBankingItem[];
+  data: OtherIncomeReport[];
   loading: boolean;
 }
 
-const TodayBankingTable: React.FC<TodayBankingTableProps> = ({
+const OtherIncomePayment: React.FC<TodayBankingTableProps> = ({
   data,
   loading,
 }) => {
-  const columns = useMemo<MRT_ColumnDef<TodayBankingItem>[]>(
+  const columns = useMemo<MRT_ColumnDef<OtherIncomeReport>[]>(
     () => [
       {
-        accessorKey: "bank_name",
-        header: "Bank",
-        size: 50,
+        accessorKey: "category_name",
+        header: "Category",
+        size: 100,
       },
-      {
-        accessorKey: "account_number",
-        header: "Account",
-        size: 50,
-      },
+
       {
         accessorKey: "amount",
         header: "Amount",
@@ -41,18 +29,9 @@ const TodayBankingTable: React.FC<TodayBankingTableProps> = ({
         },
       },
       {
-        accessorKey: "is_confirmed",
-        header: "Confirmed",
-        size: 50,
-        Cell: ({ cell }) => {
-          return (
-            <input
-              type="checkbox"
-              checked={cell.getValue<boolean>()}
-              disabled
-            />
-          );
-        },
+        accessorKey: "note",
+        header: "Note",
+        size: 150,
       },
     ],
     [data]
@@ -93,7 +72,7 @@ const TodayBankingTable: React.FC<TodayBankingTableProps> = ({
             }}
           >
             <Typography variant="body2" color="text.secondary">
-              No banking transactions found
+              No Other Income transactions found
             </Typography>
           </Box>
         )}
@@ -102,4 +81,4 @@ const TodayBankingTable: React.FC<TodayBankingTableProps> = ({
   );
 };
 
-export default TodayBankingTable;
+export default OtherIncomePayment;

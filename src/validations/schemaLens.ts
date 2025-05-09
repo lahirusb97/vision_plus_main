@@ -33,13 +33,7 @@ export const schemaLens = z.object({
     .transform((val) =>
       val === null || isNaN(val) || isUndefined(val) ? null : val
     ),
-  side: z
-    .string({ invalid_type_error: "Lense side is required" })
-    .or(z.undefined())
-    .nullable()
-    .transform((val) =>
-      val === "" || isUndefined(val) || isUndefined(val) ? null : val
-    ),
+  side: z.enum(["left", "right", "both"]).nullable(),
   limit: z.number({ invalid_type_error: "Alert is required" }).optional(),
   branch_id: z.number({ invalid_type_error: "Branch ID is required" }),
 });

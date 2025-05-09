@@ -1,4 +1,11 @@
-import { Container, Button, Typography, Box, Paper } from "@mui/material";
+import {
+  Container,
+  Button,
+  Typography,
+  Box,
+  Paper,
+  Checkbox,
+} from "@mui/material";
 import { useNavigate, useParams } from "react-router";
 import { FormProvider, useForm } from "react-hook-form";
 import CardInput from "../../components/inputui/CardInput";
@@ -25,6 +32,8 @@ import {
   schemaPaymentForm,
 } from "../../validations/schemaPaymentForm";
 import { numberWithCommas } from "../../utils/numberWithCommas";
+import TitleText from "../../components/TitleText";
+import { progressStatus } from "../../utils/progressState";
 const RepaymentForm = () => {
   const navigate = useNavigate();
   const { invoice_number } = useParams();
@@ -40,21 +49,31 @@ const RepaymentForm = () => {
       credit_card: 0,
       cash: 0,
       online_transfer: 0,
+      progress_status: false,
     },
     resolver: zodResolver(schemaPaymentForm),
   });
 
   const submiteFromData = async (data: PaymentFormData) => {
     try {
+      const userPayments = {
+        credit_card: data.credit_card,
+        cash: data.cash,
+        online_transfer: data.online_transfer,
+      };
       const postData = {
         order_id: invoiceDetail?.order,
+        progress_status: data.progress_status
+          ? "issue_to_customer"
+          : invoiceDetail?.progress_status,
         payments: [
-          ...formatUserPayments(data),
+          ...formatUserPayments(userPayments),
           ...formatPreviusUserPayments(
             invoiceDetail?.order_details?.order_payments || []
           ),
         ],
       };
+      console.log(postData);
 
       await putHandler(`/orders/update-payments/`, postData);
       toast.success("Invoice Payment Updated");
@@ -71,6 +90,7 @@ const RepaymentForm = () => {
   }
   return (
     <Container maxWidth="md" sx={{ borderRadius: 2, maxWidth: "1200px" }}>
+      <TitleText title="Repayment Form" />
       <Box
         display="flex"
         justifyContent="space-between"
@@ -249,6 +269,30 @@ const RepaymentForm = () => {
               alignItems: "center", // Centers the child horizontally
             }}
           >
+            <Box
+              sx={{
+                width: "100%", // Ensure the parent takes full width
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <Typography variant="body1">
+                Current Order Progress -{" "}
+                {invoiceDetail?.progress_status &&
+                  progressStatus(invoiceDetail?.progress_status)}
+              </Typography>
+              <Box ml={1} display="flex" alignItems="center">
+                <Typography variant="body1"> Issue To Good</Typography>
+                <Checkbox
+                  {...methods.register("progress_status")}
+                  checked={methods.watch("progress_status") || false} // Add fallback to false
+                  onChange={(e) =>
+                    methods.setValue("progress_status", e.target.checked)
+                  }
+                />
+              </Box>
+            </Box>
             <Box sx={{ display: "flex" }}>
               <OnlinePayInput />
               <CardInput />

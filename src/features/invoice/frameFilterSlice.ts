@@ -16,6 +16,7 @@ export interface FrameFilterModel {
     color_name: string;
     size: SizeType;
     species: SpeciesType;
+    brand_type_display: string;
   };
 }
 // Initial state
@@ -26,6 +27,7 @@ function extractFrameDetail(frame: FrameFilterModel) {
     color_name: frame.frame_detail?.color_name,
     size: frame.frame_detail?.size,
     species: frame.frame_detail?.species,
+    brand_type_display: frame.frame_detail?.brand_type_display,
   };
 }
 

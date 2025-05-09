@@ -21,7 +21,6 @@ import { useNavigate } from "react-router";
 import useGetFinanceSummary from "../../hooks/useGetFinanceSummary";
 import dayjs from "dayjs";
 import { ExpenceSubCategory } from "../../model/ExpenceModel";
-import { ExpensesTable } from "../../components/ExpensesTable";
 import { extractErrorMessage } from "../../utils/extractErrorMessage";
 import {
   expenseSchema,
@@ -108,7 +107,7 @@ const Expence = () => {
 
   return (
     <Box sx={{ display: "flex" }} p={1}>
-      <Paper elevation={1} sx={{ p: 1, width: "600px" }}>
+      <Paper elevation={1} sx={{ p: 1, width: "400px" }}>
         <TitleText title="Place New Expense" />
         <Box>
           <Button
@@ -196,7 +195,7 @@ const Expence = () => {
               defaultValue={getUserCurentBranch()?.id}
             />
             <Box ml={1} display="flex" alignItems="center">
-              <Typography variant="body1"> Paid From Safe</Typography>
+              <Typography variant="body1"> Pay From Safe Locker</Typography>
 
               <Checkbox
                 {...register("paid_from_safe")}

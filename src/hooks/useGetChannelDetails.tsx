@@ -19,6 +19,9 @@ export interface ChannelSearchModel {
   first_payment: number;
   date: string;
   invoice_number: number;
+  total_payment: number;
+  balance: number;
+  amount: number;
 }
 
 type ChannelSearchParams = {

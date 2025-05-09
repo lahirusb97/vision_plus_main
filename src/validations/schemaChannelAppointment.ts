@@ -3,8 +3,8 @@ import { z } from "zod";
 export const ChannelAppointmentSchema = z.object({
   doctor_id: z.number().min(1, "Doctor ID is required"),
   name: z.string().min(1, "Patient Name is required"),
-  address: z.string().min(1, "Patient Address is required"),
-  phone_number: z.string().min(1, "Patient Contact is required"),
+  address: z.string().optional().nullable(),
+  phone_number: z.string().optional().nullable(),
   channel_date: z.date().or(z.string()),
   channeling_fee: z.number().min(0, "Channeling Fee is required"),
   branch_id: z.number({ invalid_type_error: "Branch is required" }),

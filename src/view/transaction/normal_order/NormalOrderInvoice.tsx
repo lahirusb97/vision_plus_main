@@ -3,8 +3,6 @@ import { useRef } from "react";
 import { useReactToPrint } from "react-to-print";
 import useGetSingleInvoice from "../../../hooks/useGetSingleInvoice";
 import { useLocation } from "react-router";
-import { numberWithCommas } from "../../../utils/numberWithCommas";
-import { dateAndTimeFormat } from "../../../utils/dateAndTimeFormat";
 import BackButton from "../../../components/BackButton";
 import {
   Box,

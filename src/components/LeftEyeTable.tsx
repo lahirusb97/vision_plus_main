@@ -2,6 +2,7 @@ import { Box, TextField, Typography } from "@mui/material";
 const widthInput = 100;
 import { grey } from "@mui/material/colors";
 import { RefractionDetailModel } from "../model/RefractionDetailModel";
+import { Warning } from "@mui/icons-material";
 interface LeftEyeTableProps {
   refractionDetail: Pick<
     RefractionDetailModel,
@@ -16,7 +17,19 @@ interface LeftEyeTableProps {
 }
 export default function LeftEyeTable({ refractionDetail }: LeftEyeTableProps) {
   if (!refractionDetail) {
-    return <p>No refraction details available</p>;
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "200px",
+          width: "300px",
+        }}
+      >
+        <Warning color="warning" sx={{ fontSize: 50 }} />
+      </Box>
+    );
   }
   const showDashEmptyVisionValues = (
     visionValue: string | null | undefined

@@ -1,33 +1,34 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { Paper, TextField } from "@mui/material";
 import AutocompleteInputField from "../../../components/inputui/DropdownInput";
 import SubmitCustomBtn from "../../../components/common/SubmiteCustomBtn";
 import TitleText from "../../../components/TitleText";
 import { useGetOtherIncomes } from "../../../hooks/useGetOtherIncomes";
-import { useAxiosPost } from "../../../hooks/useAxiosPost";
 import {
   AddOtherIncomeModel,
   schemaAddOtherIncome,
 } from "../../../validations/schemaAddOtherIncome";
 import { getUserCurentBranch } from "../../../utils/authDataConver";
 import toast from "react-hot-toast";
-import axios from "axios";
 import { extractErrorMessage } from "../../../utils/extractErrorMessage";
+import axiosClient from "../../../axiosClient";
+import { useAxiosPut } from "../../../hooks/useAxiosPut";
 
 export default function UpdateOtherIncomePayment() {
-  const { id } = useParams(); // assumes route is /other-incomes/:id/edit
+  const navigate = useNavigate();
+  const { other_income_id } = useParams(); // assumes route is /other-incomes/:id/edit
   const { otherIncomeList, otherIncomeListLoading } = useGetOtherIncomes();
-  const { postHandlerError, postHandlerloading } = useAxiosPost();
-
+  const { putHandler, putHandlerError, putHandlerloading } = useAxiosPut();
   const {
     control,
     handleSubmit,
     formState: { errors },
     register,
     reset,
+    watch,
   } = useForm<AddOtherIncomeModel>({
     resolver: zodResolver(schemaAddOtherIncome),
     defaultValues: {
@@ -42,26 +43,29 @@ export default function UpdateOtherIncomePayment() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const res = await axios.get(`/other-incomes/${id}/`);
-        const data = res.data;
+        const res = await axiosClient.get(`other-incomes/${other_income_id}/`);
         reset({
-          branch: data.branch,
-          category: data.category,
-          amount: data.amount,
-          note: data.note || "",
+          branch: res.data.branch,
+          category: res.data.category,
+          amount: res.data.amount,
+          note: res.data.note || "",
         });
       } catch (error) {
         extractErrorMessage(error);
       }
     }
-    if (id) fetchData();
-  }, [id]);
+    if (other_income_id) {
+      fetchData();
+    }
+  }, [other_income_id]);
 
   // Update handler
   const onSubmit = async (data: AddOtherIncomeModel) => {
     try {
-      await axios.put(`/other-incomes/${id}/`, data);
+      await putHandler(`/other-incomes/${other_income_id}/`, data);
       toast.success("Updated successfully");
+      reset();
+      navigate(-1);
     } catch (error) {
       extractErrorMessage(error);
     }
@@ -69,7 +73,6 @@ export default function UpdateOtherIncomePayment() {
 
   return (
     <div>
-      <TitleText title="Update Other Income" />
       <Paper
         component={"form"}
         onSubmit={handleSubmit(onSubmit)}
@@ -83,6 +86,8 @@ export default function UpdateOtherIncomePayment() {
           gap: 2,
         }}
       >
+        <TitleText title="Update Other Income" />
+
         <Controller
           name="category"
           control={control}
@@ -116,6 +121,9 @@ export default function UpdateOtherIncomePayment() {
           {...register("amount", { valueAsNumber: true })}
           error={!!errors.amount}
           helperText={errors.amount?.message}
+          InputLabelProps={{
+            shrink: Boolean(watch("amount")),
+          }}
         />
         <TextField
           size="small"
@@ -125,11 +133,14 @@ export default function UpdateOtherIncomePayment() {
           {...register("note")}
           error={!!errors.note}
           helperText={errors.note?.message}
+          InputLabelProps={{
+            shrink: Boolean(watch("note")),
+          }}
         />
         <SubmitCustomBtn
           btnText="Update Other Income"
-          loading={postHandlerloading}
-          isError={postHandlerError}
+          loading={putHandlerloading}
+          isError={putHandlerError}
         />
       </Paper>
     </div>

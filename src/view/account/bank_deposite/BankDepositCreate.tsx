@@ -26,7 +26,7 @@ export default function BankDepositCreate() {
     defaultValues: {
       branch: getUserCurentBranch()?.id ?? 1,
       bank_account: 1,
-      amount: 0,
+      amount: undefined,
       date: new Date().toISOString().split("T")[0],
       note: "",
     },

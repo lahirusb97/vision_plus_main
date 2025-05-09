@@ -7,6 +7,7 @@ import {
   InvoiceType,
   LensArrivalStatus,
   ProgressStatus,
+  TypeBraned,
   TypeOrderStatus,
 } from "./StaticTypeModels";
 
@@ -34,6 +35,8 @@ interface FrameDetail {
   size: SizeType;
   species: SpeciesType;
   image: string | null;
+  brand_type_display: string;
+  brand_type: TypeBraned;
 }
 interface OtherItemDetail {
   id: number;
@@ -113,7 +116,6 @@ export interface ExternalLensOrderItem {
   note: string | null;
   other_item_detail: null;
   // Other shared fields
-
   frame: null;
   frame_detail: null;
   lens: null;

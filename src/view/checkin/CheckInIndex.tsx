@@ -20,6 +20,7 @@ import ProgressStagesColors from "../../components/ProgressStagesColors";
 import { customerPaymentTotal } from "../../utils/customerPaymentTotal";
 import { numberWithCommas } from "../../utils/numberWithCommas";
 import useGetCheckinInvoiceList from "../../hooks/useGetCheckinInvoiceList";
+import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
 
 const CheckInIndex = () => {
   const {
@@ -30,7 +31,6 @@ const CheckInIndex = () => {
     invoiceListPageNavigation,
     invoiceListLoading,
     invoiceListTotalCount,
-  
   } = useGetCheckinInvoiceList();
   return (
     <div style={{ padding: 20, maxWidth: "1200px", minWidth: "900px" }}>
@@ -56,13 +56,13 @@ const CheckInIndex = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-               {invoiceListLoading && (
-                          <TableRow>
-                            <TableCell colSpan={10} align="center">
-                              <CircularProgress />
-                            </TableCell>
-                          </TableRow>
-                        )}
+            {invoiceListLoading && (
+              <TableRow>
+                <TableCell colSpan={10} align="center">
+                  <CircularProgress />
+                </TableCell>
+              </TableRow>
+            )}
             {invoiceList.map((row, index) => (
               <TableRow key={index}>
                 <TableCell>{row.customer}</TableCell>
@@ -101,7 +101,14 @@ const CheckInIndex = () => {
                   </Box>
                 </TableCell>
 
-                <TableCell>
+                <TableCell
+                  sx={{
+                    display: "flex",
+                    gap: 1,
+                    justifyContent: "space-between",
+                  }}
+                  align="center"
+                >
                   <a
                     href={`/transaction/invoice/view/${row.invoice_number}/?invoice_number=${row.invoice_number}`}
                     target="_blank"
@@ -110,6 +117,16 @@ const CheckInIndex = () => {
                   >
                     <IconButton size="small" sx={{ p: 0 }} color="inherit">
                       <AssignmentIcon fontSize="small" />
+                    </IconButton>
+                  </a>
+                  <a
+                    href={`/transaction/repayment/${row.invoice_number}/`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ textDecoration: "none", color: "inherit" }} // Optional: keep icon color
+                  >
+                    <IconButton size="small" sx={{ p: 0 }} color="inherit">
+                      <PointOfSaleIcon color="error" fontSize="small" />
                     </IconButton>
                   </a>
                 </TableCell>
@@ -122,16 +139,15 @@ const CheckInIndex = () => {
                 </TableCell>
               </TableRow>
             )}
-            
           </TableBody>
         </Table>
       </TableContainer>
       <CustomerPagination
-          totalCount={invoiceListTotalCount}
-          handlePageNavigation={invoiceListPageNavigation}
-          changePageSize={invoiceListChangePageSize}
-          page_size={invoiceLimit}
-        />
+        totalCount={invoiceListTotalCount}
+        handlePageNavigation={invoiceListPageNavigation}
+        changePageSize={invoiceListChangePageSize}
+        page_size={invoiceLimit}
+      />
     </div>
   );
 };

@@ -3,14 +3,14 @@ import { z } from "zod";
 export const schemaFactoryInvoice = z.object({
   name: z.string().min(1, { message: "Patient Name is required" }),
   nic: z.string().optional(),
-  phone_number: z
-    .string()
-    .min(10, { message: "Phone number must be 10 digits" })
-    .max(10, { message: "Phone number must be 10 digits" })
-    .regex(/^\d+$/, { message: "Phone number must be numeric" })
-    .refine((val) => val.length === 10, {
-      message: "Phone number must be 10 digits",
-    }),
+  phone_number: z.string().optional(),
+  // .min(10, { message: "Phone number must be 10 digits" })
+  // .max(10, { message: "Phone number must be 10 digits" })
+  // .regex(/^\d+$/, { message: "Phone number must be numeric" })
+  // .refine((val) => val.length === 10, {
+  //   message: "Phone number must be 10 digits",
+  // })
+
   address: z.string().optional(),
   dob: z.string().optional(),
   discount: z.number().min(0, { message: "Discount must be 0 or greater" }),

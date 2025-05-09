@@ -30,6 +30,8 @@ import { formatDateTimeByType } from "../../utils/formatDateTimeByType";
 import { toast } from "react-hot-toast";
 import { useAxiosPatch } from "../../hooks/useAxiosPatch";
 import { extractErrorMessage } from "../../utils/extractErrorMessage";
+import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
+
 interface CheckBoxTableProps {
   invoiceList: CheckinInvoiceModel[];
   loading: boolean;
@@ -81,7 +83,12 @@ export default function CheckBoxTable({
   };
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "row" }}>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "row",
+      }}
+    >
       <TableContainer sx={{ flexGrow: 1 }}>
         <Table sx={{ width: "100%" }}>
           <TableHead>
@@ -120,6 +127,8 @@ export default function CheckBoxTable({
               <TableRow key={row.id}>
                 <TableCell>
                   <Checkbox
+                    size="small"
+                    sx={{ p: 0 }}
                     onChange={(e) => {
                       if (e.target.checked) {
                         setSelectedInvoice((prev) => [
@@ -173,7 +182,14 @@ export default function CheckBoxTable({
                   </Box>
                 </TableCell>
 
-                <TableCell align="center">
+                <TableCell
+                  sx={{
+                    display: "flex",
+                    gap: 1,
+                    justifyContent: "space-between",
+                  }}
+                  align="center"
+                >
                   <a
                     href={`/transaction/invoice/view/${row.invoice_number}/?invoice_number=${row.invoice_number}`}
                     target="_blank"
@@ -182,6 +198,16 @@ export default function CheckBoxTable({
                   >
                     <IconButton size="small" sx={{ p: 0 }} color="inherit">
                       <AssignmentIcon fontSize="small" />
+                    </IconButton>
+                  </a>
+                  <a
+                    href={`/transaction/repayment/${row.invoice_number}/`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ textDecoration: "none", color: "inherit" }} // Optional: keep icon color
+                  >
+                    <IconButton size="small" sx={{ p: 0 }} color="inherit">
+                      <PointOfSaleIcon color="error" fontSize="small" />
                     </IconButton>
                   </a>
                 </TableCell>
@@ -222,7 +248,14 @@ export default function CheckBoxTable({
             <MenuItem value={"issue_to_customer"}>Issue to Customer</MenuItem>
           </Select>
         </FormControl>
-        <Box sx={{ display: "flex", gap: ".2rem", flexWrap: "wrap" }}>
+        <Box
+          sx={{
+            display: "flex",
+            gap: ".2rem",
+            flexWrap: "wrap",
+            maxWidth: "440px",
+          }}
+        >
           {selectedInvoice.map((item) => (
             <Box
               key={item.id}

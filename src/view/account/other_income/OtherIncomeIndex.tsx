@@ -11,13 +11,35 @@ import {
   CircularProgress,
   Box,
   Typography,
+  IconButton,
 } from "@mui/material";
-
-import { useGetOtherIncomes } from "../../../hooks/useGetOtherIncomes";
+import useGetReportOtherIncome from "../../../hooks/useGetReportOtherIncome";
+import { Edit } from "@mui/icons-material";
+import { useEffect, useState } from "react";
+import dayjs, { Dayjs } from "dayjs";
+import SingleDatePicker from "../../../hooks/SingleDatePicker";
+import { formatDateTimeByType } from "../../../utils/formatDateTimeByType";
+import { numberWithCommas } from "../../../utils/numberWithCommas";
 
 export default function OtherIncomeIndex() {
   const navigate = useNavigate();
-  const { otherIncomeList, otherIncomeListLoading } = useGetOtherIncomes();
+
+  const {
+    otherIncomeReport,
+    otherIncomeReportLoading,
+    setOtherIncomeReportParamsData,
+  } = useGetReportOtherIncome();
+  const [selectedDate, setSelectedDate] = useState<Dayjs | null>(dayjs());
+
+  useEffect(() => {
+    if (selectedDate) {
+      const formattedDate = selectedDate
+        ? selectedDate.format("YYYY-MM-DD")
+        : "";
+      setOtherIncomeReportParamsData({ date: formattedDate });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedDate]);
 
   return (
     <Box sx={{ p: 4 }}>
@@ -45,8 +67,8 @@ export default function OtherIncomeIndex() {
           Manage Income Category
         </Button>
       </Box>
-
-      {otherIncomeListLoading ? (
+      <SingleDatePicker value={selectedDate} onChange={setSelectedDate} />
+      {otherIncomeReportLoading ? (
         <Box display="flex" justifyContent="center" mt={4}>
           <CircularProgress />
         </Box>
@@ -56,16 +78,39 @@ export default function OtherIncomeIndex() {
             <TableHead>
               <TableRow>
                 <TableCell align="left">Actions</TableCell>
-                <TableCell>Name</TableCell>
-                <TableCell>Description</TableCell>
+                <TableCell>Date</TableCell>
+                <TableCell>Category Name</TableCell>
+                <TableCell>Amount</TableCell>
+                <TableCell>Note</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              <TableRow>
-                <TableCell colSpan={3} align="center">
-                  In Development
-                </TableCell>
-              </TableRow>
+              {otherIncomeReport.length > 0 ? (
+                otherIncomeReport.map((income) => (
+                  <TableRow key={income.id}>
+                    <TableCell align="left">
+                      <IconButton
+                        size="small"
+                        onClick={() => navigate(`${income.id}`)}
+                      >
+                        <Edit sx={{ fontSize: "1rem" }} />
+                      </IconButton>
+                    </TableCell>
+                    <TableCell>
+                      {formatDateTimeByType(income.date, "date")}
+                    </TableCell>
+                    <TableCell>{income.category_name}</TableCell>
+                    <TableCell>{numberWithCommas(income.amount)}</TableCell>
+                    <TableCell>{income.note}</TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={4} align="center">
+                    No income found.
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </TableContainer>

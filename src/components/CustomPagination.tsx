@@ -66,7 +66,7 @@ const CustomerPagination: React.FC<CustomerPaginationProps> = ({
           label="Rows"
           onChange={handlePageSizeChange}
         >
-          {[1, 2, 10, 25, 50].map((size) => (
+          {[5, 10, 15, 25, 50].map((size) => (
             <MenuItem
               key={size}
               value={size}

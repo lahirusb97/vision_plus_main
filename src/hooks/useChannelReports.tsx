@@ -1,10 +1,11 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import axiosClient from "../axiosClient";
 import { extractErrorMessage } from "../utils/extractErrorMessage";
 import toast from "react-hot-toast";
 import dayjs from "dayjs";
 import { getUserCurentBranch } from "../utils/authDataConver";
 import { ChannelPaymentReport } from "../model/ChannelReportModel";
+import axios from "axios";
 
 // Type definitions
 
@@ -12,21 +13,30 @@ interface UseChannelReportsParams {
   payment_date: string; // Format: "YYYY-MM-DD"
 }
 
-const useChannelReports = ({ payment_date }: UseChannelReportsParams) => {
+const useChannelReports = () => {
   const [channelReports, setChannelReports] = useState<ChannelPaymentReport[]>(
     []
   );
   const [channelReportsLoading, setChannelReportsLoading] =
     useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  console.log(channelReports);
+  const [error, setError] = useState<boolean>(false);
+  const [params, setParams] = useState<UseChannelReportsParams>({
+    payment_date: dayjs().format("YYYY-MM-DD"),
+  });
+  const abortControllerRef = useRef<AbortController | null>(null);
+
   const fetchChannelReports = useCallback(async () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
     setChannelReportsLoading(true);
-    setError(null);
+    setError(false);
 
     try {
       // Validate date format
-      if (!dayjs(payment_date, "YYYY-MM-DD", true).isValid()) {
+      if (!dayjs(params.payment_date, "YYYY-MM-DD", true).isValid()) {
         throw new Error("Invalid date format. Use YYYY-MM-DD");
       }
 
@@ -34,38 +44,59 @@ const useChannelReports = ({ payment_date }: UseChannelReportsParams) => {
         "reports/channels/",
         {
           params: {
-            payment_date,
+            payment_date: params.payment_date,
             branch_id: getUserCurentBranch()?.id,
           },
+          signal: controller.signal,
         }
       );
 
-      setChannelReports(response.data);
-      toast.success("Channel reports loaded successfully");
+      if (!controller.signal.aborted) {
+        setChannelReports(response.data);
+        toast.success("Channel reports loaded successfully");
+      }
     } catch (err) {
-      extractErrorMessage(err);
-      setChannelReports([]);
+      if (axios.isCancel(err)) {
+        return;
+      }
+      if (!controller.signal.aborted) {
+        extractErrorMessage(err);
+        setChannelReports([]);
+        setError(true);
+      }
     } finally {
       setChannelReportsLoading(false);
     }
-  }, [payment_date]);
+  }, [params.payment_date]);
 
   // Initial fetch
   useEffect(() => {
     fetchChannelReports();
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
   }, [fetchChannelReports]);
 
   // Refresh function
   const refreshChannelReports = () => {
     fetchChannelReports();
   };
-
+  const setParamsData = (newParams: UseChannelReportsParams) => {
+    // use null to remove params
+    setParams((prev) => ({
+      ...prev,
+      ...newParams,
+    }));
+  };
   return {
     channelReports,
     channelReportsLoading,
     error,
     refreshChannelReports,
     isEmpty: !channelReportsLoading && channelReports.length === 0,
+    setChannelReportsParamsData: setParamsData,
   };
 };
 

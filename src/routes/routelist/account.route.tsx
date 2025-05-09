@@ -20,6 +20,7 @@ import ExpenceUpdate from "../../view/account/expencess_category/ExpenceUpdate";
 import AddOtherIncome from "../../view/account/other_income/AddOtherIncome";
 import OtherIncomeManage from "../../view/account/other_income/OtherIncomeManage";
 import SafeIndex from "../../view/account/safe/SafeIndex";
+import UpdateOtherIncomePayment from "../../view/account/other_income/UpdateOtherIncomePayment";
 
 export const accountRoutes: RouteObject[] = [
   {
@@ -127,6 +128,10 @@ export const accountRoutes: RouteObject[] = [
       {
         index: true,
         element: <OtherIncomeIndex />,
+      },
+      {
+        path: ":other_income_id",
+        element: <UpdateOtherIncomePayment />,
       },
       {
         path: "manage/",

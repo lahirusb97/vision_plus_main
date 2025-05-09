@@ -5,6 +5,8 @@ import toast from "react-hot-toast";
 
 import { getUserCurentBranch } from "../utils/authDataConver";
 import { DailyOrderCount } from "../model/dailyOrderCount";
+import { paramsNullCleaner } from "../utils/paramsNullCleaner";
+import dayjs from "dayjs";
 interface FilterParams {
   date: string | null;
 }
@@ -13,7 +15,7 @@ const useGetDailyOrderCount = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<boolean>(false);
   const [params, setParams] = useState<FilterParams>({
-    date: null,
+    date: dayjs().format("YYYY-MM-DD"),
   });
   const abortControllerRef = useRef<AbortController | null>(null);
   const loadData = useCallback(async () => {
@@ -23,14 +25,12 @@ const useGetDailyOrderCount = () => {
     const controller = new AbortController();
     abortControllerRef.current = controller;
     setLoading(true);
+    console.log(params);
     try {
-      const cleanParams = Object.fromEntries(
-        Object.entries(params).filter(([, v]) => v !== undefined && v !== null)
-      );
       const response: { data: DailyOrderCount } = await axiosClient.post(
         `summary/daily/`,
         {
-          ...cleanParams,
+          ...paramsNullCleaner(params),
           branch_id: getUserCurentBranch()?.id,
         },
         {

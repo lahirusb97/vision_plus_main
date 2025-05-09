@@ -13,6 +13,7 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  SelectChangeEvent,
   TextField,
   Typography,
 } from "@mui/material";
@@ -67,6 +68,7 @@ export default function OrderEditFrom() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   // SET VALUES FOR PATIENT TABLE
+  const [orderProgress, setOrderProgress] = useState("");
 
   const staticTitleParam = useMemo(() => ({ is_active: true }), []);
   const { busTitlesList, busTitlesLoading } = useGetBusTitles(staticTitleParam);
@@ -172,6 +174,7 @@ export default function OrderEditFrom() {
         "bus_title",
         BUSID === currentBranch ? invoiceDetail.order_details.bus_title : null
       );
+      setOrderProgress(invoiceDetail.progress_status);
     }
     if (invoiceDetail && !invoiceDetailLoading && loadState === 0) {
       invoiceDetail?.order_details.order_items
@@ -191,6 +194,7 @@ export default function OrderEditFrom() {
                 color_name: item.frame_detail?.color_name,
                 size: item.frame_detail?.size,
                 species: item.frame_detail?.species,
+                brand_type_display: item.frame_detail?.brand_type_display,
               },
             })
           );
@@ -239,7 +243,9 @@ export default function OrderEditFrom() {
       setLoadState(1);
     }
   }, [invoiceDetail]);
-
+  const handleChange = (event: SelectChangeEvent) => {
+    setOrderProgress(event.target.value as string);
+  };
   useEffect(() => {
     return () => {
       dispatch(clearFrame());
@@ -317,6 +323,7 @@ export default function OrderEditFrom() {
         on_hold: data.on_hold,
         user_date: data.user_date,
         bus_title: BUSID === currentBranch ? data.bus_title : null,
+        progress_status: orderProgress,
       },
       order_items: [
         ...Object.values(LenseInvoiceList).map((item) => ({
@@ -347,7 +354,6 @@ export default function OrderEditFrom() {
         ...(simplifiedPayments || []),
       ],
     };
-    console.log(postData);
 
     if (
       Object.keys(externalLenseInvoiceList).length > 0 ||
@@ -462,15 +468,46 @@ export default function OrderEditFrom() {
                     }
                   />
                 </Box>
+                <FormControl size="small" sx={{ minWidth: 250 }}>
+                  <InputLabel id="demo-simple-select-label">
+                    {" "}
+                    Order Progress Status
+                  </InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={orderProgress}
+                    label="Order Progress Status"
+                    onChange={handleChange}
+                    error={orderProgress === ""}
+                  >
+                    <MenuItem value={"received_from_customer"}>
+                      Received From Customer
+                    </MenuItem>
+                    <MenuItem value={"issue_to_factory"}>
+                      Issue to Factory
+                    </MenuItem>
+                    <MenuItem value={"received_from_factory"}>
+                      Received from Factory
+                    </MenuItem>
+                    <MenuItem value={"issue_to_customer"}>
+                      Issue to Customer
+                    </MenuItem>
+                  </Select>
+                </FormControl>
               </Box>
             </Box>
 
             {/* sending data trugh invoide details with usefrom hook */}
-            {!refractionDetailLoading && refractionDetail && (
+            {!refractionDetailLoading && (
               <PationtDetails
-                prescription={refractionDetail?.prescription_type_display}
+                prescription={
+                  refractionDetail?.prescription_type_display ||
+                  "Prescription Not Found"
+                }
                 refractionNumber={
-                  invoiceDetail?.customer_details?.refraction_number
+                  invoiceDetail?.customer_details?.refraction_number ||
+                  "Refraction Number Not Found"
                 }
               />
             )}

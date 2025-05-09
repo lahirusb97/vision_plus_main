@@ -7,7 +7,6 @@ import {
 } from "@mui/material";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { useForm, Controller, FormProvider } from "react-hook-form";
 
 import useGetDoctors from "../../hooks/useGetDoctors";
@@ -26,8 +25,16 @@ import {
   PatientResheduleModel,
   schemaPatientReshedule,
 } from "../../validations/schemaPatientReshedule";
+import useGetAppointmentSlots from "../../hooks/useGetAppointmentSlots";
+import AppointmentDatePicker from "../../components/AppointmentDatePicker";
 
 const PatientShedule = () => {
+  const {
+    appointmentSlots,
+    appointmentSlotsLoading,
+    appointmentSlotsError,
+    getAppointmentSlots,
+  } = useGetAppointmentSlots();
   const { appointment_id } = useParams();
   const { data: doctorList, loading } = useGetDoctors();
   const navigate = useNavigate();
@@ -42,9 +49,9 @@ const PatientShedule = () => {
 
   const onSubmit = async (data: PatientResheduleModel) => {
     const channelDate = dayjs(data.new_date).format("YYYY-MM-DD");
-    const channelTime = dayjs(data.new_time, "HH:mm:ss", true).format(
-      "HH:mm:ss"
-    );
+    const channelTime = dayjs(appointmentSlots?.doctor_arrival, "h:mm A")
+      .add(((appointmentSlots?.total_appointments || 0) + 1) * 5, "minute")
+      .format("HH:mm:ss");
 
     const payload = {
       appointment_id: appointment_id,
@@ -64,6 +71,14 @@ const PatientShedule = () => {
       console.log(error);
     }
   };
+  const reloadAppointmentSlots = () => {
+    if (watch("new_doctor_id") && watch("new_date")) {
+      getAppointmentSlots(
+        dayjs(watch("new_date")).format("YYYY-MM-DD"),
+        watch("new_doctor_id")
+      );
+    }
+  };
   return (
     <FormProvider {...methods}>
       <Box
@@ -75,6 +90,7 @@ const PatientShedule = () => {
           borderRadius: 2,
           bgcolor: "#fff",
           border: "1px solid #E0E0E0",
+          minWidth: "500px",
         }}
       >
         {/* Section Title */}
@@ -96,10 +112,18 @@ const PatientShedule = () => {
                 loading={loading} // Pass the loading state
                 labelName="Choose a Doctor" // Label for the input field
                 defaultId={undefined} // Optionally pass a default selected ID
+                onChange={(newValue) => {
+                  field.onChange(newValue); // Pass selected date to react-hook-form
+                  if (newValue && watch("new_date")) {
+                    getAppointmentSlots(
+                      dayjs(watch("new_date")).format("YYYY-MM-DD"),
+                      newValue
+                    );
+                  }
+                }}
               />
             )}
           />
-          {/* Date and Time Pickers (flex row) */}
 
           <Paper sx={flexBoxStyle}>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -107,7 +131,7 @@ const PatientShedule = () => {
                 name="new_date"
                 control={control}
                 render={({ field }) => (
-                  <HighlightedDatePicker
+                  <AppointmentDatePicker
                     sheduleStatus={"Available"}
                     selectedDate={
                       field.value
@@ -116,45 +140,61 @@ const PatientShedule = () => {
                     }
                     onDateChange={(newValue) => {
                       field.onChange(newValue); // Pass selected date to react-hook-form
+                      if (newValue && watch("new_doctor_id")) {
+                        getAppointmentSlots(
+                          dayjs(newValue).format("YYYY-MM-DD"),
+                          watch("new_doctor_id")
+                        );
+                      }
                     }}
                     label="Date"
-                    doctorId={
-                      watch("new_doctor_id")
-                        ? Number(watch("new_doctor_id"))
-                        : undefined
-                    } // Convert to number or pass undefined
+                    doctorId={watch("new_doctor_id") || undefined}
                   />
                 )}
               />
             </LocalizationProvider>
 
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <Controller
-                name="new_time"
-                control={control}
-                render={({ field, fieldState: { error } }) => (
-                  <TimePicker
-                    {...methods.register("new_time")}
-                    {...field}
-                    label="Time"
-                    format="HH:mm:ss"
-                    value={field.value ? dayjs(field.value, "HH:mm:ss") : null}
-                    onChange={(newValue) => {
-                      const formattedTime = newValue
-                        ? dayjs(newValue).format("HH:mm:ss")
-                        : "";
-                      field.onChange(formattedTime);
-                    }}
-                    slotProps={{
-                      textField: {
-                        error: !!error,
-                        helperText: error?.message,
-                      },
-                    }}
-                  />
-                )}
-              />
-            </LocalizationProvider>
+            <Box>
+              {watch("new_doctor_id") && watch("new_date") && (
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                  Avilable Number{" - "}
+                  {/* {appointmentSlotsLoading&& <CircularProgress size={20} />} */}
+                  {appointmentSlotsLoading && <CircularProgress size={20} />}
+                  {!appointmentSlotsLoading && appointmentSlotsError && (
+                    <Button
+                      size="small"
+                      onClick={reloadAppointmentSlots}
+                      variant="contained"
+                      color="error"
+                    >
+                      Try Again
+                    </Button>
+                  )}
+                  {!appointmentSlotsError && !appointmentSlotsLoading && (
+                    <>
+                      <Typography>
+                        {appointmentSlots?.total_appointments
+                          ? appointmentSlots?.total_appointments + 1
+                          : "1"}
+                      </Typography>
+                      <Typography>Time</Typography>
+                      <Typography>
+                        {appointmentSlots?.doctor_arrival
+                          ? dayjs(appointmentSlots.doctor_arrival, "h:mm A")
+                              .add(
+                                ((appointmentSlots.total_appointments || 0) +
+                                  1) *
+                                  5,
+                                "minute"
+                              )
+                              .format("hh:mm A")
+                          : "N/A"}
+                      </Typography>
+                    </>
+                  )}
+                </Box>
+              )}
+            </Box>
           </Paper>
           <Button
             disabled={loading}

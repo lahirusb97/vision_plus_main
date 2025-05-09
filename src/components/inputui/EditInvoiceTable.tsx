@@ -100,7 +100,7 @@ export default function EditInvoiceTable({ paymentList }: Props) {
                 </IconButton>
               </TableCell>
 
-              <TableCell>{`${row.frame_detail.brand_name} / ${row.frame_detail.code_name} / ${row.frame_detail.color_name} / ${row.frame_detail.species}`}</TableCell>
+              <TableCell>{`${row.frame_detail.brand_name} / ${row.frame_detail.code_name} / ${row.frame_detail.color_name} / ${row.frame_detail.species} / ${row.frame_detail.brand_type_display}`}</TableCell>
               <TableCell align="center">{row.buyQty}</TableCell>
               <TableCell align="right">{row.price_per_unit}</TableCell>
               <TableCell align="right">{row.subtotal}</TableCell>

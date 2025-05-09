@@ -10,7 +10,6 @@ import FactoryOrder from "../../view/transaction/factory_order/FactoryOrder";
 import FactoryOrderUpdate from "../../view/transaction/factory_order/FactoryOrderUpdate";
 import NormalInvoice from "../../view/transaction/normal_order/NormalInvoice";
 import NormalOrderInvoice from "../../view/transaction/normal_order/NormalOrderInvoice";
-import InvoiceSearchIndex from "../../view/transaction/InvoiceSearchIndex";
 import FrameOnlyOrderCreate from "../../view/transaction/frameonly/FrameOnlyOrderCreate";
 import BusTitleIndex from "../../view/transaction/bus/BusTitleIndex";
 import BusTitleUpdate from "../../view/transaction/bus/BusTitleUpdate";
@@ -111,10 +110,10 @@ export const transactionRoutes: RouteObject[] = [
       },
     ],
   },
-  {
-    path: "invoice/search",
-    element: <InvoiceSearchIndex />,
-  },
+  // {
+  //   path: "invoice/search",
+  //   element: <InvoiceSearchIndex />,
+  // },
   {
     path: "invoice/view/:invoice_number",
     element: <InvoiceView />,

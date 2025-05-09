@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import {
   Box,
   FormControl,
@@ -30,9 +30,13 @@ import { getUserCurentBranch } from "../../utils/authDataConver";
 import { useAxiosPost } from "../../hooks/useAxiosPost";
 import { extractErrorMessage } from "../../utils/extractErrorMessage";
 import SaveButton from "../../components/SaveButton";
+import { TypeLensSide } from "../../model/StaticTypeModels";
 
 const AddLens = () => {
   const { lenseTypes, lenseTypesLoading } = useGetLenseTypes();
+  const leftToastRef = useRef<string | null>(null);
+  const rightToastRef = useRef<string | null>(null);
+
   const { brands, brandsLoading } = useGetBrands({ brand_type: "lens" });
   const { coatings, coatingsLoading } = useGetCoatings();
   const { postHandler, postHandlerloading } = useAxiosPost();
@@ -61,7 +65,6 @@ const AddLens = () => {
     },
   });
   const lensTypeValue = watch("lensType");
-
   useEffect(() => {
     // Reset sph, cyl, and add when lensType changes
     reset({
@@ -93,39 +96,83 @@ const AddLens = () => {
       branch_id,
       limit,
     } = data;
-    const powersList = [
-      {
-        power: sphID,
-        value: sph,
-        side: side,
-      },
-      {
-        power: cylID,
-        value: cyl,
-        side: side,
-      },
-      {
-        power: addID,
-        value: add,
-        side: side,
-      },
-    ];
 
-    const lense = {
-      lens: {
-        type: lensType,
-        coating: coating,
-        price: price,
-        brand: brand,
-      },
-      stock: [
-        { initial_count: qty, qty: qty, branch_id: branch_id, limit: limit },
-      ],
-      powers: powersList.filter((power) => power.value !== null),
+    const createLenseObj = (sideValue: TypeLensSide) => {
+      const powersList = [
+        {
+          power: sphID,
+          value: sph,
+          side: sideValue,
+        },
+        {
+          power: cylID,
+          value: cyl,
+          side: sideValue,
+        },
+        {
+          power: addID,
+          value: add,
+          side: sideValue,
+        },
+      ];
+
+      return {
+        lens: {
+          type: lensType,
+          coating: coating,
+          price: price,
+          brand: brand,
+        },
+        stock: [
+          { initial_count: qty, qty: qty, branch_id: branch_id, limit: limit },
+        ],
+        powers: powersList.filter((power) => power.value !== null),
+      };
     };
-    console.log(lense);
+
     try {
-      await postHandler("lenses/", lense);
+      if (side === "both") {
+        try {
+          leftToastRef.current = toast.loading("Left Side Lense Creating");
+          await postHandler("lenses/", createLenseObj("left"));
+          toast.success("Left Side Lense Created!", {
+            id: leftToastRef.current,
+          });
+        } catch (error) {
+          extractErrorMessage(error);
+          if (leftToastRef.current) {
+            toast.error("Something went wrong while creating the Left lens.", {
+              id: leftToastRef.current,
+            });
+          }
+          throw error;
+        }
+
+        try {
+          rightToastRef.current = toast.loading("Right Side Lense Creating");
+          await postHandler("lenses/", createLenseObj("right"));
+          toast.success("Right Side Lense Created!", {
+            id: rightToastRef.current,
+            duration: Infinity,
+          });
+        } catch (error) {
+          extractErrorMessage(error);
+          if (rightToastRef.current) {
+            toast.error("Something went wrong while creating the Right lens.", {
+              id: rightToastRef.current,
+              duration: Infinity,
+            });
+          }
+          throw error;
+        }
+      } else {
+        try {
+          await postHandler("lenses/", createLenseObj(null));
+        } catch (error) {
+          extractErrorMessage(error);
+          throw error;
+        }
+      }
       reset();
       toast.success("Lense Added Successfully");
     } catch (error) {
@@ -245,6 +292,7 @@ const AddLens = () => {
               <Select size="small" {...field} label="Lens Side">
                 <MenuItem value="left">Left</MenuItem>
                 <MenuItem value="right">Right</MenuItem>
+                <MenuItem value="both">Both</MenuItem>
               </Select>
             )}
           />

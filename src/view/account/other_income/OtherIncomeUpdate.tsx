@@ -15,17 +15,18 @@ import axiosClient from "../../../axiosClient";
 import { extractErrorMessage } from "../../../utils/extractErrorMessage";
 import { useAxiosPatch } from "../../../hooks/useAxiosPatch";
 import BackButton from "../../../components/BackButton";
-import SaveButton from "../../../components/SaveButton";
 import {
   schemaOtherIncome,
   OtherIncomeForm,
 } from "../../../validations/schemaOtherIncome";
+import SubmitCustomBtn from "../../../components/common/SubmiteCustomBtn";
 
 export default function OtherIncomeUpdate() {
   const { other_income_category_id } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const { patchHandler, patchHandlerloading } = useAxiosPatch();
+  const { patchHandler, patchHandlerloading, patchHandlerError } =
+    useAxiosPatch();
 
   const {
     register,
@@ -121,7 +122,11 @@ export default function OtherIncomeUpdate() {
           }}
         />
 
-        <SaveButton btnText="Update Income" loading={patchHandlerloading} />
+        <SubmitCustomBtn
+          btnText="Update Income"
+          loading={patchHandlerloading}
+          isError={patchHandlerError}
+        />
       </Box>
     </Paper>
   );

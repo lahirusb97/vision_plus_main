@@ -84,7 +84,7 @@ const AutocompleteInputField: React.FC<AutocompleteInputFieldProps> = ({
           <li key={option.id} {...otherProps}>
             <Typography
               sx={{
-                fontSize: "14px",
+                fontSize: "12px",
                 whiteSpace: "nowrap",
                 overflow: "hidden",
                 textOverflow: "ellipsis",

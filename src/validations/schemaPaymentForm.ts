@@ -5,6 +5,7 @@ export const schemaPaymentForm = z
     credit_card: z.number(),
     cash: z.number(),
     online_transfer: z.number(),
+    progress_status: z.boolean().default(false),
   })
   .superRefine((data, ctx) => {
     if (data.credit_card <= 0 && data.cash <= 0 && data.online_transfer <= 0) {

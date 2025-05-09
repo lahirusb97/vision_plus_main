@@ -36,6 +36,12 @@ export default function InvoiceFrameItem({ frame }: Props) {
           Color: {frame.frame_detail.color_name}
         </Typography>
         <Typography variant="body2">Size: {frame.frame_detail.size}</Typography>
+        <Typography variant="body2">
+          Species: {frame.frame_detail.species}
+        </Typography>
+        <Typography variant="body2">
+          {frame.frame_detail.brand_type_display}
+        </Typography>
 
         <Typography variant="body2">Quantity: {frame.buyQty}</Typography>
         <Typography variant="body2">

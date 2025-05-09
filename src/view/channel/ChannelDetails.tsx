@@ -22,6 +22,7 @@ import useGetChannelDetails from "../../hooks/useGetChannelDetails";
 import HighlightedDatePicker from "../../components/HighlightedDatePicker";
 import { useNavigate } from "react-router";
 import CustomerPagination from "../../components/CustomPagination";
+import { numberWithCommas } from "../../utils/numberWithCommas";
 
 function ChannelDetails() {
   const navigate = useNavigate();
@@ -148,7 +149,7 @@ function ChannelDetails() {
             <TableRow sx={{ padding: 0, margin: 0 }}>
               <TableCell sx={tableStyles}>Action</TableCell>
               <TableCell sx={tableStyles}>Repayment</TableCell>
-              <TableCell sx={tableStyles}>Invoice Number </TableCell>
+              <TableCell sx={tableStyles}>Invoice No. </TableCell>
 
               <TableCell sx={tableStyles} align="left">
                 Date
@@ -168,12 +169,19 @@ function ChannelDetails() {
               </TableCell>
 
               <TableCell sx={tableStyles} align="left">
-                Total Payment
+                Amount
+              </TableCell>
+              <TableCell sx={tableStyles} align="left">
+                Payments
               </TableCell>
 
               <TableCell sx={tableStyles} align="left">
-                Address
+                Balance
               </TableCell>
+
+              {/* <TableCell sx={tableStyles} align="left">
+                Address
+              </TableCell> */}
             </TableRow>
           </TableHead>
           <TableBody>
@@ -245,12 +253,18 @@ function ChannelDetails() {
                 </TableCell>
 
                 <TableCell sx={tableStyles} align="left">
-                  {row.first_payment}
+                  {numberWithCommas(row.amount)}
+                </TableCell>
+                <TableCell sx={tableStyles} align="left">
+                  {numberWithCommas(row.total_payment)}
+                </TableCell>
+                <TableCell sx={tableStyles} align="left">
+                  {numberWithCommas(row.balance)}
                 </TableCell>
                 {/* {console.log(row)} */}
-                <TableCell sx={tableStyles} align="left">
+                {/* <TableCell sx={tableStyles} align="left">
                   {row.address}
-                </TableCell>
+                </TableCell> */}
               </TableRow>
             ))}
             {channelListLoading && (

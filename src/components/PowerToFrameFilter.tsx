@@ -42,12 +42,14 @@ export default function PowerToFrameFilter() {
     color: number | null;
     size: string | null;
     species: string | null;
+    brand_type_display: string | null;
   }>({
     brand: null,
     code: null,
     color: null,
     size: null,
     species: null,
+    brand_type_display: null,
   });
   //Filter Codes usign Brand
   useEffect(() => {
@@ -121,6 +123,7 @@ export default function PowerToFrameFilter() {
   }, [searchFrame.brand, searchFrame.code, searchFrame.color, framesLoading]);
 
   //TODO find a maching frame by brand code and color END***
+  console.log(selectedFrame);
 
   const addFrameByList = () => {
     if (selectedFrame) {
@@ -143,6 +146,7 @@ export default function PowerToFrameFilter() {
               color_name: selectedFrame.color_name,
               size: selectedFrame.size,
               species: selectedFrame.species,
+              brand_type_display: selectedFrame.brand_type_display,
             },
           })
         );
@@ -154,6 +158,7 @@ export default function PowerToFrameFilter() {
           color: null,
           size: null,
           species: null,
+          brand_type_display: null,
         });
         dispatch(closeStockDrawer());
       } else {
@@ -184,9 +189,8 @@ export default function PowerToFrameFilter() {
       <Box
         sx={{
           display: "flex",
-          justifyContent: "end",
+          justifyContent: "space-between",
           alignItems: "center",
-
           gap: 1,
         }}
       >
@@ -213,7 +217,7 @@ export default function PowerToFrameFilter() {
           />
         </Box>
         {/* Color Dropdown */}
-        <Box width={{ minWidth: 180 }}>
+        <Box width={{ minWidth: 200 }}>
           <DropdownInput
             options={colors}
             onChange={(selectedId) =>
@@ -225,19 +229,27 @@ export default function PowerToFrameFilter() {
           />
         </Box>
         {/* Species Dropdown */}
-        <Box width={{ minWidth: 130 }}>
+        <Box width={{ minWidth: 100 }}>
           <Typography>
             Size- {selectedFrame ? selectedFrame.size : "N/A"}
           </Typography>
         </Box>
-        <Box width={{ minWidth: 150 }}>
+        <Box width={{ minWidth: 100 }}>
           <Typography>
             Species- {selectedFrame ? selectedFrame.species : "N/A"}
           </Typography>
         </Box>
+        <Box width={{ minWidth: 80 }}>
+          {selectedFrame?.brand_type_display && (
+            <Typography variant="body2" sx={{ fontSize: 12 }}>
+              {selectedFrame.brand_type_display}
+            </Typography>
+          )}
+        </Box>
         <TextField
+          sx={{ width: 120 }}
           size="small"
-          label="Price"
+          label="Price Rs"
           type="number"
           variant="outlined"
           value={price}

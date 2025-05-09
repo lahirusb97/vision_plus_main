@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { OtherItemModel } from "../model/OtherItemModel";
 import { PaginatedResponse } from "../model/PaginatedResponse";
 import { extractErrorMessage } from "../utils/extractErrorMessage";
 import axiosClient from "../axiosClient";
 import { getUserCurentBranch } from "../utils/authDataConver";
+import axios from "axios";
 
 export default function useGetOtherItem() {
   const limit = 10;
@@ -12,9 +13,19 @@ export default function useGetOtherItem() {
   const [DataList, setDataList] = useState<OtherItemModel[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<boolean>(true);
+  const abortControllerRef = useRef<AbortController | null>(null);
+  const timer = useRef<number | null>(null);
 
   const loadData = useCallback(async () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+
     setLoading(true);
+    setError(true);
     try {
       const response: { data: PaginatedResponse<OtherItemModel> } =
         await axiosClient.get(`other-items/`, {
@@ -24,11 +35,20 @@ export default function useGetOtherItem() {
             ...(searchQuary ? { search: searchQuary } : {}),
             branch_id: getUserCurentBranch()?.id,
           },
+          signal: controller.signal,
         });
-      setDataList(response.data.results);
-      setTotalCount(response.data.count);
+      if (!controller.signal.aborted) {
+        setDataList(response.data.results);
+        setTotalCount(response.data.count);
+      }
     } catch (error) {
-      extractErrorMessage(error);
+      if (axios.isCancel(error)) {
+        return;
+      }
+      if (!controller.signal.aborted) {
+        extractErrorMessage(error);
+        setError(true);
+      }
     } finally {
       setLoading(false);
     }
@@ -38,7 +58,12 @@ export default function useGetOtherItem() {
 
   const handleSearch = (searchKeyWord: string) => {
     setNavigatePage(1);
-    setSearchQuary(searchKeyWord);
+    if (timer.current) {
+      window.clearTimeout(timer.current);
+    }
+    timer.current = window.setTimeout(() => {
+      setSearchQuary(searchKeyWord);
+    }, 500);
   };
   const handlePageNavigation = (pageNumber: number) => {
     setNavigatePage(pageNumber);
@@ -46,10 +71,12 @@ export default function useGetOtherItem() {
   //PAGE NAVIGATION HANDLE
 
   useEffect(() => {
-    const controller = new AbortController(); // ✅ Create an abort controller
-
     loadData();
-    return () => controller.abort();
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
   }, [loadData]);
 
   return {
@@ -60,5 +87,6 @@ export default function useGetOtherItem() {
     totalOtherItemCount: totalCount,
     pageNavigationByNumber: handlePageNavigation,
     OtherItemDataRefresh: loadData,
+    otherItemError: error,
   };
 }
