@@ -147,10 +147,7 @@ const Dashboard = () => {
               <Typography variant="body2" fontWeight="bold">
                 Cash Avilable
               </Typography>
-              <Typography sx={flexStyle} variant="body2">
-                <span>Cash in Hold</span>
-                <span>{financeSummary?.cash_in_hold || 0}</span>
-              </Typography>
+
               <Typography sx={flexStyle} variant="body2">
                 <span> Avilable For Deposite </span>
                 <span>{financeSummary?.available_for_deposit || 0}</span>
@@ -162,6 +159,13 @@ const Dashboard = () => {
               <Typography sx={flexStyle} variant="body2">
                 <span>Today Balance</span>
                 <span>{financeSummary?.today_balance || 0}</span>
+              </Typography>
+              <Typography sx={flexStyle} variant="body2">
+                <span>Cash in Hold</span>
+                <span>
+                  {(financeSummary?.cash_in_hold || 0) -
+                    (financeSummary?.safe_today_balance || 0)}
+                </span>
               </Typography>
             </Box>
             <Divider sx={{ my: 1 }} />

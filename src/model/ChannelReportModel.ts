@@ -8,4 +8,5 @@ export interface ChannelPaymentReport {
   total_due: number;
   balance: number;
   appointment_id: number;
+  invoice_number: string;
 }
