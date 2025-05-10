@@ -13,6 +13,7 @@ import TodayBankingTable from "../../components/common/TodayBankingTable";
 import { ExpencePaymentTable } from "../../components/ExpencePaymentTable";
 import OtherIncomePayment from "../../components/common/OtherIncomePayment";
 import useGetReportOtherIncome from "../../hooks/useGetReportOtherIncome";
+import useGetSafeTotalIncome from "../../hooks/useGetSafeTotalIncome";
 
 const Dashboard = () => {
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(dayjs());
@@ -28,6 +29,10 @@ const Dashboard = () => {
     useChannelReports();
   const { financeSummary, setFinanceSummaryParams, financeSummaryLoading } =
     useGetFinanceSummary();
+  const { safeTotalIncome, safeTotalIncomeLoading, safeTotalIncomeError } =
+    useGetSafeTotalIncome();
+  console.log("financeSummary", financeSummary);
+
   const {
     otherIncomeReport,
     otherIncomeReportLoading,
@@ -147,7 +152,10 @@ const Dashboard = () => {
               <Typography variant="body2" fontWeight="bold">
                 Cash Avilable
               </Typography>
-
+              <Typography sx={flexStyle} variant="body2">
+                <span>Cash in Hold</span>
+                <span>{financeSummary?.cash_in_hold || 0}</span>
+              </Typography>
               <Typography sx={flexStyle} variant="body2">
                 <span> Avilable For Deposite </span>
                 <span>{financeSummary?.available_for_deposit || 0}</span>
@@ -160,42 +168,16 @@ const Dashboard = () => {
                 <span>Today Balance</span>
                 <span>{financeSummary?.today_balance || 0}</span>
               </Typography>
-              <Typography sx={flexStyle} variant="body2">
-                <span>Cash in Hold</span>
-                <span>
-                  {(financeSummary?.cash_in_hold || 0) -
-                    (financeSummary?.safe_today_balance || 0)}
-                </span>
-              </Typography>
             </Box>
             <Divider sx={{ my: 1 }} />
             <Box>
               <Typography variant="body2" fontWeight="bold">
                 Safe Locker
               </Typography>
-              <Typography sx={flexStyle} variant="body2">
-                <span>Safe Before Balance</span>
-                <span>{financeSummary?.safe_before_balance || 0}</span>
-              </Typography>
-              <Typography sx={flexStyle} variant="body2">
-                <span>Safe Cash in Hold</span>
-                <span>{financeSummary?.safe_cash_in_hold || 0}</span>
-              </Typography>
-              <Typography sx={flexStyle} variant="body2">
-                <span>Safe Deposite</span>
-                <span>{financeSummary?.safe_deposit || 0}</span>
-              </Typography>
-              <Typography sx={flexStyle} variant="body2">
-                <span> Safe Expence</span>
-                <span>{financeSummary?.safe_expense || 0}</span>
-              </Typography>
-              <Typography sx={flexStyle} variant="body2">
-                <span> Safe Income</span>
-                <span>{financeSummary?.safe_income || 0}</span>
-              </Typography>
+
               <Typography sx={flexStyle} variant="body2">
                 <span> Safe Today Balance</span>
-                <span>{financeSummary?.safe_today_balance || 0}</span>
+                <span>{safeTotalIncome || 0}</span>
               </Typography>
             </Box>
           </Paper>
