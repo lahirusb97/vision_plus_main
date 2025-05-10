@@ -52,12 +52,18 @@ const stockDrawerSlice = createSlice({
       if (stockDrawerType === "lense") {
         if (refractionDetail) {
           state.refractionDetail = refractionDetail;
+        } else {
+          state.refractionDetail = null;
         }
       } else {
         state.refractionDetail = null;
       }
     },
-
+    openManualLense: (state) => {
+      state.stockDrawerOpen = true;
+      state.stockDrawerType = "lense";
+      state.refractionDetail = null;
+    },
     closeStockDrawer: (state) => {
       state.stockDrawerOpen = false;
       state.stockDrawerType = null;
@@ -67,7 +73,8 @@ const stockDrawerSlice = createSlice({
 });
 
 // Export actions
-export const { openStockDrawer, closeStockDrawer } = stockDrawerSlice.actions;
+export const { openStockDrawer, closeStockDrawer, openManualLense } =
+  stockDrawerSlice.actions;
 
 // Export reducer
 export default stockDrawerSlice.reducer;
