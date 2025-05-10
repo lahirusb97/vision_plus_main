@@ -4,6 +4,7 @@ import { extractErrorMessage } from "../utils/extractErrorMessage";
 import { getUserCurentBranch } from "../utils/authDataConver";
 import { FinanceSummary } from "../model/FinanceSummary";
 import axios from "axios";
+import dayjs from "dayjs";
 interface FilterParams {
   date: string | null;
 }
@@ -12,7 +13,7 @@ const useGetFinanceSummary = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<boolean>(false);
   const [params, setParams] = useState<FilterParams>({
-    date: null,
+    date: dayjs().format("YYYY-MM-DD"),
   });
   const abortControllerRef = useRef<AbortController | null>(null);
   const loadData = useCallback(async () => {

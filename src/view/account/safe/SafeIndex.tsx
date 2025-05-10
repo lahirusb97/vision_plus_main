@@ -6,15 +6,25 @@ import {
 } from "../../../validations/schemaAddToSafe";
 
 import { getUserCurentBranch } from "../../../utils/authDataConver";
-import { TextField, Paper } from "@mui/material";
+import {
+  TextField,
+  Paper,
+  Box,
+  CircularProgress,
+  Typography,
+} from "@mui/material";
 import TitleText from "../../../components/TitleText";
 import SubmitCustomBtn from "../../../components/common/SubmiteCustomBtn";
 import { useAxiosPost } from "../../../hooks/useAxiosPost";
 import { extractErrorMessage } from "../../../utils/extractErrorMessage";
 import toast from "react-hot-toast";
+import useGetFinanceSummary from "../../../hooks/useGetFinanceSummary";
+import DataLoadingError from "../../../components/common/DataLoadingError";
 
 export default function SafeIndex() {
   const { postHandler, postHandlerloading, postHandlerError } = useAxiosPost();
+  const { financeSummary, financeSummaryLoading, financeSummaryError } =
+    useGetFinanceSummary();
   const {
     register,
     handleSubmit,
@@ -24,7 +34,7 @@ export default function SafeIndex() {
     resolver: zodResolver(schemaAddToSafe),
     defaultValues: {
       branch: getUserCurentBranch()?.id,
-      transaction_type: "deposit",
+      transaction_type: "income",
       amount: undefined,
       reason: "",
       reference_id: "",
@@ -32,23 +42,79 @@ export default function SafeIndex() {
   });
 
   const onSubmit = async (data: AddToSafeFormModel) => {
-    try {
-      await postHandler("safe/transactions/", data);
-      toast.success("Money Transfered To Safe Locker Successfully");
-      reset();
-    } catch (error) {
-      extractErrorMessage(error);
+    const totalDepositableCash =
+      (financeSummary?.today_balance || 0) +
+      (financeSummary?.before_balance || 0);
+
+    if (data.amount > totalDepositableCash) {
+      toast.error("You Can't Transfer More Than " + totalDepositableCash);
+    } else {
+      const postData = {
+        branch: getUserCurentBranch()?.id,
+        transaction_type: "income",
+        amount: data.amount,
+        reason: data.reason,
+        reference_id: data.reference_id,
+      };
+      try {
+        await postHandler("safe/transactions/", postData);
+        toast.success("Money Transfered To Safe Locker Successfully");
+        reset();
+      } catch (error) {
+        extractErrorMessage(error);
+      }
     }
   };
+  if (financeSummaryLoading) {
+    return (
+      <Box>
+        <CircularProgress />
+      </Box>
+    );
+  }
+  if (financeSummaryError) {
+    return <DataLoadingError />;
+  }
   return (
     <Paper elevation={1}>
+      {financeSummaryLoading ? (
+        <Box>
+          <CircularProgress />
+        </Box>
+      ) : (
+        <Box sx={{ width: 300, p: "1rem" }}>
+          <TitleText title="Avilable Cash" />
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            <Typography variant="body1">Before Balance </Typography>
+            <Typography variant="body1">
+              {financeSummary?.before_balance || 0}
+            </Typography>
+          </Box>
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            <Typography variant="body1">Today Balance </Typography>
+            <Typography variant="body1">
+              {financeSummary?.today_balance || 0}
+            </Typography>
+          </Box>
+
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            <Typography variant="body1" fontWeight={"bold"}>
+              Total Depositable Amount
+            </Typography>
+            <Typography variant="body1" fontWeight={"bold"}>
+              {financeSummary?.today_balance ||
+                0 + (financeSummary?.before_balance || 0)}
+            </Typography>
+          </Box>
+        </Box>
+      )}
       <form
         style={{
           padding: "1rem",
           display: "flex",
           flexDirection: "column",
           gap: ".5rem",
-          minWidth: "300px",
+          minWidth: "400px",
         }}
         onSubmit={handleSubmit(onSubmit)}
       >

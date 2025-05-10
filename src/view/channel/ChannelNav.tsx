@@ -8,6 +8,10 @@ export default function ChannelNav() {
       <NavButton name="Channel Details" path="/channel/channel_details" />
       <NavButton name="Doctor" path="/channel/doctor" />
       <NavButton name="Doctor Shedules" path="/channel/doctor_shedule" />
+      <NavButton
+        name="Doctor Claim Channel"
+        path="/channel/doctor_claim_channel"
+      />
     </>
   );
 }

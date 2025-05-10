@@ -9,6 +9,8 @@ import DoctorCreate from "../../view/channel/doctor/DoctorCreate";
 import DoctorSheduleIndex from "../../view/channel/doctorShedule/DoctorSheduleIndex";
 import PatientShedule from "../../view/channel/PatientShedule";
 import ChannelRepayment from "../../view/channel/ChannelRepayment";
+import DoctorClaimChannelFrom from "../../view/channel/doctor_claim_channel/DoctorClaimChannelFrom";
+import DoctorClaimChannelInvoiceVIew from "../../view/channel/doctor_claim_channel/DoctorClaimChannelInvoiceVIew";
 
 export const channelRoutes: RouteObject[] = [
   {
@@ -62,5 +64,19 @@ export const channelRoutes: RouteObject[] = [
   {
     path: "channel_payment/:appointment_id",
     element: <ChannelRepayment />,
+  },
+  {
+    path: "doctor_claim_channel",
+    element: <ProtectedChildRoute />,
+    children: [
+      {
+        index: true,
+        element: <DoctorClaimChannelFrom />,
+      },
+      {
+        path: ":appointment_id",
+        element: <DoctorClaimChannelInvoiceVIew />,
+      },
+    ],
   },
 ];
