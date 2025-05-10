@@ -11,7 +11,7 @@ export const ChannelPaymentTable = ({ data, loading }: ChannelTableProps) => {
   const columns = useMemo<MRT_ColumnDef<ChannelPaymentReport>[]>(
     () => [
       {
-        accessorKey: "appointment_id",
+        accessorKey: "invoice_number",
         header: "Channel ID",
         size: 50,
       },

@@ -1,20 +1,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
-import {
-  Box,
-  Button,
-  InputAdornment,
-  Paper,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Box, Button, Paper, TextField, Typography } from "@mui/material";
 import {
   DoctorClaimChannelFormModel,
   schemaDoctorClaimChannel,
 } from "../../../validations/schemaDoctorClaimChannel";
 import TitleText from "../../../components/TitleText";
 import { FormProvider } from "react-hook-form";
-import { getBranchName } from "../../../utils/branchName";
 import MiniPatientDetails from "../../transaction/doctor_claim_invoice/MiniPatientDetails";
 import CashInput from "../../../components/inputui/CashInput";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -79,13 +71,6 @@ export default function DoctorClaimChannelFrom() {
               sx={{ width: 200 }}
               size="small"
               label="Invoice Number"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    {getBranchName()}
-                  </InputAdornment>
-                ),
-              }}
             />
             <MiniPatientDetails />
 
