@@ -315,7 +315,7 @@ export default function FactoryInvoiceForm() {
                     <Checkbox {...methods.register("fitting_on_collection")} />
                   </Box>
                 </Box>
-                <Box ml={1} display="flex" alignItems="center">
+                {/* <Box ml={1} display="flex" alignItems="center">
                   <Typography variant="body1"> Issue To Good</Typography>
                   <Checkbox
                     {...methods.register("progress_status")}
@@ -324,7 +324,7 @@ export default function FactoryInvoiceForm() {
                       methods.setValue("progress_status", e.target.checked)
                     }
                   />
-                </Box>
+                </Box> */}
               </Box>
 
               {/* Passing The Note DAta to show in tthe dialog */}

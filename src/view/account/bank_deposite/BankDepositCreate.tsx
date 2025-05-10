@@ -1,5 +1,11 @@
 // pages/AddBankDeposite.tsx
-import { Box, TextField, Typography, Paper } from "@mui/material";
+import {
+  Box,
+  TextField,
+  Typography,
+  Paper,
+  CircularProgress,
+} from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import SaveButton from "../../../components/SaveButton";
@@ -17,9 +23,11 @@ import BankAutocomplete from "../../../components/inputui/BankAutocomplete";
 import { useGetBankAccounts } from "../../../hooks/useGetBankAccounts";
 import toast from "react-hot-toast";
 import { extractErrorMessage } from "../../../utils/extractErrorMessage";
+import useGetSafeTotalIncome from "../../../hooks/useGetSafeTotalIncome";
 
 export default function BankDepositCreate() {
   const { postHandler, postHandlerloading } = useAxiosPost();
+  const { safeTotalIncome, safeTotalIncomeLoading } = useGetSafeTotalIncome();
   const { bankAccountsList, bankAccountsListLoading } = useGetBankAccounts();
   const { register, handleSubmit, reset, control } = useForm<BankDepositForm>({
     resolver: zodResolver(schemaBankDeposite),
@@ -33,12 +41,16 @@ export default function BankDepositCreate() {
   });
 
   const onSubmit = async (data: BankDepositForm) => {
-    try {
-      await postHandler("bank-deposits/", { ...data });
-      toast.success("Bank Deposit saved Successfully");
-      reset();
-    } catch (error) {
-      extractErrorMessage(error);
+    if (data.amount > safeTotalIncome) {
+      toast.error("Safe locker Des not have enough money");
+    } else {
+      try {
+        await postHandler("bank-deposits/", { ...data });
+        toast.success("Bank Deposit saved Successfully");
+        reset();
+      } catch (error) {
+        extractErrorMessage(error);
+      }
     }
   };
 
@@ -47,7 +59,13 @@ export default function BankDepositCreate() {
       <Typography variant="h6" gutterBottom>
         Add Bank Deposit
       </Typography>
-
+      {safeTotalIncomeLoading ? (
+        <CircularProgress />
+      ) : (
+        <Typography sx={{ mb: 2, fontWeight: "bold" }} variant="body1">
+          Avilable Safe Locker About : {safeTotalIncome}
+        </Typography>
+      )}
       <Box
         component="form"
         onSubmit={handleSubmit(onSubmit)}
