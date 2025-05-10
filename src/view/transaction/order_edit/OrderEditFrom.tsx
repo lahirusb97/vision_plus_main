@@ -25,7 +25,6 @@ import {
 import LeftEyeTable from "../../../components/LeftEyeTable";
 import RightEyeTable from "../../../components/RightEyeTable";
 import PationtDetails from "../../../components/PationtDetails";
-import DrawerStock from "../../../components/inputui/DrawerStock";
 import LoadingAnimation from "../../../components/LoadingAnimation";
 import {
   clearFrame,
@@ -524,7 +523,10 @@ export default function OrderEditFrom() {
           >
             <HidenNoteDialog note={invoiceDetail?.refraction_details?.note} />
 
-            <StockDrawerBtn />
+            <StockDrawerBtn
+              refractionDetail={invoiceDetail?.refraction_details || null}
+            />
+
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <Controller
                 name="user_date"
@@ -632,7 +634,6 @@ export default function OrderEditFrom() {
               Submit
             </Button>
           </Box>
-          <DrawerStock refractionDetail={refractionDetail} />
         </Box>
       </FormProvider>
       <VarificationDialog

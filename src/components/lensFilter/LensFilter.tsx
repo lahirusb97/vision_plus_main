@@ -1,5 +1,4 @@
 import React, { useEffect, useReducer } from "react";
-import { RefractionDetailModel } from "../../model/RefractionDetailModel";
 import {
   Box,
   Button,
@@ -25,9 +24,10 @@ import { setLense } from "../../features/invoice/lenseFilterSlice";
 import { RootState } from "../../store/store";
 import InvoiceLenseItem from "../InvoiceLenseItem";
 
-export default function LensFilter({
-  refractionDetail,
-}: RefractionDetailsProps) {
+export default function LensFilter() {
+  const refractionDetail = useSelector(
+    (state: RootState) => state.stock_drawer.refractionDetail
+  );
   const dispatch = useDispatch();
   const [rightByQty, setRightByQty] = React.useState(1);
   const [leftByQty, setLeftByQty] = React.useState(1);
@@ -337,7 +337,4 @@ export default function LensFilter({
       </Box>
     </Paper>
   );
-}
-interface RefractionDetailsProps {
-  refractionDetail: RefractionDetailModel | null;
 }

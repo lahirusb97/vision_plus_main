@@ -16,6 +16,8 @@ import BusTitleUpdate from "../../view/transaction/bus/BusTitleUpdate";
 import { BusTitleCreate } from "../../view/transaction/bus/BusTitleCreate";
 import NormalOrderEdit from "../../view/transaction/normal_order/NormalOrderEdit";
 import NormalOrderEditIndex from "../../view/transaction/normal_order/NormalOrderEditIndex";
+import DoctorClaimInvoiceForm from "../../view/transaction/doctor_claim_invoice/DoctorClaimInvoiceForm";
+import DoctorClainInvoiceView from "../../view/transaction/doctor_claim_invoice/DoctorClainInvoiceView";
 
 export const transactionRoutes: RouteObject[] = [
   {
@@ -133,6 +135,20 @@ export const transactionRoutes: RouteObject[] = [
       {
         path: "update/:bus_title_id",
         element: <BusTitleUpdate />,
+      },
+    ],
+  },
+  {
+    path: "doctor_claim_invoice",
+    element: <ProtectedChildRoute />,
+    children: [
+      {
+        index: true,
+        element: <DoctorClaimInvoiceForm />,
+      },
+      {
+        path: ":invoice_number",
+        element: <DoctorClainInvoiceView />,
       },
     ],
   },

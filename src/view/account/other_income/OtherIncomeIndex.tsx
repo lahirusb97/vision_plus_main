@@ -12,6 +12,7 @@ import {
   Box,
   Typography,
   IconButton,
+  Divider,
 } from "@mui/material";
 import useGetReportOtherIncome from "../../../hooks/useGetReportOtherIncome";
 import { Edit } from "@mui/icons-material";
@@ -42,13 +43,8 @@ export default function OtherIncomeIndex() {
   }, [selectedDate]);
 
   return (
-    <Box sx={{ p: 4 }}>
-      <Box
-        display="flex"
-        justifyContent="space-between"
-        alignItems="center"
-        mb={2}
-      >
+    <Paper sx={{ p: 1 }}>
+      <Box display="flex" justifyContent="space-between" alignItems="center">
         <Typography variant="h6">Recived Other Incomes</Typography>
       </Box>
       <Box
@@ -67,6 +63,7 @@ export default function OtherIncomeIndex() {
           Manage Income Category
         </Button>
       </Box>
+      <Divider sx={{ my: 2 }} />
       <SingleDatePicker value={selectedDate} onChange={setSelectedDate} />
       {otherIncomeReportLoading ? (
         <Box display="flex" justifyContent="center" mt={4}>
@@ -115,6 +112,6 @@ export default function OtherIncomeIndex() {
           </Table>
         </TableContainer>
       )}
-    </Box>
+    </Paper>
   );
 }

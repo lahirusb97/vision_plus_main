@@ -19,7 +19,11 @@ export default function TransactionNav() {
         name="Factory Order RePayment"
         path={"/transaction/repayment"}
       />
-      <NavButton name="Invoice Search" path={"/transaction/invoice/search"} />
+
+      <NavButton
+        name="Doctor Claim Invoice"
+        path={"/transaction/doctor_claim_invoice"}
+      />
 
       <NavButton name="Bus Title" path={"/transaction/bus"} />
     </>

@@ -88,8 +88,18 @@ const Expence = () => {
   }, []);
 
   const onSubmit = async (data: ExpenseFormData) => {
+    console.log(data);
+    const postData = {
+      branch: data.branch,
+      main_category: data.main_category,
+      sub_category: data.sub_category,
+      amount: data.amount,
+      note: data.note,
+      paid_source: data.paid_from_safe ? "safe" : "cash",
+      paid_from_safe: data.paid_from_safe,
+    };
     try {
-      await postHandler("/expenses/", data);
+      await postHandler("/expenses/", postData);
       toast.success("Expense recorded successfully");
       financeSummaryRefres();
       refreshReport();

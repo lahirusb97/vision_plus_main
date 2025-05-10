@@ -1,14 +1,43 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { RefractionDetailModel } from "../../model/RefractionDetailModel";
 
-interface DrawerState {
-  stockDrawerOpen: boolean;
-  stockDrawerType: string;
+type DrawerType = "frame" | "lense" | "none_stock_lense" | null;
+
+interface BaseStockDrawerPayload {
+  stockDrawerType: DrawerType;
 }
 
+interface FrameStockDrawerPayload extends BaseStockDrawerPayload {
+  stockDrawerType: "frame";
+  refractionDetail: null;
+}
+
+interface LenseStockDrawerPayload extends BaseStockDrawerPayload {
+  stockDrawerType: "lense";
+  refractionDetail: RefractionDetailModel;
+}
+
+interface NoneStockLensePayload extends BaseStockDrawerPayload {
+  stockDrawerType: "none_stock_lense";
+  refractionDetail: null;
+}
+
+// Union type that combines all possible payloads
+type StockDrawerPayload =
+  | FrameStockDrawerPayload
+  | LenseStockDrawerPayload
+  | NoneStockLensePayload;
+
+interface StockDrawerStateInit {
+  stockDrawerOpen: boolean;
+  stockDrawerType: DrawerType;
+  refractionDetail: null | RefractionDetailModel;
+}
 // Initial state
-const initialState: DrawerState = {
+const initialState: StockDrawerStateInit = {
   stockDrawerOpen: false,
-  stockDrawerType: "",
+  stockDrawerType: null,
+  refractionDetail: null,
 };
 
 const stockDrawerSlice = createSlice({
@@ -16,15 +45,23 @@ const stockDrawerSlice = createSlice({
   initialState,
   reducers: {
     // Add or update a LenseModel in the store
-    openStockDrawer: (state, action: PayloadAction<string>) => {
-      const drawerType = action.payload;
+    openStockDrawer: (state, action: PayloadAction<StockDrawerPayload>) => {
+      const { stockDrawerType, refractionDetail } = action.payload;
       state.stockDrawerOpen = true;
-      state.stockDrawerType = drawerType;
+      state.stockDrawerType = stockDrawerType;
+      if (stockDrawerType === "lense") {
+        if (refractionDetail) {
+          state.refractionDetail = refractionDetail;
+        }
+      } else {
+        state.refractionDetail = null;
+      }
     },
 
     closeStockDrawer: (state) => {
       state.stockDrawerOpen = false;
-      state.stockDrawerType = "";
+      state.stockDrawerType = null;
+      state.refractionDetail = null;
     },
   },
 });

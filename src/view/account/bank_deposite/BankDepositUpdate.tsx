@@ -25,6 +25,7 @@ import { useEffect, useState } from "react";
 import axiosClient from "../../../axiosClient";
 import DataLoadingError from "../../../components/common/DataLoadingError";
 import SubmitCustomBtn from "../../../components/common/SubmiteCustomBtn";
+import stringToIntConver from "../../../utils/stringToIntConver";
 
 export default function BankDepositUpdate() {
   const { bank_deposite_id } = useParams();
@@ -57,7 +58,7 @@ export default function BankDepositUpdate() {
         const deposit = response.data;
 
         setValue("bank_account", deposit.bank_account);
-        setValue("amount", deposit.amount);
+        setValue("amount", stringToIntConver(deposit.amount));
         setValue("date", deposit.date);
         setValue("note", deposit.note);
         setValue("branch", deposit.branch);

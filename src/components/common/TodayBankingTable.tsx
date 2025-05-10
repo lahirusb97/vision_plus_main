@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Typography } from "@mui/material";
+import { Box, Checkbox, Typography } from "@mui/material";
 import { useMemo } from "react";
 import { MaterialReactTable, MRT_ColumnDef } from "material-react-table";
 
@@ -46,8 +46,8 @@ const TodayBankingTable: React.FC<TodayBankingTableProps> = ({
         size: 50,
         Cell: ({ cell }) => {
           return (
-            <input
-              type="checkbox"
+            <Checkbox
+              size="small"
               checked={cell.getValue<boolean>()}
               disabled
             />

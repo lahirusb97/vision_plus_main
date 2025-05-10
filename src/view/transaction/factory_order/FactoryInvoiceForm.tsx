@@ -29,7 +29,6 @@ import InvoiceTable from "../../../components/inputui/InvoiceTable";
 import LoadingAnimation from "../../../components/LoadingAnimation";
 import RightEyeTable from "../../../components/RightEyeTable";
 import LeftEyeTable from "../../../components/LeftEyeTable";
-import DrawerStock from "../../../components/inputui/DrawerStock";
 import axiosClient from "../../../axiosClient";
 import PationtDetails from "../../../components/PationtDetails";
 import { clearexternalLense } from "../../../features/invoice/externalLenseSlice";
@@ -338,7 +337,9 @@ export default function FactoryInvoiceForm() {
               }}
             >
               <HidenNoteDialog note={refractionDetail?.note} />
-              <StockDrawerBtn />
+
+              <StockDrawerBtn refractionDetail={refractionDetail} />
+
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <Controller
                   name="user_date"
@@ -458,7 +459,6 @@ export default function FactoryInvoiceForm() {
             </Box>
           </Box>
         )}
-        <DrawerStock refractionDetail={refractionDetail} />
       </FormProvider>
 
       <VarificationDialog

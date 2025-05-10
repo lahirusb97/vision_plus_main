@@ -1,14 +1,6 @@
 import React from "react";
-import { useNavigate, useParams, useSearchParams } from "react-router";
-import {
-  Box,
-  Typography,
-  TextField,
-  Grid,
-  Paper,
-  Divider,
-} from "@mui/material";
-import { formatDateTimeByType } from "../../../utils/formatDateTimeByType";
+import { useNavigate, useParams } from "react-router";
+import { Box, Typography, TextField, Grid, Paper } from "@mui/material";
 import { useGetSubExCategory } from "../../../hooks/useGetSubExCategory";
 import { useGetExCategory } from "../../../hooks/useGetExCategory";
 import { ExpenceSubCategory } from "../../../model/ExpenceModel";
@@ -25,13 +17,19 @@ import { extractErrorMessage } from "../../../utils/extractErrorMessage";
 import toast from "react-hot-toast";
 import { useAxiosPut } from "../../../hooks/useAxiosPut";
 import SubmitCustomBtn from "../../../components/common/SubmiteCustomBtn";
+import useGetSingleExpence from "../../../hooks/useGetSingleExpence";
+import stringToIntConver from "../../../utils/stringToIntConver";
+import LoadingAnimation from "../../../components/LoadingAnimation";
+import DataLoadingError from "../../../components/common/DataLoadingError";
+import BackButton from "../../../components/BackButton";
 export default function ExpenceUpdate() {
   const { expence_id } = useParams();
   const navigate = useNavigate();
   const { putHandler, putHandlerloading, putHandlerError } = useAxiosPut();
   const { subExCategory, subExCategoryLoading } = useGetSubExCategory();
   const { exCategory, exCategoryLoading } = useGetExCategory();
-  const [searchParams] = useSearchParams();
+  const { singleExpence, singleExpenceLoading, singleExpenceError } =
+    useGetSingleExpence(expence_id);
   const [filteredSubCategories, setFilteredSubCategories] = React.useState<
     { id: number; name: string }[]
   >([]);
@@ -62,6 +60,16 @@ export default function ExpenceUpdate() {
       extractErrorMessage(error);
     }
   };
+
+  React.useEffect(() => {
+    if (singleExpence) {
+      setValue("main_category", singleExpence.main_category);
+      setValue("note", singleExpence.note);
+      setValue("amount", stringToIntConver(singleExpence.amount));
+      setValue("branch", singleExpence.branch);
+    }
+  }, [singleExpence]);
+
   React.useEffect(() => {
     if (selectedMainCategory && subExCategory) {
       const filtered = subExCategory
@@ -71,46 +79,39 @@ export default function ExpenceUpdate() {
         )
         .map(({ id, name }) => ({ id, name }));
       setFilteredSubCategories(filtered);
-      setValue("sub_category", 0);
     } else {
       setFilteredSubCategories([]);
     }
-  }, [selectedMainCategory, subExCategory, setValue]);
+  }, [selectedMainCategory, subExCategory]);
   // Convert exCategory to the correct format for AutocompleteInputField
   const mainCategoryOptions = exCategory.map((category) => ({
     id: category.id,
     name: category.name,
   }));
+
+  if (singleExpenceLoading) {
+    return <LoadingAnimation loadingMsg="Loading Expense" />;
+  }
+  if (singleExpenceError) {
+    return <DataLoadingError />;
+  }
   return (
-    <Box sx={{ p: 2, maxWidth: 800, mx: "auto" }}>
-      <Paper elevation={1} sx={{ p: 2, mb: 3 }}>
-        <Typography variant="h6" gutterBottom>
-          Original Expense Details
-        </Typography>
-        <Divider sx={{ mb: 2 }} />
-        <Typography variant="body1">
-          <strong>Date:</strong>{" "}
-          {formatDateTimeByType(searchParams.get("created_at"), "both") ||
-            "N/A"}
-        </Typography>
-        <Typography variant="body1">
-          <strong>Main Category:</strong>{" "}
-          {searchParams.get("main_category_name") || "N/A"}
-        </Typography>
-        <Typography variant="body1">
-          <strong>Sub Category:</strong>{" "}
-          {searchParams.get("sub_category_name") || "N/A"}
-        </Typography>
-        <Typography variant="body1">
-          <strong>Note:</strong> {searchParams.get("note") || "-"}
-        </Typography>
-        <Typography variant="body1">
-          <strong>Amount:</strong> {searchParams.get("amount") || "0"}
-        </Typography>
-      </Paper>
-      <form onSubmit={handleSubmit(onSubmit)}>
+    <Paper sx={{ p: 2, mt: 2, maxWidth: 800, mx: "auto" }}>
+      <Box>
+        <BackButton />
         <TitleText title="Update Expense" />
-        <Grid container spacing={1}>
+      </Box>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Grid container gap={1}>
+          <Box>
+            <Typography variant="body1">
+              Main Category name - {singleExpence?.main_category_name}
+            </Typography>
+            <Typography variant="body1">
+              Sub Category name - {singleExpence?.sub_category_name}
+            </Typography>
+          </Box>
+
           <Grid item xs={12}>
             <AutocompleteInputField
               options={mainCategoryOptions}
@@ -144,6 +145,9 @@ export default function ExpenceUpdate() {
               {...register("note")}
               error={!!errors.note}
               helperText={errors.note?.message}
+              InputLabelProps={{
+                shrink: Boolean(watch("note")),
+              }}
             />
           </Grid>
 
@@ -156,6 +160,9 @@ export default function ExpenceUpdate() {
               {...register("amount", { valueAsNumber: true })}
               error={!!errors.amount}
               helperText={errors.amount?.message}
+              InputLabelProps={{
+                shrink: Boolean(watch("amount")),
+              }}
             />
           </Grid>
           <TextField
@@ -181,6 +188,6 @@ export default function ExpenceUpdate() {
           </Grid>
         </Grid>
       </form>
-    </Box>
+    </Paper>
   );
 }

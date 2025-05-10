@@ -5,7 +5,7 @@ export const expenseSchema = z.object({
   sub_category: z.number().min(1, "Sub category is required").nullable(),
   amount: z.number().min(1, "Amount must be greater than 0"),
   note: z.string(),
-  paid_source: z.enum(["Safe", "Cash", "Bank"]).default("Cash"),
+  paid_source: z.enum(["safe", "cash", "bank"]).default("cash"),
   paid_from_safe: z.boolean().default(false),
 });
 

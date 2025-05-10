@@ -100,7 +100,12 @@ const Dashboard = () => {
         <Grid item xs={12} md={3}>
           <Paper sx={{ p: 1, textAlign: "center" }}>
             <SingleDatePicker value={selectedDate} onChange={setSelectedDate} />
+            <Divider sx={{ my: 1 }} />
+
             <Box>
+              <Typography variant="body2" fontWeight="bold">
+                Order Count
+              </Typography>
               <Typography sx={flexStyle} variant="body2">
                 <span> Factory Order </span>
                 <span>{dailyOrderCount?.factory_order_count || 0}</span>
@@ -117,6 +122,9 @@ const Dashboard = () => {
             <Divider sx={{ my: 1 }} />
 
             <Box>
+              <Typography variant="body2" fontWeight="bold">
+                Total Transactions
+              </Typography>
               <Typography sx={flexStyle} variant="body2">
                 <span>Total Orders Payments</span>{" "}
                 <span>{financeSummary?.today_order_payments || 0}</span>
@@ -136,6 +144,9 @@ const Dashboard = () => {
             </Box>
             <Divider sx={{ my: 1 }} />
             <Box>
+              <Typography variant="body2" fontWeight="bold">
+                Cash Avilable
+              </Typography>
               <Typography sx={flexStyle} variant="body2">
                 <span>Cash in Hold</span>
                 <span>{financeSummary?.cash_in_hold || 0}</span>
@@ -155,6 +166,9 @@ const Dashboard = () => {
             </Box>
             <Divider sx={{ my: 1 }} />
             <Box>
+              <Typography variant="body2" fontWeight="bold">
+                Safe Locker
+              </Typography>
               <Typography sx={flexStyle} variant="body2">
                 <span>Safe Before Balance</span>
                 <span>{financeSummary?.safe_before_balance || 0}</span>

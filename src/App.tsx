@@ -7,6 +7,7 @@ import theme from "./theme/theme";
 import { Toaster } from "react-hot-toast";
 import { DeleteDialogProvider } from "./context/DeleteDialogContext";
 import DeleteDialog from "./components/DeleteDialog";
+import DrawerStock from "./components/inputui/DrawerStock";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
             <Toaster position="bottom-center" gutter={8} />
             <DeleteDialog />
           </DeleteDialogProvider>
+          <DrawerStock />
         </AuthContext>
       </ThemeProvider>
     </>

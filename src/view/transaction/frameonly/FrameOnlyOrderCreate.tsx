@@ -7,10 +7,9 @@ import {
   FrameOnlyOrderForm,
 } from "../../../validations/schemaFrameOnlyOrder";
 import PaymentMethodsLayout from "../factory_layouts/PaymentMethodsLayout";
-import { Box, TextField } from "@mui/material";
-import { useSelector } from "react-redux";
+import { Box, Button, TextField } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../store/store";
-import FrameOnlyDrawerStock from "../../../components/inputui/FrameOnlyDrawerStock";
 import InvoiceTable from "../../../components/inputui/InvoiceTable";
 import { useAxiosPost } from "../../../hooks/useAxiosPost";
 import { formatUserPayments } from "../../../utils/formatUserPayments";
@@ -22,7 +21,9 @@ import VarificationDialog from "../../../components/VarificationDialog";
 import { useValidationState } from "../../../hooks/validations/useValidationState";
 import TitleText from "../../../components/TitleText";
 import SubmitCustomBtn from "../../../components/common/SubmiteCustomBtn";
+import { openStockDrawer } from "../../../features/invoice/stockDrawerSlice";
 export default function FrameOnlyOrderCreate() {
+  const dispatch = useDispatch();
   const { prepareValidation, resetValidation, validationState } =
     useValidationState();
   const { postHandler, postHandlerloading, postHandlerError } = useAxiosPost();
@@ -110,7 +111,22 @@ export default function FrameOnlyOrderCreate() {
         <form onSubmit={methods.handleSubmit(frameOnlyOrderSubmite)}>
           <NormalPatientDetail />
 
-          <FrameOnlyDrawerStock />
+          <Button
+            size="small"
+            sx={{ mt: 1 }}
+            onClick={() =>
+              dispatch(
+                openStockDrawer({
+                  stockDrawerType: "frame",
+                  refractionDetail: null,
+                })
+              )
+            }
+            color="primary"
+            variant="contained"
+          >
+            Frames
+          </Button>
           <InvoiceTable />
           <Box sx={{ display: "flex", gap: 1, mt: 1 }}>
             <PaymentMethodsLayout />
