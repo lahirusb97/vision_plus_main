@@ -19,8 +19,12 @@ import dayjs from "dayjs";
 import { useDispatch } from "react-redux";
 import { setDoctorClaimChannel } from "../../../features/invoice/doctorClaimChannelSlice";
 import { useNavigate } from "react-router";
+import AutocompleteInputField from "../../../components/inputui/DropdownInput";
+import useGetDoctors from "../../../hooks/useGetDoctors";
 
 export default function DoctorClaimChannelFrom() {
+  const { data: doctorList, loading } = useGetDoctors();
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const methods = useForm<DoctorClaimChannelFormModel>({
@@ -36,6 +40,7 @@ export default function DoctorClaimChannelFrom() {
       online_transfer: 0,
       credit_card: 0,
       cash: 0,
+      doctor_id: undefined,
     },
   });
   const {
@@ -44,14 +49,20 @@ export default function DoctorClaimChannelFrom() {
     formState: { errors },
   } = methods;
   const handleInvoiceSubmite = (data: DoctorClaimChannelFormModel) => {
+    const getDoctorNmeFromID = doctorList?.filter(
+      (item) => item.id === data.doctor_id
+    );
     const payload = {
       ...data,
+      doctor_name: getDoctorNmeFromID?.[0].name,
       date: dayjs(data.channel_date).format("YYYY-MM-DD"),
     };
-    dispatch(setDoctorClaimChannel(payload));
-    navigate(`${payload.invoice_number}`);
+    if (getDoctorNmeFromID?.length) {
+      dispatch(setDoctorClaimChannel(payload));
+      navigate(`${payload.invoice_number}`);
+    }
   };
-  console.log(methods.watch("channel_date"));
+
   return (
     <Paper sx={{ p: 2 }}>
       <TitleText title="Doctor Claim Channel Form" />
@@ -74,6 +85,22 @@ export default function DoctorClaimChannelFrom() {
             />
             <MiniPatientDetails />
 
+            <Controller
+              name="doctor_id" // Field name in the form
+              control={methods.control} // Pass the control from useForm
+              render={({ field }) => (
+                <AutocompleteInputField
+                  {...field} // Spread the field props (value and onChange)
+                  options={doctorList} // Pass the options array
+                  loading={loading} // Pass the loading state
+                  labelName="Choose a Doctor" // Label for the input field
+                  defaultId={undefined} // Optionally pass a default selected ID
+                  onChange={(newValue) => {
+                    field.onChange(newValue); // Pass selected date to react-hook-form
+                  }}
+                />
+              )}
+            />
             <Box sx={{ display: "flex", gap: 1 }}>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <Controller

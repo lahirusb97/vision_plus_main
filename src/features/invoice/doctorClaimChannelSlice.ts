@@ -13,6 +13,7 @@ export interface DoctorClaimChannelPayload {
   online_transfer: number;
   credit_card: number;
   cash: number;
+  doctor_name: string;
 }
 
 interface doctorClaimState {

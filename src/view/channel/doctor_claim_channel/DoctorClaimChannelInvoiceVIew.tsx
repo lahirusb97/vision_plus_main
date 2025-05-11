@@ -101,7 +101,12 @@ export default function DoctorClaimChannelInvoiceVIew() {
                 </Typography>
               </Box>
               <Divider sx={{ my: 1 }} />
-
+              <Box display="flex" justifyContent="space-between">
+                <Typography variant="body2">Doctor Name</Typography>
+                <Typography data-testid="doctor_name" variant="body2">
+                  {doctorClaimChannelInvoice?.doctor_name}
+                </Typography>
+              </Box>
               <Box display="flex" justifyContent="space-between">
                 <Typography variant="body2">Consultant Fee:</Typography>
                 <Typography data-testid="consultant_fee" variant="body2">

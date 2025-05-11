@@ -11,6 +11,7 @@ export const schemaDoctorClaimChannel = z.object({
   online_transfer: z.number().min(0),
   credit_card: z.number().min(0),
   cash: z.number().min(0),
+  doctor_id: z.number(),
 });
 
 export type DoctorClaimChannelFormModel = z.infer<

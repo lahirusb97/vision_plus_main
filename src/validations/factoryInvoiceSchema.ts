@@ -12,7 +12,7 @@ export const schemaFactoryInvoice = z.object({
   // })
 
   address: z.string().optional(),
-  dob: z.string().optional(),
+  dob: z.string().optional().nullable(),
   discount: z.number().min(0, { message: "Discount must be 0 or greater" }),
   online_transfer: z.number().min(0, { message: "Payment amount is required" }),
   credit_card: z.number().min(0, { message: "Payment amount is required" }),
