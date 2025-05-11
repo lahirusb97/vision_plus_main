@@ -146,7 +146,7 @@ const Expence = () => {
             </Box>
           </Paper>
           <Paper elevation={1} sx={{ p: 1, mb: 1 }}>
-            {safeTotalIncomeLoading && (
+            {!safeTotalIncomeLoading && !safeTotalIncomeError && (
               <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                 <Typography variant="body1">
                   Safe Locker Balance Rs.{safeTotalIncome}
