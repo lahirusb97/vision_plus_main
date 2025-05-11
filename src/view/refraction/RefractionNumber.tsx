@@ -29,7 +29,7 @@ export default function RefractionNumber() {
     defaultValues: {
       customer_full_name: "",
       customer_mobile: "",
-      nic: "",
+      nic: null,
       branch_id: getUserCurentBranch()?.id,
     },
   });
@@ -45,7 +45,7 @@ export default function RefractionNumber() {
       reset({
         customer_full_name: "",
         customer_mobile: "",
-        nic: "",
+        nic: null,
         branch_id: getUserCurentBranch()?.id,
       });
       navigate(`${responseData.data.data.id}/success/`);

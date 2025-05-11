@@ -4,9 +4,12 @@ export const schemaFactoryInvoice = z.object({
   name: z.string().min(1, { message: "Patient Name is required" }),
   nic: z
     .string()
-    .optional()
+    .nullable()
     .transform((val) => (val === "" ? null : val)),
-  phone_number: z.string().optional(),
+  phone_number: z
+    .string()
+    .nullable()
+    .transform((val) => (val === "" ? null : val)),
   // .min(10, { message: "Phone number must be 10 digits" })
   // .max(10, { message: "Phone number must be 10 digits" })
   // .regex(/^\d+$/, { message: "Phone number must be numeric" })
@@ -14,30 +17,47 @@ export const schemaFactoryInvoice = z.object({
   //   message: "Phone number must be 10 digits",
   // })
 
-  address: z.string().optional(),
+  address: z
+    .string()
+    .nullable()
+    .transform((val) => (val === "" ? null : val)),
   dob: z
     .string()
-    .optional()
     .nullable()
     .transform((val) => (val === "" ? null : val)),
   discount: z.number().min(0, { message: "Discount must be 0 or greater" }),
   online_transfer: z.number().min(0, { message: "Payment amount is required" }),
   credit_card: z.number().min(0, { message: "Payment amount is required" }),
   cash: z.number().min(0, { message: "Payment amount is required" }),
-  order_remark: z.string().optional(),
+  order_remark: z
+    .string()
+    .nullable()
+    .optional()
+    .transform((val) => (val === "" || val === undefined ? null : val)),
   on_hold: z.boolean({ message: "On Hold is required" }),
   fitting_on_collection: z.boolean({
     message: "Fitting on Collection is required",
   }),
-  pd: z.string().nullable().optional(),
-  right_pd: z.string().nullable().optional(),
-  left_pd: z.string().nullable().optional(),
-  height: z.string().nullable().optional(),
-  left_height: z.string().nullable().optional(),
-  right_height: z.string().nullable().optional(),
-  user_date: z.string().nullable().optional(),
+  pd: z.string().nullable(),
+  right_pd: z.string().nullable(),
+  left_pd: z.string().nullable(),
+  height: z.string().nullable(),
+  left_height: z.string().nullable(),
+  right_height: z.string().nullable(),
+  user_date: z.string(),
   branch_id: z.number(),
-  bus_title: z.number().nullable().optional(),
-  progress_status: z.boolean(),
+  bus_title: z
+    .number()
+    .nullable()
+    .optional()
+    .transform((val) => (val === undefined ? null : val)),
+  progress_status: z
+    .enum([
+      "received_from_customer",
+      "issue_to_factory",
+      "received_from_factory",
+      "issue_to_customer",
+    ])
+    .default("received_from_customer"),
 });
 export type FactoryInvoiceFormModel = z.infer<typeof schemaFactoryInvoice>;

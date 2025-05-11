@@ -173,7 +173,10 @@ export default function OrderEditFrom() {
         "bus_title",
         BUSID === currentBranch ? invoiceDetail.order_details.bus_title : null
       );
-      setOrderProgress(invoiceDetail.progress_status);
+      methods.setValue(
+        "progress_status",
+        invoiceDetail.order_details.progress_status
+      );
     }
     if (invoiceDetail && !invoiceDetailLoading && loadState === 0) {
       invoiceDetail?.order_details.order_items
@@ -467,33 +470,40 @@ export default function OrderEditFrom() {
                     }
                   />
                 </Box>
-                <FormControl size="small" sx={{ minWidth: 250 }}>
-                  <InputLabel id="demo-simple-select-label">
-                    {" "}
-                    Order Progress Status
-                  </InputLabel>
-                  <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    value={orderProgress}
-                    label="Order Progress Status"
-                    onChange={handleChange}
-                    error={orderProgress === ""}
-                  >
-                    <MenuItem value={"received_from_customer"}>
-                      Received From Customer
-                    </MenuItem>
-                    <MenuItem value={"issue_to_factory"}>
-                      Issue to Factory
-                    </MenuItem>
-                    <MenuItem value={"received_from_factory"}>
-                      Received from Factory
-                    </MenuItem>
-                    <MenuItem value={"issue_to_customer"}>
-                      Issue to Customer
-                    </MenuItem>
-                  </Select>
-                </FormControl>
+                <Controller
+                  name="progress_status"
+                  control={methods.control}
+                  render={({ field }) => (
+                    <FormControl size="small" sx={{ minWidth: 250 }}>
+                      <InputLabel id="demo-simple-select-label">
+                        Order Progress Status
+                      </InputLabel>
+                      <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        value={field.value || ""} // Ensure value is never undefined
+                        onChange={(e) => field.onChange(e.target.value)} // Pass the value directly
+                        label="Order Progress Status"
+                        error={
+                          !!methods.formState.errors.progress_status?.message
+                        }
+                      >
+                        <MenuItem value="received_from_customer">
+                          Received From Customer
+                        </MenuItem>
+                        <MenuItem value="issue_to_factory">
+                          Issue to Factory
+                        </MenuItem>
+                        <MenuItem value="received_from_factory">
+                          Received from Factory
+                        </MenuItem>
+                        <MenuItem value="issue_to_customer">
+                          Issue to Customer
+                        </MenuItem>
+                      </Select>
+                    </FormControl>
+                  )}
+                />
               </Box>
             </Box>
 

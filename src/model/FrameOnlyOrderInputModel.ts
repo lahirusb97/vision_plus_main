@@ -5,11 +5,11 @@ import {
 } from "./StaticTypeModels";
 
 interface Patient {
-  date_of_birth: string;
+  date_of_birth: string | null;
   name: string;
-  phone_number: string;
-  address: string | undefined;
-  nic: string | undefined;
+  phone_number: string | null;
+  address: string | null;
+  nic: string | null;
 }
 interface OrderPayment {
   amount: number;

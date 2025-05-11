@@ -50,6 +50,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import useGetBusTitles from "../../../hooks/useGetBusTitles";
 import { BUSID } from "../../../data/staticVariables";
+import { ProgressStatus } from "../../../model/StaticTypeModels";
 export default function FactoryInvoiceForm() {
   const { prepareValidation, resetValidation, validationState } =
     useValidationState();
@@ -91,6 +92,7 @@ export default function FactoryInvoiceForm() {
       cash: 0,
       online_transfer: 0,
       discount: 0,
+      progress_status: "received_from_customer",
     },
   });
   const discount = methods.watch("discount");
@@ -124,6 +126,7 @@ export default function FactoryInvoiceForm() {
       dispatch(clearexternalLense());
     };
   }, []);
+  console.log(methods.formState.errors);
 
   const submiteFromData = async (data: FactoryInvoiceFormModel) => {
     if (refraction_id) {
@@ -141,10 +144,10 @@ export default function FactoryInvoiceForm() {
         patient: {
           refraction_id: parseInt(refraction_id),
           name: data.name,
-          nic: data.nic || "",
-          address: data.address || "",
-          phone_number: data.phone_number || "",
-          date_of_birth: data.dob || "",
+          nic: data.nic,
+          address: data.address,
+          phone_number: data.phone_number,
+          date_of_birth: data.dob,
         },
         order: {
           refraction: parseInt(refraction_id),
@@ -165,9 +168,9 @@ export default function FactoryInvoiceForm() {
           branch_id: data.branch_id,
           user_date: data.user_date,
           bus_title: BUSID === currentBranch ? data.bus_title : null,
-          progress_status: data.progress_status
+          progress_status: (data.progress_status
             ? "issue_to_customer"
-            : "received_from_customer",
+            : "received_from_customer") as ProgressStatus,
         },
         order_items: [
           ...Object.values(LenseInvoiceList).map((item) => ({
@@ -175,6 +178,7 @@ export default function FactoryInvoiceForm() {
             quantity: item.buyQty,
             price_per_unit: item.price_per_unit,
             subtotal: item.subtotal,
+            is_non_stock: false,
           })),
 
           ...Object.values(FrameInvoiceList).map((item) => ({
@@ -182,6 +186,7 @@ export default function FactoryInvoiceForm() {
             quantity: item.buyQty,
             price_per_unit: item.price_per_unit,
             subtotal: item.subtotal,
+            is_non_stock: false,
           })),
           ...Object.values(externalLenseInvoiceList).map((item) => ({
             external_lens: item.external_lens_id,
@@ -204,10 +209,7 @@ export default function FactoryInvoiceForm() {
       ) {
         if (refractionDetail && !refractionDetailLoading) {
           prepareValidation("create", async (verifiedUserId: number) => {
-            await sendDataToDb(
-              postData as FactoryOrderInputModel,
-              verifiedUserId
-            );
+            await sendDataToDb(postData, verifiedUserId);
           });
           //TODO USE THIS AND CREATE THE SYSTEM ALL GOOD TO DO IF NO REFRACTION DETAILS NO DETAIL CREATINS
         } else {
@@ -224,8 +226,6 @@ export default function FactoryInvoiceForm() {
     postData: FactoryOrderInputModel,
     verifiedUserId: number
   ) => {
-    console.log("postData", postData);
-
     try {
       const responce = await axiosClient.post("/orders/", {
         ...postData,
@@ -319,12 +319,21 @@ export default function FactoryInvoiceForm() {
                   </Box>
                   <Box ml={1} display="flex" alignItems="center">
                     <Typography variant="body1"> Issue To Good</Typography>
-                    <Checkbox
-                      {...methods.register("progress_status")}
-                      checked={methods.watch("progress_status")}
-                      onChange={(e) =>
-                        methods.setValue("progress_status", e.target.checked)
-                      }
+                    <Controller
+                      name="progress_status"
+                      control={methods.control}
+                      render={({ field }) => (
+                        <Checkbox
+                          checked={field.value === "issue_to_customer"}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              field.onChange("issue_to_customer");
+                            } else {
+                              field.onChange("received_from_customer");
+                            }
+                          }}
+                        />
+                      )}
                     />
                   </Box>
                 </Box>
@@ -370,6 +379,7 @@ export default function FactoryInvoiceForm() {
                         textField: {
                           fullWidth: false,
                           size: "small",
+                          error: Boolean(methods.formState.errors.user_date),
                         },
                       }}
                     />

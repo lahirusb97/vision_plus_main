@@ -1,5 +1,6 @@
 import {
   PaymentMethodTypes,
+  ProgressStatus,
   TransactionStatusTypes,
   TypeLensSide,
   TypeOrderStatus,
@@ -9,11 +10,11 @@ import {
 
 export interface Patient {
   refraction_id: number;
-  date_of_birth: string;
+  date_of_birth: string | null;
   name: string;
-  phone_number: string;
-  address: string | undefined;
-  nic: string | undefined;
+  phone_number: string | null;
+  address: string | null;
+  nic: string | null;
 }
 // Order Model
 export interface Order {
@@ -22,19 +23,20 @@ export interface Order {
   sub_total: number;
   discount: number;
   total_price: number;
-  order_remark?: string;
+  order_remark: string | null;
   sales_staff_code?: number;
-  pd?: string | undefined | null;
-  height?: string | undefined | null;
-  right_height?: string | undefined | null;
-  left_height?: string | undefined | null;
-  left_pd?: string | undefined | null;
-  right_pd?: string | undefined | null;
+  pd?: string | null;
+  height?: string | null;
+  right_height?: string | null;
+  left_height?: string | null;
+  left_pd?: string | null;
+  right_pd?: string | null;
   fitting_on_collection: boolean;
   on_hold: boolean;
   branch_id: number;
   user_date: string | null;
   bus_title: number | null;
+  progress_status: ProgressStatus;
 }
 
 // External Lens Model
@@ -58,6 +60,7 @@ export interface OrderItemLensInput {
   quantity: number;
   price_per_unit: number;
   subtotal: number;
+  is_non_stock: boolean;
 }
 
 export interface OrderItemFrameInput {
@@ -65,6 +68,7 @@ export interface OrderItemFrameInput {
   quantity: number;
   price_per_unit: number;
   subtotal: number;
+  is_non_stock: boolean;
 }
 
 export interface OrderItemExternalLensInput {

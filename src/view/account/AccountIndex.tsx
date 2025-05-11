@@ -13,7 +13,8 @@ import TodayBankingTable from "../../components/common/TodayBankingTable";
 import { ExpencePaymentTable } from "../../components/ExpencePaymentTable";
 import OtherIncomePayment from "../../components/common/OtherIncomePayment";
 import useGetReportOtherIncome from "../../hooks/useGetReportOtherIncome";
-import useGetSafeTotalIncome from "../../hooks/useGetSafeTotalIncome";
+import useGetSafeBalance from "../../hooks/useGetSafeBalance";
+import { numberWithCommas } from "../../utils/numberWithCommas";
 
 const Dashboard = () => {
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(dayjs());
@@ -29,8 +30,7 @@ const Dashboard = () => {
     useChannelReports();
   const { financeSummary, setFinanceSummaryParams, financeSummaryLoading } =
     useGetFinanceSummary();
-  const { safeTotalIncome, safeTotalIncomeLoading, safeTotalIncomeError } =
-    useGetSafeTotalIncome();
+  const { safeTotalBalance } = useGetSafeBalance();
   console.log("financeSummary", financeSummary);
 
   const {
@@ -132,19 +132,29 @@ const Dashboard = () => {
               </Typography>
               <Typography sx={flexStyle} variant="body2">
                 <span>Total Orders Payments</span>{" "}
-                <span>{financeSummary?.today_order_payments || 0}</span>
+                <span>
+                  {numberWithCommas(financeSummary?.today_order_payments || 0)}
+                </span>
               </Typography>
               <Typography sx={flexStyle} variant="body2">
                 <span>Total Channels Payments</span>{" "}
-                <span>{financeSummary?.today_channel_payments || 0}</span>
+                <span>
+                  {numberWithCommas(
+                    financeSummary?.today_channel_payments || 0
+                  )}
+                </span>
               </Typography>
               <Typography sx={flexStyle} variant="body2">
                 <span>Total Other Income</span>{" "}
-                <span>{financeSummary?.today_other_income || 0}</span>
+                <span>
+                  {numberWithCommas(financeSummary?.today_other_income || 0)}
+                </span>
               </Typography>
               <Typography sx={flexStyle} variant="body2">
                 <span>Total Expencess</span>{" "}
-                <span>{financeSummary?.today_expenses || 0}</span>
+                <span>
+                  {numberWithCommas(financeSummary?.today_expenses || 0)}
+                </span>
               </Typography>
             </Box>
             <Divider sx={{ my: 1 }} />
@@ -154,19 +164,27 @@ const Dashboard = () => {
               </Typography>
               <Typography sx={flexStyle} variant="body2">
                 <span>Cash in Hold</span>
-                <span>{financeSummary?.cash_in_hold || 0}</span>
+                <span>
+                  {numberWithCommas(financeSummary?.cash_in_hold || 0)}
+                </span>
               </Typography>
               <Typography sx={flexStyle} variant="body2">
                 <span> Avilable For Deposite </span>
-                <span>{financeSummary?.available_for_deposit || 0}</span>
+                <span>
+                  {numberWithCommas(financeSummary?.available_for_deposit || 0)}
+                </span>
               </Typography>
               <Typography sx={flexStyle} variant="body2">
                 <span>Before Balance</span>
-                <span>{financeSummary?.before_balance || 0}</span>
+                <span>
+                  {numberWithCommas(financeSummary?.before_balance || 0)}
+                </span>
               </Typography>
               <Typography sx={flexStyle} variant="body2">
                 <span>Today Balance</span>
-                <span>{financeSummary?.today_balance || 0}</span>
+                <span>
+                  {numberWithCommas(financeSummary?.today_balance || 0)}
+                </span>
               </Typography>
             </Box>
             <Divider sx={{ my: 1 }} />
@@ -176,8 +194,8 @@ const Dashboard = () => {
               </Typography>
 
               <Typography sx={flexStyle} variant="body2">
-                <span> Safe Today Balance</span>
-                <span>{safeTotalIncome || 0}</span>
+                <span> Total Safe Balance</span>
+                <span>{numberWithCommas(safeTotalBalance || 0)}</span>
               </Typography>
             </Box>
           </Paper>

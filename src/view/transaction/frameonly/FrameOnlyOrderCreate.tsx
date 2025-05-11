@@ -1,4 +1,4 @@
-import { FormProvider, useForm } from "react-hook-form";
+import { Controller, FormProvider, useForm } from "react-hook-form";
 import NormalPatientDetail from "../normal_order/NormalPatientDetail";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { getUserCurentBranch } from "../../../utils/authDataConver";
@@ -74,7 +74,7 @@ export default function FrameOnlyOrderCreate() {
           ? "issue_to_customer"
           : "received_from_customer",
       };
-      console.log(postData);
+
       prepareValidation("create", async (verifiedUserId: number) => {
         await sendDataToDb(
           postData as FrameOnlyOrderInputModel,
@@ -85,6 +85,8 @@ export default function FrameOnlyOrderCreate() {
       toast.error("You Can Invoice Only a Single Frame");
     }
   };
+  console.log(methods.formState.errors);
+
   const sendDataToDb = async (
     postData: FrameOnlyOrderInputModel,
     verifiedUserId: number
@@ -106,7 +108,7 @@ export default function FrameOnlyOrderCreate() {
       extractErrorMessage(error);
     }
   };
-
+  console.log(methods.watch("phone_number"));
   return (
     <>
       <FormProvider {...methods}>
@@ -133,12 +135,15 @@ export default function FrameOnlyOrderCreate() {
             </Button>
             <Box ml={1} display="flex" alignItems="center">
               <Typography variant="body1"> Issue To Good</Typography>
-              <Checkbox
-                {...methods.register("progress_status")}
-                checked={methods.watch("progress_status")}
-                onChange={(e) =>
-                  methods.setValue("progress_status", e.target.checked)
-                }
+              <Controller
+                name="progress_status"
+                control={methods.control}
+                render={({ field }) => (
+                  <Checkbox
+                    checked={field.value || false}
+                    onChange={(e) => field.onChange(e.target.checked)}
+                  />
+                )}
               />
             </Box>
           </Box>

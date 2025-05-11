@@ -27,12 +27,10 @@ export default function NormalPatientDetail() {
   } = useFormContext();
 
   useEffect(() => {
-    if (watch("nic")?.length >= 10) {
-      const birthdate = getBirthdateFromNIC(watch("nic"));
-      setValue("dob", ""); // Force clear first
-      setTimeout(() => {
-        setValue("dob", birthdate);
-      }, 0); // Add a slight delay
+    if (watch("nic")?.length >= 10 && watch("nic") !== "") {
+      setValue("dob", getBirthdateFromNIC(watch("nic")));
+    } else {
+      setValue("dob", null);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [watch("nic")]);

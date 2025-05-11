@@ -30,7 +30,9 @@ import { useAxiosPost } from "../../hooks/useAxiosPost";
 import SubmitCustomBtn from "../../components/common/SubmiteCustomBtn";
 import TitleText from "../../components/TitleText";
 import { ExpencePaymentTable } from "../../components/ExpencePaymentTable";
-import useGetSafeTotalIncome from "../../hooks/useGetSafeTotalIncome";
+
+import useGetSafeBalance from "../../hooks/useGetSafeBalance";
+import { numberWithCommas } from "../../utils/numberWithCommas";
 
 const Expence = () => {
   const navigate = useNavigate();
@@ -39,8 +41,8 @@ const Expence = () => {
   const { exCategory, exCategoryLoading } = useGetExCategory();
   const { financeSummary, setFinanceSummaryParams, financeSummaryRefres } =
     useGetFinanceSummary();
-  const { safeTotalIncome, safeTotalIncomeLoading, safeTotalIncomeError } =
-    useGetSafeTotalIncome();
+  const { safeTotalBalance, safeTotalBalanceLoading, safeTotalBalanceError } =
+    useGetSafeBalance();
   const {
     expenseList,
     loading: expenseListLoading,
@@ -133,27 +135,30 @@ const Expence = () => {
           </Button>
           <Paper elevation={1} sx={{ p: 1, mb: 1 }}>
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+              <Typography variant="body1">Total Expense</Typography>
               <Typography variant="body1">
-                Total Expense - Rs.{totalExpense}
+                {numberWithCommas(totalExpense)}
               </Typography>
             </Box>
           </Paper>
           <Paper elevation={1} sx={{ p: 1, mb: 1 }}>
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+              <Typography variant="body1">Avilable Balance </Typography>
               <Typography variant="body1">
-                Avilable Balance - {financeSummary?.today_balance}{" "}
+                {numberWithCommas(financeSummary?.today_balance)}{" "}
               </Typography>
             </Box>
           </Paper>
           <Paper elevation={1} sx={{ p: 1, mb: 1 }}>
-            {!safeTotalIncomeLoading && !safeTotalIncomeError && (
+            {!safeTotalBalanceLoading && !safeTotalBalanceError && (
               <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                <Typography variant="body1">Safe Locker Balance</Typography>
                 <Typography variant="body1">
-                  Safe Locker Balance Rs.{safeTotalIncome}
+                  {numberWithCommas(safeTotalBalance)}
                 </Typography>
               </Box>
             )}
-            {safeTotalIncomeError && (
+            {safeTotalBalanceError && (
               <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                 <Typography variant="body1">Refresh The Page</Typography>
               </Box>

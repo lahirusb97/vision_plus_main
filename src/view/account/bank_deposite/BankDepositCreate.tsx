@@ -23,11 +23,11 @@ import BankAutocomplete from "../../../components/inputui/BankAutocomplete";
 import { useGetBankAccounts } from "../../../hooks/useGetBankAccounts";
 import toast from "react-hot-toast";
 import { extractErrorMessage } from "../../../utils/extractErrorMessage";
-import useGetSafeTotalIncome from "../../../hooks/useGetSafeTotalIncome";
+import useGetSafeBalance from "../../../hooks/useGetSafeBalance";
 
 export default function BankDepositCreate() {
   const { postHandler, postHandlerloading } = useAxiosPost();
-  const { safeTotalIncome, safeTotalIncomeLoading } = useGetSafeTotalIncome();
+  const { safeTotalBalance, safeTotalBalanceLoading } = useGetSafeBalance();
   const { bankAccountsList, bankAccountsListLoading } = useGetBankAccounts();
   const { register, handleSubmit, reset, control } = useForm<BankDepositForm>({
     resolver: zodResolver(schemaBankDeposite),
@@ -41,7 +41,7 @@ export default function BankDepositCreate() {
   });
 
   const onSubmit = async (data: BankDepositForm) => {
-    if (data.amount > safeTotalIncome) {
+    if (data.amount > safeTotalBalance) {
       toast.error("Safe locker Des not have enough money");
     } else {
       try {
@@ -59,11 +59,11 @@ export default function BankDepositCreate() {
       <Typography variant="h6" gutterBottom>
         Add Bank Deposit
       </Typography>
-      {safeTotalIncomeLoading ? (
+      {safeTotalBalanceLoading ? (
         <CircularProgress />
       ) : (
         <Typography sx={{ mb: 2, fontWeight: "bold" }} variant="body1">
-          Avilable Safe Locker About : {safeTotalIncome}
+          Avilable Safe Locker About : {safeTotalBalance}
         </Typography>
       )}
       <Box

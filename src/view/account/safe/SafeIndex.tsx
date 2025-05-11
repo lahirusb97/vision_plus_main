@@ -20,11 +20,15 @@ import { extractErrorMessage } from "../../../utils/extractErrorMessage";
 import toast from "react-hot-toast";
 import useGetFinanceSummary from "../../../hooks/useGetFinanceSummary";
 import DataLoadingError from "../../../components/common/DataLoadingError";
+import useGetSafeBalance from "../../../hooks/useGetSafeBalance";
+import { numberWithCommas } from "../../../utils/numberWithCommas";
 
 export default function SafeIndex() {
   const { postHandler, postHandlerloading, postHandlerError } = useAxiosPost();
   const { financeSummary, financeSummaryLoading, financeSummaryError } =
     useGetFinanceSummary();
+  const { safeTotalBalance } = useGetSafeBalance();
+
   const {
     register,
     handleSubmit,
@@ -87,13 +91,13 @@ export default function SafeIndex() {
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             <Typography variant="body1">Before Balance </Typography>
             <Typography variant="body1">
-              {financeSummary?.before_balance || 0}
+              {numberWithCommas(financeSummary?.before_balance || 0)}
             </Typography>
           </Box>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             <Typography variant="body1">Today Balance </Typography>
             <Typography variant="body1">
-              {financeSummary?.today_balance || 0}
+              {numberWithCommas(financeSummary?.today_balance || 0)}
             </Typography>
           </Box>
 
@@ -102,8 +106,18 @@ export default function SafeIndex() {
               Total Depositable Amount
             </Typography>
             <Typography variant="body1" fontWeight={"bold"}>
-              {financeSummary?.today_balance ||
-                0 + (financeSummary?.before_balance || 0)}
+              {numberWithCommas(
+                financeSummary?.today_balance ||
+                  0 + (financeSummary?.before_balance || 0)
+              )}
+            </Typography>
+          </Box>
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            <Typography variant="body1" fontWeight={"bold"}>
+              Safe Locker Total Balance
+            </Typography>
+            <Typography variant="body1" fontWeight={"bold"}>
+              {numberWithCommas(safeTotalBalance)}
             </Typography>
           </Box>
         </Box>

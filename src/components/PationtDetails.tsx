@@ -37,15 +37,15 @@ export default function PationtDetails({
   } = useFormContext();
 
   useEffect(() => {
-    if (watch("nic")?.length >= 10) {
+    if (watch("nic")?.length >= 10 && watch("nic") !== "") {
       const birthdate = getBirthdateFromNIC(watch("nic"));
-      setValue("dob", ""); // Force clear first
-      setTimeout(() => {
-        setValue("dob", birthdate);
-      }, 0); // Add a slight delay
+      setValue("dob", birthdate); // Force clear first
+    } else {
+      setValue("dob", null);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [watch("nic")]);
+
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
       <FilterPatient
