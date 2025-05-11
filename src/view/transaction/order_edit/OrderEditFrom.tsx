@@ -67,7 +67,6 @@ export default function OrderEditFrom() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   // SET VALUES FOR PATIENT TABLE
-  const [orderProgress, setOrderProgress] = useState("");
 
   const staticTitleParam = useMemo(() => ({ is_active: true }), []);
   const { busTitlesList, busTitlesLoading } = useGetBusTitles(staticTitleParam);
@@ -129,19 +128,13 @@ export default function OrderEditFrom() {
   useEffect(() => {
     if (!invoiceDetailLoading && invoiceDetail) {
       methods.setValue("name", invoiceDetail?.customer_details.name);
-      methods.setValue("nic", invoiceDetail?.customer_details.nic ?? undefined);
-      methods.setValue(
-        "address",
-        invoiceDetail?.customer_details?.address ?? undefined
-      );
+      methods.setValue("nic", invoiceDetail?.customer_details.nic);
+      methods.setValue("address", invoiceDetail?.customer_details?.address);
       methods.setValue(
         "phone_number",
         invoiceDetail?.customer_details.phone_number
       );
-      methods.setValue(
-        "dob",
-        invoiceDetail?.customer_details?.date_of_birth ?? undefined
-      );
+      methods.setValue("dob", invoiceDetail?.customer_details?.date_of_birth);
       methods.setValue(
         "discount",
         parseInt(invoiceDetail.order_details.discount)
@@ -245,9 +238,7 @@ export default function OrderEditFrom() {
       setLoadState(1);
     }
   }, [invoiceDetail]);
-  const handleChange = (event: SelectChangeEvent) => {
-    setOrderProgress(event.target.value as string);
-  };
+
   useEffect(() => {
     return () => {
       dispatch(clearFrame());
@@ -325,7 +316,7 @@ export default function OrderEditFrom() {
         on_hold: data.on_hold,
         user_date: data.user_date,
         bus_title: BUSID === currentBranch ? data.bus_title : null,
-        progress_status: orderProgress,
+        progress_status: data.progress_status,
       },
       order_items: [
         ...Object.values(LenseInvoiceList).map((item) => ({
