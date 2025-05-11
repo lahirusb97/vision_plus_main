@@ -70,7 +70,9 @@ export default function FrameOnlyOrderCreate() {
         price_per_unit: firstValue.price_per_unit,
         branch_id: getUserCurentBranch()?.id,
         payments: formatUserPayments(userPayments),
-        progress_status: data.progress_status,
+        progress_status: data.progress_status
+          ? "issue_to_customer"
+          : "received_from_customer",
       };
       console.log(postData);
       prepareValidation("create", async (verifiedUserId: number) => {
@@ -133,19 +135,10 @@ export default function FrameOnlyOrderCreate() {
               <Typography variant="body1"> Issue To Good</Typography>
               <Checkbox
                 {...methods.register("progress_status")}
-                checked={
-                  methods.watch("progress_status") === "issue_to_customer"
+                checked={methods.watch("progress_status")}
+                onChange={(e) =>
+                  methods.setValue("progress_status", e.target.checked)
                 }
-                onChange={(e) => {
-                  if (e.currentTarget.checked) {
-                    methods.setValue("progress_status", "issue_to_customer");
-                  } else {
-                    methods.setValue(
-                      "progress_status",
-                      "received_from_customer"
-                    );
-                  }
-                }}
               />
             </Box>
           </Box>
