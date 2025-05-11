@@ -160,6 +160,7 @@ interface OrderDetails {
   user_date: string | null;
   bus_title: number | null;
   bus_title_name?: string;
+  progress_status: ProgressStatus;
 }
 
 interface Invoice {
@@ -174,7 +175,6 @@ interface Invoice {
   invoice_date: string; // ISO datetime format
   order_details: OrderDetails;
   order_items: OrderItem[];
-  progress_status: ProgressStatus;
   lens_arrival_status: LensArrivalStatus;
   whatsapp_sent: boolean;
 }

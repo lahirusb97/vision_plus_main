@@ -19,7 +19,6 @@ const OrderForm: React.FC<OrderFormProps> = ({ invoiceDetail }) => {
   const RefractionDetails = invoiceDetail?.refraction_details;
 
   const reactToPrintFn = useReactToPrint({ contentRef: componentRef });
-  console.log(invoiceDetail);
 
   return (
     <>

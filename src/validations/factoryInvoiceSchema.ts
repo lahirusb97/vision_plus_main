@@ -2,7 +2,10 @@ import { z } from "zod";
 
 export const schemaFactoryInvoice = z.object({
   name: z.string().min(1, { message: "Patient Name is required" }),
-  nic: z.string().optional(),
+  nic: z
+    .string()
+    .optional()
+    .transform((val) => (val === "" ? null : val)),
   phone_number: z.string().optional(),
   // .min(10, { message: "Phone number must be 10 digits" })
   // .max(10, { message: "Phone number must be 10 digits" })
@@ -12,7 +15,11 @@ export const schemaFactoryInvoice = z.object({
   // })
 
   address: z.string().optional(),
-  dob: z.string().optional().nullable(),
+  dob: z
+    .string()
+    .optional()
+    .nullable()
+    .transform((val) => (val === "" ? null : val)),
   discount: z.number().min(0, { message: "Discount must be 0 or greater" }),
   online_transfer: z.number().min(0, { message: "Payment amount is required" }),
   credit_card: z.number().min(0, { message: "Payment amount is required" }),
