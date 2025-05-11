@@ -165,6 +165,9 @@ export default function FactoryInvoiceForm() {
           branch_id: data.branch_id,
           user_date: data.user_date,
           bus_title: BUSID === currentBranch ? data.bus_title : null,
+          progress_status: data.progress_status
+            ? "issue_to_customer"
+            : "received_from_customer",
         },
         order_items: [
           ...Object.values(LenseInvoiceList).map((item) => ({
@@ -314,17 +317,17 @@ export default function FactoryInvoiceForm() {
                     </Typography>
                     <Checkbox {...methods.register("fitting_on_collection")} />
                   </Box>
+                  <Box ml={1} display="flex" alignItems="center">
+                    <Typography variant="body1"> Issue To Good</Typography>
+                    <Checkbox
+                      {...methods.register("progress_status")}
+                      checked={methods.watch("progress_status")}
+                      onChange={(e) =>
+                        methods.setValue("progress_status", e.target.checked)
+                      }
+                    />
+                  </Box>
                 </Box>
-                {/* <Box ml={1} display="flex" alignItems="center">
-                  <Typography variant="body1"> Issue To Good</Typography>
-                  <Checkbox
-                    {...methods.register("progress_status")}
-                    checked={methods.watch("progress_status") || false} // Add fallback to false
-                    onChange={(e) =>
-                      methods.setValue("progress_status", e.target.checked)
-                    }
-                  />
-                </Box> */}
               </Box>
 
               {/* Passing The Note DAta to show in tthe dialog */}

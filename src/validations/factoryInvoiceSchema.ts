@@ -38,5 +38,6 @@ export const schemaFactoryInvoice = z.object({
   user_date: z.string().nullable().optional(),
   branch_id: z.number(),
   bus_title: z.number().nullable().optional(),
+  progress_status: z.boolean(),
 });
 export type FactoryInvoiceFormModel = z.infer<typeof schemaFactoryInvoice>;
