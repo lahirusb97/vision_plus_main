@@ -6,6 +6,7 @@ import { useNavigate } from "react-router";
 import { extractErrorMessage } from "../../../utils/extractErrorMessage";
 import { useAxiosPost } from "../../../hooks/useAxiosPost";
 import SubmitCustomBtn from "../../../components/common/SubmiteCustomBtn";
+import TitleText from "../../../components/TitleText";
 const FrameBrandAdd = () => {
   const navigate = useNavigate();
   const { postHandler, postHandlerloading, postHandlerError } = useAxiosPost();
@@ -41,6 +42,7 @@ const FrameBrandAdd = () => {
   return (
     <Container maxWidth="sm">
       <Paper sx={{ p: 4, width: "300px" }}>
+        <TitleText title="Create Frame Brand" />
         <form onSubmit={handleSubmit}>
           <TextField
             fullWidth
@@ -48,7 +50,6 @@ const FrameBrandAdd = () => {
             name="name"
             value={formData.name}
             onChange={handleChange}
-            margin="normal"
             required
           />
 

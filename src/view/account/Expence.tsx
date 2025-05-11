@@ -30,6 +30,7 @@ import { useAxiosPost } from "../../hooks/useAxiosPost";
 import SubmitCustomBtn from "../../components/common/SubmiteCustomBtn";
 import TitleText from "../../components/TitleText";
 import { ExpencePaymentTable } from "../../components/ExpencePaymentTable";
+import useGetSafeTotalIncome from "../../hooks/useGetSafeTotalIncome";
 
 const Expence = () => {
   const navigate = useNavigate();
@@ -38,6 +39,8 @@ const Expence = () => {
   const { exCategory, exCategoryLoading } = useGetExCategory();
   const { financeSummary, setFinanceSummaryParams, financeSummaryRefres } =
     useGetFinanceSummary();
+  const { safeTotalIncome, safeTotalIncomeLoading, safeTotalIncomeError } =
+    useGetSafeTotalIncome();
   const {
     expenseList,
     loading: expenseListLoading,
@@ -131,12 +134,30 @@ const Expence = () => {
           <Paper elevation={1} sx={{ p: 1, mb: 1 }}>
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
               <Typography variant="body1">
-                Total Expense: {totalExpense}
-              </Typography>
-              <Typography variant="body1">
-                Total Received: {financeSummary?.today_balance}{" "}
+                Total Expense - Rs.{totalExpense}
               </Typography>
             </Box>
+          </Paper>
+          <Paper elevation={1} sx={{ p: 1, mb: 1 }}>
+            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+              <Typography variant="body1">
+                Avilable Balance - {financeSummary?.today_balance}{" "}
+              </Typography>
+            </Box>
+          </Paper>
+          <Paper elevation={1} sx={{ p: 1, mb: 1 }}>
+            {safeTotalIncomeLoading && (
+              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                <Typography variant="body1">
+                  Safe Locker Balance Rs.{safeTotalIncome}
+                </Typography>
+              </Box>
+            )}
+            {safeTotalIncomeError && (
+              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                <Typography variant="body1">Refresh The Page</Typography>
+              </Box>
+            )}
           </Paper>
         </Box>
         <Divider sx={{ mb: 1 }} />
