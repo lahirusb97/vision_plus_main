@@ -44,7 +44,11 @@ export const schemaFactoryInvoice = z.object({
   height: z.string().nullable(),
   left_height: z.string().nullable(),
   right_height: z.string().nullable(),
-  user_date: z.string(),
+  user_date: z
+    .string()
+    .nullable()
+    .optional()
+    .transform((val) => (val === "" || val === undefined ? null : val)),
   branch_id: z.number(),
   bus_title: z
     .number()

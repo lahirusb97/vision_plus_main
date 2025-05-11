@@ -163,13 +163,15 @@ const OrderForm: React.FC<OrderFormProps> = ({ invoiceDetail }) => {
                     Name{` : `}
                     {invoiceDetail?.customer_details.name}
                   </Typography>
-                  <Typography variant="body2" sx={{ fontWeight: "bold" }}>
-                    Deliver Date{` : `}
-                    {formatDateTimeByType(
-                      invoiceDetail?.order_details.user_date,
-                      "date"
-                    )}
-                  </Typography>
+                  {invoiceDetail?.order_details.user_date && (
+                    <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+                      Deliver Date{` : `}
+                      {formatDateTimeByType(
+                        invoiceDetail?.order_details.user_date,
+                        "date"
+                      )}
+                    </Typography>
+                  )}
                   <hr></hr>
                   <OrderFromRemarkDetails invoiceDetail={invoiceDetail} />
                   {/* <OrderFormFrameDetails
