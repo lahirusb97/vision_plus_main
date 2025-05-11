@@ -19,6 +19,12 @@ export const schemaFrameOnlyOrderForm = z.object({
   discount: z.number().min(0),
   credit_card: z.number().min(0),
   cash: z.number().min(0),
+  progress_status: z.enum([
+    "received_from_customer",
+    "issue_to_factory",
+    "received_from_factory",
+    "issue_to_customer",
+  ]),
 });
 
 export type FrameOnlyOrderForm = z.infer<typeof schemaFrameOnlyOrderForm>;

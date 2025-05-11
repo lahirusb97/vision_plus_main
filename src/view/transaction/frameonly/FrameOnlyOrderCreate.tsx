@@ -7,7 +7,7 @@ import {
   FrameOnlyOrderForm,
 } from "../../../validations/schemaFrameOnlyOrder";
 import PaymentMethodsLayout from "../factory_layouts/PaymentMethodsLayout";
-import { Box, Button, TextField } from "@mui/material";
+import { Box, Button, Checkbox, TextField, Typography } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../store/store";
 import InvoiceTable from "../../../components/inputui/InvoiceTable";
@@ -70,6 +70,7 @@ export default function FrameOnlyOrderCreate() {
         price_per_unit: firstValue.price_per_unit,
         branch_id: getUserCurentBranch()?.id,
         payments: formatUserPayments(userPayments),
+        progress_status: data.progress_status,
       };
       console.log(postData);
       prepareValidation("create", async (verifiedUserId: number) => {
@@ -111,22 +112,43 @@ export default function FrameOnlyOrderCreate() {
         <form onSubmit={methods.handleSubmit(frameOnlyOrderSubmite)}>
           <NormalPatientDetail />
 
-          <Button
-            size="small"
-            sx={{ mt: 1 }}
-            onClick={() =>
-              dispatch(
-                openStockDrawer({
-                  stockDrawerType: "frame",
-                  refractionDetail: null,
-                })
-              )
-            }
-            color="primary"
-            variant="contained"
-          >
-            Frames
-          </Button>
+          <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+            <Button
+              size="small"
+              sx={{ mt: 1 }}
+              onClick={() =>
+                dispatch(
+                  openStockDrawer({
+                    stockDrawerType: "frame",
+                    refractionDetail: null,
+                  })
+                )
+              }
+              color="primary"
+              variant="contained"
+            >
+              Frames
+            </Button>
+            <Box ml={1} display="flex" alignItems="center">
+              <Typography variant="body1"> Issue To Good</Typography>
+              <Checkbox
+                {...methods.register("progress_status")}
+                checked={
+                  methods.watch("progress_status") === "issue_to_customer"
+                }
+                onChange={(e) => {
+                  if (e.currentTarget.checked) {
+                    methods.setValue("progress_status", "issue_to_customer");
+                  } else {
+                    methods.setValue(
+                      "progress_status",
+                      "received_from_customer"
+                    );
+                  }
+                }}
+              />
+            </Box>
+          </Box>
           <InvoiceTable />
           <Box sx={{ display: "flex", gap: 1, mt: 1 }}>
             <PaymentMethodsLayout />

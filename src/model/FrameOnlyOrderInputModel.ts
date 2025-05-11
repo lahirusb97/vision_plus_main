@@ -1,4 +1,8 @@
-import { PaymentMethodTypes, TransactionStatusTypes } from "./StaticTypeModels";
+import {
+  PaymentMethodTypes,
+  ProgressStatus,
+  TransactionStatusTypes,
+} from "./StaticTypeModels";
 
 interface Patient {
   date_of_birth: string;
@@ -20,4 +24,5 @@ export interface FrameOnlyOrderInputModel {
   branch_id: number;
   sales_staff_code?: number;
   payments: OrderPayment[];
+  progress_status: ProgressStatus;
 }

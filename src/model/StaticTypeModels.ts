@@ -1,7 +1,6 @@
 export type ORDERSTATUS = "pending" | "processing" | "completed" | "cancelled";
 export type ProgressStatus =
   | "received_from_customer"
-  | "Received from Customer"
   | "issue_to_factory"
   | "received_from_factory"
   | "issue_to_customer";
