@@ -63,8 +63,8 @@ const CheckInIndex = () => {
                 </TableCell>
               </TableRow>
             )}
-            {invoiceList.map((row, index) => (
-              <TableRow key={index}>
+            {invoiceList.map((row) => (
+              <TableRow key={row.id}>
                 <TableCell>{row.customer}</TableCell>
                 <TableCell>{dateAndTimeFormat(row.invoice_date)}</TableCell>
                 <TableCell>{row.invoice_number}</TableCell>

@@ -151,6 +151,7 @@ const LenseStore = () => {
     openDialog(
       `lenses/${row.id}/`,
       `Lense of Type - ${row.type} & Brand - ${row.brand}`,
+      "Deactivate",
       refresh
     );
   };

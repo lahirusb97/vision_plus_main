@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
-import { Box, Button, Paper, TextField, Typography } from "@mui/material";
+import { Box, Paper, TextField, Typography } from "@mui/material";
 import {
   DoctorClaimChannelFormModel,
   schemaDoctorClaimChannel,
@@ -21,10 +21,14 @@ import { setDoctorClaimChannel } from "../../../features/invoice/doctorClaimChan
 import { useNavigate } from "react-router";
 import AutocompleteInputField from "../../../components/inputui/DropdownInput";
 import useGetDoctors from "../../../hooks/useGetDoctors";
+import { useAxiosPost } from "../../../hooks/useAxiosPost";
+import SubmitCustomBtn from "../../../components/common/SubmiteCustomBtn";
+import { extractErrorMessage } from "../../../utils/extractErrorMessage";
+import { getUserCurentBranch } from "../../../utils/authDataConver";
 
 export default function DoctorClaimChannelFrom() {
   const { data: doctorList, loading } = useGetDoctors();
-
+  const { postHandler, postHandlerloading, postHandlerError } = useAxiosPost();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const methods = useForm<DoctorClaimChannelFormModel>({
@@ -48,7 +52,7 @@ export default function DoctorClaimChannelFrom() {
     setValue,
     formState: { errors },
   } = methods;
-  const handleInvoiceSubmite = (data: DoctorClaimChannelFormModel) => {
+  const handleInvoiceSubmite = async (data: DoctorClaimChannelFormModel) => {
     const getDoctorNmeFromID = doctorList?.filter(
       (item) => item.id === data.doctor_id
     );
@@ -57,9 +61,19 @@ export default function DoctorClaimChannelFrom() {
       doctor_name: getDoctorNmeFromID?.[0].name,
       date: dayjs(data.channel_date).format("YYYY-MM-DD"),
     };
+
     if (getDoctorNmeFromID?.length) {
-      dispatch(setDoctorClaimChannel(payload));
-      navigate(`${payload.invoice_number}`);
+      try {
+        await postHandler("doctor-claims-channels/", {
+          branch: getUserCurentBranch()?.id,
+          invoice_number: payload.invoice_number,
+          doctor: payload.doctor_id,
+        });
+        dispatch(setDoctorClaimChannel(payload));
+        navigate(`${payload.invoice_number}`);
+      } catch (error) {
+        extractErrorMessage(error);
+      }
     }
   };
 
@@ -201,9 +215,11 @@ export default function DoctorClaimChannelFrom() {
               <CashInput />
             </Box>
           </Box>
-          <Button fullWidth sx={{ mt: 2 }} type="submit" variant="contained">
-            Submit
-          </Button>
+          <SubmitCustomBtn
+            loading={postHandlerloading}
+            isError={postHandlerError}
+            btnText="Save Channel Invoice"
+          />
         </form>
       </FormProvider>
     </Paper>

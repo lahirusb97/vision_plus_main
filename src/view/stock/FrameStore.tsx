@@ -107,6 +107,7 @@ const FrameStore = () => {
     openDialog(
       `/frames/${row.id}/`,
       `Frame of Brand - ${row.brand_name} & Code - ${row.code_name}`,
+      "Deactivate",
       refresh
     );
   };

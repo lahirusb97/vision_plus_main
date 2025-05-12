@@ -6,6 +6,9 @@ import LensReport from "../../view/reports/LensReport";
 import BestCustomer from "../../view/reports/BestCustomer";
 import CustomerLocation from "../../view/reports/CustomerLocation";
 import InvoiceSummary from "../../view/reports/InvoiceSummary";
+import DoctorClaimReportIndex from "../../view/reports/doctor_claim/DoctorClaimReportIndex";
+import DoctorClaimReportChannel from "../../view/reports/doctor_claim/DoctorClaimReportChannel";
+import DoctorClaimReportLayout from "../../view/reports/layout/DoctorClaimReportLayout";
 
 export const reportRoutes: RouteObject[] = [
   {
@@ -65,6 +68,20 @@ export const reportRoutes: RouteObject[] = [
       {
         index: true,
         element: <InvoiceSummary />,
+      },
+    ],
+  },
+  {
+    path: "doctor_claim",
+    element: <DoctorClaimReportLayout />,
+    children: [
+      {
+        index: true,
+        element: <DoctorClaimReportIndex />,
+      },
+      {
+        path: "channel",
+        element: <DoctorClaimReportChannel />,
       },
     ],
   },

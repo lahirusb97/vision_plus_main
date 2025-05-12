@@ -1,21 +1,36 @@
 import React, { createContext, useContext, useState } from "react";
 
+type deleteType = "Permanantly Delete" | "Deactivate";
 interface DeleteDialogState {
   open: boolean;
   path: string;
-  itemName?: string;
-  refresh?: () => void;
+  itemName: string;
+  deleteType: deleteType;
+  refresh: () => void | Promise<void>;
 }
 
 interface DeleteDialogContextType {
   state: DeleteDialogState;
-  openDialog: (path: string, itemName?: string, refresh?: () => void) => void;
+  openDialog: (
+    path: string,
+    itemName: string,
+    deleteType: deleteType,
+    refresh: () => void | Promise<void>
+  ) => void;
   closeDialog: () => void;
 }
 
-const DeleteDialogContext = createContext<DeleteDialogContextType | undefined>(
-  undefined
-);
+const DeleteDialogContext = createContext<DeleteDialogContextType>({
+  state: {
+    open: false,
+    path: "",
+    itemName: "",
+    deleteType: "Permanantly Delete",
+    refresh: () => {},
+  },
+  openDialog: () => {},
+  closeDialog: () => {},
+});
 
 export const DeleteDialogProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -23,23 +38,26 @@ export const DeleteDialogProvider: React.FC<{ children: React.ReactNode }> = ({
   const [state, setState] = useState<DeleteDialogState>({
     open: false,
     path: "",
-    itemName: undefined,
+    itemName: "",
+    deleteType: "Permanantly Delete",
     refresh: () => {},
   });
 
   const openDialog = (
     path: string,
-    itemName?: string,
-    refresh?: () => void
+    itemName: string,
+    deleteType: deleteType,
+    refresh: () => void
   ) => {
-    setState({ open: true, path, itemName, refresh });
+    setState({ open: true, path, itemName, deleteType, refresh });
   };
 
   const closeDialog = () => {
     setState({
       open: false,
       path: "",
-      itemName: undefined,
+      itemName: "",
+      deleteType: "Permanantly Delete",
       refresh: () => {},
     });
   };

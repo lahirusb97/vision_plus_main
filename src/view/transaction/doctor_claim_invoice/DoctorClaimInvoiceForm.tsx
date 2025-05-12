@@ -26,11 +26,15 @@ import { useNavigate } from "react-router";
 import { clearFrame } from "../../../features/invoice/frameFilterSlice";
 import { clearLenses } from "../../../features/invoice/lenseFilterSlice";
 import { clearexternalLense } from "../../../features/invoice/externalLenseSlice";
-import toast from "react-hot-toast";
 import dayjs from "dayjs";
 import { getBranchName } from "../../../utils/branchName";
 import { useEffect } from "react";
+import { useAxiosPost } from "../../../hooks/useAxiosPost";
+import SubmitCustomBtn from "../../../components/common/SubmiteCustomBtn";
+import { extractErrorMessage } from "../../../utils/extractErrorMessage";
+import { getUserCurentBranch } from "../../../utils/authDataConver";
 export default function DoctorClaimInvoiceForm() {
+  const { postHandler, postHandlerError, postHandlerloading } = useAxiosPost();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { prepareValidation, resetValidation, validationState } =
@@ -75,13 +79,14 @@ export default function DoctorClaimInvoiceForm() {
     const payload = {
       name: data.name,
       date: dayjs().format("YYYY-MM-DD"),
-      invoice_number: `${getBranchName()}-${data.invoice_number}`,
+      invoice_number: `${getBranchName()}${data.invoice_number}`,
       phone_number: data.phone_number,
       address: data.address,
       sub_total: total,
       balance: balance,
       discount: data.discount,
       total_price: grandTotal,
+      branch: getUserCurentBranch()?.id,
       sales_staff: 1,
       invoiceItems: [
         ...Object.values(FrameInvoiceList).map((item) => {
@@ -129,11 +134,14 @@ export default function DoctorClaimInvoiceForm() {
         ...payload,
         sales_staff_code: sales_staff_code,
       };
+      await postHandler("doctor-claims-invoices/", {
+        branch: getUserCurentBranch()?.id,
+        invoice_number: payload.invoice_number,
+      });
       await dispatch(setDoctorClaim(postData));
       navigate(`/transaction/doctor_claim_invoice/${payload.invoice_number}`);
     } catch (error) {
-      toast.error("Something went wrong");
-      console.log(error);
+      extractErrorMessage(error);
     }
   };
   useEffect(() => {
@@ -205,9 +213,11 @@ export default function DoctorClaimInvoiceForm() {
             <Box sx={{ my: 1 }}>
               <CashInput />
             </Box>
-            <Button variant="contained" type="submit">
-              Submit
-            </Button>
+            <SubmitCustomBtn
+              isError={postHandlerError}
+              loading={postHandlerloading}
+              btnText="Save  Invoice"
+            />
           </form>
         </Box>
       </FormProvider>
