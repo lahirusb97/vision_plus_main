@@ -17,7 +17,7 @@ import { reportRoutes } from "./routelist/reports.route";
 import Login from "../view/auth/login";
 import RegisterUser from "../view/auth/RegisterUser";
 import { searchRoutes } from "./routelist/search.route";
-
+import { logsRoutes } from "./routelist/logs.route";
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -75,6 +75,11 @@ export const router = createBrowserRouter([
         path: "user",
         element: <ProtectedChildRoute />,
         children: userRoutes,
+      },
+      {
+        path: "logs",
+        element: <ProtectedChildRoute />,
+        children: logsRoutes,
       },
     ],
   },

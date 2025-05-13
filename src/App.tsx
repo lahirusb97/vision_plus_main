@@ -8,18 +8,23 @@ import { Toaster } from "react-hot-toast";
 import { DeleteDialogProvider } from "./context/DeleteDialogContext";
 import DeleteDialog from "./components/DeleteDialog";
 import DrawerStock from "./components/inputui/DrawerStock";
+import { MutationDialogProvider } from "./context/MutationDialogContext";
+import MutationDialog from "./components/common/MutationDialog";
 
 function App() {
   return (
     <>
       <ThemeProvider theme={theme}>
         <AuthContext>
-          <DeleteDialogProvider>
-            <RouterProvider router={router} />
-            {/* <ThemeSwitch /> */}
-            <Toaster position="bottom-center" gutter={8} />
-            <DeleteDialog />
-          </DeleteDialogProvider>
+          <MutationDialogProvider>
+            <DeleteDialogProvider>
+              <RouterProvider router={router} />
+              {/* <ThemeSwitch /> */}
+              <Toaster position="bottom-center" gutter={8} />
+              <DeleteDialog />
+            </DeleteDialogProvider>
+            <MutationDialog />
+          </MutationDialogProvider>
           <DrawerStock />
         </AuthContext>
       </ThemeProvider>

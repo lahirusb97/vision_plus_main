@@ -40,6 +40,7 @@ export default function FrameOnlyOrderCreate() {
       credit_card: 0,
       cash: 0,
       online_transfer: 0,
+      progress_status: false,
     },
   });
 
@@ -74,7 +75,7 @@ export default function FrameOnlyOrderCreate() {
           ? "issue_to_customer"
           : "received_from_customer",
       };
-
+      console.log(postData);
       prepareValidation("create", async (verifiedUserId: number) => {
         await sendDataToDb(
           postData as FrameOnlyOrderInputModel,
@@ -85,7 +86,6 @@ export default function FrameOnlyOrderCreate() {
       toast.error("You Can Invoice Only a Single Frame");
     }
   };
-  console.log(methods.formState.errors);
 
   const sendDataToDb = async (
     postData: FrameOnlyOrderInputModel,
@@ -138,9 +138,10 @@ export default function FrameOnlyOrderCreate() {
               <Controller
                 name="progress_status"
                 control={methods.control}
+                defaultValue={false} // Set default value here
                 render={({ field }) => (
                   <Checkbox
-                    checked={field.value || false}
+                    checked={field.value}
                     onChange={(e) => field.onChange(e.target.checked)}
                   />
                 )}

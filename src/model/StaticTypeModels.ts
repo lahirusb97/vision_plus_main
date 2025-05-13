@@ -16,3 +16,4 @@ export type TypeOrderStatus =
   | "completed"
   | "cancelled";
 export type TypeBraned = "branded" | "non_branded";
+export type TypeWhatappMSG = "sent" | "not_sent" | null;

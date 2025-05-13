@@ -23,7 +23,7 @@ export const schemaFrameOnlyOrderForm = z.object({
   discount: z.number().min(0),
   credit_card: z.number().min(0),
   cash: z.number().min(0),
-  progress_status: z.boolean().optional(),
+  progress_status: z.boolean().default(false),
 });
 
 export type FrameOnlyOrderForm = z.infer<typeof schemaFrameOnlyOrderForm>;

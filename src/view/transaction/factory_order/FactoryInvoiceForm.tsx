@@ -126,7 +126,7 @@ export default function FactoryInvoiceForm() {
       dispatch(clearexternalLense());
     };
   }, []);
-  console.log(methods.formState.errors);
+  console.log(methods.watch("progress_status"));
 
   const submiteFromData = async (data: FactoryInvoiceFormModel) => {
     if (refraction_id) {
@@ -168,9 +168,7 @@ export default function FactoryInvoiceForm() {
           branch_id: data.branch_id,
           user_date: data.user_date,
           bus_title: BUSID === currentBranch ? data.bus_title : null,
-          progress_status: (data.progress_status
-            ? "issue_to_customer"
-            : "received_from_customer") as ProgressStatus,
+          progress_status: data.progress_status,
         },
         order_items: [
           ...Object.values(LenseInvoiceList).map((item) => ({
@@ -200,7 +198,6 @@ export default function FactoryInvoiceForm() {
         ],
         order_payments: formatUserPayments(userPayments),
       };
-      console.log("postData", postData);
 
       if (
         Object.keys(externalLenseInvoiceList).length > 0 ||

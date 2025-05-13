@@ -55,17 +55,22 @@ export default function InvoiceTotalSummery({
       </TableRow>
       <TableRow>
         <TableCell sx={{ border: "none" }} align="right" colSpan={3}>
-          Balance
+          <strong>Balance</strong>
         </TableCell>
         <TableCell
           sx={{
             textAlign: "right",
           }}
         >
-          {numberWithCommas(
-            parseInt(invoiceDetail?.order_details?.total_price || "0") -
-              customerPaymentTotal(invoiceDetail?.order_details.order_payments)
-          )}
+          <strong>
+            {" "}
+            {numberWithCommas(
+              parseInt(invoiceDetail?.order_details?.total_price || "0") -
+                customerPaymentTotal(
+                  invoiceDetail?.order_details.order_payments
+                )
+            )}
+          </strong>
         </TableCell>
       </TableRow>
     </>

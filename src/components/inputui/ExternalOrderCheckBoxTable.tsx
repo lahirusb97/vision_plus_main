@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { CheckinInvoiceModel } from "../../model/CheckinInvoiceModel";
+import { useState } from "react";
 import {
   Checkbox,
   Table,
@@ -31,17 +30,18 @@ import { toast } from "react-hot-toast";
 import { useAxiosPatch } from "../../hooks/useAxiosPatch";
 import { extractErrorMessage } from "../../utils/extractErrorMessage";
 import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
+import { ExternalLenseOrderInvoiceModel } from "../../model/ExternalLenseOrderInvoiceModel";
 
 interface CheckBoxTableProps {
-  invoiceList: CheckinInvoiceModel[];
+  invoiceList: ExternalLenseOrderInvoiceModel[];
   loading: boolean;
   invoiceListRefres: () => void;
 }
 interface SelectedInvoices {
-  order: number;
+  order_id: number;
   invoice_number: string;
 }
-export default function CheckBoxTable({
+export default function ExternalOrderCheckBoxTable({
   invoiceList,
   loading,
   invoiceListRefres,
@@ -68,9 +68,9 @@ export default function CheckBoxTable({
     }
 
     try {
-      await patchHandler("factory-invoices/bulk-update-status/", {
-        order_ids: selectedInvoice.map((item) => item.order),
-        progress_status: orderProgress,
+      await patchHandler("factory-invoices/bulk-update-whatsapp-sent/", {
+        order_ids: selectedInvoice.map((item) => item.order_id),
+        whatsapp_sent: orderProgress,
       });
 
       toast.success(`Updated ${selectedInvoice.length} item(s) successfully`);
@@ -100,6 +100,7 @@ export default function CheckBoxTable({
               <TableCell align="center">Total</TableCell>
               <TableCell align="center">Balance</TableCell>
               <TableCell align="center">Progress</TableCell>
+              <TableCell align="center">Whatapp MSG</TableCell>
               {/* <TableCell>
                 <b>Notes</b>
               </TableCell> */}
@@ -134,22 +135,22 @@ export default function CheckBoxTable({
                         setSelectedInvoice((prev) => [
                           ...prev,
                           {
-                            order: row.order,
+                            order_id: row.order_id,
                             invoice_number: row.invoice_number,
                           },
                         ]);
                       } else {
                         setSelectedInvoice((prev) =>
-                          prev.filter((item) => item.order !== row.order)
+                          prev.filter((item) => item.order_id !== row.order_id)
                         );
                       }
                     }}
                     checked={selectedInvoice.some(
-                      (item) => item.order === row.order
+                      (item) => item.order_id === row.order_id
                     )}
                   />
                 </TableCell>
-                <TableCell>{row.customer}</TableCell>
+                <TableCell>{row.customer_name}</TableCell>
                 <TableCell>
                   {formatDateTimeByType(row.invoice_date, "date")}
                 </TableCell>
@@ -173,7 +174,9 @@ export default function CheckBoxTable({
                   ? "Received"
                   : "Not Received"}
               </TableCell> */}
-
+                <TableCell align="center">
+                  {row.whatsapp_sent === "sent" ? "Sent" : "Not Sent"}
+                </TableCell>
                 <TableCell align="center">
                   <Box sx={{ display: "flex", flexDirection: "rows" }}>
                     {row.on_hold ? (
@@ -234,7 +237,7 @@ export default function CheckBoxTable({
         <FormControl size="small" sx={{ minWidth: 300 }}>
           <InputLabel id="demo-simple-select-label">
             {" "}
-            Filter By Order Progress
+            Whatapp Message Status
           </InputLabel>
           <Select
             labelId="demo-simple-select-label"
@@ -243,14 +246,8 @@ export default function CheckBoxTable({
             label=" Filter By Order Progress"
             onChange={handleChange}
           >
-            <MenuItem value={"received_from_customer"}>
-              Received From Customer
-            </MenuItem>
-            <MenuItem value={"issue_to_factory"}>Issue to Factory</MenuItem>
-            <MenuItem value={"received_from_factory"}>
-              Received from Factory
-            </MenuItem>
-            <MenuItem value={"issue_to_customer"}>Issue to Customer</MenuItem>
+            <MenuItem value={"sent"}>Sent</MenuItem>
+            <MenuItem value={"not_sent"}>Not Sent</MenuItem>
           </Select>
         </FormControl>
         <Box
@@ -263,7 +260,7 @@ export default function CheckBoxTable({
         >
           {selectedInvoice.map((item) => (
             <Box
-              key={item.order}
+              key={item.order_id}
               sx={{
                 display: "flex",
                 gap: ".1rem",
@@ -275,14 +272,16 @@ export default function CheckBoxTable({
               <Typography
                 sx={{ fontSize: ".8rem" }}
                 variant="body2"
-                key={item.order}
+                key={item.order_id}
               >
                 {item.invoice_number}
               </Typography>
               <IconButton
                 onClick={() => {
                   setSelectedInvoice((prev) =>
-                    prev.filter((prevItem) => prevItem.order !== item.order)
+                    prev.filter(
+                      (prevItem) => prevItem.order_id !== item.order_id
+                    )
                   );
                 }}
                 size="small"

@@ -12,6 +12,8 @@ import Search from "../../assets/icons/navbar/Search.png";
 import StockIcon from "../../assets/icons/navbar/Stock.png";
 import TransationIcon from "../../assets/icons/navbar/Transation.png";
 import UserIcon from "../../assets/icons/navbar/User.png";
+import LogBookIcon from "../../assets/icons/navbar/logbook.webp";
+
 import RefractionNav from "../refraction/RefractionNav";
 import { Box, Button, Paper, Typography } from "@mui/material";
 import ChannelNav from "../channel/ChannelNav";
@@ -24,6 +26,7 @@ import UserNav from "../user/UserNav";
 import CheckInNav from "../checkin/CheckInNav";
 import SearchNav from "../search/SearchNav";
 import AccountNav from "../account/AccountNav";
+import LogsNav from "../user/LogsNav";
 import {
   deleteUserData,
   getUserAuth,
@@ -100,6 +103,7 @@ export default function NavBar() {
       nav: RefractionNav,
     },
     { id: 8, path: "user", icon: UserIcon, label: "User", nav: UserNav },
+    { id: 9, path: "logs", icon: LogBookIcon, label: "Logs", nav: LogsNav },
   ];
 
   const location = useLocation();

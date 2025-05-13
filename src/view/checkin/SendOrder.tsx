@@ -8,42 +8,51 @@ import {
   SelectChangeEvent,
   TableContainer,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import CustomerPagination from "../../components/CustomPagination";
 import ProgressStagesColors from "../../components/ProgressStagesColors";
-import FactoryInvoiceSearch from "../../hooks/FactoryInvoiceSearch";
-import useGetCheckinInvoiceList from "../../hooks/useGetCheckinInvoiceList";
-import { ProgressStatus } from "../../model/StaticTypeModels";
-
+import useGetExternalLenseOrderList from "../../hooks/useGetExternalLenseOrderList";
+import { TypeWhatappMSG } from "../../model/StaticTypeModels";
+import ExternalOrderCheckBoxTable from "../../components/inputui/ExternalOrderCheckBoxTable";
+import dayjs, { Dayjs } from "dayjs"; // Import 'dayjs' for creating Dayjs objects
+import DateRangePickerManual from "../../components/common/DateRangePickerManual";
+export interface DateRangePickerManualState {
+  start_date: Dayjs | null;
+  end_date: Dayjs | null;
+}
 export default function JobProgress() {
   const {
-    invoiceList,
-    invoiceLimit,
-    invoiceListSearch,
-    invoiceListChangePageSize,
-    invoiceListPageNavigation,
-    invoiceListLoading,
-    invoiceListTotalCount,
-    invoiceListRefres,
-  } = useGetCheckinInvoiceList();
-
+    externalLenseInvoiceLimit,
+    externalLenseInvoiceList,
+    externalLenseInvoiceListLoading,
+    externalLenseInvoiceListTotalCount,
+    externalLenseInvoiceListPageNavigation,
+    externalLenseInvoiceListChangePageSize,
+    externalLenseInvoiceListSearch,
+    externalLenseInvoiceListRefres,
+  } = useGetExternalLenseOrderList();
 
   const [orderProgress, setOrderProgress] = useState("");
-
+  const [dateRange, setDateRange] = useState<DateRangePickerManualState>({
+    start_date: dayjs(), // or null
+    end_date: dayjs().add(1, "M"),
+  });
   const handleChange = (event: SelectChangeEvent) => {
     setOrderProgress(event.target.value as string);
-    invoiceListSearch({
-         progress_status: event.target.value as ProgressStatus,
-         search: null,
-         invoice_number: null,
-         mobile: null,
-         nic: null,
-         page_size: 10,
-         page: 1,
-       });
   };
 
+  useEffect(() => {
+    externalLenseInvoiceListSearch({
+      whatsapp_sent: orderProgress as TypeWhatappMSG,
+      search: null,
+      invoice_number: null,
+      start_date: dateRange.start_date?.format("YYYY-MM-DD") || null,
+      end_date: dateRange.end_date?.format("YYYY-MM-DD") || null,
+      page_size: 10,
+      page: 1,
+    });
+  }, [dateRange, orderProgress]);
   // Persist selections in localStorage/sessionStorage
 
   return (
@@ -53,6 +62,7 @@ export default function JobProgress() {
           sx={{
             display: "flex",
             m: 1,
+            gap: 1,
             alignItems: "center",
             flexWrap: "wrap",
           }}
@@ -60,7 +70,7 @@ export default function JobProgress() {
           <FormControl size="small" sx={{ minWidth: 250 }}>
             <InputLabel id="demo-simple-select-label">
               {" "}
-              Filter By Order Progress
+              Filter By Whatapp MSG
             </InputLabel>
             <Select
               labelId="demo-simple-select-label"
@@ -69,29 +79,33 @@ export default function JobProgress() {
               label=" Filter By Order Progress"
               onChange={handleChange}
             >
-              <MenuItem value={"received_from_customer"}>
-                Received From Customer
-              </MenuItem>
-              <MenuItem value={"issue_to_factory"}>Issue to Factory</MenuItem>
-              <MenuItem value={"received_from_factory"}>
-                Received from Factory
-              </MenuItem>
-              <MenuItem value={"issue_to_customer"}>Issue to Customer</MenuItem>
+              <MenuItem value={"sent"}>Message Sent</MenuItem>
+              <MenuItem value={"not_sent"}>Message Not Sent</MenuItem>
             </Select>
           </FormControl>
-          <FactoryInvoiceSearch invoiceListSearch={invoiceListSearch} />
-          <ProgressStagesColors />
+          <DateRangePickerManual
+            value={{
+              start_date: dateRange.start_date,
+              end_date: dateRange.end_date,
+            }}
+            onChange={(range) =>
+              setDateRange((prev) => ({ ...prev, ...range }))
+            }
+          />
+          {/* <ProgressStagesColors /> */}
         </Box>
-        
+        <ExternalOrderCheckBoxTable
+          invoiceListRefres={externalLenseInvoiceListRefres}
+          invoiceList={externalLenseInvoiceList}
+          loading={externalLenseInvoiceListLoading}
+        />
         <CustomerPagination
-          totalCount={invoiceListTotalCount}
-          handlePageNavigation={invoiceListPageNavigation}
-          changePageSize={invoiceListChangePageSize}
-          page_size={invoiceLimit}
+          totalCount={externalLenseInvoiceListTotalCount}
+          handlePageNavigation={externalLenseInvoiceListPageNavigation}
+          changePageSize={externalLenseInvoiceListChangePageSize}
+          page_size={externalLenseInvoiceLimit}
         />
       </TableContainer>
-
-      
     </Box>
   );
 }
