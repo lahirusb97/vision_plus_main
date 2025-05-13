@@ -69,35 +69,32 @@ export default function SafeIndex() {
       }
     }
   };
-  if (financeSummaryLoading) {
+  if (!financeSummary && financeSummaryLoading) {
     return (
       <Box>
         <CircularProgress />
       </Box>
     );
   }
-  if (financeSummaryError) {
+  if (!!financeSummary || financeSummaryError) {
     return <DataLoadingError />;
   }
+
   return (
     <Paper elevation={1}>
-      {financeSummaryLoading ? (
-        <Box>
-          <CircularProgress />
-        </Box>
-      ) : (
+      {financeSummary && (
         <Box sx={{ width: 300, p: "1rem" }}>
           <TitleText title="Avilable Cash" />
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             <Typography variant="body1">Before Balance </Typography>
             <Typography variant="body1">
-              {numberWithCommas(financeSummary?.before_balance || 0)}
+              {numberWithCommas(financeSummary.before_balance)}
             </Typography>
           </Box>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             <Typography variant="body1">Today Balance </Typography>
             <Typography variant="body1">
-              {numberWithCommas(financeSummary?.today_balance || 0)}
+              {numberWithCommas(financeSummary?.today_balance)}
             </Typography>
           </Box>
 
@@ -105,10 +102,10 @@ export default function SafeIndex() {
             <Typography variant="body1" fontWeight={"bold"}>
               Total Depositable Amount
             </Typography>
+
             <Typography variant="body1" fontWeight={"bold"}>
               {numberWithCommas(
-                financeSummary?.today_balance ||
-                  0 + (financeSummary?.before_balance || 0)
+                financeSummary?.today_balance + financeSummary?.before_balance
               )}
             </Typography>
           </Box>
@@ -122,6 +119,7 @@ export default function SafeIndex() {
           </Box>
         </Box>
       )}
+
       <form
         style={{
           padding: "1rem",
