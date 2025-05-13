@@ -46,39 +46,30 @@ export default function SafeIndex() {
   });
 
   const onSubmit = async (data: AddToSafeFormModel) => {
-    const totalDepositableCash =
-      (financeSummary?.today_balance || 0) +
-      (financeSummary?.before_balance || 0);
+    if (financeSummary) {
+      const totalDepositableCash =
+        financeSummary.today_balance + financeSummary.before_balance;
 
-    if (data.amount > totalDepositableCash) {
-      toast.error("You Can't Transfer More Than " + totalDepositableCash);
-    } else {
-      const postData = {
-        branch: getUserCurentBranch()?.id,
-        transaction_type: "income",
-        amount: data.amount,
-        reason: data.reason,
-        reference_id: data.reference_id,
-      };
-      try {
-        await postHandler("safe/transactions/", postData);
-        toast.success("Money Transfered To Safe Locker Successfully");
-        reset();
-      } catch (error) {
-        extractErrorMessage(error);
+      if (data.amount > totalDepositableCash) {
+        toast.error("You Can't Transfer More Than " + totalDepositableCash);
+      } else {
+        const postData = {
+          branch: getUserCurentBranch()?.id,
+          transaction_type: "income",
+          amount: data.amount,
+          reason: data.reason,
+          reference_id: data.reference_id,
+        };
+        try {
+          await postHandler("safe/transactions/", postData);
+          toast.success("Money Transfered To Safe Locker Successfully");
+          reset();
+        } catch (error) {
+          extractErrorMessage(error);
+        }
       }
     }
   };
-  if (!financeSummary && financeSummaryLoading) {
-    return (
-      <Box>
-        <CircularProgress />
-      </Box>
-    );
-  }
-  if (!!financeSummary || financeSummaryError) {
-    return <DataLoadingError />;
-  }
 
   return (
     <Paper elevation={1}>
