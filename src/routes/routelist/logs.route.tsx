@@ -1,7 +1,7 @@
 import { RouteObject } from "react-router";
+import FrameLog from "../../view/audit_logs/FrameLog";
+import LensLog from "../../view/audit_logs/LensLog";
 
-import FrameLog from "../../view/logs/FrameLog";
-import LensLog from "../../view/logs/LensLog";
 export const logsRoutes: RouteObject[] = [
   {
     path: "",
