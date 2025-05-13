@@ -52,158 +52,161 @@ const Dashboard = () => {
   }, [selectedDate]);
   //! BUG WHEN NAGICATE PAGINATION VALUES DES NOT REST
   return (
-    <Box p={2} minWidth="1000px" minHeight="50vh">
-      <Grid container spacing={2}>
-        {/* Left Side - Tables */}
-        <Grid item xs={12} md={9}>
-          {/* Expenses Section */}
-          <Box sx={{ mb: 1 }}>
-            <Typography variant="body1">Expenses</Typography>
-            <ExpencePaymentTable
-              data={expenseList}
-              loading={expenseListLoading}
-            />
-          </Box>
+    <>
+      {financeSummary && dailyOrderCount && (
+        <Box p={2} minWidth="1000px" minHeight="50vh">
+          <Grid container spacing={2}>
+            {/* Left Side - Tables */}
+            <Grid item xs={12} md={9}>
+              {/* Expenses Section */}
+              <Box sx={{ mb: 1 }}>
+                <Typography variant="body1">Expenses</Typography>
+                <ExpencePaymentTable
+                  data={expenseList}
+                  loading={expenseListLoading}
+                />
+              </Box>
 
-          {/* Invoice Section */}
-          <Box sx={{ mb: 1 }}>
-            <Typography variant="body1">Invoice</Typography>
-            <InvoicePaymentTable
-              data={invoiceReport}
-              loading={invoiceReportLoading}
-            />
-          </Box>
+              {/* Invoice Section */}
+              <Box sx={{ mb: 1 }}>
+                <Typography variant="body1">Invoice</Typography>
+                <InvoicePaymentTable
+                  data={invoiceReport}
+                  loading={invoiceReportLoading}
+                />
+              </Box>
 
-          {/* Channel Section */}
-          <Box sx={{ mb: 1 }}>
-            <Typography variant="body1">Channel</Typography>
-            <ChannelPaymentTable
-              data={channelReports}
-              loading={channelReportsLoading}
-            />
-          </Box>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            <Box sx={{ mb: 1 }}>
-              <Typography variant="body1">Banking</Typography>
-              <TodayBankingTable
-                data={financeSummary?.today_banking || []}
-                loading={financeSummaryLoading}
-              />
-            </Box>
-            <Box sx={{ mb: 1 }}>
-              <Typography variant="body1">Other Income</Typography>
-              <OtherIncomePayment
-                data={otherIncomeReport || []}
-                loading={otherIncomeReportLoading}
-              />
-            </Box>
-          </Box>
-          {/* Financial Summary Buttons */}
-        </Grid>
+              {/* Channel Section */}
+              <Box sx={{ mb: 1 }}>
+                <Typography variant="body1">Channel</Typography>
+                <ChannelPaymentTable
+                  data={channelReports}
+                  loading={channelReportsLoading}
+                />
+              </Box>
+              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                <Box sx={{ mb: 1 }}>
+                  <Typography variant="body1">Banking</Typography>
+                  <TodayBankingTable
+                    data={financeSummary.today_banking}
+                    loading={financeSummaryLoading}
+                  />
+                </Box>
+                <Box sx={{ mb: 1 }}>
+                  <Typography variant="body1">Other Income</Typography>
+                  <OtherIncomePayment
+                    data={otherIncomeReport || []}
+                    loading={otherIncomeReportLoading}
+                  />
+                </Box>
+              </Box>
+              {/* Financial Summary Buttons */}
+            </Grid>
 
-        {/* Right Sidebar Section */}
-        <Grid item xs={12} md={3}>
-          <Paper sx={{ p: 1, textAlign: "center" }}>
-            <SingleDatePicker value={selectedDate} onChange={setSelectedDate} />
-            <Divider sx={{ my: 1 }} />
+            {/* Right Sidebar Section */}
+            <Grid item xs={12} md={3}>
+              <Paper sx={{ p: 1, textAlign: "center" }}>
+                <SingleDatePicker
+                  value={selectedDate}
+                  onChange={setSelectedDate}
+                />
+                <Divider sx={{ my: 1 }} />
 
-            <Box>
-              <Typography variant="body2" fontWeight="bold">
-                Order Count
-              </Typography>
-              <Typography sx={flexStyle} variant="body2">
-                <span> Factory Order </span>
-                <span>{dailyOrderCount?.factory_order_count || 0}</span>
-              </Typography>
-              <Typography sx={flexStyle} variant="body2">
-                <span> Normal Order </span>
-                <span>{dailyOrderCount?.normal_order_count || 0}</span>
-              </Typography>
-              <Typography sx={flexStyle} variant="body2">
-                <span> Channel </span>
-                <span>{dailyOrderCount?.channel_count || 0}</span>
-              </Typography>
-            </Box>
-            <Divider sx={{ my: 1 }} />
+                <Box>
+                  <Typography variant="body2" fontWeight="bold">
+                    Order Count
+                  </Typography>
+                  <Typography sx={flexStyle} variant="body2">
+                    <span> Factory Order </span>
+                    <span>{dailyOrderCount.factory_order_count}</span>
+                  </Typography>
+                  <Typography sx={flexStyle} variant="body2">
+                    <span> Normal Order </span>
+                    <span>{dailyOrderCount.normal_order_count}</span>
+                  </Typography>
+                  <Typography sx={flexStyle} variant="body2">
+                    <span> Channel </span>
+                    <span>{dailyOrderCount.channel_count}</span>
+                  </Typography>
+                </Box>
+                <Divider sx={{ my: 1 }} />
 
-            <Box>
-              <Typography variant="body2" fontWeight="bold">
-                Total Transactions
-              </Typography>
-              <Typography sx={flexStyle} variant="body2">
-                <span>Total Orders Payments</span>{" "}
-                <span>
-                  {numberWithCommas(financeSummary?.today_order_payments || 0)}
-                </span>
-              </Typography>
-              <Typography sx={flexStyle} variant="body2">
-                <span>Total Channels Payments</span>{" "}
-                <span>
-                  {numberWithCommas(
-                    financeSummary?.today_channel_payments || 0
-                  )}
-                </span>
-              </Typography>
-              <Typography sx={flexStyle} variant="body2">
-                <span>Total Other Income</span>{" "}
-                <span>
-                  {numberWithCommas(financeSummary?.today_other_income || 0)}
-                </span>
-              </Typography>
-              <Typography sx={flexStyle} variant="body2">
-                <span>Total Expencess</span>{" "}
-                <span>
-                  {numberWithCommas(financeSummary?.today_expenses || 0)}
-                </span>
-              </Typography>
-            </Box>
-            <Divider sx={{ my: 1 }} />
-            <Box>
-              <Typography variant="body2" fontWeight="bold">
-                Cash Avilable
-              </Typography>
-              <Typography sx={flexStyle} variant="body2">
-                <span>Cash in Hold</span>
-                <span>
-                  {numberWithCommas(financeSummary?.cash_in_hold || 0)}
-                </span>
-              </Typography>
-              <Typography sx={flexStyle} variant="body2">
-                <span> Avilable For Deposite </span>
-                <span>
-                  {numberWithCommas(financeSummary?.available_for_deposit || 0)}
-                </span>
-              </Typography>
-              <Typography sx={flexStyle} variant="body2">
-                <span>Before Balance</span>
-                <span>
-                  {numberWithCommas(financeSummary?.before_balance || 0)}
-                </span>
-              </Typography>
-              <Typography sx={flexStyle} variant="body2">
-                <span>Today Balance</span>
-                <span>
-                  {numberWithCommas(financeSummary?.today_balance || 0)}
-                </span>
-              </Typography>
-            </Box>
-            <Divider sx={{ my: 1 }} />
-            <Box>
-              <Typography variant="body2" fontWeight="bold">
-                Safe Locker
-              </Typography>
+                <Box>
+                  <Typography variant="body2" fontWeight="bold">
+                    Total Transactions
+                  </Typography>
+                  <Typography sx={flexStyle} variant="body2">
+                    <span>Total Orders Payments</span>{" "}
+                    <span>
+                      {numberWithCommas(financeSummary.today_order_payments)}
+                    </span>
+                  </Typography>
+                  <Typography sx={flexStyle} variant="body2">
+                    <span>Total Channels Payments</span>{" "}
+                    <span>
+                      {numberWithCommas(financeSummary.today_channel_payments)}
+                    </span>
+                  </Typography>
+                  <Typography sx={flexStyle} variant="body2">
+                    <span>Total Other Income</span>{" "}
+                    <span>
+                      {numberWithCommas(financeSummary.today_other_income)}
+                    </span>
+                  </Typography>
+                  <Typography sx={flexStyle} variant="body2">
+                    <span>Total Expencess</span>{" "}
+                    <span>
+                      {numberWithCommas(financeSummary.today_expenses)}
+                    </span>
+                  </Typography>
+                </Box>
+                <Divider sx={{ my: 1 }} />
+                <Box>
+                  <Typography variant="body2" fontWeight="bold">
+                    Cash Avilable
+                  </Typography>
+                  <Typography sx={flexStyle} variant="body2">
+                    <span>Cash in Hold</span>
+                    <span>{numberWithCommas(financeSummary.cash_in_hold)}</span>
+                  </Typography>
+                  <Typography sx={flexStyle} variant="body2">
+                    <span> Avilable For Deposite </span>
+                    <span>
+                      {numberWithCommas(financeSummary.available_for_deposit)}
+                    </span>
+                  </Typography>
+                  <Typography sx={flexStyle} variant="body2">
+                    <span>Before Balance</span>
+                    <span>
+                      {numberWithCommas(financeSummary.before_balance)}
+                    </span>
+                  </Typography>
+                  <Typography sx={flexStyle} variant="body2">
+                    <span>Today Balance</span>
+                    <span>
+                      {numberWithCommas(financeSummary.today_balance)}
+                    </span>
+                  </Typography>
+                </Box>
+                <Divider sx={{ my: 1 }} />
+                <Box>
+                  <Typography variant="body2" fontWeight="bold">
+                    Safe Locker
+                  </Typography>
 
-              <Typography sx={flexStyle} variant="body2">
-                <span> Total Safe Balance</span>
-                <span>{numberWithCommas(safeTotalBalance || 0)}</span>
-              </Typography>
-            </Box>
-          </Paper>
+                  <Typography sx={flexStyle} variant="body2">
+                    <span> Total Safe Balance</span>
+                    <span>{numberWithCommas(safeTotalBalance || 0)}</span>
+                  </Typography>
+                </Box>
+              </Paper>
 
-          {/* Sidebar Buttons */}
-        </Grid>
-      </Grid>
-    </Box>
+              {/* Sidebar Buttons */}
+            </Grid>
+          </Grid>
+        </Box>
+      )}
+    </>
   );
 };
 
