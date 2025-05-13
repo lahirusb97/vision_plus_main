@@ -4,6 +4,7 @@ import {
   TransactionStatusTypes,
   TypeLensSide,
   TypeOrderStatus,
+  TypeWhatappMSG,
 } from "./StaticTypeModels";
 
 // Patient Model
@@ -61,6 +62,7 @@ export interface OrderItemLensInput {
   price_per_unit: number;
   subtotal: number;
   is_non_stock: boolean;
+  whatsapp_sent?: null;
 }
 
 export interface OrderItemFrameInput {
@@ -69,6 +71,7 @@ export interface OrderItemFrameInput {
   price_per_unit: number;
   subtotal: number;
   is_non_stock: boolean;
+  whatsapp_sent?: null;
 }
 
 export interface OrderItemExternalLensInput {
@@ -78,6 +81,7 @@ export interface OrderItemExternalLensInput {
   subtotal: number;
   note: string | null;
   is_non_stock: boolean;
+  whatsapp_sent: TypeWhatappMSG;
 }
 
 export type OrderItemInput =

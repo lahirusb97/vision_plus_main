@@ -193,6 +193,7 @@ export default function FactoryInvoiceForm() {
             subtotal: item.subtotal,
             note: item.note,
             is_non_stock: true,
+            whatsapp_sent: "not_sent",
             //!Note here
           })),
         ],
