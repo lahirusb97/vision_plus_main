@@ -46,73 +46,69 @@ const InvoiceView = () => {
     );
   }
 
-  if (!invoiceDetail) {
-    return (
-      <Typography variant="h6" align="center">
-        Invoice not found
-      </Typography>
-    );
-  }
-
   return (
     <div>
       {/* A5 Paper Size Container */}
-      <Box
-        sx={{
-          padding: "4mm",
-          minwidth: "6cm", // A5 width
-          minHeight: "10.5mc", // A5 height
-          border: "1px solid #000",
-          fontFamily: "Arial, sans-serif",
-          "@media print": {
-            minWidth: "13cm",
-            minHeight: "21cm",
-            border: "none",
-            margin: "0",
-          },
-        }}
-        ref={componentRef}
-      >
-        {/* Logo and Header */}
-        <InvoiceHeading invoiceDate={invoiceDetail.invoice_date} />
+      {invoiceDetail && (
+        <div>
+          <Box
+            sx={{
+              padding: "4mm",
+              minwidth: "6cm", // A5 width
+              minHeight: "10.5mc", // A5 height
+              border: "1px solid #000",
+              fontFamily: "Arial, sans-serif",
+              "@media print": {
+                minWidth: "13cm",
+                minHeight: "21cm",
+                border: "none",
+                margin: "0",
+              },
+            }}
+            ref={componentRef}
+          >
+            {/* Logo and Header */}
+            <InvoiceHeading invoiceDate={invoiceDetail.invoice_date} />
 
-        <InvoiceAddress invoiceDetail={invoiceDetail} />
+            <InvoiceAddress invoiceDetail={invoiceDetail} />
 
-        {/* Table using CSS Grid */}
-        <Table sx={{ border: "2px solid #000" }}>
-          <TableHead>
-            <TableRow sx={{ borderBottom: "2px solid #000" }}>
-              <TableCell>Description</TableCell>
-              <TableCell align="center">Qty.</TableCell>
-              <TableCell align="right">Unit</TableCell>
-              <TableCell align="right">Sum</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            <InvoiceLensDetails
-              order_items={invoiceDetail?.order_details?.order_items ?? []}
-            />
-            <InvoiceFrameDetails
-              order_items={invoiceDetail?.order_details?.order_items ?? []}
-            />
-            <InvoiceExternalLensDetails
-              order_items={invoiceDetail?.order_details?.order_items ?? []}
-            />
-            <InvoiceTotalSummery invoiceDetail={invoiceDetail} />
-          </TableBody>
-        </Table>
+            {/* Table using CSS Grid */}
+            <Table sx={{ border: "2px solid #000" }}>
+              <TableHead>
+                <TableRow sx={{ borderBottom: "2px solid #000" }}>
+                  <TableCell>Description</TableCell>
+                  <TableCell align="center">Qty.</TableCell>
+                  <TableCell align="right">Unit</TableCell>
+                  <TableCell align="right">Sum</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                <InvoiceLensDetails
+                  order_items={invoiceDetail?.order_details?.order_items ?? []}
+                />
+                <InvoiceFrameDetails
+                  order_items={invoiceDetail?.order_details?.order_items ?? []}
+                />
+                <InvoiceExternalLensDetails
+                  order_items={invoiceDetail?.order_details?.order_items ?? []}
+                />
+                <InvoiceTotalSummery invoiceDetail={invoiceDetail} />
+              </TableBody>
+            </Table>
 
-        <InvoiceFooter />
-      </Box>
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={() => reactToPrintFn()}
-        sx={{ mt: "2mm" }}
-      >
-        Print Invoice
-      </Button>
-      <OrderForm invoiceDetail={invoiceDetail} />
+            <InvoiceFooter />
+          </Box>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => reactToPrintFn()}
+            sx={{ mt: "2mm" }}
+          >
+            Print Invoice
+          </Button>
+          <OrderForm invoiceDetail={invoiceDetail} />
+        </div>
+      )}
     </div>
   );
 };

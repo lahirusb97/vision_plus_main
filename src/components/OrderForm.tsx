@@ -9,6 +9,7 @@ import { customerPaymentTotal } from "../utils/customerPaymentTotal";
 import OrderFromVisionTable from "./orderform/OrderFromVisionTable";
 import { formatDateTimeByType } from "../utils/formatDateTimeByType";
 import { numberWithCommas } from "../utils/numberWithCommas";
+import dayjs from "dayjs";
 
 interface OrderFormProps {
   invoiceDetail: Invoice | null;
@@ -170,9 +171,8 @@ const OrderForm: React.FC<OrderFormProps> = ({ invoiceDetail }) => {
                       {invoiceDetail.order_details.user_date && (
                         <Typography variant="body2" sx={{ fontWeight: "bold" }}>
                           Deliver Date{` : `}
-                          {formatDateTimeByType(
-                            invoiceDetail.order_details.user_date,
-                            "date"
+                          {dayjs(invoiceDetail.order_details.user_date).format(
+                            "DD-MM-YYYY"
                           )}
                         </Typography>
                       )}

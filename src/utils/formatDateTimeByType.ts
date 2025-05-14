@@ -9,7 +9,6 @@ export const formatDateTimeByType = (
     time: "N/A",
     both: "N/A - N/A",
   };
-  console.log(isoString);
 
   if (!isoString || typeof isoString !== "string") {
     return fallback[type];
