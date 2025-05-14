@@ -131,11 +131,11 @@ const OrderForm: React.FC<OrderFormProps> = ({ invoiceDetail }) => {
                     }}
                   >
                     <strong>
-                      {invoiceDetail?.order_details.on_hold && "On Hold"}
-                      {invoiceDetail?.order_details.on_hold &&
-                        invoiceDetail?.order_details.fitting_on_collection &&
+                      {invoiceDetail.order_details.on_hold && "On Hold"}
+                      {invoiceDetail.order_details.on_hold &&
+                        invoiceDetail.order_details.fitting_on_collection &&
                         " / "}
-                      {invoiceDetail?.order_details.fitting_on_collection &&
+                      {invoiceDetail.order_details.fitting_on_collection &&
                         "Fitting on Collection"}
                     </strong>
                   </Typography>
@@ -148,30 +148,30 @@ const OrderForm: React.FC<OrderFormProps> = ({ invoiceDetail }) => {
                     >
                       <Typography variant="body2" sx={{ fontWeight: "bold" }}>
                         Refraction by:{" "}
-                        {invoiceDetail?.refraction_details
-                          ?.prescription_type === "internal"
-                          ? invoiceDetail?.refraction_details?.username
-                          : invoiceDetail?.refraction_details
+                        {invoiceDetail.refraction_details?.prescription_type ===
+                        "internal"
+                          ? invoiceDetail.refraction_details?.username
+                          : invoiceDetail.refraction_details
                               ?.prescription_type_display}
                       </Typography>
                       <Typography variant="body2" sx={{ fontWeight: "bold" }}>
                         Refraction No:{" "}
-                        {invoiceDetail?.customer_details.refraction_number}
+                        {invoiceDetail.customer_details.refraction_number}
                       </Typography>
                       <Typography variant="body2" sx={{ fontWeight: "bold" }}>
                         Staff Member:
-                        {invoiceDetail?.order_details.sales_staff_username}
+                        {invoiceDetail.order_details.sales_staff_username}
                       </Typography>
                       <hr></hr>
                       <Typography variant="body2" sx={{ fontWeight: "bold" }}>
                         Name{` : `}
-                        {invoiceDetail?.customer_details.name}
+                        {invoiceDetail.customer_details.name}
                       </Typography>
-                      {invoiceDetail?.order_details.user_date && (
+                      {invoiceDetail.order_details.user_date && (
                         <Typography variant="body2" sx={{ fontWeight: "bold" }}>
                           Deliver Date{` : `}
                           {formatDateTimeByType(
-                            invoiceDetail?.order_details.user_date,
+                            invoiceDetail.order_details.user_date,
                             "date"
                           )}
                         </Typography>
