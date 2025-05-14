@@ -172,7 +172,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ invoiceDetail }) => {
                         <Typography variant="body2" sx={{ fontWeight: "bold" }}>
                           Deliver Date{` : `}
                           {dayjs(invoiceDetail.order_details.user_date).format(
-                            "DD-MM-YYYY"
+                            "YYYY-MM-DD"
                           )}
                         </Typography>
                       )}
