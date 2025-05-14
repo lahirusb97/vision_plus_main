@@ -185,7 +185,7 @@ function ChannelDetails() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {channelList.results.map((row) => (
+            {channelList?.results.map((row) => (
               <TableRow
                 key={row.id}
                 sx={{
