@@ -274,7 +274,7 @@ function ChannelDetails() {
                 </TableCell>
               </TableRow>
             )}
-            {channelList.results.length === 0 && (
+            {channelList?.results?.length === 0 && (
               <TableRow>
                 <TableCell align="center" colSpan={9}>
                   {channelListError ? "Error loading data " : "No data..."}
