@@ -19,7 +19,6 @@ import { useAxiosPost } from "../../../hooks/useAxiosPost";
 import { extractErrorMessage } from "../../../utils/extractErrorMessage";
 import toast from "react-hot-toast";
 import useGetFinanceSummary from "../../../hooks/useGetFinanceSummary";
-import DataLoadingError from "../../../components/common/DataLoadingError";
 import useGetSafeBalance from "../../../hooks/useGetSafeBalance";
 import { numberWithCommas } from "../../../utils/numberWithCommas";
 
