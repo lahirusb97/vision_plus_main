@@ -6,7 +6,15 @@ import {
   PickersDayProps,
 } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { Tooltip, CircularProgress, Box } from "@mui/material";
+import {
+  Tooltip,
+  CircularProgress,
+  Box,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+} from "@mui/material";
 import { styled } from "@mui/material/styles";
 import dayjs, { Dayjs } from "dayjs";
 import useGetDoctorShedule from "../hooks/useGetDoctorShedule";
@@ -79,61 +87,63 @@ export default function AppointmentDatePicker({
   );
 
   return (
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <DatePicker
-        label={label}
-        format="YYYY-MM-DD"
-        value={selectedDate ? dayjs(selectedDate) : null}
-        onChange={(newValue: Dayjs | null) => {
-          onDateChange(newValue ? newValue.format("YYYY-MM-DD") : null);
-        }}
-        disabled={
-          !doctorId || doctorSheduleListLoading || doctorSheduleListError
-        }
-        // onOpen={() => setIsOpen(true)}
-        // onClose={() => setIsOpen(false)}
-        slots={{
-          day: (props) => {
-            const dateStr = dayjs(props.day).format("YYYY-MM-DD");
-            const time = scheduleMap[dateStr];
+    <>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <DatePicker
+          label={label}
+          format="YYYY-MM-DD"
+          value={selectedDate ? dayjs(selectedDate) : null}
+          onChange={(newValue: Dayjs | null) => {
+            onDateChange(newValue ? newValue.format("YYYY-MM-DD") : null);
+          }}
+          disabled={
+            !doctorId || doctorSheduleListLoading || doctorSheduleListError
+          }
+          // onOpen={() => setIsOpen(true)}
+          // onClose={() => setIsOpen(false)}
+          slots={{
+            day: (props) => {
+              const dateStr = dayjs(props.day).format("YYYY-MM-DD");
+              const time = scheduleMap[dateStr];
 
-            if (doctorSheduleListLoading) {
-              return renderLoadingDay();
-            }
+              if (doctorSheduleListLoading) {
+                return renderLoadingDay();
+              }
 
-            if (time) {
-              return (
-                <Tooltip title={`Available at ${time}`} arrow>
-                  <span>
-                    <HighlightedPickersDay {...props} />
-                  </span>
-                </Tooltip>
-              );
-            }
+              if (time) {
+                return (
+                  <Tooltip title={`Available at ${time}`} arrow>
+                    <span>
+                      <HighlightedPickersDay {...props} />
+                    </span>
+                  </Tooltip>
+                );
+              }
 
-            return <PickersDay {...props} />;
-          },
-        }}
-        shouldDisableDate={(date) => {
-          const dateStr = dayjs(date).format("YYYY-MM-DD");
-          return !scheduleMap[dateStr]; // disables dates not in the schedule
-        }}
-        slotProps={{
-          textField: {
-            size: "small", // <-- Makes the input field compact
-          },
-          popper: {
-            sx: {
-              "& .MuiPickersDay-root": {
-                // Optional: Style for days in the calendar
+              return <PickersDay {...props} />;
+            },
+          }}
+          shouldDisableDate={(date) => {
+            const dateStr = dayjs(date).format("YYYY-MM-DD");
+            return !scheduleMap[dateStr]; // disables dates not in the schedule
+          }}
+          slotProps={{
+            textField: {
+              size: "small", // <-- Makes the input field compact
+            },
+            popper: {
+              sx: {
+                "& .MuiPickersDay-root": {
+                  // Optional: Style for days in the calendar
+                },
               },
             },
-          },
-          actionBar: {
-            actions: ["today", "cancel", "accept"],
-          },
-        }}
-      />
-    </LocalizationProvider>
+            actionBar: {
+              actions: ["today", "cancel", "accept"],
+            },
+          }}
+        />
+      </LocalizationProvider>
+    </>
   );
 }

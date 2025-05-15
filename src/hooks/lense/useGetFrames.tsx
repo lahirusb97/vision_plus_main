@@ -21,10 +21,10 @@ const useGetFrames = (): UseGetFrameReturn => {
   const [framesLoading, setFramesLoading] = useState<boolean>(true);
   const [framesError, setFramesError] = useState<boolean>(false);
   const [params, setParams] = useState<FrameParams>({
-    status: "active",
+    status: "inactive",
   });
   const abortControllerRef = useRef<AbortController | null>(null);
-
+  console.log(frames);
   const fetchFrames = useCallback(async () => {
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();

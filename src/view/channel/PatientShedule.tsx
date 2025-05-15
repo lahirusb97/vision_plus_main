@@ -27,6 +27,7 @@ import {
 } from "../../validations/schemaPatientReshedule";
 import useGetAppointmentSlots from "../../hooks/useGetAppointmentSlots";
 import AppointmentDatePicker from "../../components/AppointmentDatePicker";
+import BookedTimeSlotsDropdown from "../../components/common/BookedTimeSlotsDropdown";
 
 const PatientShedule = () => {
   const {
@@ -153,7 +154,11 @@ const PatientShedule = () => {
                 )}
               />
             </LocalizationProvider>
-
+            <BookedTimeSlotsDropdown
+              doctorId={watch("new_doctor_id") || null}
+              appointmentSlots={appointmentSlots?.appointments || []}
+              appointmentSlotsLoading={appointmentSlotsLoading}
+            />
             <Box>
               {watch("new_doctor_id") && watch("new_date") && (
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>

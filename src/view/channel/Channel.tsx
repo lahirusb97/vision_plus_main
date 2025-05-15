@@ -32,6 +32,8 @@ import OnlinePayInput from "../../components/inputui/OnlinePayInput";
 import { formatUserPayments } from "../../utils/formatUserPayments";
 import AppointmentDatePicker from "../../components/AppointmentDatePicker";
 import useGetAppointmentSlots from "../../hooks/useGetAppointmentSlots";
+import { TimePicker } from "@mui/x-date-pickers";
+import BookedTimeSlotsDropdown from "../../components/common/BookedTimeSlotsDropdown";
 const Channel = () => {
   const { data: doctorList, loading } = useGetDoctors();
   const {
@@ -55,9 +57,6 @@ const Channel = () => {
 
   const onSubmit = async (data: ChannelAppointmentForm) => {
     const channelDate = dayjs(data.channel_date).format("YYYY-MM-DD");
-    const channelTime = dayjs(appointmentSlots?.doctor_arrival, "h:mm A")
-      .add(((appointmentSlots?.total_appointments || 0) + 1) * 5, "minute")
-      .format("HH:mm:ss");
 
     const userPayments = {
       credit_card: data.credit_card,
@@ -71,7 +70,7 @@ const Channel = () => {
       address: data.address,
       contact_number: data.phone_number,
       channel_date: channelDate,
-      time: channelTime,
+      time: data.channel_time.format("HH:mm:ss"),
       channeling_fee: data.channeling_fee,
       payments: formatUserPayments(userPayments),
     };
@@ -98,6 +97,7 @@ const Channel = () => {
       );
     }
   };
+
   return (
     <FormProvider {...methods}>
       <Box
@@ -177,6 +177,11 @@ const Channel = () => {
                 )}
               />
             </LocalizationProvider>
+            <BookedTimeSlotsDropdown
+              doctorId={watch("doctor_id") || null}
+              appointmentSlots={appointmentSlots?.appointments || []}
+              appointmentSlotsLoading={appointmentSlotsLoading}
+            />
             <Box>
               {watch("doctor_id") && watch("channel_date") && (
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
@@ -200,19 +205,29 @@ const Channel = () => {
                           ? appointmentSlots?.total_appointments + 1
                           : "1"}
                       </Typography>
-                      <Typography>Time</Typography>
-                      <Typography>
-                        {appointmentSlots?.doctor_arrival
-                          ? dayjs(appointmentSlots.doctor_arrival, "h:mm A")
-                              .add(
-                                ((appointmentSlots.total_appointments || 0) +
-                                  1) *
-                                  5,
-                                "minute"
-                              )
-                              .format("hh:mm A")
-                          : "N/A"}
-                      </Typography>
+                      <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <Controller
+                          name="channel_time"
+                          control={control}
+                          render={({ field, fieldState }) => (
+                            <TimePicker
+                              label="Channel Time"
+                              value={field.value ? dayjs(field.value) : null}
+                              onChange={(time) => {
+                                field.onChange(time);
+                              }}
+                              slotProps={{
+                                textField: {
+                                  error: !!fieldState.error,
+                                  helperText: fieldState.error?.message,
+                                  size: "small",
+                                  sx: { width: 200 },
+                                },
+                              }}
+                            />
+                          )}
+                        />
+                      </LocalizationProvider>
                     </>
                   )}
                 </Box>

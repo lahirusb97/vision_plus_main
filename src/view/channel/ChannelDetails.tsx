@@ -44,7 +44,7 @@ function ChannelDetails() {
     channelListPageNavigation,
     channelListChangePageSize,
   } = useGetChannelDetails();
-  console.log(channelList);
+
   //handle Filters
 
   const handleFilter = () => {

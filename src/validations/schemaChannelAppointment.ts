@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import { z } from "zod";
 
 export const ChannelAppointmentSchema = z.object({
@@ -6,6 +7,12 @@ export const ChannelAppointmentSchema = z.object({
   address: z.string().optional().nullable(),
   phone_number: z.string().optional().nullable(),
   channel_date: z.date().or(z.string()),
+  channel_time: z.custom<dayjs.Dayjs>(
+    (val) => dayjs.isDayjs(val) && val.isValid(),
+    {
+      message: "Invalid channel time",
+    }
+  ),
   channeling_fee: z.number().min(0, "Channeling Fee is required"),
   branch_id: z.number({ invalid_type_error: "Branch is required" }),
   cash: z.number().min(0, "Cash Amount is required"),

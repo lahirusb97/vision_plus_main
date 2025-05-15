@@ -18,7 +18,7 @@ export interface AppointmentSlots {
 const useGetAppointmentSlots = () => {
   //use null or [] base on scenario
   const [Data, setData] = useState<AppointmentSlots | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
 
   const abortControllerRef = useRef<AbortController | null>(null);

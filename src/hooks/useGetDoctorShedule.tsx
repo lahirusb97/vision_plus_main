@@ -48,6 +48,7 @@ export default function useUpcomingSchedules(): UseUpcomingSchedulesResult {
       });
       if (!abortController.signal.aborted) {
         setHighlightedDates(res.data);
+        console.log(res.data);
       }
     } catch (err) {
       // Check if the error is a cancellation
