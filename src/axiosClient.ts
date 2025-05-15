@@ -14,7 +14,7 @@ const axiosClient: AxiosInstance = axios.create({
   //   import.meta.env.VITE_DEV === "true"
   //     ? import.meta.env.VITE_LOCAL_BASE_URL
   //     : import.meta.env.VITE_API_BASE_URL,
-  // withCredentials: false,
+  // // withCredentials: false,
 });
 
 // Request interceptor to add Authorization header

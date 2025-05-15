@@ -7,8 +7,8 @@ export interface DoctorSchedule {
   branch: number;
   branch_name: string;
   date: string; // Format: YYYY-MM-DD
-  start_time: string; // Format: HH:mm:ss
+  start_time: string; // Format: hh:mm A
   status: DoctorScheduleStatus; // You can refine enum based on real values
-  created_at: string; // ISO timestamp
-  updated_at: string; // ISO timestamp
+  created_at: string; // 
+  updated_at: string; // 
 }

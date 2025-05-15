@@ -10,10 +10,6 @@ import {
   Tooltip,
   CircularProgress,
   Box,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import dayjs, { Dayjs } from "dayjs";
@@ -144,6 +140,7 @@ export default function AppointmentDatePicker({
           }}
         />
       </LocalizationProvider>
+    
     </>
   );
 }
