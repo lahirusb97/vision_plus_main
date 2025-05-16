@@ -31,8 +31,11 @@ const DeleteDialog: React.FC = () => {
       <DialogTitle>Confirm Deletion</DialogTitle>
       <DialogContent>
         <Typography>
-          Are you sure you want to Deactivate{" "}
+          Are you sure you want to {state.deleteType}{" "}
           <strong>{state.itemName || "this item"}</strong>?
+        </Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+          {state.message}
         </Typography>
       </DialogContent>
       <DialogActions>
@@ -40,7 +43,7 @@ const DeleteDialog: React.FC = () => {
           No
         </Button>
         <Button onClick={handleDelete} color="error" variant="contained">
-          Yes, Deactivate
+          Yes, {state.deleteType}
         </Button>
       </DialogActions>
     </Dialog>

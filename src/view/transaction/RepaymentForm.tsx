@@ -65,7 +65,7 @@ const RepaymentForm = () => {
         order_id: invoiceDetail?.order,
         progress_status: data.progress_status
           ? "issue_to_customer"
-          : invoiceDetail?.progress_status,
+          : invoiceDetail?.order_details?.progress_status,
         payments: [
           ...formatUserPayments(userPayments),
           ...formatPreviusUserPayments(
@@ -153,7 +153,7 @@ const RepaymentForm = () => {
             Full Amount
           </Typography>
           <Typography sx={{ fontSize: 16, fontWeight: "bold" }}>
-            {invoiceDetail?.order_details.sub_total}
+            {numberWithCommas(invoiceDetail?.order_details.sub_total)}
           </Typography>
         </Paper>
 
@@ -168,7 +168,7 @@ const RepaymentForm = () => {
         >
           <Typography sx={{ fontSize: 16 }}>Discount</Typography>
           <Typography sx={{ fontSize: 16 }}>
-            {invoiceDetail?.order_details.discount}
+            {numberWithCommas(invoiceDetail?.order_details.discount)}
           </Typography>
         </Paper>
 
@@ -203,7 +203,9 @@ const RepaymentForm = () => {
             Total Recived Payment
           </Typography>
           <Typography sx={{ fontSize: 16, fontWeight: "bold" }}>
-            {orderpaymentTotal(invoiceDetail?.order_details.order_payments)}
+            {numberWithCommas(
+              orderpaymentTotal(invoiceDetail?.order_details.order_payments)
+            )}
           </Typography>
         </Paper>
 
@@ -218,8 +220,10 @@ const RepaymentForm = () => {
         >
           <Typography sx={{ fontSize: 16 }}>Balance</Typography>
           <Typography sx={{ fontSize: 16 }}>
-            {safeParseFloat(invoiceDetail?.order_details.total_price) -
-              orderpaymentTotal(invoiceDetail?.order_details.order_payments)}
+            {numberWithCommas(
+              safeParseFloat(invoiceDetail?.order_details.total_price) -
+                orderpaymentTotal(invoiceDetail?.order_details.order_payments)
+            )}
           </Typography>
         </Paper>
 
@@ -234,9 +238,11 @@ const RepaymentForm = () => {
         >
           <Typography sx={{ fontSize: 16 }}>New Payment</Typography>
           <Typography sx={{ fontSize: 16 }}>
-            {safeParseFloat(methods.watch("cash")) +
-              safeParseFloat(methods.watch("credit_card")) +
-              safeParseFloat(methods.watch("online_transfer"))}
+            {numberWithCommas(
+              safeParseFloat(methods.watch("cash")) +
+                safeParseFloat(methods.watch("credit_card")) +
+                safeParseFloat(methods.watch("online_transfer"))
+            )}
           </Typography>
         </Paper>
 
@@ -251,11 +257,13 @@ const RepaymentForm = () => {
         >
           <Typography sx={{ fontSize: 16 }}>New Balance</Typography>
           <Typography sx={{ fontSize: 16 }}>
-            {safeParseFloat(invoiceDetail?.order_details.total_price) -
-              orderpaymentTotal(invoiceDetail?.order_details.order_payments) -
-              (safeParseFloat(methods.watch("cash")) +
-                safeParseFloat(methods.watch("credit_card")) +
-                safeParseFloat(methods.watch("online_transfer")))}
+            {numberWithCommas(
+              safeParseFloat(invoiceDetail?.order_details.total_price) -
+                orderpaymentTotal(invoiceDetail?.order_details.order_payments) -
+                (safeParseFloat(methods.watch("cash")) +
+                  safeParseFloat(methods.watch("credit_card")) +
+                  safeParseFloat(methods.watch("online_transfer")))
+            )}
           </Typography>
         </Paper>
         <FormProvider {...methods}>
@@ -279,8 +287,8 @@ const RepaymentForm = () => {
             >
               <Typography variant="body1">
                 Current Order Progress -{" "}
-                {invoiceDetail?.progress_status &&
-                  progressStatus(invoiceDetail?.progress_status)}
+                {invoiceDetail?.order_details.progress_status &&
+                  progressStatus(invoiceDetail?.order_details.progress_status)}
               </Typography>
               <Box ml={1} display="flex" alignItems="center">
                 <Typography variant="body1"> Issue To Good</Typography>

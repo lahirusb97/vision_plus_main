@@ -84,6 +84,15 @@ export default function ChannelPatientDetail() {
         />
       </Box>
       <TextField
+        {...register("note")}
+        label="Mobile Number 2"
+        variant="outlined"
+        type="text"
+        size="small"
+        fullWidth
+        autoComplete="off"
+      />
+      <TextField
         {...register("address")}
         error={!!errors.address}
         size="small"

@@ -1,9 +1,9 @@
 import React from "react";
-import { Button, Paper, Typography } from "@mui/material";
+import { Box, Button, Divider, Typography } from "@mui/material";
 import AutocompleteInputField from "../../components/inputui/DropdownInput";
 import { useNavigate } from "react-router";
 import toast from "react-hot-toast";
-import { useDeleteDialog } from "../../context/DeleteDialogContext";
+// import { useDeleteDialog } from "../../context/DeleteDialogContext";
 interface dataList {
   id: number;
   name: string;
@@ -13,8 +13,8 @@ interface AddVariationCompProps {
   textName: string;
   Urlpath: string;
   dataList: dataList[];
-  pathroute: string;
-  refresh: () => void;
+  // pathroute: string;
+  // refresh: () => void;
   loading: boolean;
 }
 
@@ -22,16 +22,16 @@ export default function AddVariationComp({
   textName,
   Urlpath,
   dataList,
-  pathroute,
+  // pathroute,
   loading,
-  refresh,
-}: AddVariationCompProps) {
+}: // refresh,
+AddVariationCompProps) {
   const navigate = useNavigate();
-  const { openDialog } = useDeleteDialog();
+  // const { openDialog } = useDeleteDialog();
   const [lenseCoating, setLenseCoating] = React.useState<number | null>(null);
   return (
     <div>
-      <Paper
+      <Box
         sx={{
           padding: 1,
           display: "flex",
@@ -58,6 +58,8 @@ export default function AddVariationComp({
           </Button>
           <Button
             variant="outlined"
+            color="info"
+            disabled={!lenseCoating}
             onClick={() => {
               if (lenseCoating) {
                 navigate(`${Urlpath}/${lenseCoating}`);
@@ -68,19 +70,26 @@ export default function AddVariationComp({
           >
             Edit
           </Button>
-          <Button
+          {/* <Button
             color="error"
             variant="outlined"
             onClick={() => {
               if (lenseCoating) {
-                openDialog(`${pathroute}/${lenseCoating}/`, textName, refresh);
+                openDialog(
+                  `${pathroute}/${lenseCoating}/`,
+                  textName,
+                  "Permanantly Delete",
+                  "Permanantly Delete",
+                  refresh
+                );
               }
             }}
           >
             Delete
-          </Button>
+          </Button> */}
         </div>
-      </Paper>
+      </Box>
+      <Divider sx={{ margin: 1 }} />
     </div>
   );
 }

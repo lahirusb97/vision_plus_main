@@ -7,7 +7,6 @@ import OrderFormRemark from "./OrderFormRemark";
 import OrderFromRemarkDetails from "./orderform/OrderFromRemarkDetails";
 import { customerPaymentTotal } from "../utils/customerPaymentTotal";
 import OrderFromVisionTable from "./orderform/OrderFromVisionTable";
-import { formatDateTimeByType } from "../utils/formatDateTimeByType";
 import { numberWithCommas } from "../utils/numberWithCommas";
 import dayjs from "dayjs";
 

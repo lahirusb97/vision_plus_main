@@ -8,9 +8,10 @@ export default function OrderFromRemarkDetails({
 }: OrderFromRemarkDetailsProps) {
   return (
     <div>
-      <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+      <Typography variant="body2" fontWeight={"bold"}>
+        <strong>Refraction Remark</strong>
         {invoiceDetail?.refraction_details?.refraction_remark &&
-          ` Refraction Remark : ${invoiceDetail?.refraction_details.refraction_remark}`}
+          ` : ${invoiceDetail?.refraction_details.refraction_remark}`}
       </Typography>
 
       <Typography variant="body2" fontWeight="bold">

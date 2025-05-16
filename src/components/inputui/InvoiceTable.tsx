@@ -15,6 +15,7 @@ import { useFormContext } from "react-hook-form";
 import { removeexternalLense } from "../../features/invoice/externalLenseSlice";
 
 import DiscountInput from "./DiscountInput";
+import { numberWithCommas } from "../../utils/numberWithCommas";
 
 export default function InvoiceTable() {
   const { watch } = useFormContext();
@@ -95,8 +96,12 @@ export default function InvoiceTable() {
 
               <TableCell>{`${row.frame_detail.brand_name} / ${row.frame_detail.code_name} / ${row.frame_detail.color_name} / ${row.frame_detail.species} / ${row.frame_detail.brand_type_display}`}</TableCell>
               <TableCell align="center">{row.buyQty}</TableCell>
-              <TableCell align="right">{row.price_per_unit}</TableCell>
-              <TableCell align="right">{row.subtotal}</TableCell>
+              <TableCell align="right">
+                {numberWithCommas(row.price_per_unit)}
+              </TableCell>
+              <TableCell align="right">
+                {numberWithCommas(row.subtotal)}
+              </TableCell>
             </TableRow>
           ))}
 
@@ -130,8 +135,12 @@ export default function InvoiceTable() {
               </TableCell>
 
               <TableCell align="center">{row.buyQty}</TableCell>
-              <TableCell align="right">{row.price_per_unit}</TableCell>
-              <TableCell align="right">{row.subtotal}</TableCell>
+              <TableCell align="right">
+                {numberWithCommas(row.price_per_unit)}
+              </TableCell>
+              <TableCell align="right">
+                {numberWithCommas(row.subtotal)}
+              </TableCell>
             </TableRow>
           ))}
           {/* //! External Invoice */}
@@ -166,8 +175,12 @@ export default function InvoiceTable() {
               } `}</TableCell>
 
               <TableCell align="center">{row.buyQty}</TableCell>
-              <TableCell align="right">{row.price_per_unit}</TableCell>
-              <TableCell align="right">{row.subtotal}</TableCell>
+              <TableCell align="right">
+                {numberWithCommas(row.price_per_unit)}
+              </TableCell>
+              <TableCell align="right">
+                {numberWithCommas(row.subtotal)}
+              </TableCell>
             </TableRow>
           ))}
           {/* //! External Invoice */}
@@ -178,7 +191,7 @@ export default function InvoiceTable() {
             <TableCell align="right" colSpan={2}>
               Subtotal
             </TableCell>
-            <TableCell align="right">{subtotal}</TableCell>
+            <TableCell align="right">{numberWithCommas(subtotal)}</TableCell>
           </TableRow>
           <TableRow>
             <TableCell colSpan={1} />
@@ -191,16 +204,18 @@ export default function InvoiceTable() {
             <TableCell align="right" colSpan={2}>
               Total
             </TableCell>
-            <TableCell align="right">{grandTotal}</TableCell>
+            <TableCell align="right">{numberWithCommas(grandTotal)}</TableCell>
           </TableRow>
           <TableRow>
             <TableCell sx={{ fontWeight: "bold" }} align="right" colSpan={2}>
               Current Payment
             </TableCell>
             <TableCell sx={{ fontWeight: "bold" }} align="right">
-              {parseInt(watch("online_transfer") || 0) +
-                parseInt(watch("credit_card") || 0) +
-                parseInt(watch("cash") || 0)}
+              {numberWithCommas(
+                parseInt(watch("online_transfer") || 0) +
+                  parseInt(watch("credit_card") || 0) +
+                  parseInt(watch("cash") || 0)
+              )}
             </TableCell>
           </TableRow>
           <TableRow>
@@ -208,10 +223,12 @@ export default function InvoiceTable() {
               Balance
             </TableCell>
             <TableCell sx={{ fontWeight: "bold" }} align="right">
-              {grandTotal -
-                (parseInt(watch("online_transfer") || 0) +
-                  parseInt(watch("credit_card") || 0) +
-                  parseInt(watch("cash") || 0))}
+              {numberWithCommas(
+                grandTotal -
+                  (parseInt(watch("online_transfer") || 0) +
+                    parseInt(watch("credit_card") || 0) +
+                    parseInt(watch("cash") || 0))
+              )}
             </TableCell>
           </TableRow>
         </TableBody>

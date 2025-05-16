@@ -35,6 +35,7 @@ import ExternalFactoryCreate from "../../view/stock/external_lens/external_facto
 import ExternalFactoryUpdate from "../../view/stock/external_lens/external_factory/ExternalFactoryUpdate";
 import ExternalCoatingCreate from "../../view/stock/external_lens/external_coating/ExternalCoatingCreate";
 import ExternalCoatingUpdate from "../../view/stock/external_lens/external_coating/ExternalCoatingUpdate";
+import FrameFullEdit from "../../view/stock/frame/FrameFullEdit";
 export const stockRoutes: RouteObject[] = [
   {
     path: "add_frames",
@@ -55,6 +56,10 @@ export const stockRoutes: RouteObject[] = [
       {
         path: "edit/:id",
         element: <FrameEdit />,
+      },
+      {
+        path: "full_edit/:id",
+        element: <FrameFullEdit />,
       },
       {
         path: "history/:id",

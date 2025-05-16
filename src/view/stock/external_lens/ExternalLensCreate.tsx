@@ -29,10 +29,9 @@ export default function ExternalLensCreate() {
   const { lenseTypes, lenseTypesLoading } = useGetLenseTypes();
 
   const { postHandler, postHandlerloading, postHandlerError } = useAxiosPost();
-  const { externalFactorys, externalFactorysLoading, externalFactorysRefresh } =
+  const { externalFactorys, externalFactorysLoading } =
     useGetExternalFactorys();
-  const { externalCoatings, externalCoatingsLoading, externalCoatingsRefresh } =
-    useGetExternalCoating();
+  const { externalCoatings, externalCoatingsLoading } = useGetExternalCoating();
   const {
     control,
     handleSubmit,
@@ -61,24 +60,25 @@ export default function ExternalLensCreate() {
 
   return (
     <Box display={"flex"} gap={2}>
-      <Box sx={{ minWidth: 400 }}>
+      <Paper sx={{ minWidth: 400, p: 1 }}>
+        <TitleText title="External Lens Variations Create" />
         <AddVariationComp
           loading={externalFactorysLoading}
-          textName="Lens Factory"
+          textName="External Lens Factorys"
           Urlpath="lense_factory"
           dataList={externalFactorys}
-          pathroute={"external-lens-brands"}
-          refresh={externalFactorysRefresh}
+          // pathroute={"external-lens-brands"}
+          // refresh={externalFactorysRefresh}
         />
         <AddVariationComp
           loading={externalCoatingsLoading}
-          textName="Coating"
+          textName="External Lens Coatings"
           Urlpath="lense_coating"
           dataList={externalCoatings}
-          pathroute={"external-lens-coatings"}
-          refresh={externalCoatingsRefresh}
+          // pathroute={"external-lens-coatings"}
+          // refresh={externalCoatingsRefresh}
         />
-      </Box>
+      </Paper>
       <Paper
         sx={{
           display: "flex",
@@ -86,7 +86,6 @@ export default function ExternalLensCreate() {
           gap: 1,
           minWidth: 400,
           p: 1,
-          mt: 1,
         }}
         component={"form"}
         onSubmit={handleSubmit(createExternalLens)}

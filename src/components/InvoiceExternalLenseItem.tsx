@@ -5,6 +5,7 @@ import {
   ExternalLenseFilterModel,
   removeexternalLense,
 } from "../features/invoice/externalLenseSlice";
+import { numberWithCommas } from "../utils/numberWithCommas";
 interface LenseItemProps {
   lense: ExternalLenseFilterModel;
 }
@@ -38,9 +39,11 @@ export default function InvoiceExternalLenseItem({ lense }: LenseItemProps) {
       </Typography>
       <Typography variant="body2">Quantity: {lense?.buyQty}</Typography>
       <Typography variant="body2">
-        Unite Price: {lense?.price_per_unit}
+        Unite Price: {numberWithCommas(lense?.price_per_unit)}
       </Typography>
-      <Typography variant="body2">Total Price: {lense?.subtotal}</Typography>
+      <Typography variant="body2">
+        Total Price: {numberWithCommas(lense?.subtotal)}
+      </Typography>
       <IconButton
         onClick={() => dispatch(removeexternalLense(lense.external_lens_id))}
         color="error"

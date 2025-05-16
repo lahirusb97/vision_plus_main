@@ -50,7 +50,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import useGetBusTitles from "../../../hooks/useGetBusTitles";
 import { BUSID } from "../../../data/staticVariables";
-import { ProgressStatus } from "../../../model/StaticTypeModels";
+
 export default function FactoryInvoiceForm() {
   const { prepareValidation, resetValidation, validationState } =
     useValidationState();

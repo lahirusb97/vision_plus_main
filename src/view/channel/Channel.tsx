@@ -71,6 +71,7 @@ const Channel = () => {
       contact_number: data.phone_number,
       channel_date: channelDate,
       time: data.channel_time.format("HH:mm:ss"),
+      note: data.note,
       channeling_fee: data.channeling_fee,
       payments: formatUserPayments(userPayments),
     };
@@ -177,11 +178,13 @@ const Channel = () => {
                 )}
               />
             </LocalizationProvider>
-            <BookedTimeSlotsDropdown
-              doctorId={watch("doctor_id") || null}
-              appointmentSlots={appointmentSlots?.appointments || []}
-              appointmentSlotsLoading={appointmentSlotsLoading}
-            />
+            {appointmentSlots && (
+              <BookedTimeSlotsDropdown
+                doctorId={watch("doctor_id") || null}
+                appointmentSlots={appointmentSlots?.appointments || []}
+                appointmentSlotsLoading={appointmentSlotsLoading}
+              />
+            )}
             <Box>
               {watch("doctor_id") && watch("channel_date") && (
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>

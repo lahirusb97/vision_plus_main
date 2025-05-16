@@ -31,7 +31,7 @@ const FrameCodeAdd = () => {
         ...formData,
         brand: parseInt(paramName?.toString() ?? ""),
       });
-      toast.success("Lense Code added successfully");
+      toast.success("Frame Code added successfully");
       navigate(-1);
       setFormData({
         name: "",

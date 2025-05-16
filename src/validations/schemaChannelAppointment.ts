@@ -15,6 +15,7 @@ export const ChannelAppointmentSchema = z.object({
   ),
   channeling_fee: z.number().min(0, "Channeling Fee is required"),
   branch_id: z.number({ invalid_type_error: "Branch is required" }),
+  note: z.string().optional().nullable(),
   cash: z.number().min(0, "Cash Amount is required"),
   credit_card: z.number().min(0, "Card Amount is required"),
   online_transfer: z.number().min(0, "Online Transfer Amount is required"),

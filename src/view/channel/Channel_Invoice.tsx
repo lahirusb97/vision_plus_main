@@ -101,12 +101,12 @@ const ChannelInvoice = () => {
               {singleAppointment?.time}
             </Typography>
           </Box>
-          <Box display="flex" justifyContent="space-between" sx={{ mt: 2 }}>
+          {/* <Box display="flex" justifyContent="space-between" sx={{ mt: 2 }}>
             <Typography variant="body2">Invoice Number</Typography>
             <Typography variant="body2">
               {singleAppointment?.invoice_number}
             </Typography>
-          </Box>
+          </Box> */}
 
           <Box display="flex" justifyContent="space-between">
             <Typography variant="body2">Patient Name</Typography>

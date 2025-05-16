@@ -102,8 +102,12 @@ export default function EditInvoiceTable({ paymentList }: Props) {
 
               <TableCell>{`${row.frame_detail.brand_name} / ${row.frame_detail.code_name} / ${row.frame_detail.color_name} / ${row.frame_detail.species} / ${row.frame_detail.brand_type_display}`}</TableCell>
               <TableCell align="center">{row.buyQty}</TableCell>
-              <TableCell align="right">{row.price_per_unit}</TableCell>
-              <TableCell align="right">{row.subtotal}</TableCell>
+              <TableCell align="right">
+                {numberWithCommas(row.price_per_unit)}
+              </TableCell>
+              <TableCell align="right">
+                {numberWithCommas(row.subtotal)}
+              </TableCell>
             </TableRow>
           ))}
 
@@ -136,8 +140,12 @@ export default function EditInvoiceTable({ paymentList }: Props) {
               </TableCell>
 
               <TableCell align="center">{row.buyQty}</TableCell>
-              <TableCell align="right">{row.price_per_unit}</TableCell>
-              <TableCell align="right">{row.subtotal}</TableCell>
+              <TableCell align="right">
+                {numberWithCommas(row.price_per_unit)}
+              </TableCell>
+              <TableCell align="right">
+                {numberWithCommas(row.subtotal)}
+              </TableCell>
             </TableRow>
           ))}
           {/* //! External Invoice */}
@@ -166,8 +174,12 @@ export default function EditInvoiceTable({ paymentList }: Props) {
               }`}</TableCell>
 
               <TableCell align="center">{row.buyQty}</TableCell>
-              <TableCell align="right">{row.price_per_unit}</TableCell>
-              <TableCell align="right">{row.subtotal}</TableCell>
+              <TableCell align="right">
+                {numberWithCommas(row.price_per_unit)}
+              </TableCell>
+              <TableCell align="right">
+                {numberWithCommas(row.subtotal)}
+              </TableCell>
             </TableRow>
           ))}
           {/* //! External Invoice */}
@@ -212,9 +224,11 @@ export default function EditInvoiceTable({ paymentList }: Props) {
               Current Payment
             </TableCell>
             <TableCell sx={{ fontWeight: "bold" }} align="right">
-              {parseInt(watch("online_transfer") || 0) +
-                parseInt(watch("credit_card") || 0) +
-                parseInt(watch("cash") || 0)}
+              {numberWithCommas(
+                parseInt(watch("online_transfer") || 0) +
+                  parseInt(watch("credit_card") || 0) +
+                  parseInt(watch("cash") || 0)
+              )}
             </TableCell>
           </TableRow>
           <TableRow>
@@ -230,11 +244,13 @@ export default function EditInvoiceTable({ paymentList }: Props) {
               align="right"
               colSpan={5}
             >
-              {grandTotal -
-                totalPrePayments -
-                (parseInt(watch("online_transfer") || 0) +
-                  parseInt(watch("credit_card") || 0) +
-                  parseInt(watch("cash") || 0))}
+              {numberWithCommas(
+                grandTotal -
+                  totalPrePayments -
+                  (parseInt(watch("online_transfer") || 0) +
+                    parseInt(watch("credit_card") || 0) +
+                    parseInt(watch("cash") || 0))
+              )}
             </TableCell>
           </TableRow>
         </TableBody>

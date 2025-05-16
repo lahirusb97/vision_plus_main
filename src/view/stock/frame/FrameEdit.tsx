@@ -1,10 +1,11 @@
 import {
   Box,
-  Chip,
   TextField,
   Typography,
   Paper,
   CircularProgress,
+  Stack,
+  Divider,
 } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,11 +17,18 @@ import useGetSingleFrame from "../../../hooks/lense/useGetSingleFrame";
 import { FrameFormModel, schemaFrame } from "../../../validations/schemaFrame";
 import { useAxiosPut } from "../../../hooks/useAxiosPut";
 import SaveButton from "../../../components/SaveButton";
+import InfoChip from "../../../components/common/InfoChip";
+import { numberWithCommas } from "../../../utils/numberWithCommas";
+import BackButton from "../../../components/BackButton";
+import { useNavigate } from "react-router";
+import DataLoadingError from "../../../components/common/DataLoadingError";
 
 const FrameEdit = () => {
+  const navigate = useNavigate();
   const { id } = useParams();
 
-  const { singleFrame, singleFrameLoading, refresh } = useGetSingleFrame(id);
+  const { singleFrame, singleFrameLoading, singleFrameError } =
+    useGetSingleFrame(id);
   const { putHandler, putHandlerloading } = useAxiosPut();
   const {
     handleSubmit,
@@ -41,9 +49,9 @@ const FrameEdit = () => {
 
     try {
       await putHandler(`/frames/${id}/`, postDAta);
-      toast.success("Frame added successfully");
+      toast.success("Frame Updated successfully");
       reset();
-      refresh();
+      navigate(-1);
     } catch (error) {
       if (error instanceof AxiosError) {
         // Safely access error.response.data.message
@@ -54,6 +62,24 @@ const FrameEdit = () => {
       }
     }
   };
+
+  if (singleFrameLoading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "80vh",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
+  if (singleFrameError) {
+    return <DataLoadingError />;
+  }
   return (
     <Box
       sx={{
@@ -67,79 +93,78 @@ const FrameEdit = () => {
         component={"form"}
         onSubmit={handleSubmit(submiteData)}
         sx={{ padding: 4, width: 400, textAlign: "Left" }}
-        elevation={3}
+        variant="outlined"
       >
-        <Typography variant="h6" fontWeight="bold" paddingLeft="9px">
-          Frames Price Update
+        <BackButton />
+        <Typography variant="h6" fontWeight="600" gutterBottom>
+          Frame Price Update
         </Typography>
+        <Divider sx={{ mb: 2 }} />
+        {!singleFrameLoading && singleFrame ? (
+          <>
+            <Box sx={{ my: 2 }}>
+              <Typography
+                variant="subtitle1"
+                sx={{ mb: 1, fontWeight: 600, color: "#2E3A59" }}
+              >
+                Frame Details
+              </Typography>
 
-        {!singleFrameLoading ? (
-          <Box
-            sx={{
-              marginY: 2,
-              display: "flex",
-              flexDirection: "row",
-              flexWrap: "wrap",
-              gap: 1,
-            }}
-          >
-            <Chip
-              label={`Brand - ${singleFrame?.brand_name}`}
-              color="primary"
-              sx={{ backgroundColor: "#237ADE", color: "white" }}
-            />
-            <Chip
-              label={`Code - ${singleFrame?.code_name}`}
-              color="primary"
-              sx={{ backgroundColor: "#237ADE", color: "white" }}
-            />
-            <Chip
-              label={`Color - ${singleFrame?.species}`}
-              color="primary"
-              sx={{ backgroundColor: "#237ADE", color: "white" }}
-            />
-            <Chip
-              label={`Color - ${singleFrame?.size}`}
-              color="primary"
-              sx={{ backgroundColor: "#237ADE", color: "white" }}
-            />
-            <Chip
-              label={`Color - ${singleFrame?.color_name}`}
-              color="primary"
-              sx={{ backgroundColor: "#237ADE", color: "white" }}
-            />
-            <Chip
-              label={`Color - ${singleFrame?.brand_type_display}`}
-              color="primary"
-              sx={{ backgroundColor: "#237ADE", color: "white" }}
-            />
-          </Box>
+              <Stack direction="row" spacing={1.5} useFlexGap flexWrap="wrap">
+                {[
+                  { label: "Brand", value: singleFrame?.brand_name },
+                  { label: "Code", value: singleFrame?.code_name },
+                  { label: "Species", value: singleFrame?.species },
+                  { label: "Size", value: singleFrame?.size },
+                  { label: "Color", value: singleFrame?.color_name },
+                  {
+                    label: "Brand Type",
+                    value: singleFrame?.brand_type_display,
+                  },
+                ].map((item) => (
+                  <div key={item.label}>
+                    <InfoChip label={item.label} value={item.value} />
+                  </div>
+                ))}
+              </Stack>
+            </Box>
+            <Box>
+              <Typography variant="body2" fontWeight="500" sx={{ mb: 0.5 }}>
+                Current Price
+              </Typography>
+              <Typography
+                variant="h6"
+                fontWeight="bold"
+                sx={{ color: "#1565C0", mb: 1 }}
+              >
+                Rs. {numberWithCommas(singleFrame?.price)}
+              </Typography>
+              <TextField
+                fullWidth
+                label="New Price"
+                variant="outlined"
+                inputProps={{ min: 0 }}
+                type="number"
+                {...register("price", {
+                  setValueAs: (value) =>
+                    value === "" ? undefined : Number(value),
+                })}
+                error={!!errors.price}
+                helperText={errors.price?.message}
+                sx={{ marginBottom: 2 }}
+              />
+
+              <SaveButton btnText="Save" loading={putHandlerloading} />
+            </Box>
+          </>
         ) : (
-          <CircularProgress />
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <CircularProgress size={20} />
+            <Typography variant="body2" color="text.secondary">
+              Loading frame data...
+            </Typography>
+          </Box>
         )}
-        <Typography
-          marginY={1}
-          variant="body1"
-          fontWeight="bold"
-          paddingLeft="9px"
-        >
-          Curent Price- Rs.{singleFrame?.price}
-        </Typography>
-        <TextField
-          fullWidth
-          label="Price"
-          variant="outlined"
-          inputProps={{ min: 0 }}
-          type="number"
-          {...register("price", {
-            setValueAs: (value) => (value === "" ? undefined : Number(value)),
-          })}
-          error={!!errors.price}
-          helperText={errors.price?.message}
-          sx={{ marginBottom: 2 }}
-        />
-
-        <SaveButton btnText="Save" loading={putHandlerloading} />
       </Paper>
     </Box>
   );

@@ -20,12 +20,11 @@ import AutocompleteInputField from "../../components/inputui/DropdownInput";
 import useGetDoctors from "../../hooks/useGetDoctors";
 import useGetChannelDetails from "../../hooks/useGetChannelDetails";
 import HighlightedDatePicker from "../../components/HighlightedDatePicker";
-import { useNavigate } from "react-router";
 import CustomerPagination from "../../components/CustomPagination";
 import { numberWithCommas } from "../../utils/numberWithCommas";
+import dayjs from "dayjs";
 
 function ChannelDetails() {
-  const navigate = useNavigate();
   const { data: doctorList, loading: loadingDoctors } = useGetDoctors();
   const [searchText, setSearchText] = useState<string | null>(null);
   const [invoice_number, setInvoiceNumber] = useState<string | null>(null);
@@ -149,11 +148,12 @@ function ChannelDetails() {
             <TableRow sx={{ padding: 0, margin: 0 }}>
               <TableCell sx={tableStyles}>Action</TableCell>
               <TableCell sx={tableStyles}>Repayment</TableCell>
-              <TableCell sx={tableStyles}>Invoice No. </TableCell>
+              {/* <TableCell sx={tableStyles}>Invoice No. </TableCell> */}
 
-              <TableCell sx={tableStyles} align="left">
-                Date
+              <TableCell sx={tableStyles} align="center">
+                Date & Time
               </TableCell>
+
               <TableCell sx={tableStyles} align="center">
                 Channel No
               </TableCell>
@@ -165,7 +165,10 @@ function ChannelDetails() {
                 Doctor Name
               </TableCell>
               <TableCell sx={tableStyles} align="left">
-                Contact Number
+                Mobile No
+              </TableCell>
+              <TableCell sx={tableStyles} align="left">
+                Mobile No 2
               </TableCell>
 
               <TableCell sx={tableStyles} align="left">
@@ -196,17 +199,25 @@ function ChannelDetails() {
               >
                 <TableCell sx={tableStyles}>
                   <IconButton
-                    onClick={() =>
-                      navigate(`/channel/patient_shedule/${row.id}`)
-                    }
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      window.open(
+                        `/channel/patient_shedule/${row.id}`,
+                        "_blank"
+                      );
+                    }}
                     size="small"
                   >
                     <Edit sx={{ fontSize: 15 }} />
                   </IconButton>
                   <IconButton
-                    onClick={() =>
-                      navigate(`/channel/channel_invoice/${row.id}`)
-                    }
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      window.open(
+                        `/channel/channel_invoice/${row.id}`,
+                        "_blank"
+                      );
+                    }}
                     size="small"
                   >
                     <Print sx={{ fontSize: 15 }} />
@@ -220,25 +231,31 @@ function ChannelDetails() {
                   scope="row"
                 >
                   <IconButton
-                    onClick={() =>
-                      navigate(`/channel/channel_payment/${row.id}`)
-                    }
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      window.open(
+                        `/channel/channel_payment/${row.id}`,
+                        "_blank"
+                      );
+                    }}
                     size="small"
                   >
                     <PointOfSaleIcon color="error" sx={{ fontSize: 15 }} />
                   </IconButton>
                 </TableCell>
-                <TableCell
+                {/* <TableCell
                   sx={tableStyles}
                   align="center"
                   component="th"
                   scope="row"
                 >
                   {row.invoice_number}
+                </TableCell> */}
+                <TableCell sx={tableStyles} align="center">
+                  {row.date}-{" "}
+                  {dayjs(`${row.date} ${row.time}`).format("hh:mm A")}
                 </TableCell>
-                <TableCell sx={tableStyles} align="left">
-                  {row.date}
-                </TableCell>
+
                 <TableCell sx={tableStyles} align="center">
                   {row.channel_no}
                 </TableCell>
@@ -250,6 +267,9 @@ function ChannelDetails() {
                 </TableCell>
                 <TableCell sx={tableStyles} align="left">
                   {row.contact_number}
+                </TableCell>
+                <TableCell sx={tableStyles} align="left">
+                  {row.note}
                 </TableCell>
 
                 <TableCell sx={tableStyles} align="left">

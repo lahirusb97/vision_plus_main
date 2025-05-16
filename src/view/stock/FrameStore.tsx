@@ -1,15 +1,16 @@
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { MaterialReactTable } from "material-react-table";
-import { Box, IconButton } from "@mui/material";
+import { Box, IconButton, Tooltip, Typography } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-import HistoryIcon from "@mui/icons-material/History";
+// import HistoryIcon from "@mui/icons-material/History";
 import LoopIcon from "@mui/icons-material/Loop";
 import useGetFrames from "../../hooks/lense/useGetFrames";
 import { useNavigate } from "react-router";
 import { useDeleteDialog } from "../../context/DeleteDialogContext";
 import { FrameModel } from "../../model/FrameModel";
 import TitleText from "../../components/TitleText";
+import { numberWithCommas } from "../../utils/numberWithCommas";
+import { Edit, PriceChange } from "@mui/icons-material";
 
 const FrameStore = () => {
   const { frames, framesLoading, refresh } = useGetFrames();
@@ -23,38 +24,48 @@ const FrameStore = () => {
         id: "action",
         Cell: ({ row }: { row: { original: FrameModel } }) => (
           <Box>
-            <IconButton
-              size="small"
-              color="error"
-              title="Delete"
-              onClick={() => handleDelete(row.original)}
-            >
-              <DeleteIcon sx={{ fontSize: "1.4rem" }} />
-            </IconButton>
-            <IconButton
+            <Tooltip title="Deactivate">
+              <IconButton
+                size="small"
+                color="error"
+                onClick={() => handleDelete(row.original)}
+              >
+                <DeleteIcon sx={{ fontSize: "1.4rem" }} />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Edit Frame">
+              <IconButton
+                size="small"
+                onClick={() => handleFrameFullEdit(row.original.id)}
+              >
+                <Edit sx={{ fontSize: "1.4rem" }} />
+              </IconButton>
+            </Tooltip>
+            {/* <IconButton
               size="small"
               color="info"
               title="History"
               onClick={() => handleHistory(row.original.id)}
             >
               <HistoryIcon sx={{ fontSize: "1.4rem" }} />
-            </IconButton>
-            <IconButton
-              size="small"
-              color="warning"
-              title="Edit"
-              onClick={() => handleEdit(row.original.id)}
-            >
-              <EditIcon sx={{ fontSize: "1.4rem" }} />
-            </IconButton>
-            <IconButton
-              size="small"
-              color="warning"
-              title="Update Quantity"
-              onClick={() => handleUpdate(row.original.id)}
-            >
-              <LoopIcon sx={{ fontSize: "1.4rem" }} />
-            </IconButton>
+            </IconButton> */}
+            <Tooltip title="Update Price">
+              <IconButton
+                size="small"
+                onClick={() => handleEdit(row.original.id)}
+              >
+                <PriceChange sx={{ fontSize: "1.4rem" }} />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Update Quantity">
+              <IconButton
+                size="small"
+                color="warning"
+                onClick={() => handleUpdate(row.original.id)}
+              >
+                <LoopIcon sx={{ fontSize: "1.4rem" }} />
+              </IconButton>
+            </Tooltip>
           </Box>
         ),
       },
@@ -87,6 +98,11 @@ const FrameStore = () => {
         header: "Price",
         accessorKey: "price",
         size: 60,
+        Cell: ({ row }: { row: { original: FrameModel } }) => (
+          <Typography variant="body2">
+            {numberWithCommas(row.original.price)}
+          </Typography>
+        ),
       },
       {
         header: "Quantity",
@@ -94,9 +110,24 @@ const FrameStore = () => {
         size: 50,
       },
       {
-        header: "Stock Limit",
+        header: "Alert Limit",
         accessorFn: (row: FrameModel) => row.stock?.[0]?.limit ?? 0,
         size: 50,
+      },
+      {
+        header: "Low Stocks",
+        accessorFn: (row: FrameModel) =>
+          row.stock?.[0]?.qty < row.stock?.[0]?.limit,
+        size: 50,
+        Cell: ({ row }: { row: { original: FrameModel } }) => (
+          <Typography variant="body2">
+            {row.original.stock?.[0]?.qty < row.original.stock?.[0]?.limit ? (
+              <span style={{ color: "red" }}>Low Stock</span>
+            ) : (
+              <span style={{ color: "green" }}>OK</span>
+            )}
+          </Typography>
+        ),
       },
     ],
     [frames]
@@ -107,16 +138,20 @@ const FrameStore = () => {
     openDialog(
       `/frames/${row.id}/`,
       `Frame of Brand - ${row.brand_name} & Code - ${row.code_name}`,
+      "Your can activate this frame again using Logs section frame store",
       "Deactivate",
       refresh
     );
   };
 
-  const handleHistory = (id: number) => {
-    // console.log(`View History for Frame ID: ${id}`);
-    // Add history logic
-    navigate(`./history/${id}`);
+  const handleFrameFullEdit = (id: number) => {
+    navigate(`./edit/${id}`);
   };
+  // const handleHistory = (id: number) => {
+  //   // console.log(`View History for Frame ID: ${id}`);
+  //   // Add history logic
+  //   navigate(`./history/${id}`);
+  // };
 
   const handleEdit = (id: number) => {
     // console.log(`Edit Frame ID: ${id}`);

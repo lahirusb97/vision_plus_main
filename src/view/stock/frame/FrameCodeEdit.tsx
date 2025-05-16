@@ -45,7 +45,7 @@ const FrameCodeEdit = () => {
         ...formData,
         paramName: parseInt(paramName?.toString() ?? ""),
       });
-      toast.success("Lense added successfully");
+      toast.success("Frame Code Updated successfully");
       navigate(-1);
       setFormData({
         name: "",

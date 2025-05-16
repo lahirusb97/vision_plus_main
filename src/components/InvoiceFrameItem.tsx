@@ -5,6 +5,7 @@ import {
   FrameFilterModel,
   removeFrame,
 } from "../features/invoice/frameFilterSlice";
+import { numberWithCommas } from "../utils/numberWithCommas";
 
 interface Props {
   frame: FrameFilterModel;
@@ -45,9 +46,11 @@ export default function InvoiceFrameItem({ frame }: Props) {
 
         <Typography variant="body2">Quantity: {frame.buyQty}</Typography>
         <Typography variant="body2">
-          Unite Price: {frame.price_per_unit}
+          Unite Price: {numberWithCommas(frame.price_per_unit)}
         </Typography>
-        <Typography variant="body2">Total Price: {frame.subtotal}</Typography>
+        <Typography variant="body2">
+          Total Price: {numberWithCommas(frame.subtotal)}
+        </Typography>
         <IconButton
           onClick={() => dispatch(removeFrame(frame.frame_id))}
           color="error"

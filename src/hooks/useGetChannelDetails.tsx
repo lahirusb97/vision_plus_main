@@ -18,6 +18,8 @@ export interface ChannelSearchModel {
   channel_no: number;
   first_payment: number;
   date: string;
+  time: string;
+  note: string;
   invoice_number: number;
   total_payment: number;
   balance: number;

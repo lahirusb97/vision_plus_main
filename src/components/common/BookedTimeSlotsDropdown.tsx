@@ -20,7 +20,9 @@ export default function BookedTimeSlotsDropdown({
   appointmentSlots,
   appointmentSlotsLoading,
 }: BookedTimeSlotsDropdownProps) {
-  const isDisabled = !doctorId || appointmentSlots?.length === 0;
+  const noDoctorSelected = !doctorId;
+  const noAppointments = appointmentSlots?.length === 0;
+  const isDisabled = noDoctorSelected;
 
   return (
     <Box>
@@ -29,31 +31,25 @@ export default function BookedTimeSlotsDropdown({
 
         {appointmentSlotsLoading ? (
           <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: 1,
-              mt: 1,
-              ml: 1,
-            }}
+            sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1, ml: 1 }}
           >
             <CircularProgress size={18} />
             <Typography variant="body2">Loading...</Typography>
           </Box>
-        ) : appointmentSlots.length > 0 ? (
+        ) : noAppointments ? (
+          <Typography variant="body2" sx={{ mt: 1, ml: 1 }}>
+            {noDoctorSelected
+              ? "Select a doctor & channel date to view bookings."
+              : "No appointments have been booked for this date."}
+          </Typography>
+        ) : (
           <Select sx={{ width: 200 }} value="" label="Bookings" displayEmpty>
             {appointmentSlots.map((slot) => (
               <MenuItem key={slot.time} value={slot.time}>
-                {slot.time}-({slot.channel_no})
+                {slot.time} - ({slot.channel_no})
               </MenuItem>
             ))}
           </Select>
-        ) : (
-          <Typography variant="body2" sx={{ mt: 1, ml: 1 }}>
-            {isDisabled
-              ? "Select a doctor & channel Date to view bookings."
-              : "No bookings for this date."}
-          </Typography>
         )}
       </FormControl>
     </Box>

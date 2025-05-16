@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { Box, Button, Paper, Typography } from "@mui/material";
 import AutocompleteInputField from "../../components/inputui/DropdownInput";
 import { useNavigate } from "react-router";
-import { useDeleteDialog } from "../../context/DeleteDialogContext";
+// import { useDeleteDialog } from "../../context/DeleteDialogContext";
 
 interface dataList {
   id: number;
@@ -16,18 +16,18 @@ interface brandList {
 interface AddVariationCompProps {
   textName: string;
   Urlpath: string;
-  pathroute: string;
+  // pathroute: string;
   dataList: dataList[];
   brandList: brandList[];
-  refresh: () => void;
+  // refresh: () => void;
 }
 export default function CodeCRUD({
   textName,
   dataList,
   brandList,
-  pathroute,
-  refresh,
-}: AddVariationCompProps) {
+}: // pathroute,
+// refresh,
+AddVariationCompProps) {
   const navigate = useNavigate();
 
   const [lenseCoating, setLenseCoating] = React.useState<
@@ -35,7 +35,7 @@ export default function CodeCRUD({
   >(null);
   const [brandID, setBrandID] = React.useState<number | null>(null);
   const [avilableCodes, setAvilableCodes] = React.useState<dataList[]>([]);
-  const { openDialog } = useDeleteDialog();
+  // const { openDialog } = useDeleteDialog();
 
   useEffect(() => {
     if (brandID) {
@@ -97,7 +97,7 @@ export default function CodeCRUD({
           >
             Edit
           </Button>
-          <Button
+          {/* <Button
             color="error"
             variant="outlined"
             onClick={() => {
@@ -107,7 +107,7 @@ export default function CodeCRUD({
             }}
           >
             Delete
-          </Button>
+          </Button> */}
         </div>
       </Paper>
     </div>
