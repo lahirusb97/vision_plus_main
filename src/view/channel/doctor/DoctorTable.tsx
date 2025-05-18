@@ -102,7 +102,13 @@ const DoctorTable: React.FC = () => {
                     <IconButton
                       size="small"
                       onClick={() => {
-                        openDialog(`/doctors/${doctor.id}/`, "doctor", refresh);
+                        openDialog(
+                          `/doctors/${doctor.id}/`,
+                          "doctor",
+                          "This will delete all the data related to this doctor including Appointments ",
+                          "Permanantly Delete",
+                          refresh
+                        );
                       }}
                       color="error"
                     >

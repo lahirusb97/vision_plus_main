@@ -1,5 +1,7 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import axiosClient from "../../axiosClient";
+import { extractErrorMessage } from "../../utils/extractErrorMessage";
+import axios from "axios";
 
 interface Coating {
   id: number;
@@ -10,26 +12,36 @@ interface Coating {
 interface UseGetCoatingReturn {
   coatings: Coating[];
   coatingsLoading: boolean;
-  coatingsError: string | null;
+  coatingsError: boolean;
   refresh: () => void;
 }
 
 const useGetCoatings = (): UseGetCoatingReturn => {
   const [coatings, setCoatings] = useState<Coating[]>([]);
   const [coatingsLoading, setCoatingsLoading] = useState<boolean>(true);
-  const [coatingsError, setCoatingsError] = useState<string | null>(null);
+  const [coatingsError, setCoatingsError] = useState<boolean>(false);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const fetchCoatings = useCallback(async () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    const abortController = new AbortController();
+    abortControllerRef.current = abortController;
     setCoatingsLoading(true);
-    setCoatingsError(null);
+    setCoatingsError(false);
 
     try {
       const response = await axiosClient.get<Coating[]>("/lens-coatings/");
       setCoatings(response.data);
-    } catch (err: any) {
-      setCoatingsLoading(
-        err?.response?.data?.message || "Failed to fetch doctors."
-      );
+    } catch (err) {
+      if (axios.isCancel(err)) {
+        return;
+      }
+      if (!abortController.signal.aborted) {
+        extractErrorMessage(err);
+        setCoatingsError(true);
+      }
     } finally {
       setCoatingsLoading(false);
     }
@@ -38,6 +50,11 @@ const useGetCoatings = (): UseGetCoatingReturn => {
   // Automatically fetch data on mount
   useEffect(() => {
     fetchCoatings();
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
   }, [fetchCoatings]);
 
   return {

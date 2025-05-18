@@ -17,3 +17,4 @@ export type TypeOrderStatus =
   | "cancelled";
 export type TypeBraned = "branded" | "non_branded";
 export type TypeWhatappMSG = "sent" | "not_sent" | null;
+export type TypeInStockBrand = "frame" | "lens" | "both";

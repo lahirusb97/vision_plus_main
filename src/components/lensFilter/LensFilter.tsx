@@ -34,9 +34,7 @@ export default function LensFilter() {
   const selectedLenseList = useSelector(
     (state: RootState) => state.invoice_lense_filer.selectedLensesList
   );
-  const { brands, brandsLoading } = useGetBrands({
-    brand_type: "lens",
-  });
+  const { brands, brandsLoading } = useGetBrands("lens");
   const { coatings, coatingsLoading } = useGetCoatings();
   const { lenseTypes, lenseTypesLoading } = useGetLenseTypes();
   const {

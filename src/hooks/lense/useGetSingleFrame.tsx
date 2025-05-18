@@ -1,8 +1,9 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import axiosClient from "../../axiosClient";
 import { FrameModel } from "../../model/FrameModel";
 import { getUserCurentBranch } from "../../utils/authDataConver";
 import { extractErrorMessage } from "../../utils/extractErrorMessage";
+import axios from "axios";
 
 interface UseGetSingleFrameReturn {
   singleFrame: FrameModel | null;
@@ -19,10 +20,16 @@ const useGetSingleFrame = (
     singleFrameLoading: true,
     singleFrameError: false,
   });
+  const abortControllerRef = useRef<AbortController | null>(null);
+  console.log("singleFrameId", singleFrameId);
 
   const fetchSingleFrame = useCallback(async () => {
     if (singleFrameId) {
       try {
+        if (abortControllerRef.current) {
+          abortControllerRef.current.abort();
+        }
+        abortControllerRef.current = new AbortController();
         setState({
           singleFrame: null,
           singleFrameLoading: true,
@@ -35,28 +42,51 @@ const useGetSingleFrame = (
             params: {
               branch_id: getUserCurentBranch()?.id,
             },
+            signal: abortControllerRef.current?.signal,
           }
         );
-
-        setState({
-          singleFrame: response.data,
-          singleFrameLoading: false,
-          singleFrameError: false,
-        });
+        if (!abortControllerRef.current?.signal.aborted) {
+          setState({
+            singleFrame: response.data,
+            singleFrameLoading: false,
+            singleFrameError: false,
+          });
+        }
       } catch (err) {
-        extractErrorMessage(err);
-        setState({
-          singleFrame: null,
+        if (axios.isCancel(err)) {
+          return;
+        }
+        if (!abortControllerRef.current?.signal.aborted) {
+          extractErrorMessage(err);
+          setState((prev) => ({
+            ...prev,
+            singleFrameLoading: false,
+            singleFrameError: true,
+          }));
+        }
+      } finally {
+        setState((prev) => ({
+          ...prev,
           singleFrameLoading: false,
-          singleFrameError: true,
-        });
+        }));
       }
+    } else {
+      setState({
+        singleFrame: null,
+        singleFrameLoading: false,
+        singleFrameError: false,
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     fetchSingleFrame();
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
   }, [fetchSingleFrame]);
 
   return {

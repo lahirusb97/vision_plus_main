@@ -3,39 +3,37 @@ import { describe, it, expect } from "vitest";
 import SugarCataractText from "../SugarCataractText";
 
 describe("SugarCataractText", () => {
-  it("renders nothing when both props are false or undefined", () => {
+  it("renders no labels when all props are false", () => {
     const { container } = render(
       <SugarCataractText shuger={false} cataract={false} blepharitis={false} />
     );
-    expect(container).toBeEmptyDOMElement();
+    // No text should be rendered
+    expect(container.textContent).toBe("");
   });
 
-  it("renders only 'Sugar' when shuger is true", () => {
-    render(
-      <SugarCataractText shuger={true} cataract={false} blepharitis={false} />
+  it.each([
+    ["Sugar", { shuger: true, cataract: false, blepharitis: false }],
+    ["Cataract", { shuger: false, cataract: true, blepharitis: false }],
+    ["Blepharitis", { shuger: false, cataract: false, blepharitis: true }],
+  ])("renders only '%s' when only %s is true", (label, props) => {
+    render(<SugarCataractText {...props} />);
+    // The expected label should be in the document
+    expect(screen.getByText(label)).toBeInTheDocument();
+    // Other labels should not be present
+    const others = ["Sugar", "Cataract", "Blepharitis"].filter(
+      (l) => l !== label
     );
-    expect(screen.getByText("Sugar")).toBeInTheDocument();
+    others.forEach((other) => {
+      expect(screen.queryByText(other)).toBeNull();
+    });
   });
 
-  it("renders only 'Cataract' when cataract is true", () => {
-    render(
-      <SugarCataractText shuger={false} cataract={true} blepharitis={false} />
-    );
-    expect(screen.getByText("Cataract")).toBeInTheDocument();
-  });
-  it("renders only 'Blepharitis' when blepharitis is true", () => {
-    render(
-      <SugarCataractText shuger={false} cataract={false} blepharitis={true} />
-    );
-    expect(screen.getByText("Blepharitis")).toBeInTheDocument();
-  });
-
-  it("renders 'Sugar | Cataract | Blepharitis' when both are true", () => {
+  it("renders all labels when all props are true", () => {
     render(
       <SugarCataractText shuger={true} cataract={true} blepharitis={true} />
     );
-    expect(
-      screen.getByText("Sugar | Cataract | Blepharitis")
-    ).toBeInTheDocument();
+    ["Sugar", "Cataract", "Blepharitis"].forEach((label) => {
+      expect(screen.getByText(label)).toBeInTheDocument();
+    });
   });
 });

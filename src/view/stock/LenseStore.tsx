@@ -1,9 +1,8 @@
 import { useMemo } from "react";
 import { MaterialReactTable } from "material-react-table";
-import { Box, IconButton } from "@mui/material";
+import { Box, IconButton, Tooltip } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-import HistoryIcon from "@mui/icons-material/History";
+// import HistoryIcon from "@mui/icons-material/History";
 import LoopIcon from "@mui/icons-material/Loop";
 import { useNavigate } from "react-router";
 import useGetLenses from "../../hooks/lense/useGetLense";
@@ -11,6 +10,7 @@ import { useDeleteDialog } from "../../context/DeleteDialogContext";
 import { addID, cylID, sphID } from "../../data/staticVariables";
 import { LenseModel } from "../../model/LenseModel";
 import TitleText from "../../components/TitleText";
+import { Edit, PriceChange } from "@mui/icons-material";
 
 const LenseStore = () => {
   const { lenses, lensesLoading, refresh } = useGetLenses();
@@ -25,38 +25,52 @@ const LenseStore = () => {
         id: "action",
         Cell: ({ row }: { row: { original: LenseModel } }) => (
           <Box>
-            <IconButton
-              size="small"
-              color="error"
-              title="Delete"
-              onClick={() => handleDelete(row.original)}
-            >
-              <DeleteIcon sx={{ fontSize: "1.4rem" }} />
-            </IconButton>
-            <IconButton
+            <Tooltip title="Delete">
+              <IconButton
+                size="small"
+                color="error"
+                title="Delete"
+                onClick={() => handleDelete(row.original)}
+              >
+                <DeleteIcon sx={{ fontSize: "1.4rem" }} />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Lense Full Edit">
+              <IconButton
+                size="small"
+                onClick={() => handleLenseFullEdit(row.original.id)}
+              >
+                <Edit sx={{ fontSize: "1.4rem" }} />
+              </IconButton>
+            </Tooltip>
+            {/* <IconButton
               size="small"
               color="info"
               title="History"
               onClick={() => handleHistory(row.original.id)}
             >
               <HistoryIcon sx={{ fontSize: "1.4rem" }} />
-            </IconButton>
-            <IconButton
-              size="small"
-              color="warning"
-              title="Edit"
-              onClick={() => handleEdit(row.original.id)}
-            >
-              <EditIcon sx={{ fontSize: "1.4rem" }} />
-            </IconButton>
-            <IconButton
-              size="small"
-              color="warning"
-              title="Update Quantity"
-              onClick={() => handleUpdate(row.original.id)}
-            >
-              <LoopIcon sx={{ fontSize: "1.4rem" }} />
-            </IconButton>
+            </IconButton> */}
+            <Tooltip title="Edit Lense Price">
+              <IconButton
+                size="small"
+                color="warning"
+                title="Edit"
+                onClick={() => handleEdit(row.original.id)}
+              >
+                <PriceChange sx={{ fontSize: "1.4rem" }} />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Update Lense Quantity">
+              <IconButton
+                size="small"
+                color="warning"
+                title="Update Quantity"
+                onClick={() => handleUpdate(row.original.id)}
+              >
+                <LoopIcon sx={{ fontSize: "1.4rem" }} />
+              </IconButton>
+            </Tooltip>
           </Box>
         ),
       },
@@ -151,15 +165,18 @@ const LenseStore = () => {
     openDialog(
       `lenses/${row.id}/`,
       `Lense of Type - ${row.type} & Brand - ${row.brand}`,
+      "Your can activate this lense again using Logs section lens store",
       "Deactivate",
       refresh
     );
   };
-
-  const handleHistory = (id: number) => {
-    // Add history logic
-    navigate(`history/${id}`);
+  const handleLenseFullEdit = (id: number) => {
+    navigate(`./full_edit/${id}`);
   };
+  // const handleHistory = (id: number) => {
+  //   // Add history logic
+  //   navigate(`history/${id}`);
+  // };
 
   const handleEdit = (id: number) => {
     // Add edit logic

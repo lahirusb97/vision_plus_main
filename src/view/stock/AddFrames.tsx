@@ -35,9 +35,7 @@ import { extractErrorMessage } from "../../utils/extractErrorMessage";
 import SaveButton from "../../components/SaveButton";
 const AddFrames = () => {
   const { postHandler, postHandlerloading } = useAxiosPost();
-  const { brands, brandsLoading } = useGetBrands({
-    brand_type: "frame",
-  });
+  const { brands, brandsLoading } = useGetBrands("frame");
   const { codes, codesLoading } = useGetCodes();
   const { colors, colorsLoading } = useGetColors();
 

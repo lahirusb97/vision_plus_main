@@ -2,23 +2,16 @@ import React, { useEffect } from "react";
 import { Box, Button, Paper, Typography } from "@mui/material";
 import AutocompleteInputField from "../../components/inputui/DropdownInput";
 import { useNavigate } from "react-router";
+import { CodeModel } from "../../model/CodeModel";
+import { BrandModel } from "../../model/BrandModel";
 // import { useDeleteDialog } from "../../context/DeleteDialogContext";
 
-interface dataList {
-  id: number;
-  name: string;
-  brand: number;
-}
-interface brandList {
-  id: number;
-  name: string;
-}
 interface AddVariationCompProps {
   textName: string;
   Urlpath: string;
   // pathroute: string;
-  dataList: dataList[];
-  brandList: brandList[];
+  dataList: CodeModel[];
+  brandList: BrandModel[];
   // refresh: () => void;
 }
 export default function CodeCRUD({
@@ -30,20 +23,21 @@ export default function CodeCRUD({
 AddVariationCompProps) {
   const navigate = useNavigate();
 
-  const [lenseCoating, setLenseCoating] = React.useState<
-    string | number | null
-  >(null);
+  const [lenseCode, setLenseCode] = React.useState<number | null>(null);
   const [brandID, setBrandID] = React.useState<number | null>(null);
-  const [avilableCodes, setAvilableCodes] = React.useState<dataList[]>([]);
+  const [avilableCodes, setAvilableCodes] = React.useState<CodeModel[]>([]);
   // const { openDialog } = useDeleteDialog();
 
   useEffect(() => {
     if (brandID) {
-      setAvilableCodes(dataList.filter((item) => item.brand === brandID));
+      const filtered = dataList.filter((item) => item.brand === brandID);
+      setAvilableCodes(filtered);
+      setLenseCode(null); // ✅ reset selected code
     } else {
       setAvilableCodes([]);
+      setLenseCode(null); // ✅ also clear when brand is unselected
     }
-  }, [brandID, dataList.length]);
+  }, [brandID]);
 
   return (
     <div>
@@ -68,8 +62,8 @@ AddVariationCompProps) {
             options={avilableCodes}
             loading={false}
             labelName="Code name "
-            defaultId={undefined}
-            onChange={(id) => setLenseCoating(id)}
+            defaultId={lenseCode}
+            onChange={(id) => setLenseCode(id)}
           />
         </Box>
         <div style={{ display: "flex", gap: "10px" }}>
@@ -88,10 +82,12 @@ AddVariationCompProps) {
             Add
           </Button>
           <Button
+            disabled={!brandID || !lenseCode}
+            color="info"
             variant="outlined"
             onClick={() => {
-              if (brandID && lenseCoating) {
-                navigate(`frame_code/${lenseCoating}`);
+              if (brandID && lenseCode) {
+                navigate(`frame_code/${lenseCode}`);
               }
             }}
           >
@@ -101,8 +97,8 @@ AddVariationCompProps) {
             color="error"
             variant="outlined"
             onClick={() => {
-              if (brandID && lenseCoating) {
-                openDialog(`/${pathroute}/${lenseCoating}/`, textName, refresh);
+              if (brandID && lenseCode) {
+                openDialog(`/${pathroute}/${lenseCode}/`, textName, refresh);
               }
             }}
           >

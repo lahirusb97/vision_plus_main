@@ -9,7 +9,6 @@ import {
 } from "../../../validations/shcemaExternalLens";
 import { Controller, useForm } from "react-hook-form";
 import useGetLenseTypes from "../../../hooks/lense/useGetLenseType";
-import useGetBrands from "../../../hooks/lense/useGetBrand";
 import useGetCoatings from "../../../hooks/lense/useGetCoatings";
 import {
   TextField,
@@ -25,13 +24,16 @@ import SaveButton from "../../../components/SaveButton";
 import { extractErrorMessage } from "../../../utils/extractErrorMessage";
 import toast from "react-hot-toast";
 import { useAxiosPut } from "../../../hooks/useAxiosPut";
+import useGetExternalFactorys from "../../../hooks/lense/useGetExternalFactorys";
+import ImportantNotice from "../../../components/common/ImportantNotice";
 
 export default function ExternalLensUpdate() {
   const { external_lens_id } = useParams();
   const { externalLens, externalLensLoading } =
     useGetSingleExternalLens(external_lens_id);
   const { lenseTypes, lenseTypesLoading } = useGetLenseTypes();
-  const { brands, brandsLoading } = useGetBrands({ brand_type: "lens" });
+  const { externalFactorys, externalFactorysLoading } =
+    useGetExternalFactorys();
   const { coatings, coatingsLoading } = useGetCoatings();
   const { putHandler, putHandlerloading } = useAxiosPut();
 
@@ -57,7 +59,7 @@ export default function ExternalLensUpdate() {
     try {
       await putHandler(`external_lenses/${external_lens_id}/`, data);
       reset();
-      toast.success("External Lens Created Successfully");
+      toast.success("External Lens Updated Successfully");
     } catch (error) {
       extractErrorMessage(error);
     }
@@ -71,7 +73,6 @@ export default function ExternalLensUpdate() {
       setValue("price", parseInt(externalLens.price));
     }
   }, [externalLens, externalLensLoading]);
-  console.log(externalLens, "externalLens");
 
   return (
     <Paper
@@ -87,15 +88,19 @@ export default function ExternalLensUpdate() {
       onSubmit={handleSubmit(createExternalLens)}
     >
       <TitleText title="External Lens Update" />
+      <ImportantNotice
+        notice="Please note: modifying any of the fields below will update historical invoices and patient records. Proceed with caution."
+        dismissible={false}
+      />
       <Controller
         name="brand"
         control={control}
         render={({ field }) => (
           <DropdownInput
-            options={brands}
+            options={externalFactorys}
             onChange={field.onChange}
-            labelName="Lens Factory"
-            loading={brandsLoading}
+            labelName="External Lens Factory"
+            loading={externalFactorysLoading}
             defaultId={field.value}
           />
         )}

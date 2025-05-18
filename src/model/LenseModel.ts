@@ -1,9 +1,11 @@
+import { TypeLensSide } from "./StaticTypeModels";
+
 interface Power {
   id: number;
   lens: number;
   power: number;
   value: string;
-  side: string | null;
+  side: TypeLensSide;
   power_name: string;
 }
 
@@ -18,6 +20,7 @@ interface LenseStock {
   powers: Power[];
   created_at: string;
   updated_at: string;
+  branch_id: number;
 }
 
 interface LenseModel {

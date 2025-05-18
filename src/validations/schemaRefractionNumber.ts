@@ -7,7 +7,10 @@ export const schemaRefractionNumber = z.object({
     .optional()
     .nullable()
     .transform((val) => (val === "" ? null : val)),
-  customer_mobile: z.string(),
+  customer_mobile: z
+    .string()
+    .nullable()
+    .transform((val) => (val === "" ? null : val)),
   branch_id: z.number({ invalid_type_error: "Branch is required" }),
 });
 

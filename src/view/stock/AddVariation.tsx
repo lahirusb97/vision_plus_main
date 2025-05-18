@@ -9,14 +9,9 @@ import TitleText from "../../components/TitleText";
 // import useGetLenseTypes from "../../hooks/lense/useGetLenseType";
 export default function AddVariation() {
   const { coatings, coatingsLoading } = useGetCoatings();
-  const { brands: lenseBrand, brandsLoading } = useGetBrands({
-    brand_type: "lens",
-  });
-  const { brands: frameBrand, brandsLoading: frameBrandLoading } = useGetBrands(
-    {
-      brand_type: "frame",
-    }
-  );
+  const { brands: lenseBrand, brandsLoading } = useGetBrands("lens");
+  const { brands: frameBrand, brandsLoading: frameBrandLoading } =
+    useGetBrands("frame");
   const { colors, colorsLoading } = useGetColors();
   const { codes } = useGetCodes();
   // const { lenseTypes, refresh: refreshLenseTypes } = useGetLenseTypes();

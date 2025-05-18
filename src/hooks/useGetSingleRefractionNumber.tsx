@@ -5,13 +5,15 @@ import axiosClient from "../axiosClient";
 import { RefractionNumberModel } from "../model/RefractionModel";
 import { getUserCurentBranch } from "../utils/authDataConver";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 export default function useGetSingleRefractionNumber(id: string | undefined) {
   const [singlerefractionNumber, setSingleRefractionNumber] =
     useState<RefractionNumberModel | null>(null);
   const [singlerefractionNumberLoading, setSingleRefractionNumberLoading] =
     useState<boolean>(true);
-
+  const [singleRefractionNumberError, setSingleRefractionNumberError] =
+    useState<boolean>(false);
   const abortControllerRef = useRef<AbortController | null>(null);
 
   const loadData = useCallback(async () => {
@@ -19,6 +21,8 @@ export default function useGetSingleRefractionNumber(id: string | undefined) {
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
       }
+      setSingleRefractionNumberError(false);
+      setSingleRefractionNumberLoading(true);
       const controller = new AbortController();
       abortControllerRef.current = controller;
       try {
@@ -37,10 +41,15 @@ export default function useGetSingleRefractionNumber(id: string | undefined) {
         }
         if (!controller.signal.aborted) {
           extractErrorMessage(error);
+          setSingleRefractionNumberError(true);
         }
       } finally {
         setSingleRefractionNumberLoading(false);
       }
+    } else {
+      setSingleRefractionNumberError(true);
+      setSingleRefractionNumberLoading(false);
+      toast.error("Invalid ID");
     }
   }, [id]);
 
@@ -57,5 +66,6 @@ export default function useGetSingleRefractionNumber(id: string | undefined) {
     singlerefractionNumber,
     singlerefractionNumberLoading,
     singleRefractionNumberDataRefresh: loadData,
+    singleRefractionNumberError,
   };
 }

@@ -24,16 +24,13 @@ import {
 } from "../../validations/schemaChannelAppointment";
 import { extractErrorMessage } from "../../utils/extractErrorMessage";
 import { getUserCurentBranch } from "../../utils/authDataConver";
-import CashInput from "../../components/inputui/CashInput";
-import CardInput from "../../components/inputui/CardInput";
 import ChannelPatientDetail from "./apointments/ChannelPatientDetail";
-
-import OnlinePayInput from "../../components/inputui/OnlinePayInput";
 import { formatUserPayments } from "../../utils/formatUserPayments";
 import AppointmentDatePicker from "../../components/AppointmentDatePicker";
 import useGetAppointmentSlots from "../../hooks/useGetAppointmentSlots";
 import { TimePicker } from "@mui/x-date-pickers";
 import BookedTimeSlotsDropdown from "../../components/common/BookedTimeSlotsDropdown";
+import PaymentMethodsLayout from "../transaction/factory_layouts/PaymentMethodsLayout";
 const Channel = () => {
   const { data: doctorList, loading } = useGetDoctors();
   const {
@@ -303,9 +300,7 @@ const Channel = () => {
           {/* Payment Method */}
 
           <Paper sx={flexBoxStyle}>
-            <OnlinePayInput />
-            <CardInput />
-            <CashInput />
+            <PaymentMethodsLayout />
           </Paper>
           <TextField
             sx={{ display: "none" }}

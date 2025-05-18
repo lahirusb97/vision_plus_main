@@ -11,22 +11,27 @@ import {
   schemaRefractionNumber,
 } from "../../validations/schemaRefractionNumber";
 import { useAxiosPut } from "../../hooks/useAxiosPut";
-import SaveButton from "../../components/SaveButton";
 import useGetSingleRefractionNumber from "../../hooks/useGetSingleRefractionNumber";
 import LoadingAnimation from "../../components/LoadingAnimation";
 import { useEffect } from "react";
 import { getUserCurentBranch } from "../../utils/authDataConver";
+import SubmitCustomBtn from "../../components/common/SubmiteCustomBtn";
+import DataLoadingError from "../../components/common/DataLoadingError";
 export default function UpdateRefraction() {
   const navigate = useNavigate();
   const { id } = useParams();
-  const { singlerefractionNumber, singlerefractionNumberLoading } =
-    useGetSingleRefractionNumber(id);
-  const { putHandler, putHandlerloading } = useAxiosPut();
+  const {
+    singlerefractionNumber,
+    singlerefractionNumberLoading,
+    singleRefractionNumberError,
+  } = useGetSingleRefractionNumber(id);
+  const { putHandler, putHandlerloading, putHandlerError } = useAxiosPut();
 
   const {
     register,
     handleSubmit,
     reset,
+    watch,
     formState: { errors },
   } = useForm<RefractionNumberFormModel>({
     resolver: zodResolver(schemaRefractionNumber),
@@ -48,6 +53,7 @@ export default function UpdateRefraction() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [singlerefractionNumber]); // Run when data changes
+
   const shandleSubmit = async (data: RefractionNumberFormModel) => {
     try {
       await putHandler(`refractions/${id}/update/`, data);
@@ -65,10 +71,14 @@ export default function UpdateRefraction() {
       }
     }
   };
+
   if (singlerefractionNumberLoading) {
     return (
       <LoadingAnimation loadingMsg="Refraction Number Details Loading..." />
     );
+  }
+  if (singleRefractionNumberError) {
+    return <DataLoadingError />;
   }
   return (
     <Box
@@ -100,6 +110,9 @@ export default function UpdateRefraction() {
             required
             error={!!errors.customer_full_name}
             helperText={errors.customer_full_name?.message}
+            InputLabelProps={{
+              shrink: Boolean(watch("customer_full_name")),
+            }}
           />
           <TextField
             {...register("nic")}
@@ -109,6 +122,9 @@ export default function UpdateRefraction() {
             margin="normal"
             error={!!errors.nic}
             helperText={errors.nic?.message}
+            InputLabelProps={{
+              shrink: Boolean(watch("nic")),
+            }}
           />
           <TextField
             {...register("customer_mobile")}
@@ -116,7 +132,6 @@ export default function UpdateRefraction() {
             label="Phone Number"
             variant="outlined"
             margin="normal"
-            required
             type="tel"
             inputProps={{
               pattern: "[0-9]{10}",
@@ -124,6 +139,9 @@ export default function UpdateRefraction() {
             }}
             error={!!errors.customer_mobile}
             helperText={errors.customer_mobile?.message}
+            InputLabelProps={{
+              shrink: Boolean(watch("customer_mobile")),
+            }}
           />
           <TextField
             sx={{ display: "none" }}
@@ -142,9 +160,10 @@ export default function UpdateRefraction() {
             helperText={errors.branch_id?.message}
             defaultValue={getUserCurentBranch()?.id}
           />
-          <SaveButton
+          <SubmitCustomBtn
             btnText="Update Customer Details"
             loading={putHandlerloading}
+            isError={putHandlerError}
           />
         </form>
       </Paper>

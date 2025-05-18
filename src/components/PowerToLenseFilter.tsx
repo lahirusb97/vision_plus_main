@@ -56,9 +56,7 @@ export default function PowerToLenseFilter({
     right_eye_near_sph: null,
   });
 
-  const { brands, brandsLoading } = useGetBrands({
-    brand_type: "lens",
-  });
+  const { brands, brandsLoading } = useGetBrands("lens");
   const [leftPrice, setLeftPrice] = React.useState<string>("");
   const [rightPrice, setRightPrice] = React.useState<string>("");
   const [leftlenseByQty, setLeftlenseByQty] = React.useState<number>(1);

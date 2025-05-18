@@ -34,7 +34,7 @@ const DeleteDialog: React.FC = () => {
           Are you sure you want to {state.deleteType}{" "}
           <strong>{state.itemName || "this item"}</strong>?
         </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+        <Typography variant="body2" color="error" sx={{ mt: 1 }}>
           {state.message}
         </Typography>
       </DialogContent>

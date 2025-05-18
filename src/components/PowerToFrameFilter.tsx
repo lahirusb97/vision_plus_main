@@ -22,9 +22,7 @@ export default function PowerToFrameFilter() {
     (state: RootState) => state.invoice_frame_filer.selectedFrameList
   );
   const { frames, framesLoading } = useGetFrames();
-  const { brands, brandsLoading } = useGetBrands({
-    brand_type: "frame",
-  });
+  const { brands, brandsLoading } = useGetBrands("frame");
 
   const { codes, codesLoading } = useGetCodes();
 

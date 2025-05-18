@@ -36,7 +36,7 @@ const AddLens = () => {
   const leftToastRef = useRef<string | null>(null);
   const rightToastRef = useRef<string | null>(null);
 
-  const { brands, brandsLoading } = useGetBrands({ brand_type: "lens" });
+  const { brands, brandsLoading } = useGetBrands("lens");
   const { coatings, coatingsLoading } = useGetCoatings();
   const { postHandler, postHandlerloading } = useAxiosPost();
 

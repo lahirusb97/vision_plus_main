@@ -1,75 +1,76 @@
-import { TextField, Box } from "@mui/material";
-import { useFormContext } from "react-hook-form";
+import { Box } from "@mui/material";
+import { Controller, useFormContext } from "react-hook-form";
+import NumericInput from "../../../components/inputui/NumericInput";
 
 export default function PdAndHeightInputs() {
-  const { register, watch } = useFormContext();
+  const { control, formState } = useFormContext();
+  console.log(formState.errors);
+
   return (
     <>
       <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-        <TextField
-          {...register("pd")}
-          sx={{ width: 100 }}
-          size="small"
-          type="number"
-          label="PD"
-          InputLabelProps={{
-            shrink: Boolean(watch("pd")),
-          }}
+        <Controller
+          name="pd"
+          control={control}
+          render={({ field }) => (
+            <NumericInput {...field} inputLabel="PD" sx={{ width: 100 }} />
+          )}
         />
-        <TextField
-          {...register("height")}
-          sx={{ width: 100 }}
-          type="number"
-          size="small"
-          label="Height"
-          InputLabelProps={{
-            shrink: Boolean(watch("height")),
-          }}
+        <Controller
+          name="height"
+          control={control}
+          render={({ field }) => (
+            <NumericInput {...field} inputLabel="Height" sx={{ width: 100 }} />
+          )}
         />
       </Box>
       <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
         <Box sx={{ display: "flex", gap: 1 }}>
-          <TextField
-            {...register("right_pd")}
-            sx={{ width: 100 }}
-            type="number"
-            size="small"
-            label="Right-PD"
-            InputLabelProps={{
-              shrink: Boolean(watch("right_pd")),
-            }}
+          <Controller
+            name="right_pd"
+            control={control}
+            render={({ field }) => (
+              <NumericInput
+                {...field}
+                inputLabel="Right-PD"
+                sx={{ width: 100 }}
+              />
+            )}
           />
-          <TextField
-            {...register("left_pd")}
-            sx={{ width: 100 }}
-            type="number"
-            size="small"
-            label="Left-PD"
-            InputLabelProps={{
-              shrink: Boolean(watch("left_pd")),
-            }}
+          <Controller
+            name="left_pd"
+            control={control}
+            render={({ field }) => (
+              <NumericInput
+                {...field}
+                inputLabel="Left-PD"
+                sx={{ width: 100 }}
+              />
+            )}
           />
         </Box>
         <Box sx={{ display: "flex", gap: 1 }}>
-          <TextField
-            {...register("right_height")}
-            sx={{ width: 100 }}
-            type="number"
-            size="small"
-            label="Right-H"
-            InputLabelProps={{
-              shrink: Boolean(watch("right_height")),
-            }}
+          <Controller
+            name="right_height"
+            control={control}
+            render={({ field }) => (
+              <NumericInput
+                {...field}
+                inputLabel="Right-H"
+                sx={{ width: 100 }}
+              />
+            )}
           />
-          <TextField
-            {...register("left_height")}
-            sx={{ width: 100 }}
-            type="number"
-            size="small"
-            label="Left-H "
-            InputLabelProps={{
-              shrink: Boolean(watch("left_height")),
-            }}
+          <Controller
+            name="left_height"
+            control={control}
+            render={({ field }) => (
+              <NumericInput
+                {...field}
+                inputLabel="Left-H"
+                sx={{ width: 100 }}
+              />
+            )}
           />
         </Box>
       </Box>

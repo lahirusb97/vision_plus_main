@@ -6,21 +6,26 @@ import { extractErrorMessage } from "../../../utils/extractErrorMessage";
 import { useAxiosPost } from "../../../hooks/useAxiosPost";
 import SubmitCustomBtn from "../../../components/common/SubmiteCustomBtn";
 import TitleText from "../../../components/TitleText";
+import InfoChip from "../../../components/common/InfoChip";
+import LoadingAnimation from "../../../components/LoadingAnimation";
+import DataLoadingError from "../../../components/common/DataLoadingError";
+import useGetSingleBrand from "../../../hooks/lense/useGetSingleBrand";
 const FrameCodeAdd = () => {
   const navigate = useNavigate();
+
   const [searchParams] = useSearchParams();
   const { postHandler, postHandlerloading, postHandlerError } = useAxiosPost();
   const paramName = searchParams.get("brand");
-
+  const { singleBrand, singleBrandLoading, singleBrandError } =
+    useGetSingleBrand(paramName?.toString() ?? "");
   const [formData, setFormData] = useState({
     name: "",
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
+    const { value } = e.target;
     setFormData({
-      ...formData,
-      [name]: value,
+      name: value,
     });
   };
 
@@ -29,7 +34,7 @@ const FrameCodeAdd = () => {
     try {
       await postHandler("/codes/", {
         ...formData,
-        brand: parseInt(paramName?.toString() ?? ""),
+        brand: singleBrand?.id,
       });
       toast.success("Frame Code added successfully");
       navigate(-1);
@@ -40,11 +45,17 @@ const FrameCodeAdd = () => {
       extractErrorMessage(error);
     }
   };
-
+  if (singleBrandLoading) {
+    return <LoadingAnimation loadingMsg="Loading Frame Code" />;
+  }
+  if (!singleBrand && !singleBrandError) {
+    return <DataLoadingError />;
+  }
   return (
     <Container maxWidth="sm">
       <Paper sx={{ p: 4, width: "300px" }}>
         <TitleText title="Create Frame Code" />
+        <InfoChip label="Brand" value={singleBrand?.name} />
         <form onSubmit={handleSubmit}>
           <TextField
             fullWidth

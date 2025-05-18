@@ -23,6 +23,7 @@ export default function RefractionNumber() {
     register,
     handleSubmit,
     reset,
+
     formState: { errors },
   } = useForm<RefractionNumberFormModel>({
     resolver: zodResolver(schemaRefractionNumber),
@@ -103,7 +104,6 @@ export default function RefractionNumber() {
             label="Phone Number"
             variant="outlined"
             margin="normal"
-            required
             type="number"
             error={!!errors.customer_mobile}
             helperText={errors.customer_mobile?.message}

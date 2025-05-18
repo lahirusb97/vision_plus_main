@@ -3,26 +3,18 @@ import axiosClient from "../../axiosClient";
 
 import { extractErrorMessage } from "../../utils/extractErrorMessage";
 import axios from "axios";
-
-interface Brand {
-  id: number;
-  name: string;
-  brand_type: string; //lens,frame
-}
+import { TypeInStockBrand } from "../../model/StaticTypeModels";
+import { BrandModel } from "../../model/BrandModel";
 
 interface UseGetBrandReturn {
-  brands: Brand[];
+  brands: BrandModel[];
   brandsLoading: boolean;
   brandsError: string | null;
   refresh: () => void;
 }
 
-const useGetBrands = ({
-  brand_type,
-}: {
-  brand_type: string;
-}): UseGetBrandReturn => {
-  const [brands, setBrands] = useState<Brand[]>([]);
+const useGetBrands = (brand_type: TypeInStockBrand): UseGetBrandReturn => {
+  const [brands, setBrands] = useState<BrandModel[]>([]);
   const [brandsLoading, setBrandsLoading] = useState<boolean>(true);
   const [brandsError, setBrandsError] = useState<string | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
@@ -38,8 +30,8 @@ const useGetBrands = ({
     setBrandsError(null);
 
     try {
-      const response = await axiosClient.get<Brand[]>("/brands/", {
-        params: { brand_type },
+      const response = await axiosClient.get<BrandModel[]>("/brands/", {
+        params: { brand_type: brand_type },
         signal: abortController.signal,
       });
       // Only update state if this request wasn't aborted

@@ -6,6 +6,7 @@ interface NumericInputProps extends Omit<TextFieldProps, "onChange"> {
   onChange?: (value: string) => void;
   inputLabel: string;
   errorCheck?: (value: string) => boolean;
+  slotProps?: TextFieldProps["slotProps"];
 }
 
 const NumericInput: React.FC<NumericInputProps> = ({
@@ -13,6 +14,9 @@ const NumericInput: React.FC<NumericInputProps> = ({
   onChange,
   inputLabel,
   errorCheck,
+  slotProps = {},
+  // pull out any style‐related props you want to treat specially...
+  sx,
   ...rest
 }) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -27,27 +31,30 @@ const NumericInput: React.FC<NumericInputProps> = ({
 
   return (
     <TextField
-      inputProps={{
-        step: 0.25,
-        max: 0,
-        inputMode: "numeric",
-        ...rest.inputProps,
+      {...rest}
+      slotProps={{
+        htmlInput: {
+          step: 0.25,
+          max: 0,
+          inputMode: "numeric",
+          ...(slotProps.htmlInput ?? {}),
+        },
+        inputLabel: {
+          shrink: true,
+          ...(slotProps.inputLabel ?? {}),
+        },
+        ...slotProps, // spread any other slotProps you passed in
       }}
       type="text"
       value={value || ""} // Ensure the value is a string, even if it's null
       onChange={handleChange}
       error={getError()}
       size="small"
-      label={inputLabel}
       sx={{
         "& .MuiInputBase-root": {
           height: 32,
         },
-        ...rest.sx,
-      }}
-      InputLabelProps={{
-        shrink: true,
-        ...rest.InputLabelProps,
+        ...sx,
       }}
       placeholder={inputLabel}
     />

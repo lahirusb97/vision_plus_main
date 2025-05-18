@@ -33,7 +33,7 @@ const FrameStore = () => {
                 <DeleteIcon sx={{ fontSize: "1.4rem" }} />
               </IconButton>
             </Tooltip>
-            <Tooltip title="Edit Frame">
+            <Tooltip title="Frame Full Edit">
               <IconButton
                 size="small"
                 onClick={() => handleFrameFullEdit(row.original.id)}
@@ -145,7 +145,7 @@ const FrameStore = () => {
   };
 
   const handleFrameFullEdit = (id: number) => {
-    navigate(`./edit/${id}`);
+    navigate(`./full_edit/${id}`);
   };
   // const handleHistory = (id: number) => {
   //   // console.log(`View History for Frame ID: ${id}`);
