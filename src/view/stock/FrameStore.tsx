@@ -27,7 +27,7 @@ const FrameStore = () => {
         muiTableBodyCellProps: { align: "center" as const },
         Cell: ({ row }: { row: { original: FrameModel } }) => (
           <Box sx={{ display: "flex", gap: 1 }}>
-            <Tooltip title="Deactivate">
+            <Tooltip title="Deactivate Frame">
               <IconButton
                 size="small"
                 color="error"

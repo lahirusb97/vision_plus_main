@@ -38,12 +38,36 @@ export const schemaFactoryInvoice = z.object({
   fitting_on_collection: z.boolean({
     message: "Fitting on Collection is required",
   }),
-  pd: z.string().nullable(),
-  right_pd: z.string().nullable(),
-  left_pd: z.string().nullable(),
-  height: z.string().nullable(),
-  left_height: z.string().nullable(),
-  right_height: z.string().nullable(),
+  pd: z
+    .string()
+    .nullable()
+    .optional()
+    .transform((val) => (val === "" || val === undefined ? null : val)),
+  right_pd: z
+    .string()
+    .nullable()
+    .optional()
+    .transform((val) => (val === "" || val === undefined ? null : val)),
+  left_pd: z
+    .string()
+    .nullable()
+    .optional()
+    .transform((val) => (val === "" || val === undefined ? null : val)),
+  height: z
+    .string()
+    .nullable()
+    .optional()
+    .transform((val) => (val === "" || val === undefined ? null : val)),
+  left_height: z
+    .string()
+    .nullable()
+    .optional()
+    .transform((val) => (val === "" || val === undefined ? null : val)),
+  right_height: z
+    .string()
+    .nullable()
+    .optional()
+    .transform((val) => (val === "" || val === undefined ? null : val)),
   user_date: z
     .string()
     .nullable()

@@ -11,6 +11,7 @@ import { addID, cylID, sphID } from "../../data/staticVariables";
 import { LenseModel } from "../../model/LenseModel";
 import TitleText from "../../components/TitleText";
 import { Edit, PriceChange } from "@mui/icons-material";
+import returnPlusSymbol from "../../utils/returnPlusSymbol";
 
 const LenseStore = () => {
   const { lenses, lensesLoading, refresh } = useGetLenses();
@@ -23,13 +24,15 @@ const LenseStore = () => {
       {
         header: "Action",
         id: "action",
+        size: 100,
+        muiTableHeadCellProps: { align: "center" as const },
+        muiTableBodyCellProps: { align: "center" as const },
         Cell: ({ row }: { row: { original: LenseModel } }) => (
-          <Box>
-            <Tooltip title="Delete">
+          <Box sx={{ display: "flex", gap: 1 }}>
+            <Tooltip title="Deactivate Lense">
               <IconButton
                 size="small"
                 color="error"
-                title="Delete"
                 onClick={() => handleDelete(row.original)}
               >
                 <DeleteIcon sx={{ fontSize: "1.4rem" }} />
@@ -51,11 +54,10 @@ const LenseStore = () => {
             >
               <HistoryIcon sx={{ fontSize: "1.4rem" }} />
             </IconButton> */}
-            <Tooltip title="Edit Lense Price">
+            <Tooltip title="Update Lense Price">
               <IconButton
                 size="small"
                 color="warning"
-                title="Edit"
                 onClick={() => handleEdit(row.original.id)}
               >
                 <PriceChange sx={{ fontSize: "1.4rem" }} />
@@ -78,27 +80,36 @@ const LenseStore = () => {
       {
         header: "Lense Factory",
         accessorKey: "brand_name",
+        muiTableHeadCellProps: { align: "center" as const },
+        muiTableBodyCellProps: { align: "center" as const },
         size: 130,
       },
       {
         header: "Lense Type",
         accessorKey: "type_name",
+        muiTableHeadCellProps: { align: "center" as const },
+        muiTableBodyCellProps: { align: "center" as const },
         size: 130,
       },
       {
         header: "Coating",
         accessorKey: "coating_name",
+        muiTableHeadCellProps: { align: "center" as const },
+        muiTableBodyCellProps: { align: "center" as const },
         size: 130,
       },
       {
         header: "Price",
         accessorKey: "price",
+        muiTableHeadCellProps: { align: "right" as const },
+        muiTableBodyCellProps: { align: "right" as const },
         size: 80,
       },
       {
         header: "Side",
         id: "side",
-
+        muiTableHeadCellProps: { align: "center" as const },
+        muiTableBodyCellProps: { align: "center" as const },
         Cell: ({ row }: { row: { original: LenseModel } }) => {
           const sphEntry = row.original.powers.find((p) => p.power === sphID);
           return sphEntry && sphEntry.side ? sphEntry.side : "-";
@@ -108,40 +119,45 @@ const LenseStore = () => {
       {
         header: "SPH",
         id: "sph",
-
-        // Cell: ({ row }: { row: { original: LenseModel } }) => {
-        //   const sphEntry = row.original.powers.find((p) => p.power === sphID);
-        //   return sphEntry ? sphEntry.value : "-";
-        // },
+        muiTableHeadCellProps: { align: "center" as const },
+        muiTableBodyCellProps: { align: "center" as const },
         accessorFn: (row: LenseModel) => {
           const sph = row.powers.find((p) => p.power === sphID);
-          return sph ? parseFloat(sph.value) : null;
+          return sph
+            ? `${returnPlusSymbol(sph.value)}${parseFloat(sph.value).toFixed(
+                2
+              )}`
+            : null;
         },
         size: 30,
       },
       {
         header: "CYL",
         id: "cyl",
-        // Cell: ({ row }: { row: { original: LenseModel } }) => {
-        //   const cylEntry = row.original.powers.find((p) => p.power === cylID);
-        //   return cylEntry ? cylEntry.value : "-";
-        // },
+        muiTableHeadCellProps: { align: "center" as const },
+        muiTableBodyCellProps: { align: "center" as const },
         accessorFn: (row: LenseModel) => {
           const cyl = row.powers.find((p) => p.power === cylID);
-          return cyl ? parseFloat(cyl.value) : null;
+          return cyl
+            ? `${returnPlusSymbol(cyl.value)}${parseFloat(cyl.value).toFixed(
+                2
+              )}`
+            : null;
         },
         size: 30,
       },
       {
         header: "ADD",
         id: "add",
-        // Cell: ({ row }: { row: { original: LenseModel } }) => {
-        //   const addEntry = row.original.powers.find((p) => p.power === addID);
-        //   return addEntry ? addEntry.value : "-";
-        // },
+        muiTableHeadCellProps: { align: "center" as const },
+        muiTableBodyCellProps: { align: "center" as const },
         accessorFn: (row: LenseModel) => {
           const add = row.powers.find((p) => p.power === addID);
-          return add ? parseFloat(add.value) : null;
+          return add
+            ? `${returnPlusSymbol(add.value)}${parseFloat(add.value).toFixed(
+                2
+              )}`
+            : null;
         },
         size: 30,
       },

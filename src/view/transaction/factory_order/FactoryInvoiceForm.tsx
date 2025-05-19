@@ -242,7 +242,7 @@ export default function FactoryInvoiceForm() {
       extractErrorMessage(error);
     }
   };
-
+  console.log(methods.formState.errors);
   return (
     <>
       <FormProvider {...methods}>
