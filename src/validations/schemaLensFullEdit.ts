@@ -24,7 +24,7 @@ export const schemaLensFullEdit = z.object({
   powers: z.array(PowerEntry),
   limit: z.number({ invalid_type_error: "Alert is required" }).optional(),
   branch_id: z.number({ invalid_type_error: "Branch ID is required" }),
-  global_side: z.enum(["left", "right"]).optional(),
+  global_side: z.enum(["left", "right"]).nullable(),
 });
 
 export type LenseFullEditModel = z.infer<typeof schemaLensFullEdit>;

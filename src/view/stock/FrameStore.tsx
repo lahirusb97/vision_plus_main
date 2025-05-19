@@ -22,8 +22,11 @@ const FrameStore = () => {
       {
         header: "Action",
         id: "action",
+        size: 100,
+        muiTableHeadCellProps: { align: "center" as const },
+        muiTableBodyCellProps: { align: "center" as const },
         Cell: ({ row }: { row: { original: FrameModel } }) => (
-          <Box>
+          <Box sx={{ display: "flex", gap: 1 }}>
             <Tooltip title="Deactivate">
               <IconButton
                 size="small"
@@ -72,34 +75,46 @@ const FrameStore = () => {
       {
         header: "Brand",
         accessorKey: "brand_name",
+        muiTableHeadCellProps: { align: "center" as const },
+        muiTableBodyCellProps: { align: "center" as const },
         size: 130,
       },
       {
         header: "Code",
         accessorKey: "code_name",
+        muiTableHeadCellProps: { align: "center" as const },
+        muiTableBodyCellProps: { align: "center" as const },
         size: 130,
       },
       {
         header: "Color",
         accessorKey: "color_name",
+        muiTableHeadCellProps: { align: "center" as const },
+        muiTableBodyCellProps: { align: "center" as const },
         size: 130,
       },
       {
         header: "Species",
         accessorKey: "species",
-        size: 130,
+        muiTableHeadCellProps: { align: "center" as const },
+        muiTableBodyCellProps: { align: "center" as const },
+        size: 50,
       },
       {
         header: "Branded",
         accessorKey: "brand_type_display",
-        size: 100,
+        muiTableHeadCellProps: { align: "center" as const },
+        muiTableBodyCellProps: { align: "center" as const },
+        size: 60,
       },
       {
         header: "Price",
         accessorKey: "price",
-        size: 60,
+        muiTableHeadCellProps: { align: "right" as const },
+        muiTableBodyCellProps: { align: "right" as const },
+        size: 80,
         Cell: ({ row }: { row: { original: FrameModel } }) => (
-          <Typography variant="body2">
+          <Typography align="right" variant="body2">
             {numberWithCommas(row.original.price)}
           </Typography>
         ),
@@ -108,26 +123,46 @@ const FrameStore = () => {
         header: "Quantity",
         accessorFn: (row: FrameModel) => row.stock?.[0]?.qty ?? 0,
         size: 50,
+        muiTableHeadCellProps: { align: "center" as const },
+        muiTableBodyCellProps: { align: "center" as const },
+        Cell: ({ row }: { row: { original: FrameModel } }) => (
+          <Typography variant="body2">
+            {row.original.stock?.[0]?.qty ?? 0}
+          </Typography>
+        ),
       },
       {
         header: "Alert Limit",
+        muiTableHeadCellProps: { align: "center" as const },
+        muiTableBodyCellProps: { align: "center" as const },
         accessorFn: (row: FrameModel) => row.stock?.[0]?.limit ?? 0,
         size: 50,
       },
       {
         header: "Low Stocks",
-        accessorFn: (row: FrameModel) =>
-          row.stock?.[0]?.qty < row.stock?.[0]?.limit,
+        accessorFn: (row: FrameModel) => {
+          const qty = row.stock?.[0]?.qty ?? 0;
+          const limit = row.stock?.[0]?.limit ?? 0;
+          return qty <= limit;
+        },
+        enableSorting: true, // explicitly enable sorting
         size: 50,
-        Cell: ({ row }: { row: { original: FrameModel } }) => (
-          <Typography variant="body2">
-            {row.original.stock?.[0]?.qty < row.original.stock?.[0]?.limit ? (
-              <span style={{ color: "red" }}>Low Stock</span>
-            ) : (
-              <span style={{ color: "green" }}>OK</span>
-            )}
-          </Typography>
-        ),
+        muiTableHeadCellProps: { align: "center" as const },
+        muiTableBodyCellProps: { align: "center" as const },
+        Cell: ({ row }: { row: { original: FrameModel } }) => {
+          const qty = row.original.stock?.[0]?.qty ?? 0;
+          const limit = row.original.stock?.[0]?.limit ?? 0;
+          return (
+            <Typography
+              variant="body2"
+              sx={{
+                color: qty <= limit ? "error.main" : "success.main",
+              }}
+            >
+              {qty <= limit ? "Low Stock" : "OK"}
+            </Typography>
+          );
+        },
       },
     ],
     [frames]
@@ -175,8 +210,12 @@ const FrameStore = () => {
         columns={columns}
         data={frames}
         enableColumnActions={false}
-        state={{ isLoading: framesLoading }}
+        state={{ isLoading: framesLoading, showSkeletons: framesLoading }}
+        muiTableBodyRowProps={{
+          sx: { "&:hover": { backgroundColor: "#f5f5fa" } },
+        }}
         initialState={{
+          sorting: [{ id: "Low Stocks", desc: true }],
           density: "compact",
           pagination: { pageIndex: 0, pageSize: 15 },
         }}

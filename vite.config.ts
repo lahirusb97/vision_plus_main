@@ -4,6 +4,10 @@ import path from "path";
 
 // https://vite.dev/config/
 export default defineConfig({
+  define: {
+    // inject process.env.NODE_ENV for backward-compat
+    "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
+  },
   plugins: [react()],
   resolve: {
     alias: {

@@ -108,6 +108,7 @@ export default function LenseFullEdit() {
         qty: singleLense.stock[0]?.qty,
         limit: singleLense.stock[0]?.limit,
         branch_id: singleLense.stock[0]?.branch_id,
+        global_side: singleLense.powers[0]?.side,
       });
     }
   }, [singleLense]);
@@ -141,7 +142,7 @@ export default function LenseFullEdit() {
       })),
     };
     try {
-      await patchHandler(`/lenses/${lense_id}/`, postData);
+      await patchHandler(`lenses/${lense_id}/`, postData);
       toast.success("Lense Updated Successfully");
       navigate(-1);
     } catch (error) {
@@ -302,8 +303,9 @@ export default function LenseFullEdit() {
                     <Select
                       {...field}
                       value={field.value}
+                      key={field.value}
                       label="Side"
-                      onChange={field.onChange}
+                      onChange={(e) => field.onChange(e.target.value)}
                       size="small"
                       sx={{
                         width: 100,

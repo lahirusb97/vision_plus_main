@@ -74,7 +74,7 @@ const FrameFullEdit = () => {
     },
   });
   const [avilableCodes, setAvilableCodes] = useState<CodeModel[]>([]);
-
+  console.log("form species after reset", watch("species"));
   useEffect(() => {
     if (watch("brand")) {
       setAvilableCodes(codes.filter((item) => item.brand === watch("brand")));
@@ -129,6 +129,8 @@ const FrameFullEdit = () => {
         brand_type: singleFrame.brand_type,
       });
     }
+
+    console.log("singleFrame", singleFrame);
   }, [singleFrame]);
 
   if (singleFrameError) {
@@ -262,10 +264,12 @@ const FrameFullEdit = () => {
                 <Select
                   size="small"
                   {...field}
+                  key={field.value}
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
                   label="species"
-                  value={field.value || ""}
+                  value={field.value}
+                  onChange={(e) => field.onChange(e.target.value)}
                 >
                   <MenuItem value={frameSpeciesMetal}>Metal</MenuItem>
                   <MenuItem value={frameSpeciesPlastic}>Plastic</MenuItem>
