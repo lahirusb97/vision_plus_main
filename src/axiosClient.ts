@@ -5,18 +5,16 @@ import axios, {
   InternalAxiosRequestConfig,
 } from "axios";
 import { getUserAuth } from "./utils/authDataConver";
-const API_BASE =
-  import.meta.env.NODE_ENV === "production"
-    ? "https://www.onlineict.site/api/"
-    : "http://127.0.0.1:8005/api/";
+
 // Create an Axios instance with a base URL
 const axiosClient: AxiosInstance = axios.create({
   // baseURL: import.meta.env.VITE_BASE_URL,
   // baseURL: "https://www.onlineict.site/api/",
-  baseURL: API_BASE,
-  // import.meta.env.VITE_DEV === "true"
-  //   ? import.meta.env.VITE_LOCAL_BASE_URL
-  //   : import.meta.env.VITE_API_BASE_URL,
+
+  baseURL:
+    import.meta.env.VITE_DEV === "true"
+      ? import.meta.env.VITE_LOCAL_BASE_URL
+      : import.meta.env.VITE_API_BASE_URL,
   // // withCredentials: false,
 });
 
