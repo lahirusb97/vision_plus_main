@@ -20,7 +20,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { extractErrorMessage } from "../../utils/extractErrorMessage";
 import { getUserCurentBranch } from "../../utils/authDataConver";
 
-import HighlightedDatePicker from "../../components/HighlightedDatePicker";
 import {
   PatientResheduleModel,
   schemaPatientReshedule,

@@ -42,11 +42,12 @@ const CheckInIndex = () => {
           <TableHead>
             <TableRow sx={{ backgroundColor: "#f5f5f5" }}>
               <TableCell>Patient Name</TableCell>
-              <TableCell>Date </TableCell>
-              <TableCell>Invoice</TableCell>
-              <TableCell>Total</TableCell>
+              <TableCell align="center">Date </TableCell>
+              <TableCell align="center">Invoice</TableCell>
+              <TableCell>Invoice Total</TableCell>
+              <TableCell>Total Payment</TableCell>
               <TableCell>Balance</TableCell>
-              <TableCell>Progress</TableCell>
+              <TableCell align="center">Progress</TableCell>
               {/* <TableCell>
                 <b>Notes</b>
               </TableCell> */}
@@ -68,11 +69,13 @@ const CheckInIndex = () => {
                 <TableCell>{row.customer}</TableCell>
                 <TableCell>{dateAndTimeFormat(row.invoice_date)}</TableCell>
                 <TableCell>{row.invoice_number}</TableCell>
-                <TableCell>
-                  Rs.{numberWithCommas(customerPaymentTotal(row.payments))}
+                <TableCell align="right">
+                  {numberWithCommas(row.total_price)}
                 </TableCell>
-                <TableCell>
-                  Rs.
+                <TableCell align="right">
+                  {numberWithCommas(customerPaymentTotal(row.payments))}
+                </TableCell>
+                <TableCell align="right">
                   {numberWithCommas(
                     parseInt(row.total_price) -
                       customerPaymentTotal(row.payments)
@@ -80,7 +83,7 @@ const CheckInIndex = () => {
                 </TableCell>
                 <TableCell>{progressStatus(row.progress_status)}</TableCell>
                 {/* <TableCell>{row.notes}</TableCell> */}
-                <TableCell>
+                <TableCell align="center">
                   {row.lens_arrival_status == null
                     ? "_"
                     : row.lens_arrival_status == "received"

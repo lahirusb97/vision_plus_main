@@ -34,21 +34,23 @@ export default function ChannelPatientDetail() {
             sx={{ flexGrow: 1 }}
             size="small"
             label="name"
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    onClick={() =>
-                      setOpenSearchDialog({ open: true, searchType: "name" })
-                    }
-                  >
-                    <SearchSharp />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-            InputLabelProps={{
-              shrink: Boolean(watch("name")),
+            slotProps={{
+              inputLabel: {
+                shrink: Boolean(watch("name")),
+              },
+              input: {
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={() =>
+                        setOpenSearchDialog({ open: true, searchType: "name" })
+                      }
+                    >
+                      <SearchSharp />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              },
             }}
           />
         </Box>
@@ -78,8 +80,10 @@ export default function ChannelPatientDetail() {
               </InputAdornment>
             ),
           }}
-          InputLabelProps={{
-            shrink: Boolean(watch("phone_number")),
+          slotProps={{
+            inputLabel: {
+              shrink: Boolean(watch("phone_number")),
+            },
           }}
         />
       </Box>
@@ -91,14 +95,21 @@ export default function ChannelPatientDetail() {
         size="small"
         fullWidth
         autoComplete="off"
+        slotProps={{
+          inputLabel: {
+            shrink: Boolean(watch("note")),
+          },
+        }}
       />
       <TextField
         {...register("address")}
         error={!!errors.address}
         size="small"
         label="Address"
-        InputLabelProps={{
-          shrink: Boolean(watch("address")),
+        slotProps={{
+          inputLabel: {
+            shrink: Boolean(watch("address")),
+          },
         }}
       />
     </Box>

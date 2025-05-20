@@ -202,7 +202,7 @@ function ChannelDetails() {
                     onClick={(e) => {
                       e.stopPropagation();
                       window.open(
-                        `/channel/patient_shedule/${row.id}`,
+                        `/channel/appointment_full_edit/${row.id}`,
                         "_blank"
                       );
                     }}

@@ -10,21 +10,26 @@ import DeleteDialog from "./components/DeleteDialog";
 import DrawerStock from "./components/inputui/DrawerStock";
 import { MutationDialogProvider } from "./context/MutationDialogContext";
 import MutationDialog from "./components/common/MutationDialog";
+import { ReminderDialogProvider } from "./context/ReminderDialogContext";
+import ReminderDialog from "./components/common/ReminderDialog";
 
 function App() {
   return (
     <>
       <ThemeProvider theme={theme}>
         <AuthContext>
-          <MutationDialogProvider>
-            <DeleteDialogProvider>
-              <RouterProvider router={router} />
-              {/* <ThemeSwitch /> */}
-              <Toaster position="bottom-center" gutter={8} />
-              <DeleteDialog />
-            </DeleteDialogProvider>
-            <MutationDialog />
-          </MutationDialogProvider>
+          <ReminderDialogProvider>
+            <MutationDialogProvider>
+              <DeleteDialogProvider>
+                <RouterProvider router={router} />
+                {/* <ThemeSwitch /> */}
+                <Toaster position="bottom-center" gutter={8} />
+                <DeleteDialog />
+                <ReminderDialog />
+              </DeleteDialogProvider>
+              <MutationDialog />
+            </MutationDialogProvider>
+          </ReminderDialogProvider>
           <DrawerStock />
         </AuthContext>
       </ThemeProvider>

@@ -97,7 +97,8 @@ export default function CheckBoxTable({
               <TableCell align="center">Patient Name</TableCell>
               <TableCell align="center">Date </TableCell>
               <TableCell align="center">Invoice</TableCell>
-              <TableCell align="center">Total</TableCell>
+              <TableCell align="center">Invoice Total</TableCell>
+              <TableCell align="center">Total Payment</TableCell>
               <TableCell align="center">Balance</TableCell>
               <TableCell align="center">Progress</TableCell>
               {/* <TableCell>
@@ -154,11 +155,13 @@ export default function CheckBoxTable({
                   {formatDateTimeByType(row.invoice_date, "date")}
                 </TableCell>
                 <TableCell>{row.invoice_number}</TableCell>
-                <TableCell>
-                  Rs.{numberWithCommas(customerPaymentTotal(row.payments))}
+                <TableCell align="right">
+                  {numberWithCommas(row.total_price)}
                 </TableCell>
-                <TableCell>
-                  Rs.
+                <TableCell align="right">
+                  {numberWithCommas(customerPaymentTotal(row.payments))}
+                </TableCell>
+                <TableCell align="right">
                   {numberWithCommas(
                     parseInt(row.total_price) -
                       customerPaymentTotal(row.payments)

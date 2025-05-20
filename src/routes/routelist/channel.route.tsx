@@ -7,10 +7,11 @@ import DoctorTable from "../../view/channel/doctor/DoctorTable";
 import DoctorUpdate from "../../view/channel/doctor/DoctorUpdate";
 import DoctorCreate from "../../view/channel/doctor/DoctorCreate";
 import DoctorSheduleIndex from "../../view/channel/doctorShedule/DoctorSheduleIndex";
-import PatientShedule from "../../view/channel/PatientShedule";
+// import PatientShedule from "../../view/channel/PatientShedule";
 import ChannelRepayment from "../../view/channel/ChannelRepayment";
 import DoctorClaimChannelFrom from "../../view/channel/doctor_claim_channel/DoctorClaimChannelFrom";
 import DoctorClaimChannelInvoiceVIew from "../../view/channel/doctor_claim_channel/DoctorClaimChannelInvoiceVIew";
+import AppointmentFullEdit from "../../view/channel/apointments/AppointmentFullEdit";
 
 export const channelRoutes: RouteObject[] = [
   {
@@ -45,9 +46,13 @@ export const channelRoutes: RouteObject[] = [
     path: "doctor_shedule",
     element: <DoctorSheduleIndex />,
   },
+  // {
+  //   path: "patient_shedule/:appointment_id",
+  //   element: <PatientShedule />,
+  // },
   {
-    path: "patient_shedule/:appointment_id",
-    element: <PatientShedule />,
+    path: "appointment_full_edit/:appointment_id",
+    element: <AppointmentFullEdit />,
   },
   // {
   //   path: "channel_invoice",
