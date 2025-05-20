@@ -9,7 +9,7 @@ import { PaginatedResponse } from "../model/PaginatedResponse";
 import { paramsNullCleaner } from "../utils/paramsNullCleaner";
 import dayjs from "dayjs";
 
-export interface ChannelSearchModel {
+export interface ChannelDeleteStatusModel {
   id: number;
   address: string;
   doctor_name: string;
@@ -26,20 +26,26 @@ export interface ChannelSearchModel {
   amount: number;
   is_deleted: boolean;
   is_refund: boolean;
+  deleted_at: string;
+  refunded_at: string;
 }
 
 type ChannelSearchParams = {
   page_size: number;
   page: number;
   doctor: number | null;
-  date: string | null;
   invoice_number: number | null;
   search: string | null;
+  status: "active" | "deactivated" | "refunded" | "deactivated_refunded"; // API status filter
+  start_date: string | null; // format: "YYYY-MM-DD"
+  end_date: string | null; // format: "YYYY-MM-DD"
 };
 
-const useGetChannelDetails = () => {
+const useGetChannelDeleteStatus = (
+  initialParams?: Partial<ChannelSearchParams>
+) => {
   const [channelList, setChannelList] = useState<
-    PaginatedResponse<ChannelSearchModel>
+    PaginatedResponse<ChannelDeleteStatusModel>
   >({
     count: 0,
     next: null,
@@ -52,9 +58,12 @@ const useGetChannelDetails = () => {
     page_size: 10,
     page: 1,
     doctor: null,
-    date: dayjs().format("YYYY-MM-DD"),
     invoice_number: null,
     search: null,
+    status: "active",
+    start_date: dayjs().format("YYYY-MM-DD"),
+    end_date: dayjs().format("YYYY-MM-DD"),
+    ...initialParams,
   });
 
   const abortControllerRef = useRef<AbortController | null>(null);
@@ -69,8 +78,8 @@ const useGetChannelDetails = () => {
     setError(false);
     try {
       const response = await axiosClient.get<
-        PaginatedResponse<ChannelSearchModel>
-      >(`channels/`, {
+        PaginatedResponse<ChannelDeleteStatusModel>
+      >(`channels/status/`, {
         params: {
           branch_id: getUserCurentBranch()?.id,
           ...paramsNullCleaner(params),
@@ -80,7 +89,6 @@ const useGetChannelDetails = () => {
 
       if (!controller.signal.aborted) {
         setChannelList(response.data);
-        console.log(response.data);
       }
     } catch (error) {
       if (axios.isCancel(error)) {
@@ -134,16 +142,16 @@ const useGetChannelDetails = () => {
     };
   }, [loadChannels]);
   return {
-    channelList: channelList,
-    channelListLimit: params.page_size,
-    channelListLoading: loading,
-    channelListError: error,
-    channelListTotalCount: channelList?.count,
-    channelListRefresh: loadChannels,
-    channelListSearch: setQuaryParamsData,
-    channelListPageNavigation: handlePageNavigation,
-    channelListChangePageSize: changePageSize,
+    channelStatusList: channelList,
+    channelStatusListLimit: params.page_size,
+    channelStatusListLoading: loading,
+    channelStatusListError: error,
+    channelStatusListTotalCount: channelList?.count,
+    channelStatusListRefresh: loadChannels,
+    channelStatusListSearch: setQuaryParamsData,
+    channelStatusListPageNavigation: handlePageNavigation,
+    channelStatusListChangePageSize: changePageSize,
   };
 };
 
-export default useGetChannelDetails;
+export default useGetChannelDeleteStatus;

@@ -38,8 +38,8 @@ import SubmitCustomBtn from "../../../components/common/SubmiteCustomBtn";
 import LoadingAnimation from "../../../components/LoadingAnimation";
 import DataLoadingError from "../../../components/common/DataLoadingError";
 import { useReminderDialog } from "../../../context/ReminderDialogContext";
-import { Delete } from "@mui/icons-material";
 import ChannelDeleteRefund from "../../../components/common/channel-delete-refund-dialog/ChannelDeleteRefund";
+
 const AppointmentFullEdit = () => {
   const { appointment_id } = useParams();
   const { showReminder } = useReminderDialog();
@@ -383,7 +383,14 @@ const AppointmentFullEdit = () => {
             </Typography>
           </Paper>
           {/* Channel Refund */}
-          <ChannelDeleteRefund appointment_id={appointment_id} />
+
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <ChannelDeleteRefund
+              dialogType="both"
+              appointment_id={appointment_id}
+            />
+          </Box>
+
           {/* Payment Method */}
           <PaymentsForm />
           <Paper sx={flexBoxStyle}>

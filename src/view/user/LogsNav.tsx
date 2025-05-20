@@ -6,6 +6,9 @@ export default function UserNav() {
       {/* Pass unique onClick handlers */}
       <NavButton name="Frame Store" path={"/logs"} />
       <NavButton name="Lens Store" path={"/logs/lens"} />
+      {/* //channel deativate refind 
+      //  */}
+      <NavButton name="Channel Logs" path={"/logs/channel"} />
     </>
   );
 }

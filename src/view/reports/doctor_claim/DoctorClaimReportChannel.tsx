@@ -86,6 +86,7 @@ export default function DoctorClaimReportChannel() {
                         `doctor-claims-channels/${row.id}/`,
                         row.invoice_number,
                         "Permanantly Delete",
+                        "Permanantly Delete",
                         doctorClaimChannelListRefres
                       )
                     }

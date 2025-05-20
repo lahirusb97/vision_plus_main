@@ -84,6 +84,7 @@ export default function DoctorClaimReportIndex() {
                         `doctor-claims-invoices/${row.id}/`,
                         row.invoice_number,
                         "Permanantly Delete",
+                        "Permanantly Delete",
                         doctorClaimInvoiceListRefres
                       )
                     }
