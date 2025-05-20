@@ -1,22 +1,27 @@
-export const sphID: number = 1;
-export const cylID: number = 2;
-export const addID: number = 3;
-export const axisID: number = 4;
+export const sphID: number = 1 as const;
+export const cylID: number = 2 as const;
+export const addID: number = 3 as const;
+export const axisID: number = 4 as const;
 
-export const singleVisionID: number = 1;
-export const progresiveID: number = 2;
-export const bifocalID: number = 3;
+export const singleVisionID: number = 1 as const;
+export const progresiveID: number = 2 as const;
+export const bifocalID: number = 3 as const;
 
 //! Frame Species
-export const frameSpeciesMetal: string = "Metal";
-export const frameSpeciesPlastic: string = "Plastic";
-export const frameSpeciesMetalPlastic: string = "Metal/Plastic";
+export const frameSpeciesMetal: string = "Metal" as const;
+export const frameSpeciesPlastic: string = "Plastic" as const;
+export const frameSpeciesMetalPlastic: string = "Metal/Plastic" as const;
 //! Frame Size
-export const frameSizeHalf: string = "Half";
-export const frameSizeFull: string = "Full";
-export const frameSizeRimless: string = "Rimless";
+export const frameSizeHalf: string = "Half" as const;
+export const frameSizeFull: string = "Full" as const;
+export const frameSizeRimless: string = "Rimless" as const;
 
 //!BRAND IDS
-export const BUSID: number = 3;
-export const BRANCH_MATHUGAMA_ID: number = 1;
-export const BRANCH_ALUTHGAMA_ID: number = 2;
+export const BUSID: number = 3 as const;
+export const BRANCH_MATHUGAMA_ID: number = 1 as const;
+export const BRANCH_ALUTHGAMA_ID: number = 2 as const;
+
+//!REFUND
+export const REFUND_MAIN_CAT_ID: number = 1 as const;
+//!REFUND CHANNEL
+export const REFUND_CHANNEL_ID: number = 1 as const;

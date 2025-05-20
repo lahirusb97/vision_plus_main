@@ -156,7 +156,7 @@ const ReminderDialog: React.FC = () => {
             }}
             autoFocus
           >
-            Confirm and Proceed
+            Proceed
           </Button>
           <Button
             onClick={closeReminderAndGoBack}
@@ -177,7 +177,7 @@ const ReminderDialog: React.FC = () => {
               },
             }}
           >
-            Cancel and Go Back
+            Go Back
           </Button>
         </DialogActions>
       </motion.div>
