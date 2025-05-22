@@ -20,14 +20,14 @@ import { numberWithCommas } from "../../../utils/numberWithCommas";
 import { progressStatus } from "../../../utils/progressState";
 import { formatDateTimeByType } from "../../../utils/formatDateTimeByType";
 import { SolderingInvoiceModel } from "../../../model/SolderingInvoiceModel";
-import { Update } from "@mui/icons-material";
+import { Print, Update } from "@mui/icons-material";
 import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
 import axiosClient from "../../../axiosClient";
 import toast from "react-hot-toast";
 import { extractErrorMessage } from "../../../utils/extractErrorMessage";
 import { useMutationDialog } from "../../../context/MutationDialogContext";
 import { useState } from "react";
-
+import { useNavigate } from "react-router";
 const PROGRESS_STAGES = [
   { value: "received_from_customer", label: "Received from Customer" },
   { value: "issue_to_factory", label: "Issued to Factory" },
@@ -35,6 +35,7 @@ const PROGRESS_STAGES = [
   { value: "issue_to_customer", label: "Issued to Customer" },
 ];
 export default function SolderingInvoiceTable() {
+  const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedInvoice, setSelectedInvoice] =
     useState<SolderingInvoiceModel | null>(null);
@@ -90,6 +91,7 @@ export default function SolderingInvoiceTable() {
             <TableRow>
               <TableCell align="center">Update Progress</TableCell>
               <TableCell align="center">Repayment</TableCell>
+              <TableCell align="center">View</TableCell>
               <TableCell>Invoice Number</TableCell>
               <TableCell>Invoice Date</TableCell>
               <TableCell>Total Price</TableCell>
@@ -118,6 +120,18 @@ export default function SolderingInvoiceTable() {
                     onClick={() => handleRepayment(invoice)}
                   >
                     <PointOfSaleIcon color="error" sx={{ fontSize: 15 }} />
+                  </IconButton>
+                </TableCell>
+                <TableCell align="center">
+                  <IconButton
+                    size="small"
+                    onClick={() =>
+                      navigate(
+                        `/master/soldering-invoice/${invoice.invoice_number}`
+                      )
+                    }
+                  >
+                    <Print color="info" sx={{ fontSize: 15 }} />
                   </IconButton>
                 </TableCell>
                 <TableCell>{invoice.invoice_number}</TableCell>
