@@ -1,5 +1,4 @@
 import {
-  Box,
   Table,
   TableHead,
   TableRow,
@@ -27,7 +26,9 @@ import toast from "react-hot-toast";
 import { extractErrorMessage } from "../../../utils/extractErrorMessage";
 import { useMutationDialog } from "../../../context/MutationDialogContext";
 import { useState } from "react";
-import { useNavigate } from "react-router";
+import CustomerPagination from "../../../components/CustomPagination";
+import TitleText from "../../../components/TitleText";
+import SolderingInvoiceSearch from "../../../hooks/SolderingInvoiceSearch";
 const PROGRESS_STAGES = [
   { value: "received_from_customer", label: "Received from Customer" },
   { value: "issue_to_factory", label: "Issued to Factory" },
@@ -35,7 +36,6 @@ const PROGRESS_STAGES = [
   { value: "issue_to_customer", label: "Issued to Customer" },
 ];
 export default function SolderingInvoiceTable() {
-  const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedInvoice, setSelectedInvoice] =
     useState<SolderingInvoiceModel | null>(null);
@@ -50,14 +50,22 @@ export default function SolderingInvoiceTable() {
     setAnchorEl(null);
     setSelectedInvoice(null);
   };
-  const { solderingInvoiceList, solderingInvoiceListRefres } =
-    useGetSolderingInvoiceList();
+  const {
+    solderingInvoiceList,
+    solderingInvoiceListRefres,
+    solderingInvoiceLimit,
+    solderingInvoiceListSearch,
+    solderingInvoiceListTotalCount,
+    solderingInvoiceListPageNavigation,
+    solderingInvoiceListChangePageSize,
+  } = useGetSolderingInvoiceList();
   const { openMutationDialog } = useMutationDialog();
 
   const handleUpdateProgress = (
     stage: string,
-    invoice: SolderingInvoiceModel
+    invoice: SolderingInvoiceModel | null
   ) => {
+    if (!invoice) return;
     openMutationDialog(
       `Update Progress of Invoice Number ${invoice.invoice_number}`,
       "patch",
@@ -84,21 +92,26 @@ export default function SolderingInvoiceTable() {
   };
 
   return (
-    <Box>
+    <Paper sx={{ p: 2 }}>
+      <TitleText title="Soldering Invoice List" />
+      <SolderingInvoiceSearch invoiceListSearch={solderingInvoiceListSearch} />
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell align="center">Update Progress</TableCell>
+              <TableCell align="center">Update</TableCell>
               <TableCell align="center">Repayment</TableCell>
               <TableCell align="center">View</TableCell>
+              <TableCell align="center">Name</TableCell>
+              <TableCell align="center">Mobile</TableCell>
+              <TableCell align="center">Nic</TableCell>
               <TableCell>Invoice Number</TableCell>
               <TableCell>Invoice Date</TableCell>
               <TableCell>Total Price</TableCell>
               <TableCell>Payment</TableCell>
               <TableCell>Balance</TableCell>
-              <TableCell>Progress Status</TableCell>
-              <TableCell>Last Updated</TableCell>
+              <TableCell align="center"> Status</TableCell>
+              <TableCell align="center">Last Update</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -125,16 +138,20 @@ export default function SolderingInvoiceTable() {
                 <TableCell align="center">
                   <IconButton
                     size="small"
-                    onClick={() =>
-                      navigate(
-                        `/master/soldering-invoice/${invoice.invoice_number}`
-                      )
-                    }
+                    onClick={(event) => {
+                      event.preventDefault();
+                      const url = `/master/soldering-invoice/${invoice.invoice_number}`;
+                      window.open(url, "_blank");
+                    }}
                   >
                     <Print color="info" sx={{ fontSize: 15 }} />
                   </IconButton>
                 </TableCell>
+                <TableCell>{invoice.patient.name}</TableCell>
+                <TableCell>{invoice.patient.phone_number}</TableCell>
+                <TableCell>{invoice.patient.nic}</TableCell>
                 <TableCell>{invoice.invoice_number}</TableCell>
+
                 <TableCell>{invoice.invoice_date}</TableCell>
                 <TableCell align="right">
                   {numberWithCommas(invoice.order_details.price)}
@@ -197,6 +214,12 @@ export default function SolderingInvoiceTable() {
           ))}
         </List>
       </Popover>
-    </Box>
+      <CustomerPagination
+        totalCount={solderingInvoiceListTotalCount}
+        handlePageNavigation={solderingInvoiceListPageNavigation}
+        changePageSize={solderingInvoiceListChangePageSize}
+        page_size={solderingInvoiceLimit}
+      />
+    </Paper>
   );
 }

@@ -12,6 +12,8 @@ import { paramsNullCleaner } from "../utils/paramsNullCleaner";
 export interface SolderingInvoiceListParams {
   page_size: number;
   page: number;
+  search: string | null;
+  nic: string | null;
   invoice_number: string | null;
   mobile: string | null;
   progress_status: ProgressStatus | null;
@@ -31,6 +33,8 @@ const useGetSolderingInvoiceList = ({ invoice_number }: fetchMode = {}) => {
   const [params, setParams] = useState<SolderingInvoiceListParams>({
     page_size: 10,
     page: 1,
+    search: null,
+    nic: null,
     invoice_number: invoice_number ?? null,
     mobile: null,
     progress_status: null,
