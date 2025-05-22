@@ -5,7 +5,7 @@ import Tab from "@mui/material/Tab";
 import AccountIcon from "../../assets/icons/navbar/Account.png";
 import ChanneltIcon from "../../assets/icons/navbar/Channel.png";
 import MasterIcon from "../../assets/icons/navbar/Master.png";
-import MessangerIcon from "../../assets/icons/navbar/Messenger.png";
+// import MessangerIcon from "../../assets/icons/navbar/Messenger.png";
 import RefractionIcon from "../../assets/icons/navbar/Refraction.png";
 import ReportsIcon from "../../assets/icons/navbar/Reports.png";
 import Search from "../../assets/icons/navbar/Search.png";
@@ -27,6 +27,7 @@ import CheckInNav from "../checkin/CheckInNav";
 import SearchNav from "../search/SearchNav";
 import AccountNav from "../account/AccountNav";
 import LogsNav from "../user/LogsNav";
+import MasterNav from "../master/MasterNav";
 import {
   deleteUserData,
   getUserAuth,
@@ -97,10 +98,10 @@ export default function NavBar() {
     },
     {
       id: 7,
-      path: "messenger",
-      icon: MessangerIcon,
-      label: "Messenger",
-      nav: RefractionNav,
+      path: "master",
+      icon: MasterIcon,
+      label: "Master",
+      nav: MasterNav,
     },
     { id: 8, path: "user", icon: UserIcon, label: "User", nav: UserNav },
     { id: 9, path: "logs", icon: LogBookIcon, label: "Logs", nav: LogsNav },

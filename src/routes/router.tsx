@@ -18,6 +18,7 @@ import Login from "../view/auth/login";
 import RegisterUser from "../view/auth/RegisterUser";
 import { searchRoutes } from "./routelist/search.route";
 import { logsRoutes } from "./routelist/logs.route";
+import { masterRoutes } from "./routelist/master.route";
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -60,6 +61,12 @@ export const router = createBrowserRouter([
         element: <ProtectedChildRoute />,
 
         children: channelRoutes,
+      },
+      {
+        path: "master",
+        element: <ProtectedChildRoute />,
+
+        children: masterRoutes,
       },
       {
         path: "reports",

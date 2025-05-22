@@ -1,4 +1,12 @@
-import { Box, Chip, TextField, Typography, Paper } from "@mui/material";
+import {
+  Box,
+  TextField,
+  Typography,
+  Paper,
+  Divider,
+  CircularProgress,
+  Stack,
+} from "@mui/material";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -11,11 +19,17 @@ import LoadingAnimation from "../../../components/LoadingAnimation";
 import { extractErrorMessage } from "../../../utils/extractErrorMessage";
 import { useAxiosPut } from "../../../hooks/useAxiosPut";
 import SubmitCustomBtn from "../../../components/common/SubmiteCustomBtn";
+import BackButton from "../../../components/BackButton";
+import InfoChip from "../../../components/common/InfoChip";
+import returnPlusSymbol from "../../../utils/returnPlusSymbol";
+import { numberWithCommas } from "../../../utils/numberWithCommas";
+import { useNavigate } from "react-router";
 
 interface Stock {
   price: number;
 }
 const LenseEdit = () => {
+  const navigate = useNavigate();
   const { id } = useParams();
   const { singleLense, singleLenseLoading, refresh } = useGetSingleLense(id);
 
@@ -31,7 +45,6 @@ const LenseEdit = () => {
     handleSubmit,
     formState: { errors },
     register,
-    reset,
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
@@ -47,8 +60,8 @@ const LenseEdit = () => {
     try {
       await putHandler(`/lenses/${id}/`, postDAta);
       toast.success("Lense Saved Successfully");
-      reset();
       refresh();
+      navigate(-1);
     } catch (error) {
       extractErrorMessage(error);
     }
@@ -69,59 +82,71 @@ const LenseEdit = () => {
         component={"form"}
         onSubmit={handleSubmit(submiteData)}
         sx={{ padding: 4, width: 400, textAlign: "Left" }}
-        elevation={3}
+        variant="outlined"
       >
+        <BackButton />
         <Typography variant="h6" fontWeight="bold" paddingLeft="9px">
           Lense Price Update
         </Typography>
+        <Divider sx={{ mb: 2 }} />
+        {!singleLenseLoading && singleLense ? (
+          <>
+            <Box sx={{ my: 2 }}>
+              <Typography
+                variant="subtitle1"
+                sx={{ mb: 1, fontWeight: 600, color: "#2E3A59" }}
+              >
+                Lens Details
+              </Typography>
+              <Stack direction="row" spacing={1.5} useFlexGap flexWrap="wrap">
+                {[
+                  { label: "Factory", value: singleLense?.brand_name },
+                  { label: "Lens Type", value: singleLense?.type_name },
+                  { label: "Coating", value: singleLense?.coating_name },
+                ].map((item) => (
+                  <div key={item.label}>
+                    <InfoChip label={item.label} value={item.value} />
+                  </div>
+                ))}
+              </Stack>
+            </Box>
+            <Divider sx={{ mb: 2 }} />
+            <Box sx={{ my: 2 }}>
+              <Typography
+                variant="subtitle1"
+                sx={{ mb: 1, fontWeight: 600, color: "#2E3A59" }}
+              >
+                Power Details
+              </Typography>
+              <Stack direction="row" spacing={1.5} useFlexGap flexWrap="wrap">
+                {singleLense?.powers.map((item) => (
+                  <div key={item.power_name}>
+                    <InfoChip
+                      label={item.power_name}
+                      value={`${returnPlusSymbol(item.value)}${parseFloat(
+                        item.value
+                      ).toFixed(2)}`}
+                    />
+                  </div>
+                ))}
+              </Stack>
+            </Box>
+          </>
+        ) : (
+          <CircularProgress />
+        )}
 
-        <Box sx={{ marginY: 2, display: "flex", flexWrap: "wrap", gap: 1 }}>
-          <Chip
-            label={`Factory - ${singleLense?.brand_name}`}
-            color="primary"
-            sx={{ marginX: 0.5, backgroundColor: "#237ADE", color: "white" }}
-          />
-          <Chip
-            label={`Type - ${singleLense?.type_name}`}
-            color="primary"
-            sx={{ marginX: 0.5, backgroundColor: "#237ADE", color: "white" }}
-          />
-
-          <Chip
-            label={`Coating - ${singleLense?.coating_name}`}
-            color="primary"
-            sx={{ marginX: 0.5, backgroundColor: "#237ADE", color: "white" }}
-          />
-        </Box>
-        <Paper
-          sx={{
-            display: "flex",
-            flexWrap: "wrap",
-            gap: 1,
-            p: 1,
-            alignItems: "center",
-          }}
-        >
-          <Typography>Powers</Typography>
-          {singleLense?.powers.map((power) => (
-            <Chip
-              label={`${power.power_name.toLocaleUpperCase()}: ${power.value}`}
-              sx={{
-                marginX: 0.5,
-                backgroundColor: "#131e36",
-                color: "white",
-              }}
-            />
-          ))}
-        </Paper>
-        <Typography
-          marginY={1}
-          variant="body1"
-          fontWeight="bold"
-          paddingLeft="9px"
-        >
-          Curent Price- Rs.{singleLense?.price}
+        <Typography variant="body2" fontWeight="500" sx={{ mb: 0.5 }}>
+          Current Price
         </Typography>
+        <Typography
+          variant="h6"
+          fontWeight="bold"
+          sx={{ color: "#1565C0", mb: 1 }}
+        >
+          Rs. {numberWithCommas(singleLense?.price)}
+        </Typography>
+
         <TextField
           fullWidth
           label="Price"

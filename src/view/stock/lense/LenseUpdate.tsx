@@ -1,4 +1,12 @@
-import { Box, Chip, TextField, Typography, Paper } from "@mui/material";
+import {
+  Box,
+  TextField,
+  Typography,
+  Paper,
+  Divider,
+  Stack,
+  CircularProgress,
+} from "@mui/material";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -12,6 +20,12 @@ import { extractErrorMessage } from "../../../utils/extractErrorMessage";
 
 import { useAxiosPatch } from "../../../hooks/useAxiosPatch";
 import SubmitCustomBtn from "../../../components/common/SubmiteCustomBtn";
+import BackButton from "../../../components/BackButton";
+import InfoChip from "../../../components/common/InfoChip";
+import StockCountDisplay from "../../../components/common/StockCountDisplay";
+import returnPlusSymbol from "../../../utils/returnPlusSymbol";
+import LoadingAnimation from "../../../components/LoadingAnimation";
+import DataLoadingError from "../../../components/common/DataLoadingError";
 
 const LenseUpdate = () => {
   const { id } = useParams();
@@ -24,13 +38,13 @@ const LenseUpdate = () => {
     handleSubmit,
     formState: { errors },
     register,
-    reset,
+    watch,
   } = useForm<Pick<LenseFormModel, "limit" | "qty" | "branch_id">>({
     resolver: zodResolver(
       schemaLens.pick({ limit: true, qty: true, branch_id: true })
     ),
     defaultValues: {
-      limit: undefined,
+      // limit: undefined,
       qty: undefined,
       branch_id: getUserCurentBranch()?.id,
     },
@@ -40,7 +54,7 @@ const LenseUpdate = () => {
     data: Pick<LenseFormModel, "limit" | "qty" | "branch_id">
   ) => {
     if (!singleLenseLoading && singleLense) {
-      const { qty, limit } = data;
+      const { qty } = data;
       const postDAta = {
         lens: {
           brand: singleLense.brand,
@@ -50,7 +64,7 @@ const LenseUpdate = () => {
             lens: id,
             initial_count: (singleLense.stock[0]?.qty || 0) + qty,
             qty: (singleLense.stock[0]?.qty || 0) + qty,
-            limit: limit,
+            // limit: limit,
             branch_id: data.branch_id,
           },
         ],
@@ -59,7 +73,6 @@ const LenseUpdate = () => {
       try {
         await patchHandler(`/lenses/${id}/`, postDAta);
         toast.success("Lense Updated Successfully");
-        reset();
         refresh();
         navigate(-1);
       } catch (error) {
@@ -67,6 +80,13 @@ const LenseUpdate = () => {
       }
     }
   };
+
+  if (singleLenseLoading) {
+    return <LoadingAnimation loadingMsg="Loading Lense Details" />;
+  }
+  if (!singleLenseLoading && !singleLense) {
+    return <DataLoadingError />;
+  }
   return (
     <Box
       sx={{
@@ -80,58 +100,71 @@ const LenseUpdate = () => {
         component={"form"}
         onSubmit={handleSubmit(submiteData)}
         sx={{ padding: 4, width: 400, textAlign: "Left" }}
-        elevation={3}
+        variant="outlined"
       >
+        <BackButton />
         <Typography variant="h6" fontWeight="bold" paddingLeft="9px">
           Lense Quantity Update
         </Typography>
+        <Divider sx={{ mb: 2 }} />
+        {!singleLenseLoading && singleLense ? (
+          <>
+            <Box sx={{ my: 2 }}>
+              <Typography
+                variant="subtitle1"
+                sx={{ mb: 1, fontWeight: 600, color: "#2E3A59" }}
+              >
+                Lens Details
+              </Typography>
+              <Stack direction="row" spacing={1.5} useFlexGap flexWrap="wrap">
+                {[
+                  { label: "Factory", value: singleLense?.brand_name },
+                  { label: "Lens Type", value: singleLense?.type_name },
+                  { label: "Coating", value: singleLense?.coating_name },
+                ].map((item) => (
+                  <div key={item.label}>
+                    <InfoChip label={item.label} value={item.value} />
+                  </div>
+                ))}
+              </Stack>
+            </Box>
+            <Divider sx={{ mb: 2 }} />
+            <Box sx={{ my: 2 }}>
+              <Typography
+                variant="subtitle1"
+                sx={{ mb: 1, fontWeight: 600, color: "#2E3A59" }}
+              >
+                Power Details
+              </Typography>
+              <Stack direction="row" spacing={1.5} useFlexGap flexWrap="wrap">
+                {singleLense?.powers.map((item) => (
+                  <div key={item.power_name}>
+                    <InfoChip
+                      label={item.power_name}
+                      value={`${returnPlusSymbol(item.value)}${parseFloat(
+                        item.value
+                      ).toFixed(2)}`}
+                    />
+                  </div>
+                ))}
+              </Stack>
+            </Box>
+          </>
+        ) : (
+          <CircularProgress />
+        )}
 
-        <Box sx={{ marginY: 2 }}>
-          <Chip
-            label={`Factory - ${singleLense?.brand_name}`}
-            color="primary"
-            sx={{ marginX: 0.5, backgroundColor: "#237ADE", color: "white" }}
-          />
-          <Chip
-            label={`Lense Type  - ${singleLense?.type_name}`}
-            color="primary"
-            sx={{ margin: 0.5, backgroundColor: "#237ADE", color: "white" }}
-          />
-          <Chip
-            label={`Coating - ${singleLense?.coating_name}`}
-            color="primary"
-            sx={{ marginX: 0.5, backgroundColor: "#237ADE", color: "white" }}
-          />
-        </Box>
-        <Paper
-          sx={{
-            display: "flex",
-            flexWrap: "wrap",
-            gap: 1,
-            p: 1,
-            alignItems: "center",
-          }}
-        >
-          <Typography>Powers</Typography>
-          {singleLense?.powers.map((power) => (
-            <Chip
-              label={`${power.power_name.toLocaleUpperCase()}: ${power.value}`}
-              sx={{
-                marginX: 0.5,
-                backgroundColor: "#131e36",
-                color: "white",
-              }}
-            />
-          ))}
-        </Paper>
-        <Typography
-          marginY={1}
-          variant="body1"
-          fontWeight="bold"
-          paddingLeft="9px"
-        >
-          Curently Avilable Quantity - {singleLense?.stock[0]?.qty || 0}
+        <Typography variant="body2" fontWeight="500" sx={{ mb: 0.5 }}>
+          Current Quantity
         </Typography>
+        {!singleLenseLoading && singleLense ? (
+          <StockCountDisplay
+            currentQty={singleLense?.stock[0]?.qty || 0}
+            changeQty={watch("qty") || 0}
+          />
+        ) : (
+          <CircularProgress />
+        )}
         <TextField
           fullWidth
           label="Quantity"
@@ -142,7 +175,7 @@ const LenseUpdate = () => {
           helperText={errors.qty?.message}
           sx={{ marginBottom: 2 }}
         />
-        <TextField
+        {/* <TextField
           fullWidth
           type="number"
           label="Alert Level"
@@ -154,7 +187,7 @@ const LenseUpdate = () => {
           error={!!errors.limit}
           helperText={errors.limit?.message}
           sx={{ marginBottom: 2 }}
-        />
+        /> */}
         <TextField
           sx={{ display: "none" }}
           inputProps={{

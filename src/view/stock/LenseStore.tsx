@@ -1,6 +1,17 @@
 import { useMemo } from "react";
-import { MaterialReactTable } from "material-react-table";
-import { Box, IconButton, Tooltip } from "@mui/material";
+import {
+  MaterialReactTable,
+  MRT_Column,
+  MRT_TableInstance,
+} from "material-react-table";
+import {
+  Autocomplete,
+  Box,
+  IconButton,
+  TextField,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 // import HistoryIcon from "@mui/icons-material/History";
 import LoopIcon from "@mui/icons-material/Loop";
@@ -12,6 +23,7 @@ import { LenseModel } from "../../model/LenseModel";
 import TitleText from "../../components/TitleText";
 import { Edit, PriceChange } from "@mui/icons-material";
 import returnPlusSymbol from "../../utils/returnPlusSymbol";
+import { numberWithCommas } from "../../utils/numberWithCommas";
 
 const LenseStore = () => {
   const { lenses, lensesLoading, refresh } = useGetLenses();
@@ -84,6 +96,25 @@ const LenseStore = () => {
         muiTableHeadCellProps: { align: "center" as const },
         muiTableBodyCellProps: { align: "center" as const },
         size: 130,
+        Filter: ({ column }: { column: MRT_Column<LenseModel> }) => {
+          const allBrands = Array.from(
+            new Set(lenses.map((l) => l.brand_name))
+          ).filter(Boolean);
+
+          return (
+            <Autocomplete
+              size="small"
+              options={allBrands}
+              onChange={(_, value) => column.setFilterValue(value ?? "")}
+              renderInput={(params) => (
+                <TextField {...params} label="Filter" variant="standard" />
+              )}
+              value={column.getFilterValue() || ""}
+              isOptionEqualToValue={(option, value) => option === value}
+              clearOnEscape
+            />
+          );
+        },
       },
       {
         header: "Lense Type",
@@ -91,6 +122,41 @@ const LenseStore = () => {
         muiTableHeadCellProps: { align: "center" as const },
         muiTableBodyCellProps: { align: "center" as const },
         size: 130,
+        Filter: ({
+          column,
+          table,
+        }: {
+          column: MRT_Column<LenseModel>;
+          table: MRT_TableInstance<LenseModel>;
+        }) => {
+          // Get selected brand from filters
+          const brandFilter = table
+            .getState()
+            .columnFilters.find((f) => f.id === "brand_name");
+          const selectedBrand = brandFilter?.value;
+          // Show only types for selected brand
+          const filteredTypes = Array.from(
+            new Set(
+              lenses
+                .filter((l) => !selectedBrand || l.brand_name === selectedBrand)
+                .map((l) => l.type_name)
+            )
+          ).filter(Boolean);
+
+          return (
+            <Autocomplete
+              size="small"
+              options={filteredTypes}
+              onChange={(_, value) => column.setFilterValue(value ?? "")}
+              renderInput={(params) => (
+                <TextField {...params} label="Filter" variant="standard" />
+              )}
+              value={column.getFilterValue() || ""}
+              isOptionEqualToValue={(option, value) => option === value}
+              clearOnEscape
+            />
+          );
+        },
       },
       {
         header: "Coating",
@@ -98,6 +164,50 @@ const LenseStore = () => {
         muiTableHeadCellProps: { align: "center" as const },
         muiTableBodyCellProps: { align: "center" as const },
         size: 130,
+        Filter: ({
+          column,
+          table,
+        }: {
+          column: MRT_Column<LenseModel>;
+          table: MRT_TableInstance<LenseModel>;
+        }) => {
+          // Get selected brand & type from filters
+          const brandFilter = table
+            .getState()
+            .columnFilters.find((f) => f.id === "brand_name");
+          const selectedBrand = brandFilter?.value;
+          const typeFilter = table
+            .getState()
+            .columnFilters.find((f) => f.id === "type_name");
+          const selectedType = typeFilter?.value;
+
+          // Show only coatings for selected brand+type
+          const filteredCoatings = Array.from(
+            new Set(
+              lenses
+                .filter(
+                  (l) =>
+                    (!selectedBrand || l.brand_name === selectedBrand) &&
+                    (!selectedType || l.type_name === selectedType)
+                )
+                .map((l) => l.coating_name)
+            )
+          ).filter(Boolean);
+
+          return (
+            <Autocomplete
+              size="small"
+              options={filteredCoatings}
+              onChange={(_, value) => column.setFilterValue(value ?? "")}
+              renderInput={(params) => (
+                <TextField {...params} label="Filter" variant="standard" />
+              )}
+              value={column.getFilterValue() || ""}
+              isOptionEqualToValue={(option, value) => option === value}
+              clearOnEscape
+            />
+          );
+        },
       },
       {
         header: "Price",
@@ -105,6 +215,11 @@ const LenseStore = () => {
         muiTableHeadCellProps: { align: "right" as const },
         muiTableBodyCellProps: { align: "right" as const },
         size: 80,
+        Cell: ({ row }: { row: { original: LenseModel } }) => (
+          <Typography align="right" variant="body2">
+            {numberWithCommas(row.original.price)}
+          </Typography>
+        ),
       },
       {
         header: "Side",
@@ -165,12 +280,47 @@ const LenseStore = () => {
       {
         header: "Quantity",
         accessorFn: (row: LenseModel) => row.stock?.[0]?.qty ?? 0,
+        muiTableHeadCellProps: { align: "center" as const },
+        muiTableBodyCellProps: { align: "center" as const },
         size: 50,
+        Cell: ({ row }: { row: { original: LenseModel } }) => (
+          <Typography align="center" variant="body2">
+            {row.original.stock?.[0]?.qty ?? 0}
+          </Typography>
+        ),
       },
       {
         header: "Stock Limit",
+        muiTableHeadCellProps: { align: "center" as const },
+        muiTableBodyCellProps: { align: "center" as const },
         accessorFn: (row: LenseModel) => row.stock?.[0]?.limit ?? 0,
         size: 50,
+      },
+      {
+        header: "Low Stocks",
+        accessorFn: (row: LenseModel) => {
+          const qty = row.stock?.[0]?.qty ?? 0;
+          const limit = row.stock?.[0]?.limit ?? 0;
+          return qty <= limit;
+        },
+        enableSorting: true, // explicitly enable sorting
+        size: 50,
+        muiTableHeadCellProps: { align: "center" as const },
+        muiTableBodyCellProps: { align: "center" as const },
+        Cell: ({ row }: { row: { original: LenseModel } }) => {
+          const qty = row.original.stock?.[0]?.qty ?? 0;
+          const limit = row.original.stock?.[0]?.limit ?? 0;
+          return (
+            <Typography
+              variant="body2"
+              sx={{
+                color: qty <= limit ? "error.main" : "success.main",
+              }}
+            >
+              {qty <= limit ? "Low Stock" : "OK"}
+            </Typography>
+          );
+        },
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -19,6 +19,8 @@ const ExternalLensStore = () => {
     openDialog(
       `external_lenses/${row.id}/`,
       `External Lense of Type - ${row.lens_type_name} & Brand - ${row.brand_name}`,
+      "Your can activate this lense again using Logs section external lens store",
+      "Deactivate",
       () => {
         setExternalLenseParams({
           brand: row.brand,

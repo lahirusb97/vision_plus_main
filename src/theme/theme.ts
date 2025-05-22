@@ -20,6 +20,7 @@ const theme = createTheme({
     },
   },
   components: {
+    // INPUTS OUT LINE
     MuiOutlinedInput: {
       styleOverrides: {
         root: ({ theme }) => ({
@@ -40,6 +41,31 @@ const theme = createTheme({
             },
           },
         },
+      },
+      defaultProps: {
+        onWheel: (e: React.WheelEvent) =>
+          e.target instanceof HTMLElement && e.target.blur(),
+      },
+    },
+    // INPUTS ROOT
+    MuiInput: {
+      defaultProps: {
+        onWheel: (e: React.WheelEvent) =>
+          e.target instanceof HTMLElement && e.target.blur(),
+      },
+    },
+    // INPUTS BASE
+    MuiInputBase: {
+      defaultProps: {
+        onWheel: (e: React.WheelEvent) =>
+          e.target instanceof HTMLElement && e.target.blur(),
+      },
+    },
+    // INPUTS FILL
+    MuiFilledInput: {
+      defaultProps: {
+        onWheel: (e: React.WheelEvent) =>
+          e.target instanceof HTMLElement && e.target.blur(),
       },
     },
     MuiTableCell: {
