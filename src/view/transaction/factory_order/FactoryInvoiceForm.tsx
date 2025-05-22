@@ -126,7 +126,6 @@ export default function FactoryInvoiceForm() {
       dispatch(clearexternalLense());
     };
   }, []);
-  console.log(methods.watch("progress_status"));
 
   const submiteFromData = async (data: FactoryInvoiceFormModel) => {
     if (refraction_id) {

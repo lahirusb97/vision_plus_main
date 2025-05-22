@@ -87,10 +87,6 @@ export default function SolderingInvoiceTable() {
     );
   };
 
-  const handleRepayment = (invoice: SolderingInvoiceModel) => {
-    console.log(invoice);
-  };
-
   return (
     <Paper sx={{ p: 2 }}>
       <TitleText title="Soldering Invoice List" />
@@ -130,7 +126,11 @@ export default function SolderingInvoiceTable() {
                   <IconButton
                     size="small"
                     color="primary"
-                    onClick={() => handleRepayment(invoice)}
+                    onClick={(event) => {
+                      event.preventDefault();
+                      const url = `/master/soldering-invoice/${invoice.invoice_number}/soldering-repayment`;
+                      window.open(url, "_blank");
+                    }}
                   >
                     <PointOfSaleIcon color="error" sx={{ fontSize: 15 }} />
                   </IconButton>

@@ -1,170 +1,84 @@
-# VisionPlus Frontend
+# 🚀 Live Site Preview
 
-**Professional medical industry web-based solution for optical clinics and vision care centers.**
+[![Live Preview](https://img.shields.io/badge/Live%20Site-lahiru.store-brightgreen?style=for-the-badge&logo=vercel)](https://lahiru.store)
 
----
-
-## 🚀 Features
-
-- **Role-based Authentication**
-  - Secure login (JWT/cookies, API-based)
-  - Admin, SuperAdmin, Branch User access control
-
-- **Branch Management**
-  - Create, update, delete, and list branches
-  - Assign users to branches
-
-- **Channeling & Appointment System**
-  - Doctor management, including schedules and absence handling
-  - Appointment booking, editing, transfer, reschedule
-  - Channel invoice and payment management (partial/final payments)
-  - Patient records integration
-  - Channel claim, doctor claim, and reporting
-
-- **Refraction & Patient Records**
-  - Full patient/refraction registration and history
-  - Multiple prescription types: internal, vision plus, external
-
-- **Inventory Management**
-  - Frames, lenses, coatings, colors, and powers CRUD
-  - Frame/lens/cleaner/other-item stock management, per-branch
-  - Barcode & search for fast item selection
-
-- **Order & Invoice Processing**
-  - Factory and manual orders (including frame-only/external lenses)
-  - Discount handling, order on-hold, progress tracking, WhatsApp status
-  - Bulk update for status and notifications
-  - Auto-increment and branch-prefixed invoice numbers
-  - Soft-delete for data compliance
-
-- **Expense & Finance Management**
-  - Expense categories/subcategories
-  - Daily financial summaries, expense reporting
-  - Safe and bank deposit tracking
-  - Other income, bank account, and cash/bank/safe source tracking
-
-- **Reporting & Analytics**
-  - Daily/periodic summaries (sales, invoices, stock, expenses)
-  - Frame and invoice reporting
-  - Channel/appointment analytics
-  - Export and printable reports (with react-to-print)
-
-- **User Management**
-  - CRUD for users/admins with branch assignment
-  - Secure password handling (no plain text, API validation)
-  - Role/permission check endpoints
-
-- **Comprehensive Search**
-  - Patient, doctor, item, order, and invoice search
-
-- **System & Bus Management**
-  - Bus system settings for accounting and custom business logic
-
-- **Modern UI/UX**
-  - Built with Material UI (MUI) and Framer Motion for modern, responsive experience
-  - Data grid tables (material-react-table, MUI DataGrid)
-  - Toast notifications (react-hot-toast)
-  - Form validation (zod, yup, react-hook-form)
-  - Professional accessibility and mobile-first design
-
-- **Testing & Dev Tools**
-  - Unit/UI tests (Vitest, Testing Library)
-  - Linting (ESLint)
-  - Hot reload, code splitting (Vite)
+> **Experience the application here:**  
+> [https://lahiru.store](https://lahiru.store)
 
 ---
 
-## 🏗️ Main App Structure
+## ✨ Main Features
 
-### Core Routes
+### 🔒 Advanced Role-Based Authentication
 
-| Path                | Description                                             |
-|---------------------|--------------------------------------------------------|
-| `/`                 | Refraction dashboard (protected)                       |
-| `/transaction`      | Order, payment, and invoice management                 |
-| `/channel`          | Doctor, channel, schedule, claim, and payment flows    |
-| `/search`           | Global search (patients, orders, invoices, etc.)       |
-| `/checkin`          | Check-in system for appointments/refractions           |
-| `/stock`            | Stock management for all optical items                 |
-| `/account`          | Account and user profile management                    |
-| `/reports`          | Reports dashboard (finance, inventory, appointments)   |
-| `/user`             | User/admin management                                  |
-| `/logs`             | System logs                                            |
-| `/branch_selection` | Select active branch (multi-branch support)            |
-| `/login`            | Login/register (public)                                |
+- **JWT authentication** using secure, httpOnly cookies
+- Middleware enforces access: only authorized roles (Admin, Customer) can access sensitive routes
+- Automatic route-based redirection for login and dashboard based on user role
+- Passwords stored securely with bcrypt hashing
 
-_All major routes use `ProtectedChildRoute` or `LoginProtectedRoute` to enforce security._
+### 👥 User & Role Management
 
-### Dynamic & Nested Routing
+- Two main roles: **Admin** (full management access) and **Customer** (shopping and order access)
+- Admin-only dashboard and management tools
+- Customer-only account and order views
 
-- Modular route files per feature (`channel.route`, `transaction.route`, etc.)
-- Nested routes for doctor/appointment editing, invoice viewing, etc.
-- Suspense fallback for async code splitting and loading UX
+### 🛒 E-commerce Core
 
----
+- Product, category, brand, size, and color CRUD (Create, Read, Update, Delete)
+- Support for product variants and real-time stock management
+- Shopping cart, fast add/remove, and streamlined checkout
+- Order management with status tracking, invoice numbers, and notifications
 
-## ⚙️ Tech Stack
+### 💳 Payment Integration
 
-- **React 18**
-- **Vite**
-- **Material UI (MUI)**
-- **Redux Toolkit**
-- **React Router v7**
-- **React Hook Form** (with Zod/Yup validation)
-- **Axios**
-- **Day.js**
-- **Vitest** (unit and UI tests)
-- **TypeScript**
-- **Firebase** (optional, for auth/deployment)
+- **Stripe** integration for secure payment processing
+- Supports partial and final payments, plus webhook handling
 
-See [`package.json`](./package.json) for the complete dependency list.
+### 🏪 Multi-Branch & Inventory
 
----
+- Branch management: assign users to branches
+- Track inventory per branch and manage stock levels
 
-## 🔒 Security & Compliance
+### 📦 File/Image Management
 
-- All sensitive routes protected by authentication and role checks.
-- Patient and order data is never cached or stored insecurely on the client.
-- All API calls use secure HTTPS and backend CORS rules.
-- Soft-delete and audit trails for all critical data.
+- Upload and manage product images with **Cloudinary**
+- Fast, mobile-optimized image delivery using next-cloudinary
 
----
+### 📊 Expense & Financial Management
 
-## 🧪 Testing & Quality
+- Expense category and subcategory CRUD
+- Daily summaries, reports, and analytics for admins
 
-- Unit and UI tests with [Vitest](https://vitest.dev/) and Testing Library
-- Linting with [ESLint](https://eslint.org/)
-- Pre-deploy and CI test scripts included
+### 🖥️ Modern Frontend & UX/UI
 
----
+- Built with **Next.js 15** and **React 19** for speed and scalability
+- Beautiful UI using **shadcn/ui**, **Tailwind CSS**, and **Radix UI** primitives
+- Hero section carousel, product galleries, and responsive layouts
 
-## 📝 Real-world & Edge Case Considerations
+### ✅ Form & Data Validation
 
-- Medical/Healthcare: Validate all patient identifiers (NIC, phone, etc.) before submission.
-- Multi-branch: All branch-specific operations validate session/branch selection.
-- Concurrency: Always check for stale data on update (e.g., double submit, browser tab issues).
-- User Actions: Guard against accidental deletion (soft-delete everywhere possible).
+- **React Hook Form** for type-safe forms
+- **Zod** for schema validation and error handling
+
+### 🛡️ Security & Best Practices
+
+- All tokens httpOnly (never exposed to JS), protecting against XSS
+- Strict role and authentication checks in every sensitive route
+- Uses latest TypeScript, ESLint, and dependency management
+
+### 🛠️ Dev Experience
+
+- Clean, modular codebase
+- Modern scripts (`createsuperuser`, lint, build, dev)
+- Easy to extend with your own features
 
 ---
 
-## 📦 Getting Started
+**Recruiter highlights:**
 
-### Prerequisites
-
-- Node.js 18+
-- npm or yarn
-- Running backend API server
-
-### Installation
-
-```bash
-git clone https://github.com/your-org/visionplus-frontend.git
-cd visionplus-frontend
-npm install
-# or
-yarn install
-
-# Start local development server
-npm run dev
-# or
-yarn dev
+- Advanced JWT auth & route middleware
+- Stripe payment & webhook integration
+- Cloudinary image/file management
+- Modern, accessible UI with shadcn/ui & Tailwind CSS
+- Robust e-commerce, branch, and inventory logic
+- TypeScript, Next.js, Prisma, and MySQL expertise
