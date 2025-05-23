@@ -57,11 +57,6 @@ export default function PaymentsForm() {
             label="Amount"
             variant="outlined"
             size="small"
-            slotProps={{
-              inputProps: {
-                min: 0,
-              },
-            }}
             {...register(`payments.${index}.amount`, { valueAsNumber: true })}
           />
 

@@ -108,6 +108,12 @@ export default function SolderingOrderEdit() {
     };
     try {
       const patchPayload = {
+        patient: {
+          name: data.name,
+          nic: data.nic,
+          phone_number: data.phone_number,
+          address: data.address,
+        },
         progress_status: data.progress_status,
         price: data.price,
         note: data.note,
