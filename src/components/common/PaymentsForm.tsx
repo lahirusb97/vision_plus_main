@@ -24,7 +24,7 @@ const paymentMethodOptions = [
 ];
 
 export default function PaymentsForm() {
-  const { control, watch } = useFormContext();
+  const { control, watch, register } = useFormContext();
   const [pendingDeleteIndex, setPendingDeleteIndex] = useState<number | null>(
     null
   );
@@ -51,20 +51,18 @@ export default function PaymentsForm() {
               "both"
             )}
           </Typography>
-          <Controller
-            control={control}
-            name={`payments.${index}.amount`}
-            rules={{ required: true, min: 0 }}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                type="number"
-                label="Amount"
-                variant="outlined"
-                size="small"
-                inputProps={{ step: "0.01" }}
-              />
-            )}
+
+          <TextField
+            type="number"
+            label="Amount"
+            variant="outlined"
+            size="small"
+            slotProps={{
+              inputProps: {
+                min: 0,
+              },
+            }}
+            {...register(`payments.${index}.amount`, { valueAsNumber: true })}
           />
 
           <Controller

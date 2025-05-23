@@ -53,7 +53,6 @@ const LenseStore = () => {
             <Tooltip title="Lense Full Edit">
               <IconButton
                 size="small"
-                disabled
                 onClick={() => handleLenseFullEdit(row.original.id)}
               >
                 <Edit sx={{ fontSize: "1.4rem" }} />

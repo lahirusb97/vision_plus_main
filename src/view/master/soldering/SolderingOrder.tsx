@@ -51,10 +51,10 @@ export default function SolderingOrder() {
         is_final_payment: payment.amount === data.price,
       })),
     };
-    console.log(postData);
 
     try {
       const response = await postHandler("soldering/orders/create/", postData);
+      methods.reset();
       navigate(
         `/master/soldering-invoice/${response.data.invoice.invoice_number}`
       );
@@ -100,19 +100,17 @@ export default function SolderingOrder() {
               <b>Total Price:</b> {numberWithCommas(price)}
             </Typography>
             <Typography variant="body2">
-              <b>Total Payment:</b>{" "}
+              <b>Current Payment:</b>{" "}
               {numberWithCommas(creditCard + cash + onlineTransfer)}
             </Typography>
             <Typography
               color={
-                price - creditCard - cash - onlineTransfer < 0
-                  ? "error"
-                  : "success"
+                price - (creditCard + cash + onlineTransfer) < 0 ? "error" : ""
               }
               variant="body2"
             >
               <b>Balance:</b>{" "}
-              {numberWithCommas(price - creditCard - cash - onlineTransfer)}
+              {numberWithCommas(price - (creditCard + cash + onlineTransfer))}
             </Typography>
           </Box>
           <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
@@ -121,7 +119,7 @@ export default function SolderingOrder() {
           <SubmitCustomBtn
             isError={postHandlerError}
             btnText="Save"
-            loading={postHandlerloading}
+            loading={postHandlerloading || methods.formState.isSubmitting}
           />
         </form>
       </FormProvider>

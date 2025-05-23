@@ -12,6 +12,8 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
+  Tooltip,
+  Box,
 } from "@mui/material";
 import useGetSolderingInvoiceList from "../../../hooks/useGetSolderingInvoiceList";
 import { channelPaymentsTotal } from "../../../utils/channelPaymentsTotal";
@@ -19,7 +21,7 @@ import { numberWithCommas } from "../../../utils/numberWithCommas";
 import { progressStatus } from "../../../utils/progressState";
 import { formatDateTimeByType } from "../../../utils/formatDateTimeByType";
 import { SolderingInvoiceModel } from "../../../model/SolderingInvoiceModel";
-import { Print, Update } from "@mui/icons-material";
+import { Edit, Print, Update } from "@mui/icons-material";
 import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
 import axiosClient from "../../../axiosClient";
 import toast from "react-hot-toast";
@@ -29,6 +31,7 @@ import { useState } from "react";
 import CustomerPagination from "../../../components/CustomPagination";
 import TitleText from "../../../components/TitleText";
 import SolderingInvoiceSearch from "../../../hooks/SolderingInvoiceSearch";
+import { useNavigate } from "react-router";
 const PROGRESS_STAGES = [
   { value: "received_from_customer", label: "Received from Customer" },
   { value: "issue_to_factory", label: "Issued to Factory" },
@@ -36,6 +39,7 @@ const PROGRESS_STAGES = [
   { value: "issue_to_customer", label: "Issued to Customer" },
 ];
 export default function SolderingInvoiceTable() {
+  const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedInvoice, setSelectedInvoice] =
     useState<SolderingInvoiceModel | null>(null);
@@ -95,9 +99,9 @@ export default function SolderingInvoiceTable() {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell align="center">Update</TableCell>
+              <TableCell align="center">Actions </TableCell>
               <TableCell align="center">Repayment</TableCell>
-              <TableCell align="center">View</TableCell>
+
               <TableCell align="center">Name</TableCell>
               <TableCell align="center">Mobile</TableCell>
               <TableCell align="center">Nic</TableCell>
@@ -114,39 +118,59 @@ export default function SolderingInvoiceTable() {
             {solderingInvoiceList.map((invoice) => (
               <TableRow key={invoice.invoice_number}>
                 <TableCell align="center">
-                  <IconButton
-                    size="small"
-                    color="primary"
-                    onClick={(event) => handleOpenPopover(event, invoice)}
-                  >
-                    <Update sx={{ fontSize: 15 }} />
-                  </IconButton>
+                  <Box sx={{ display: "flex", gap: 1 }}>
+                    <Tooltip title="Edit Invoice">
+                      <IconButton
+                        size="small"
+                        color="primary"
+                        onClick={() =>
+                          navigate(
+                            `/master/soldering-invoice/${invoice.invoice_number}/soldering-edit`
+                          )
+                        }
+                      >
+                        <Edit color="info" sx={{ fontSize: 15 }} />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Update Progress">
+                      <IconButton
+                        size="small"
+                        color="primary"
+                        onClick={(event) => handleOpenPopover(event, invoice)}
+                      >
+                        <Update sx={{ fontSize: 15 }} />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="View Invoice">
+                      <IconButton
+                        size="small"
+                        onClick={(event) => {
+                          event.preventDefault();
+                          const url = `/master/soldering-invoice/${invoice.invoice_number}`;
+                          window.open(url, "_blank");
+                        }}
+                      >
+                        <Print color="info" sx={{ fontSize: 15 }} />
+                      </IconButton>
+                    </Tooltip>
+                  </Box>
                 </TableCell>
                 <TableCell align="center">
-                  <IconButton
-                    size="small"
-                    color="primary"
-                    onClick={(event) => {
-                      event.preventDefault();
-                      const url = `/master/soldering-invoice/${invoice.invoice_number}/soldering-repayment`;
-                      window.open(url, "_blank");
-                    }}
-                  >
-                    <PointOfSaleIcon color="error" sx={{ fontSize: 15 }} />
-                  </IconButton>
+                  <Tooltip title="Repayment">
+                    <IconButton
+                      size="small"
+                      color="primary"
+                      onClick={(event) => {
+                        event.preventDefault();
+                        const url = `/master/soldering-invoice/${invoice.invoice_number}/soldering-repayment`;
+                        window.open(url, "_blank");
+                      }}
+                    >
+                      <PointOfSaleIcon color="error" sx={{ fontSize: 15 }} />
+                    </IconButton>
+                  </Tooltip>
                 </TableCell>
-                <TableCell align="center">
-                  <IconButton
-                    size="small"
-                    onClick={(event) => {
-                      event.preventDefault();
-                      const url = `/master/soldering-invoice/${invoice.invoice_number}`;
-                      window.open(url, "_blank");
-                    }}
-                  >
-                    <Print color="info" sx={{ fontSize: 15 }} />
-                  </IconButton>
-                </TableCell>
+
                 <TableCell>{invoice.patient.name}</TableCell>
                 <TableCell>{invoice.patient.phone_number}</TableCell>
                 <TableCell>{invoice.patient.nic}</TableCell>

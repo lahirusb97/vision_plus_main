@@ -1,4 +1,3 @@
-import React from "react";
 import { useParams } from "react-router";
 import useGetSolderingInvoiceList from "../../../hooks/useGetSolderingInvoiceList";
 import {
@@ -34,6 +33,7 @@ import {
 import { formatUserPayments } from "../../../utils/formatUserPayments";
 import TitleText from "../../../components/TitleText";
 import { progressStatus } from "../../../utils/progressState";
+import { channelPaymentsTotal } from "../../../utils/channelPaymentsTotal";
 
 // Main component
 export default function SolderingRepayment() {
@@ -66,7 +66,10 @@ export default function SolderingRepayment() {
   if (solderingInvoiceListLoading) {
     return <LoadingAnimation loadingMsg="Loading Soldering Invoice Details" />;
   }
-  if (!invoiceDetail || solderingInvoiceList.length > 1) {
+  if (
+    !solderingInvoiceListLoading &&
+    (!invoiceDetail || solderingInvoiceList.length > 1)
+  ) {
     return (
       <Box p={4}>
         <Typography color="error" variant="h6">
@@ -77,13 +80,10 @@ export default function SolderingRepayment() {
   }
 
   // Calculate balance, typesafe
-  const orderAmount = parseFloat(invoiceDetail.order_details.price);
-  const paidTotal = invoiceDetail.payments
-    .filter((p: SolderingPayment) => !p.is_deleted)
-    .reduce(
-      (acc: number, p: SolderingPayment) => acc + parseFloat(p.amount),
-      0
-    );
+  const orderAmount = parseFloat(invoiceDetail?.order_details.price || "0");
+  const paidTotal = channelPaymentsTotal(
+    invoiceDetail?.payments.filter((p: SolderingPayment) => !p.is_deleted) || []
+  );
   const currentPaymentTotal =
     (methods.watch("cash") || 0) +
     (methods.watch("credit_card") || 0) +
@@ -109,7 +109,7 @@ export default function SolderingRepayment() {
           : invoiceDetail?.order_details?.progress_status,
       };
       await patchHandler(
-        `soldering/orders/${invoiceDetail.order_details.id}/edit/`,
+        `soldering/orders/${invoiceDetail?.order_details.id}/edit/`,
         patchPayload
       );
       methods.reset();
@@ -123,127 +123,134 @@ export default function SolderingRepayment() {
   return (
     <Box maxWidth={800} mx="auto" p={2} component={Paper} elevation={2}>
       {/* Invoice number */}
-      <TitleText title="Soldering Repayment" />
-      <Typography variant="h5" fontWeight="bold" gutterBottom>
-        Invoice #{invoiceDetail.invoice_number}
-      </Typography>
-      {/* Progress Status and Date */}
-      <Typography>
-        <strong>Status:</strong>{" "}
-        {`${progressStatus(
-          invoiceDetail.order_details.progress_status
-        )} - ${formatDateTimeByType(
-          invoiceDetail.order_details.progress_status_updated_at,
-          "both"
-        )}`}
-      </Typography>
-      <Typography variant="body2" color="textSecondary" gutterBottom>
-        Name: {invoiceDetail.patient.name}
-      </Typography>
-      <Typography variant="body2" color="textSecondary" gutterBottom>
-        Order Date:{" "}
-        {formatDateTimeByType(invoiceDetail.order_details.order_date, "both")}
-      </Typography>
-      <Divider sx={{ my: 1 }} />
-      <Paper sx={{ p: 1 }}>
-        <Typography variant="body1" fontWeight="bold">
-          Note
-        </Typography>
-        <Typography variant="body2" color="textSecondary">
-          {invoiceDetail.order_details.note}
-        </Typography>
-      </Paper>
-      <Divider sx={{ my: 2 }} />
+      {invoiceDetail && (
+        <>
+          <TitleText title="Soldering Repayment" />
+          <Typography variant="h5" fontWeight="bold" gutterBottom>
+            Invoice #{invoiceDetail.invoice_number}
+          </Typography>
+          {/* Progress Status and Date */}
+          <Typography>
+            <strong>Status:</strong>{" "}
+            {`${progressStatus(
+              invoiceDetail.order_details.progress_status
+            )} - ${formatDateTimeByType(
+              invoiceDetail.order_details.progress_status_updated_at,
+              "both"
+            )}`}
+          </Typography>
+          <Typography variant="body2" color="textSecondary" gutterBottom>
+            Name: {invoiceDetail.patient.name}
+          </Typography>
+          <Typography variant="body2" color="textSecondary" gutterBottom>
+            Order Date:{" "}
+            {formatDateTimeByType(
+              invoiceDetail.order_details.order_date,
+              "both"
+            )}
+          </Typography>
+          <Divider sx={{ my: 1 }} />
+          <Paper sx={{ p: 1 }}>
+            <Typography variant="body1" fontWeight="bold">
+              Note
+            </Typography>
+            <Typography variant="body2" color="textSecondary">
+              {invoiceDetail.order_details.note}
+            </Typography>
+          </Paper>
+          <Divider sx={{ my: 2 }} />
 
-      {/* Payments Table */}
-      <Typography variant="subtitle1" fontWeight="bold" sx={{ mt: 2 }}>
-        Payment History
-      </Typography>
-      <Table size="small">
-        <TableHead>
-          <TableRow>
-            <TableCell align="center">Payment Method</TableCell>
-            <TableCell align="center">Payment Date</TableCell>
-            <TableCell align="right">Payment Amount</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {invoiceDetail.payments
-            .filter((p: SolderingPayment) => !p.is_deleted)
-            .map((p: SolderingPayment) => (
-              <TableRow key={p.id}>
-                <TableCell align="center">
-                  {formatPaymentMethod(p.payment_method)}
-                </TableCell>
-                <TableCell align="center">
-                  {formatDateTimeByType(p.payment_date, "both")}
+          {/* Payments Table */}
+          <Typography variant="subtitle1" fontWeight="bold" sx={{ mt: 2 }}>
+            Payment History
+          </Typography>
+          <Table size="small">
+            <TableHead>
+              <TableRow>
+                <TableCell align="center">Payment Method</TableCell>
+                <TableCell align="center">Payment Date</TableCell>
+                <TableCell align="right">Payment Amount</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {invoiceDetail.payments
+                .filter((p: SolderingPayment) => !p.is_deleted)
+                .map((p: SolderingPayment) => (
+                  <TableRow key={p.id}>
+                    <TableCell align="center">
+                      {formatPaymentMethod(p.payment_method)}
+                    </TableCell>
+                    <TableCell align="center">
+                      {formatDateTimeByType(p.payment_date, "both")}
+                    </TableCell>
+                    <TableCell align="right">
+                      {numberWithCommas(p.amount)}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              {/* Add order amount and balance rows, aligned right */}
+              <TableRow>
+                <TableCell />
+                <TableCell align="right">
+                  <strong>Order Amount:</strong>
                 </TableCell>
                 <TableCell align="right">
-                  {numberWithCommas(p.amount)}
+                  <strong>
+                    {numberWithCommas(invoiceDetail.order_details.price)}
+                  </strong>
                 </TableCell>
               </TableRow>
-            ))}
-          {/* Add order amount and balance rows, aligned right */}
-          <TableRow>
-            <TableCell />
-            <TableCell align="right">
-              <strong>Order Amount:</strong>
-            </TableCell>
-            <TableCell align="right">
-              <strong>
-                {numberWithCommas(invoiceDetail.order_details.price)}
-              </strong>
-            </TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell />
-            <TableCell align="right">
-              <strong>Balance:</strong>
-            </TableCell>
-            <TableCell align="right">
-              <span style={{ color: balance < 0 ? "red" : "black" }}>
-                <strong>{numberWithCommas(balance)}</strong>
-              </span>
-            </TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell />
-            <TableCell align="right">
-              <strong>Current Payment:</strong>
-            </TableCell>
-            <TableCell align="right">
-              <span>
-                <strong>{numberWithCommas(currentPaymentTotal)}</strong>
-              </span>
-            </TableCell>
-          </TableRow>
-        </TableBody>
-      </Table>
-      <Divider sx={{ my: 2 }} />
+              <TableRow>
+                <TableCell />
+                <TableCell align="right">
+                  <strong>Balance:</strong>
+                </TableCell>
+                <TableCell align="right">
+                  <span style={{ color: balance < 0 ? "red" : "black" }}>
+                    <strong>{numberWithCommas(balance)}</strong>
+                  </span>
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell />
+                <TableCell align="right">
+                  <strong>Current Payment:</strong>
+                </TableCell>
+                <TableCell align="right">
+                  <span>
+                    <strong>{numberWithCommas(currentPaymentTotal)}</strong>
+                  </span>
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+          <Divider sx={{ my: 2 }} />
 
-      {/* Repayment Form */}
-      <FormProvider {...methods}>
-        <form onSubmit={methods.handleSubmit(onSubmit)} noValidate>
-          <Box ml={1} display="flex" alignItems="center">
-            <Typography variant="body1"> Issue To Good</Typography>
-            <Checkbox
-              {...methods.register("progress_status")}
-              checked={methods.watch("progress_status") || false} // Add fallback to false
-              onChange={(e) =>
-                methods.setValue("progress_status", e.target.checked)
-              }
-            />
-          </Box>
-          <Box sx={{ display: "flex", gap: 1 }}>
-            <PaymentMethodsLayout />
-          </Box>
-          <SubmitCustomBtn
-            loading={patchHandlerloading}
-            isError={patchHandlerError}
-            btnText="Add New Payment"
-          />
-        </form>
-      </FormProvider>
+          {/* Repayment Form */}
+          <FormProvider {...methods}>
+            <form onSubmit={methods.handleSubmit(onSubmit)} noValidate>
+              <Box ml={1} display="flex" alignItems="center">
+                <Typography variant="body1"> Issue To Good</Typography>
+                <Checkbox
+                  {...methods.register("progress_status")}
+                  checked={methods.watch("progress_status") || false} // Add fallback to false
+                  onChange={(e) =>
+                    methods.setValue("progress_status", e.target.checked)
+                  }
+                />
+              </Box>
+              <Box sx={{ display: "flex", gap: 1 }}>
+                <PaymentMethodsLayout />
+              </Box>
+              <SubmitCustomBtn
+                loading={patchHandlerloading}
+                isError={patchHandlerError}
+                btnText="Add New Payment"
+              />
+            </form>
+          </FormProvider>
+        </>
+      )}
     </Box>
   );
 }

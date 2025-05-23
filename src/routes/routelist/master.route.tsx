@@ -4,6 +4,7 @@ import SolderingOrder from "../../view/master/soldering/SolderingOrder";
 import SolderingInvoiceTable from "../../view/master/soldering/SolderingInvoiceTable";
 import SolderingInvoiceView from "../../view/master/soldering/SolderingInvoiceView";
 import SolderingRepayment from "../../view/master/soldering/SolderingRepayment";
+import SolderingOrderEdit from "../../view/master/soldering/SolderingOrderEdit";
 
 export const masterRoutes: RouteObject[] = [
   {
@@ -31,6 +32,10 @@ export const masterRoutes: RouteObject[] = [
       {
         path: ":invoice_number/soldering-repayment",
         element: <SolderingRepayment />,
+      },
+      {
+        path: ":invoice_number/soldering-edit",
+        element: <SolderingOrderEdit />,
       },
     ],
   },
