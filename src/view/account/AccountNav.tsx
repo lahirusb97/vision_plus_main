@@ -10,6 +10,10 @@ export default function AccountNav() {
       <NavButton name="Bank Deposite" path={"/account/bank_deposite/"} />
       <NavButton name="Bank Accounts" path={"/account/bank_accounts/"} />
       <NavButton name="Safe Locker" path={"/account/safe/"} />
+      <NavButton
+        name="Safe Locker Expence"
+        path={"/account/safe/safe_expence/"}
+      />
     </>
   );
 }

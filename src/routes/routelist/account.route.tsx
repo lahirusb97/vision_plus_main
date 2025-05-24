@@ -21,6 +21,7 @@ import AddOtherIncome from "../../view/account/other_income/AddOtherIncome";
 import OtherIncomeManage from "../../view/account/other_income/OtherIncomeManage";
 import SafeIndex from "../../view/account/safe/SafeIndex";
 import UpdateOtherIncomePayment from "../../view/account/other_income/UpdateOtherIncomePayment";
+import SafeLockerExpence from "../../view/account/SafeLockerExpence";
 
 export const accountRoutes: RouteObject[] = [
   {
@@ -183,6 +184,10 @@ export const accountRoutes: RouteObject[] = [
       {
         index: true,
         element: <SafeIndex />,
+      },
+      {
+        path: "safe_expence/",
+        element: <SafeLockerExpence />,
       },
     ],
   },

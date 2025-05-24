@@ -34,7 +34,7 @@ import { ExpencePaymentTable } from "../../components/ExpencePaymentTable";
 import useGetSafeBalance from "../../hooks/useGetSafeBalance";
 import { numberWithCommas } from "../../utils/numberWithCommas";
 
-const Expence = () => {
+const SafeLockerExpence = () => {
   const navigate = useNavigate();
   const { postHandler, postHandlerloading, postHandlerError } = useAxiosPost();
   const { subExCategory, subExCategoryLoading } = useGetSubExCategory();
@@ -93,7 +93,7 @@ const Expence = () => {
   }, []);
 
   const onSubmit = async (data: ExpenseFormData) => {
-    if ((financeSummary?.cash_in_hold || 0) >= data.amount) {
+    if (safeTotalBalance >= data.amount) {
       console.log(data);
       const postData = {
         branch: data.branch,
@@ -101,8 +101,8 @@ const Expence = () => {
         sub_category: data.sub_category,
         amount: data.amount,
         note: data.note,
-        paid_source: "cash",
-        paid_from_safe: false,
+        paid_source: "safe",
+        paid_from_safe: true,
       };
       try {
         await postHandler("/expenses/", postData);
@@ -127,7 +127,7 @@ const Expence = () => {
   return (
     <Box sx={{ display: "flex" }} p={1}>
       <Paper elevation={1} sx={{ p: 1, width: "400px" }}>
-        <TitleText title="Place New Expense" />
+        <TitleText title="Place New Expense From Safe Locker" />
         <Box>
           <Button
             size="small"
@@ -147,9 +147,9 @@ const Expence = () => {
           </Paper>
           <Paper elevation={1} sx={{ p: 1, mb: 1 }}>
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-              <Typography variant="body1">Avilable Balance </Typography>
+              <Typography variant="body1">Avilable Safe Balance </Typography>
               <Typography variant="body1">
-                {numberWithCommas(financeSummary?.cash_in_hold)}{" "}
+                {numberWithCommas(safeTotalBalance)}{" "}
               </Typography>
             </Box>
           </Paper>
@@ -259,4 +259,4 @@ const Expence = () => {
   );
 };
 
-export default Expence;
+export default SafeLockerExpence;
