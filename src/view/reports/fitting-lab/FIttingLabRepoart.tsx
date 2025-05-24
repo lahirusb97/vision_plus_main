@@ -163,12 +163,20 @@ export default function FIttingLabRepoart() {
             <Typography variant="subtitle2">
               <b>Damage:</b> {damage_count}
             </Typography>
+            <Typography variant="subtitle2">
+              <b>Total Pending Order:</b> {fitting_not_ok_count + damage_count}
+            </Typography>
             <Divider orientation="vertical" flexItem sx={{ mx: 1 }} />
             <Typography variant="subtitle2">
               <b>Stock Lens Orders:</b> {total_stock_lens_orders}
             </Typography>
             <Typography variant="subtitle2">
               <b>Non-Stock Lens Orders:</b> {total_non_stock_lens_orders}
+            </Typography>
+
+            <Typography variant="subtitle2">
+              <b>Total Orders:</b>{" "}
+              {total_stock_lens_orders + total_non_stock_lens_orders}
             </Typography>
           </Stack>
         </Stack>
