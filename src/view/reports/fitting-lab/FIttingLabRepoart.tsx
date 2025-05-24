@@ -193,10 +193,10 @@ export default function FIttingLabRepoart() {
             <TableRow>
               <TableCell>Invoice No</TableCell>
               <TableCell>Date</TableCell>
-              <TableCell>Patient</TableCell>
+              {/* <TableCell>Patient</TableCell> */}
               <TableCell align="center">Fitting Status</TableCell>
-              <TableCell align="right">Amount</TableCell>
-              <TableCell align="center">Progress Status</TableCell>
+              {/* <TableCell align="right">Amount</TableCell> */}
+              {/* <TableCell align="center">Progress Status</TableCell> */}
               {/* Add more columns as needed */}
             </TableRow>
           </TableHead>
@@ -214,16 +214,16 @@ export default function FIttingLabRepoart() {
                 <TableCell>
                   {formatDateTimeByType(order.invoice_date, "both")}
                 </TableCell>
-                <TableCell>{order.customer ?? "-"}</TableCell>
-                <TableCell align="center">
+                {/* <TableCell>{order.customer ?? "-"}</TableCell> */}
+                {/* <TableCell align="center">
                   {formatFittingStatus(order.fitting_status)}
-                </TableCell>
-                <TableCell align="right">
+                </TableCell> */}
+                {/* <TableCell align="right">
                   {numberWithCommas(order.total_price)}
-                </TableCell>
-                <TableCell align="center">
+                </TableCell> */}
+                {/* <TableCell align="center">
                   {progressStatus(order.progress_status)}
-                </TableCell>
+                </TableCell> */}
                 {/* Add more cells as needed */}
               </TableRow>
             ))}

@@ -86,7 +86,7 @@ export default function FittingForm() {
       {invoiceSearchData && (
         <Box>
           <Divider sx={{ mb: 2 }} />
-          <Stack direction="column" spacing={1.5} mb={2} pl={1}>
+          <Stack direction="column" spacing={1} mb={1} pl={1}>
             <Typography variant="body1">
               <b>Customer:</b> {invoiceSearchData.customer_details.name}
             </Typography>
@@ -97,10 +97,7 @@ export default function FittingForm() {
               <b>Date:</b>{" "}
               {formatDateTimeByType(invoiceSearchData.invoice_date, "both")}
             </Typography>
-            <Typography variant="body1">
-              <b>Total Price:</b>{" "}
-              {numberWithCommas(invoiceSearchData.order_details.total_price)}
-            </Typography>
+
             <Typography variant="body1">
               <b>Current Fitting Status:</b>{" "}
               {invoiceSearchData.order_details.fitting_status
@@ -113,6 +110,16 @@ export default function FittingForm() {
                 invoiceSearchData.order_details.fitting_status_updated_date,
                 "both"
               )}
+            </Typography>
+            <Typography color="primary" fontWeight={"bold"} variant="body1">
+              {invoiceSearchData.order_details.order_items.filter(
+                (item) => item.lens !== null
+              ).length >= 1 && "In Stock Lense Order"}
+            </Typography>
+            <Typography color="primary" fontWeight={"bold"} variant="body1">
+              {invoiceSearchData.order_details.order_items.filter(
+                (item) => item.external_lens !== null
+              ).length >= 1 && "External Lense Order "}
             </Typography>
           </Stack>
           <Stack direction="row" spacing={2} mt={2} justifyContent="center">
