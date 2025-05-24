@@ -215,9 +215,9 @@ export default function FIttingLabRepoart() {
                   {formatDateTimeByType(order.invoice_date, "both")}
                 </TableCell>
                 {/* <TableCell>{order.customer ?? "-"}</TableCell> */}
-                {/* <TableCell align="center">
+                <TableCell align="center">
                   {formatFittingStatus(order.fitting_status)}
-                </TableCell> */}
+                </TableCell>
                 {/* <TableCell align="right">
                   {numberWithCommas(order.total_price)}
                 </TableCell> */}
