@@ -41,8 +41,12 @@ const SafeLockerExpence = () => {
   const { exCategory, exCategoryLoading } = useGetExCategory();
   const { financeSummary, setFinanceSummaryParams, financeSummaryRefres } =
     useGetFinanceSummary();
-  const { safeTotalBalance, safeTotalBalanceLoading, safeTotalBalanceError } =
-    useGetSafeBalance();
+  const {
+    safeTotalBalance,
+    safeTotalBalanceLoading,
+    safeTotalBalanceError,
+    safeTotalBalanceRefres,
+  } = useGetSafeBalance();
   const {
     expenseList,
     loading: expenseListLoading,
@@ -109,6 +113,7 @@ const SafeLockerExpence = () => {
         toast.success("Expense recorded successfully");
         financeSummaryRefres();
         refreshReport();
+        safeTotalBalanceRefres();
         reset(); // Reset the form after successful submission
       } catch (error) {
         extractErrorMessage(error);
@@ -146,12 +151,30 @@ const SafeLockerExpence = () => {
             </Box>
           </Paper>
           <Paper elevation={1} sx={{ p: 1, mb: 1 }}>
-            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-              <Typography variant="body1">Avilable Safe Balance </Typography>
-              <Typography variant="body1">
-                {numberWithCommas(safeTotalBalance)}{" "}
-              </Typography>
-            </Box>
+            {!safeTotalBalanceLoading && !safeTotalBalanceError && (
+              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                <Typography variant="body1">Avilable Safe Balance </Typography>
+                <Typography variant="body1">
+                  {numberWithCommas(safeTotalBalance)}{" "}
+                </Typography>
+              </Box>
+            )}
+            {!safeTotalBalanceLoading && safeTotalBalanceError && (
+              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                <Typography variant="body1">Avilable Safe Balance </Typography>
+                <Typography variant="body1" color="error">
+                  Error Refresh The Page
+                </Typography>
+              </Box>
+            )}
+            {safeTotalBalanceLoading && (
+              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                <Typography variant="body1">Avilable Safe Balance </Typography>
+                <Typography variant="body1" color="error">
+                  Loading...
+                </Typography>
+              </Box>
+            )}
           </Paper>
           {/* <Paper elevation={1} sx={{ p: 1, mb: 1 }}>
             {!safeTotalBalanceLoading && !safeTotalBalanceError && (

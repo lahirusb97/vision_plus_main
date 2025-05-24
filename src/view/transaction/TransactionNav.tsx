@@ -1,4 +1,6 @@
 import NavButton from "../../components/NavButton";
+import { BUSID } from "../../data/staticVariables";
+import { getUserCurentBranch } from "../../utils/authDataConver";
 
 export default function TransactionNav() {
   return (
@@ -25,7 +27,9 @@ export default function TransactionNav() {
         path={"/transaction/doctor_claim_invoice"}
       />
 
-      <NavButton name="Bus Title" path={"/transaction/bus"} />
+      {BUSID === getUserCurentBranch()?.id && (
+        <NavButton name="Bus Title" path={"/transaction/bus"} />
+      )}
     </>
   );
 }
