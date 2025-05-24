@@ -46,42 +46,46 @@ export default function FrameOnlyOrderCreate() {
 
   const frameOnlyOrderSubmite = (data: FrameOnlyOrderForm) => {
     if (Object.keys(FrameInvoiceList).length === 1) {
-      const userPayments = {
-        credit_card: data.credit_card,
-        cash: data.cash,
-        online_transfer: data.online_transfer,
-      };
-      const orderState =
-        frameTotal <= data.credit_card + data.cash + data.online_transfer
-          ? "completed"
-          : "pending";
-      const firstValue = Object.values(FrameInvoiceList)[0];
-      const postData = {
-        patient: {
-          name: data.name,
-          nic: data.nic,
-          address: data.address,
-          phone_number: data.phone_number,
-          date_of_birth: data.dob,
-        },
-        discount: data.discount,
-        status: orderState,
-        frame: firstValue.frame_id,
-        quantity: firstValue.buyQty,
-        price_per_unit: firstValue.price_per_unit,
-        branch_id: getUserCurentBranch()?.id,
-        payments: formatUserPayments(userPayments),
-        progress_status: data.progress_status
-          ? "issue_to_customer"
-          : "received_from_customer",
-      };
-      console.log(postData);
-      prepareValidation("create", async (verifiedUserId: number) => {
-        await sendDataToDb(
-          postData as FrameOnlyOrderInputModel,
-          verifiedUserId
-        );
-      });
+      if (data.credit_card + data.cash + data.online_transfer <= frameTotal) {
+        const userPayments = {
+          credit_card: data.credit_card,
+          cash: data.cash,
+          online_transfer: data.online_transfer,
+        };
+        const orderState =
+          frameTotal <= data.credit_card + data.cash + data.online_transfer
+            ? "completed"
+            : "pending";
+        const firstValue = Object.values(FrameInvoiceList)[0];
+        const postData = {
+          patient: {
+            name: data.name,
+            nic: data.nic,
+            address: data.address,
+            phone_number: data.phone_number,
+            date_of_birth: data.dob,
+          },
+          discount: data.discount,
+          status: orderState,
+          frame: firstValue.frame_id,
+          quantity: firstValue.buyQty,
+          price_per_unit: firstValue.price_per_unit,
+          branch_id: getUserCurentBranch()?.id,
+          payments: formatUserPayments(userPayments),
+          progress_status: data.progress_status
+            ? "issue_to_customer"
+            : "received_from_customer",
+        };
+        console.log(postData);
+        prepareValidation("create", async (verifiedUserId: number) => {
+          await sendDataToDb(
+            postData as FrameOnlyOrderInputModel,
+            verifiedUserId
+          );
+        });
+      } else {
+        toast.error("Payment Amount is greater than Total Amount");
+      }
     } else {
       toast.error("You Can Invoice Only a Single Frame");
     }

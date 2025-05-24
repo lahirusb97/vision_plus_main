@@ -6,14 +6,20 @@ import {
   Chip,
 } from "@mui/material";
 import { useFormContext } from "react-hook-form";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { SearchSharp } from "@mui/icons-material";
 import FilterPatient from "../../../components/FilterPatient";
 import { getBirthdateFromNIC } from "../../../utils/NictoBirthday";
 import DateInput from "../../../components/inputui/DateInput";
 import { birthdayToAge } from "../../../utils/BirthdayToAge";
 
-export default function SolderingPatientDetail() {
+interface SolderingPatientDetailProps {
+  disabledInput?: boolean;
+}
+
+export default function SolderingPatientDetail({
+  disabledInput,
+}: SolderingPatientDetailProps) {
   const [openSearchDialog, setOpenSearchDialog] = useState({
     open: false,
     searchType: "",
@@ -25,16 +31,6 @@ export default function SolderingPatientDetail() {
     setValue,
     formState: { errors },
   } = useFormContext();
-
-  useEffect(() => {
-    if (watch("nic")?.length >= 10 && watch("nic") !== "") {
-      const birthdate = getBirthdateFromNIC(watch("nic"));
-      setValue("dob", birthdate); // Force clear first
-    } else {
-      setValue("dob", null);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [watch("nic")]);
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
@@ -49,6 +45,7 @@ export default function SolderingPatientDetail() {
           sx={{ display: "flex", flexGrow: 1, gap: 1, alignItems: "center" }}
         >
           <TextField
+            disabled={disabledInput}
             {...register("name")}
             error={!!errors.name}
             sx={{ flexGrow: 1 }}
@@ -78,6 +75,7 @@ export default function SolderingPatientDetail() {
 
       <Box sx={{ display: "flex", gap: 1 }}>
         <TextField
+          disabled={disabledInput}
           {...register("phone_number")}
           error={!!errors.phone_number}
           sx={{ flexGrow: 1 }}
@@ -108,6 +106,7 @@ export default function SolderingPatientDetail() {
         />
       </Box>
       <TextField
+        disabled={disabledInput}
         {...register("nic")}
         error={watch("nic") === ""}
         sx={{ flexGrow: 1 }}
@@ -129,15 +128,25 @@ export default function SolderingPatientDetail() {
             </InputAdornment>
           ),
         }}
+        onChange={(e) => {
+          setValue("nic", e.target.value);
+          // If value is valid, update DOB, else clear DOB
+          if (e.target.value && e.target.value.length >= 10) {
+            setValue("dob", getBirthdateFromNIC(e.target.value));
+          } else {
+            setValue("dob", null);
+          }
+        }}
       />
       <Box sx={{ display: "flex", gap: 1 }}>
-        <DateInput />
+        <DateInput disabledInput={true} />
         <Chip
           sx={{ p: 1, fontWeight: "bold" }}
           label={birthdayToAge(watch("dob"))}
         ></Chip>
       </Box>
       <TextField
+        disabled={disabledInput}
         {...register("address")}
         error={!!errors.address}
         size="small"

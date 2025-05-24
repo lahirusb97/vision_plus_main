@@ -129,91 +129,100 @@ export default function FactoryInvoiceForm() {
 
   const submiteFromData = async (data: FactoryInvoiceFormModel) => {
     if (refraction_id) {
-      //HANDLE PAYMENT To REMOVE SENDING  0
-      const orderState =
-        grandTotal <= data.credit_card + data.cash + data.online_transfer
-          ? "completed"
-          : "pending";
-      const userPayments = {
-        credit_card: data.credit_card,
-        cash: data.cash,
-        online_transfer: data.online_transfer,
-      };
-      const postData = {
-        patient: {
-          refraction_id: parseInt(refraction_id),
-          name: data.name,
-          nic: data.nic,
-          address: data.address,
-          phone_number: data.phone_number,
-          date_of_birth: data.dob,
-        },
-        order: {
-          refraction: parseInt(refraction_id),
-          status: orderState,
-          sub_total: subtotal,
-          discount: discount,
-          total_price: grandTotal,
-          order_remark: data.order_remark,
-          // sales_staff_code: data.sales_staff_code, //!user code ID set this using varification Dialog
-          pd: data.pd,
-          right_pd: data.right_pd,
-          left_pd: data.left_pd,
-          height: data.height,
-          right_height: data.right_height,
-          left_height: data.left_height,
-          fitting_on_collection: data.fitting_on_collection,
-          on_hold: data.on_hold,
-          branch_id: data.branch_id,
-          user_date: data.user_date,
-          bus_title: BUSID === currentBranch ? data.bus_title : null,
-          progress_status: data.progress_status,
-        },
-        order_items: [
-          ...Object.values(LenseInvoiceList).map((item) => ({
-            lens: item.lense_id,
-            quantity: item.buyQty,
-            price_per_unit: item.price_per_unit,
-            subtotal: item.subtotal,
-            is_non_stock: false,
-          })),
-
-          ...Object.values(FrameInvoiceList).map((item) => ({
-            frame: item.frame_id,
-            quantity: item.buyQty,
-            price_per_unit: item.price_per_unit,
-            subtotal: item.subtotal,
-            is_non_stock: false,
-          })),
-          ...Object.values(externalLenseInvoiceList).map((item) => ({
-            external_lens: item.external_lens_id,
-            quantity: item.buyQty,
-            price_per_unit: item.price_per_unit,
-            subtotal: item.subtotal,
-            note: item.note,
-            is_non_stock: true,
-            whatsapp_sent: "not_sent",
-            //!Note here
-          })),
-        ],
-        order_payments: formatUserPayments(userPayments),
-      };
-
       if (
-        Object.keys(externalLenseInvoiceList).length > 0 ||
-        Object.keys(LenseInvoiceList).length > 0 ||
-        Object.keys(FrameInvoiceList).length > 0
+        grandTotal >=
+        methods.watch("credit_card") +
+          methods.watch("cash") +
+          methods.watch("online_transfer")
       ) {
-        if (refractionDetail && !refractionDetailLoading) {
-          prepareValidation("create", async (verifiedUserId: number) => {
-            await sendDataToDb(postData, verifiedUserId);
-          });
-          //TODO USE THIS AND CREATE THE SYSTEM ALL GOOD TO DO IF NO REFRACTION DETAILS NO DETAIL CREATINS
+        //HANDLE PAYMENT To REMOVE SENDING  0
+        const orderState =
+          grandTotal <= data.credit_card + data.cash + data.online_transfer
+            ? "completed"
+            : "pending";
+        const userPayments = {
+          credit_card: data.credit_card,
+          cash: data.cash,
+          online_transfer: data.online_transfer,
+        };
+        const postData = {
+          patient: {
+            refraction_id: parseInt(refraction_id),
+            name: data.name,
+            nic: data.nic,
+            address: data.address,
+            phone_number: data.phone_number,
+            date_of_birth: data.dob,
+          },
+          order: {
+            refraction: parseInt(refraction_id),
+            status: orderState,
+            sub_total: subtotal,
+            discount: discount,
+            total_price: grandTotal,
+            order_remark: data.order_remark,
+            // sales_staff_code: data.sales_staff_code, //!user code ID set this using varification Dialog
+            pd: data.pd,
+            right_pd: data.right_pd,
+            left_pd: data.left_pd,
+            height: data.height,
+            right_height: data.right_height,
+            left_height: data.left_height,
+            fitting_on_collection: data.fitting_on_collection,
+            on_hold: data.on_hold,
+            branch_id: data.branch_id,
+            user_date: data.user_date,
+            bus_title: BUSID === currentBranch ? data.bus_title : null,
+            progress_status: data.progress_status,
+          },
+          order_items: [
+            ...Object.values(LenseInvoiceList).map((item) => ({
+              lens: item.lense_id,
+              quantity: item.buyQty,
+              price_per_unit: item.price_per_unit,
+              subtotal: item.subtotal,
+              is_non_stock: false,
+            })),
+
+            ...Object.values(FrameInvoiceList).map((item) => ({
+              frame: item.frame_id,
+              quantity: item.buyQty,
+              price_per_unit: item.price_per_unit,
+              subtotal: item.subtotal,
+              is_non_stock: false,
+            })),
+            ...Object.values(externalLenseInvoiceList).map((item) => ({
+              external_lens: item.external_lens_id,
+              quantity: item.buyQty,
+              price_per_unit: item.price_per_unit,
+              subtotal: item.subtotal,
+              note: item.note,
+              is_non_stock: true,
+              whatsapp_sent: "not_sent",
+              //!Note here
+            })),
+          ],
+          order_payments: formatUserPayments(userPayments),
+        };
+
+        if (
+          Object.keys(externalLenseInvoiceList).length > 0 ||
+          Object.keys(LenseInvoiceList).length > 0 ||
+          Object.keys(FrameInvoiceList).length > 0
+        ) {
+          if (refractionDetail && !refractionDetailLoading) {
+            prepareValidation("create", async (verifiedUserId: number) => {
+              await sendDataToDb(postData, verifiedUserId);
+            });
+            //TODO USE THIS AND CREATE THE SYSTEM ALL GOOD TO DO IF NO REFRACTION DETAILS NO DETAIL CREATINS
+          } else {
+            toast.error("Refraction Detail Not Found");
+          }
         } else {
-          toast.error("Refraction Detail Not Found");
+          toast.error("No Items ware added");
         }
       } else {
-        toast.error("No Items ware added");
+        toast.error("Payment Amount is greater than Total Amount");
       }
     } else {
       toast.error("Selected Petient Does not Have a  Refraction Number");

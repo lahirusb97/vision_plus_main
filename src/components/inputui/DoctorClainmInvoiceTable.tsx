@@ -15,6 +15,7 @@ import { useFormContext } from "react-hook-form";
 import { removeexternalLense } from "../../features/invoice/externalLenseSlice";
 
 import DiscountInput from "./DiscountInput";
+import { removeDoctorClaimItem } from "../../features/invoice/doctorClaimSlice";
 
 export default function DoctorClainmInvoiceTable() {
   const { watch } = useFormContext();
@@ -22,6 +23,10 @@ export default function DoctorClainmInvoiceTable() {
   const dispatch = useDispatch();
   const externalLenseInvoiceList = useSelector(
     (state: RootState) => state.invoice_external_lense.externalLenseList
+  );
+  const doctorclaimItems = useSelector(
+    (state: RootState) =>
+      state.doctor_claim_invoice.doctorClaimPayload.invoiceItems
   );
   const ExtraTotal = useSelector(
     (state: RootState) => state.invoice_external_lense.externalLenseSubTotal
@@ -42,7 +47,11 @@ export default function DoctorClainmInvoiceTable() {
 
   //calcuate Total
   const discount = watch("discount") || 0;
-  const subtotal = frameTotal + lenseTotal + ExtraTotal;
+  const subtotal =
+    frameTotal +
+    lenseTotal +
+    ExtraTotal +
+    doctorclaimItems.reduce((acc, item) => acc + item.subtotal, 0);
   const grandTotal = subtotal - discount;
 
   return (
@@ -95,6 +104,32 @@ export default function DoctorClainmInvoiceTable() {
 
               <TableCell>{`${row.frame_detail.brand_name} / ${row.frame_detail.code_name} / ${row.frame_detail.color_name} / ${row.frame_detail.species} / ${row.frame_detail.brand_type_display}`}</TableCell>
               <TableCell align="center">{row.buyQty}</TableCell>
+              <TableCell align="right">{row.price_per_unit}</TableCell>
+              <TableCell align="right">{row.subtotal}</TableCell>
+            </TableRow>
+          ))}
+          {/* //! DOCTOR CLAIM ITEMS */}
+          {Object.values(doctorclaimItems)?.map((row, index) => (
+            <TableRow key={index}>
+              <TableCell>
+                <IconButton
+                  size="small"
+                  onClick={() => {
+                    if (
+                      window.confirm(
+                        "Are you sure you want to delete this item?"
+                      )
+                    ) {
+                      dispatch(removeDoctorClaimItem(row.id));
+                    }
+                  }}
+                >
+                  <Delete sx={{ fontSize: "1rem" }} color="error" />
+                </IconButton>
+              </TableCell>
+
+              <TableCell>{row.details}</TableCell>
+              <TableCell align="center">{row.quantity}</TableCell>
               <TableCell align="right">{row.price_per_unit}</TableCell>
               <TableCell align="right">{row.subtotal}</TableCell>
             </TableRow>

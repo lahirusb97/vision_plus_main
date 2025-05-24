@@ -8,10 +8,7 @@ import {
 import TitleText from "../../../components/TitleText";
 import MiniPatientDetails from "./MiniPatientDetails";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  openManualLense,
-  openStockDrawer,
-} from "../../../features/invoice/stockDrawerSlice";
+import { openStockDrawer } from "../../../features/invoice/stockDrawerSlice";
 
 import { RootState } from "../../../store/store";
 import { useValidationState } from "../../../hooks/validations/useValidationState";
@@ -39,24 +36,28 @@ export default function DoctorClaimInvoiceForm() {
   const dispatch = useDispatch();
   const { prepareValidation, resetValidation, validationState } =
     useValidationState();
-  const externalLenseInvoiceList = useSelector(
-    (state: RootState) => state.invoice_external_lense.externalLenseList
-  );
+  // const externalLenseInvoiceList = useSelector(
+  //   (state: RootState) => state.invoice_external_lense.externalLenseList
+  // );
   const ExtraTotal = useSelector(
     (state: RootState) => state.invoice_external_lense.externalLenseSubTotal
   );
-  const FrameInvoiceList = useSelector(
-    (state: RootState) => state.invoice_frame_filer.selectedFrameList
-  );
-  const LenseInvoiceList = useSelector(
-    (state: RootState) => state.invoice_lense_filer.selectedLensesList
-  );
+  // const FrameInvoiceList = useSelector(
+  //   (state: RootState) => state.invoice_frame_filer.selectedFrameList
+  // );
+  // const LenseInvoiceList = useSelector(
+  //   (state: RootState) => state.invoice_lense_filer.selectedLensesList
+  // );
   const lenseTotal = useSelector(
     (state: RootState) => state.invoice_lense_filer.lenseSubTotal
   );
 
   const frameTotal = useSelector(
     (state: RootState) => state.invoice_frame_filer.framesubTotal
+  );
+
+  const doctorClaimPayload = useSelector(
+    (state: RootState) => state.doctor_claim_invoice.doctorClaimPayload
   );
   const methods = useForm<DoctorClaimInvoiceFormModel>({
     resolver: zodResolver(schemaDoctorClaimInvoice),
@@ -71,9 +72,16 @@ export default function DoctorClaimInvoiceForm() {
     },
   });
   const handleInvoiceSubmite = (data: DoctorClaimInvoiceFormModel) => {
-    const total = frameTotal + lenseTotal + ExtraTotal;
+    const total =
+      frameTotal +
+      lenseTotal +
+      ExtraTotal +
+      doctorClaimPayload.invoiceItems.reduce(
+        (acc, item) => acc + item.subtotal,
+        0
+      );
     const grandTotal = total - data.discount;
-    const payment = data.online_transfer + data.credit_card + data.cash;
+    const payment = data.cash;
     const balance = grandTotal - payment;
 
     const payload = {
@@ -89,36 +97,38 @@ export default function DoctorClaimInvoiceForm() {
       branch: getUserCurentBranch()?.id,
       sales_staff: 1,
       invoiceItems: [
-        ...Object.values(FrameInvoiceList).map((item) => {
-          return {
-            id: item.frame_id,
-            quantity: item.buyQty,
-            price_per_unit: item.price_per_unit,
-            subtotal: item.subtotal,
-            details: `${item.frame_detail.brand_name} / ${item.frame_detail.code_name} / ${item.frame_detail.color_name}`,
-          };
-        }),
-        ...Object.values(LenseInvoiceList).map((item) => {
-          return {
-            id: item.lense_id,
-            quantity: item.buyQty,
-            price_per_unit: item.price_per_unit,
-            subtotal: item.subtotal,
-            details: `${item.lense_detail.brand_name} / ${item.lense_detail.type_name} / ${item.lense_detail.coating_name}`,
-          };
-        }),
-        ...Object.values(externalLenseInvoiceList).map((item) => {
-          return {
-            id: item.external_lens_id,
-            quantity: item.buyQty,
-            price_per_unit: item.price_per_unit,
-            subtotal: item.subtotal,
-            details: `${item.external_lens_details.brand_name} / ${item.external_lens_details.type_name} / ${item.external_lens_details.coating_name}`,
-          };
-        }),
+        ...(doctorClaimPayload?.invoiceItems || []),
+        // ...Object.values(FrameInvoiceList).map((item) => {
+        //   return {
+        //     id: item.frame_id,
+        //     quantity: item.buyQty,
+        //     price_per_unit: item.price_per_unit,
+        //     subtotal: item.subtotal,
+        //     details: `${item.frame_detail.brand_name} / ${item.frame_detail.code_name} / ${item.frame_detail.color_name}`,
+        //   };
+        // }),
+        // ...Object.values(LenseInvoiceList).map((item) => {
+        //   return {
+        //     id: item.lense_id,
+        //     quantity: item.buyQty,
+        //     price_per_unit: item.price_per_unit,
+        //     subtotal: item.subtotal,
+        //     details: `${item.lense_detail.brand_name} / ${item.lense_detail.type_name} / ${item.lense_detail.coating_name}`,
+        //   };
+        // }),
+        // ...Object.values(externalLenseInvoiceList).map((item) => {
+        //   return {
+        //     id: item.external_lens_id,
+        //     quantity: item.buyQty,
+        //     price_per_unit: item.price_per_unit,
+        //     subtotal: item.subtotal,
+        //     details: `${item.external_lens_details.brand_name} / ${item.external_lens_details.type_name} / ${item.external_lens_details.coating_name}`,
+        //   };
+        // }),
       ],
       order_payments: payment,
     };
+    console.log(payload);
 
     prepareValidation("create", async (verifiedUserId: number) => {
       await sendDataToNextPage(payload as DoctorClaimPayload, verifiedUserId);
@@ -176,7 +186,7 @@ export default function DoctorClaimInvoiceForm() {
             <MiniPatientDetails />
 
             <Box sx={{ display: "flex", gap: 2, my: 1 }}>
-              <Button
+              {/* <Button
                 variant="contained"
                 onClick={() =>
                   dispatch(
@@ -188,14 +198,14 @@ export default function DoctorClaimInvoiceForm() {
                 }
               >
                 Frame
-              </Button>
-              <Button
+              </Button> */}
+              {/* <Button
                 variant="contained"
                 onClick={() => dispatch(openManualLense())}
               >
                 In Stock Lens
-              </Button>
-              <Button
+              </Button> */}
+              {/* <Button
                 variant="contained"
                 onClick={() =>
                   dispatch(
@@ -207,6 +217,19 @@ export default function DoctorClaimInvoiceForm() {
                 }
               >
                 None Stock Lens
+              </Button> */}
+              <Button
+                variant="contained"
+                onClick={() =>
+                  dispatch(
+                    openStockDrawer({
+                      stockDrawerType: "doctor_claim",
+                      refractionDetail: null,
+                    })
+                  )
+                }
+              >
+                Doctor Claim
               </Button>
             </Box>
             <DoctorClainmInvoiceTable />

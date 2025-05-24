@@ -109,13 +109,6 @@ export default function SolderingOrderEdit() {
     };
     try {
       const patchPayload = {
-        patient: {
-          name: data.name,
-          nic: data.nic,
-          phone_number: data.phone_number,
-          address: data.address,
-          date_of_birth: data.dob,
-        },
         progress_status: data.progress_status,
         price: data.price,
         note: data.note,
@@ -130,7 +123,6 @@ export default function SolderingOrderEdit() {
           })),
         ],
       };
-      console.log(patchPayload);
       await patchHandler(
         `soldering/orders/${invoiceDetail?.order_details.id}/edit/`,
         patchPayload
@@ -141,14 +133,14 @@ export default function SolderingOrderEdit() {
       extractErrorMessage(error);
     }
   };
-  console.log(methods.formState.errors);
+  console.log(invoiceDetail);
   // UI
   return (
     <Paper sx={{ p: 2, mt: 1 }}>
       <TitleText title="Soldering Order" />
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)}>
-          <SolderingPatientDetail />
+          <SolderingPatientDetail disabledInput={true} />
           <Divider sx={{ my: 2 }} />
           <TextField
             multiline

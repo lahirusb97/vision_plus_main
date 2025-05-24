@@ -4,7 +4,11 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { Controller, useFormContext } from "react-hook-form";
 
-export default function DateInput() {
+interface DateInputProps {
+  disabledInput?: boolean;
+}
+
+export default function DateInput({ disabledInput }: DateInputProps) {
   const {
     control,
     watch,
@@ -20,6 +24,7 @@ export default function DateInput() {
         rules={{ required: "Date is required" }}
         render={({ field }) => (
           <DatePicker
+            disabled={disabledInput}
             {...field}
             label="Select Birth Day"
             value={field.value ? dayjs(field.value) : null} // Convert string to dayjs object

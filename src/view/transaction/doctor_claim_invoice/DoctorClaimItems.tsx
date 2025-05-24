@@ -8,6 +8,8 @@ interface DoctorClaimPayloadProps {
 export default function DoctorClaimItems({
   invoiceDetail,
 }: DoctorClaimPayloadProps) {
+  console.log(invoiceDetail);
+
   return (
     <>
       {invoiceDetail?.invoiceItems.map((item) => (

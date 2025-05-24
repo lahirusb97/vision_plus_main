@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Table,
@@ -16,7 +16,6 @@ import {
   IconButton,
   Typography,
   TextField,
-  Pagination,
 } from "@mui/material";
 import { useFormContext } from "react-hook-form";
 import axiosClient from "../axiosClient";
@@ -27,8 +26,11 @@ import SaveIcon from "@mui/icons-material/Save";
 import CloseIcon from "@mui/icons-material/Close";
 import toast from "react-hot-toast";
 import { extractErrorMessage } from "../utils/extractErrorMessage";
-import useGetAllPatient from "../hooks/useGetAllPatient";
-
+import DateInput from "./inputui/DateInput";
+import dayjs from "dayjs";
+import { grey } from "@mui/material/colors";
+import useGetPatientList from "../hooks/useGetPatientList";
+import CustomerPagination from "./CustomPagination";
 export default function FilterPatient({
   open,
   searchType,
@@ -38,16 +40,16 @@ export default function FilterPatient({
   searchType: string;
   handleClose: () => void;
 }) {
-  const [fetchpatientData, setfetchPatientData] = useState<boolean>(false);
   const {
-    patientLimit,
-    patientsList,
-    patientLoading,
-    totalPatientCount,
-    handlePatientSearch,
-    patientPageNavigation,
-    refreshPatientList,
-  } = useGetAllPatient({ open: fetchpatientData });
+    PatientListLimit,
+    PatientList,
+    PatientListLoading,
+    PatientListError,
+    PatientListTotalCount,
+    PatientListPageNavigation,
+    PatientListSearch,
+    PatientListChangePageSize,
+  } = useGetPatientList();
 
   const { setValue, watch } = useFormContext();
   const [editMode, setEditMode] = useState<number | null>(null);
@@ -56,19 +58,33 @@ export default function FilterPatient({
   useEffect(() => {
     if (open) {
       if (searchType === "phone_number") {
-        handlePatientSearch("phone_number", watch("phone_number"));
-        setfetchPatientData(true);
+        PatientListSearch({
+          page_size: 10,
+          page: 1,
+          nic: null,
+          search: null,
+          phone_number: watch("phone_number"),
+        });
       } else if (searchType === "name") {
-        handlePatientSearch("name", watch("name"));
-        setfetchPatientData(true);
+        PatientListSearch({
+          page_size: 10,
+          page: 1,
+          nic: null,
+          search: watch("name"),
+          phone_number: null,
+        });
       } else if (searchType === "nic") {
-        handlePatientSearch("nic", watch("nic"));
-        setfetchPatientData(true);
+        PatientListSearch({
+          page_size: 10,
+          page: 1,
+          nic: watch("nic"),
+          search: null,
+          phone_number: null,
+        });
       }
     } else {
       setEditedPatient({});
       setEditMode(null);
-      setfetchPatientData(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, searchType]);
@@ -91,15 +107,29 @@ export default function FilterPatient({
   };
 
   const handleSave = async (id: number) => {
+    const postData: Partial<PatientModel> = {
+      name: editedPatient.name,
+      phone_number: editedPatient.phone_number,
+      nic: editedPatient.nic,
+      address: editedPatient.address,
+      patient_note: editedPatient.patient_note,
+      date_of_birth: editedPatient.date_of_birth
+        ? dayjs(editedPatient.date_of_birth).format("YYYY-MM-DD")
+        : null,
+    };
     try {
       const response: { data: PatientModel } = await axiosClient.put(
         `patients/${id}/`,
-        editedPatient
+        postData
       );
       setEditedPatient({});
-      setfetchPatientData(true);
-      refreshPatientList();
+      setValue("name", response.data.name);
+      setValue("phone_number", response.data.phone_number);
+      setValue("nic", response.data.nic);
+      setValue("address", response.data.address);
+      setValue("date_of_birth", response.data.date_of_birth);
       setEditMode(null);
+      handleClose();
       toast.success(`Patient ${response.data.name} new changes saved`);
     } catch (error) {
       extractErrorMessage(error);
@@ -110,7 +140,7 @@ export default function FilterPatient({
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
       <DialogTitle>Search Patient</DialogTitle>
       <DialogContent>
-        {patientLoading ? (
+        {PatientListLoading ? (
           <CircularProgress />
         ) : (
           <TableContainer component={Paper}>
@@ -122,13 +152,23 @@ export default function FilterPatient({
                   <TableCell>Name</TableCell>
                   <TableCell>Phone</TableCell>
                   <TableCell>NIC</TableCell>
+                  <TableCell>Birth Day</TableCell>
                   <TableCell>address</TableCell>
                   <TableCell>Peatint Note</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {patientsList.map((patient: PatientModel) => (
-                  <TableRow key={patient.id}>
+                {PatientList.map((patient: PatientModel) => (
+                  <TableRow
+                    sx={{
+                      cursor: "pointer",
+                      //hover bg color
+                      "&:hover": {
+                        bgcolor: grey[200],
+                      },
+                    }}
+                    key={patient.id}
+                  >
                     {/* Select Button */}
                     <TableCell>
                       <IconButton
@@ -211,6 +251,14 @@ export default function FilterPatient({
                     </TableCell>
                     <TableCell>
                       {editMode === patient.id ? (
+                        //birthday date picker
+                        <DateInput />
+                      ) : (
+                        patient.date_of_birth
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {editMode === patient.id ? (
                         <TextField
                           name="address"
                           value={editedPatient.address || ""}
@@ -239,16 +287,16 @@ export default function FilterPatient({
                 ))}
               </TableBody>
             </Table>
-            <Pagination
-              count={Math.ceil(totalPatientCount / patientLimit)}
-              onChange={(_e: ChangeEvent<unknown>, value: number) => {
-                patientPageNavigation(value);
-              }}
-            ></Pagination>
+            <CustomerPagination
+              totalCount={PatientListTotalCount}
+              handlePageNavigation={PatientListPageNavigation}
+              changePageSize={PatientListChangePageSize}
+              page_size={PatientListLimit}
+            />
           </TableContainer>
         )}
 
-        {patientsList.length === 0 && !patientLoading && (
+        {PatientList.length === 0 && !PatientListLoading && (
           <Typography p={1} textAlign={"center"} color="error">
             No patients information found for{" "}
             {`${searchType === "nic" ? "NIC - " + watch("nic") : ""} ${
@@ -258,6 +306,11 @@ export default function FilterPatient({
                 ? "Phone Number - " + watch("phone_number")
                 : ""
             }`}
+          </Typography>
+        )}
+        {PatientListError && !PatientListLoading && (
+          <Typography p={1} textAlign={"center"} color="error">
+            Netowrk Error Try Again
           </Typography>
         )}
       </DialogContent>

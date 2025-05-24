@@ -1,7 +1,12 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RefractionDetailModel } from "../../model/RefractionDetailModel";
 
-type DrawerType = "frame" | "lense" | "none_stock_lense" | null;
+type DrawerType =
+  | "frame"
+  | "lense"
+  | "none_stock_lense"
+  | "doctor_claim"
+  | null;
 
 interface BaseStockDrawerPayload {
   stockDrawerType: DrawerType;
@@ -22,11 +27,17 @@ interface NoneStockLensePayload extends BaseStockDrawerPayload {
   refractionDetail: null;
 }
 
+interface DoctorClaimPayload extends BaseStockDrawerPayload {
+  stockDrawerType: "doctor_claim";
+  refractionDetail: null;
+}
+
 // Union type that combines all possible payloads
 type StockDrawerPayload =
   | FrameStockDrawerPayload
   | LenseStockDrawerPayload
-  | NoneStockLensePayload;
+  | NoneStockLensePayload
+  | DoctorClaimPayload;
 
 interface StockDrawerStateInit {
   stockDrawerOpen: boolean;

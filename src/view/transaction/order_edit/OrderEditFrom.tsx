@@ -115,7 +115,10 @@ export default function OrderEditFrom() {
 
   const subtotal = frameTotal + lenseTotal + ExtraTotal;
   const grandTotal = subtotal - discount;
-
+  const paymentTotalData =
+    methods.watch("credit_card") +
+    methods.watch("cash") +
+    methods.watch("online_transfer");
   useEffect(() => {
     return () => {
       dispatch(clearFrame());
@@ -288,76 +291,81 @@ export default function OrderEditFrom() {
       cash: data.cash,
       online_transfer: data.online_transfer,
     };
-    const postData = {
-      patient: {
-        refraction_id: invoiceDetail?.customer_details.refraction_id,
-        name: data.name,
-        nic: data.nic,
-        address: data.address,
-        phone_number: data.phone_number,
-        date_of_birth: data.dob,
-      },
-      order: {
-        refraction: invoiceDetail?.customer_details.refraction_id,
-        status: orderState,
-        sub_total: subtotal,
-        discount: discount,
-        total_price: grandTotal,
-        order_remark: data.order_remark,
-        sales_staff_code: invoiceDetail?.order_details.sales_staff_code, //TODO TEST THIS
-        branch_id: invoiceDetail?.order_details.branch_id,
-        pd: data.pd,
-        right_pd: data.right_pd,
-        left_pd: data.left_pd,
-        height: data.height,
-        right_height: data.right_height,
-        left_height: data.left_height,
-        fitting_on_collection: data.fitting_on_collection,
-        on_hold: data.on_hold,
-        user_date: data.user_date,
-        bus_title: BUSID === currentBranch ? data.bus_title : null,
-        progress_status: data.progress_status,
-      },
-      order_items: [
-        ...Object.values(LenseInvoiceList).map((item) => ({
-          lens: item.lense_id,
-          quantity: item.buyQty,
-          price_per_unit: item.price_per_unit,
-          subtotal: item.subtotal,
-        })),
+    //payment exesed or not the total
+    if (true) {
+      const postData = {
+        patient: {
+          refraction_id: invoiceDetail?.customer_details.refraction_id,
+          name: data.name,
+          nic: data.nic,
+          address: data.address,
+          phone_number: data.phone_number,
+          date_of_birth: data.dob,
+        },
+        order: {
+          refraction: invoiceDetail?.customer_details.refraction_id,
+          status: orderState,
+          sub_total: subtotal,
+          discount: discount,
+          total_price: grandTotal,
+          order_remark: data.order_remark,
+          sales_staff_code: invoiceDetail?.order_details.sales_staff_code, //TODO TEST THIS
+          branch_id: invoiceDetail?.order_details.branch_id,
+          pd: data.pd,
+          right_pd: data.right_pd,
+          left_pd: data.left_pd,
+          height: data.height,
+          right_height: data.right_height,
+          left_height: data.left_height,
+          fitting_on_collection: data.fitting_on_collection,
+          on_hold: data.on_hold,
+          user_date: data.user_date,
+          bus_title: BUSID === currentBranch ? data.bus_title : null,
+          progress_status: data.progress_status,
+        },
+        order_items: [
+          ...Object.values(LenseInvoiceList).map((item) => ({
+            lens: item.lense_id,
+            quantity: item.buyQty,
+            price_per_unit: item.price_per_unit,
+            subtotal: item.subtotal,
+          })),
 
-        ...Object.values(FrameInvoiceList).map((item) => ({
-          frame: item.frame_id,
-          quantity: item.buyQty,
-          price_per_unit: item.price_per_unit,
-          subtotal: item.subtotal,
-        })),
+          ...Object.values(FrameInvoiceList).map((item) => ({
+            frame: item.frame_id,
+            quantity: item.buyQty,
+            price_per_unit: item.price_per_unit,
+            subtotal: item.subtotal,
+          })),
 
-        ...Object.values(externalLenseInvoiceList).map((item) => ({
-          external_lens: item.external_lens_id,
-          quantity: item.buyQty,
-          price_per_unit: item.price_per_unit,
-          subtotal: item.subtotal,
-          is_non_stock: true,
-          //!Note here
-        })),
-      ],
-      order_payments: [
-        ...formatUserPayments(userPayments),
-        ...(simplifiedPayments || []),
-      ],
-    };
+          ...Object.values(externalLenseInvoiceList).map((item) => ({
+            external_lens: item.external_lens_id,
+            quantity: item.buyQty,
+            price_per_unit: item.price_per_unit,
+            subtotal: item.subtotal,
+            is_non_stock: true,
+            //!Note here
+          })),
+        ],
+        order_payments: [
+          ...formatUserPayments(userPayments),
+          ...(simplifiedPayments || []),
+        ],
+      };
 
-    if (
-      Object.keys(externalLenseInvoiceList).length > 0 ||
-      Object.keys(LenseInvoiceList).length > 0 ||
-      Object.keys(FrameInvoiceList).length > 0
-    ) {
-      prepareValidation("create", async () => {
-        await sendDataToDb(postData as FactoryOrderInputModel);
-      });
+      if (
+        Object.keys(externalLenseInvoiceList).length > 0 ||
+        Object.keys(LenseInvoiceList).length > 0 ||
+        Object.keys(FrameInvoiceList).length > 0
+      ) {
+        prepareValidation("create", async () => {
+          await sendDataToDb(postData as FactoryOrderInputModel);
+        });
+      } else {
+        toast.error("No Items ware added");
+      }
     } else {
-      toast.error("No Items ware added");
+      toast.error("Payment Amount is greater than Total Amount");
     }
   };
 

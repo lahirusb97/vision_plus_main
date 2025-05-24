@@ -24,12 +24,26 @@ export interface DoctorClaimPayload {
 }
 
 interface doctorClaimState {
-  doctorClaimPayload: DoctorClaimPayload | null; // Store lenses with quantity by ID
+  doctorClaimPayload: DoctorClaimPayload; // Store lenses with quantity by ID
 }
 
 const initialState: doctorClaimState = {
-  doctorClaimPayload: null,
+  doctorClaimPayload: {
+    invoice_number: "",
+    date: "",
+    name: "",
+    phone_number: "",
+    address: "",
+    discount: 0,
+    sub_total: 0,
+    total_price: 0,
+    balance: 0,
+    sales_staff: 0,
+    invoiceItems: [],
+    order_payments: 0,
+  },
 };
+console.log(initialState);
 const doctorClaimSlice = createSlice({
   name: "doctor_claim_invoice",
   initialState,
@@ -39,13 +53,40 @@ const doctorClaimSlice = createSlice({
       state.doctorClaimPayload = action.payload;
     },
     clearDoctorClaim: (state) => {
-      state.doctorClaimPayload = null;
+      state.doctorClaimPayload = {
+        invoice_number: "",
+        date: "",
+        name: "",
+        phone_number: "",
+        address: "",
+        discount: 0,
+        sub_total: 0,
+        total_price: 0,
+        balance: 0,
+        sales_staff: 0,
+        invoiceItems: [],
+        order_payments: 0,
+      };
+    },
+    setdoctorClaimItem: (state, action: PayloadAction<DoctorClaimItem>) => {
+      state.doctorClaimPayload.invoiceItems.push(action.payload);
+    },
+    removeDoctorClaimItem: (state, action: PayloadAction<number>) => {
+      state.doctorClaimPayload.invoiceItems =
+        state.doctorClaimPayload.invoiceItems.filter(
+          (item) => item.id !== action.payload
+        );
     },
   },
 });
 
 // Export actions
-export const { setDoctorClaim, clearDoctorClaim } = doctorClaimSlice.actions;
+export const {
+  setDoctorClaim,
+  clearDoctorClaim,
+  setdoctorClaimItem,
+  removeDoctorClaimItem,
+} = doctorClaimSlice.actions;
 
 // Export reducer
 export default doctorClaimSlice.reducer;

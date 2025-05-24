@@ -222,7 +222,20 @@ export default function InvoiceTable() {
             <TableCell sx={{ fontWeight: "bold" }} align="right" colSpan={4}>
               Balance
             </TableCell>
-            <TableCell sx={{ fontWeight: "bold" }} align="right">
+            <TableCell
+              sx={{
+                fontWeight: "bold",
+                color:
+                  grandTotal -
+                    (parseInt(watch("online_transfer") || 0) +
+                      parseInt(watch("credit_card") || 0) +
+                      parseInt(watch("cash") || 0)) <
+                  0
+                    ? "red"
+                    : "",
+              }}
+              align="right"
+            >
               {numberWithCommas(
                 grandTotal -
                   (parseInt(watch("online_transfer") || 0) +

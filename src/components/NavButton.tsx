@@ -10,9 +10,10 @@ import { teal } from "@mui/material/colors";
 interface NavButtonProps {
   name: string;
   path: string;
+  bgColor?: string;
 }
 //remember to aad / to front of the path  toy pass as props
-const NavButton: React.FC<NavButtonProps> = ({ name, path }) => {
+const NavButton: React.FC<NavButtonProps> = ({ name, path, bgColor }) => {
   const theme = useTheme();
   const navigation = useNavigate();
   const currentPath = useLocation().pathname; // Get the current path
@@ -20,7 +21,7 @@ const NavButton: React.FC<NavButtonProps> = ({ name, path }) => {
   const handleNavigation = () => {
     navigation(path); // Navigate to the specified path
   };
-
+  const avilableBgColoer = bgColor ? bgColor : teal[800];
   // Adjust styles based on the current theme and active state
   const MyButton = styled(Button)(() => ({
     backgroundColor:
@@ -30,7 +31,7 @@ const NavButton: React.FC<NavButtonProps> = ({ name, path }) => {
           : "#FF7043" // Highlight for active button
         : theme.palette.mode === "dark"
         ? yellow[100]
-        : teal[800], // Default background color
+        : avilableBgColoer, // Default background color
     color:
       currentPath === path
         ? theme.palette.mode === "dark"

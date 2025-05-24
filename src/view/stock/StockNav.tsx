@@ -8,14 +8,31 @@ export default function StockNav() {
       <NavButton name="External Lens Store " path="/stock/external_lense" />
 
       <NavButton name="Other item Store" path="/stock/other_item_stock" />
-      <NavButton name="Frame Create" path="/stock/add_frames" />
-      <NavButton name="Lense Create" path="/stock/add_lense" />
       <NavButton
+        bgColor="#208C27"
+        name="Frame Create"
+        path="/stock/add_frames"
+      />
+      <NavButton
+        bgColor="#208C27"
+        name="Lense Create"
+        path="/stock/add_lense"
+      />
+      <NavButton
+        bgColor="#208C27"
         name="External Lens Create "
         path="/stock/external_lense/create"
       />
-      <NavButton name="Other item Create" path="/stock/add_other_item" />
-      <NavButton name="Variations Create " path="/stock/add_variation" />
+      <NavButton
+        bgColor="#208C27"
+        name="Other item Create"
+        path="/stock/add_other_item"
+      />
+      <NavButton
+        bgColor="#208C27"
+        name="Variations Create "
+        path="/stock/add_variation"
+      />
     </>
   );
 }

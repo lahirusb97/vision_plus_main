@@ -8,6 +8,7 @@ import { closeStockDrawer } from "../../features/invoice/stockDrawerSlice";
 import ExternalLense from "../../view/transaction/factory_order/ExternalLense";
 import PowerToFrameFilter from "../PowerToFrameFilter";
 import LensFilter from "../lensFilter/LensFilter";
+import DoctorClaimItem from "../common/DoctorClaimItem";
 
 export default function DrawerStock() {
   const dispatch = useDispatch();
@@ -40,6 +41,8 @@ export default function DrawerStock() {
           <LensFilter />
         ) : stockDrawerType === "none_stock_lense" ? (
           <ExternalLense />
+        ) : stockDrawerType === "doctor_claim" ? (
+          <DoctorClaimItem />
         ) : (
           <>Error Refresh The Page</>
         )}
