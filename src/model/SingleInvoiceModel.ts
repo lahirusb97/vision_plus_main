@@ -8,6 +8,7 @@ import {
   LensArrivalStatus,
   ProgressStatus,
   TypeBraned,
+  TypeFittingStatus,
   TypeOrderStatus,
 } from "./StaticTypeModels";
 
@@ -161,6 +162,8 @@ interface OrderDetails {
   bus_title: number | null;
   bus_title_name?: string;
   progress_status: ProgressStatus;
+  fitting_status: TypeFittingStatus;
+  fitting_status_updated_date: string;
 }
 
 interface Invoice {

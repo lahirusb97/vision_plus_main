@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import useGetCheckinInvoiceList from "../../../hooks/useGetCheckinInvoiceList";
+import { useState } from "react";
 import {
   Box,
   Paper,
@@ -13,56 +12,39 @@ import {
 } from "@mui/material";
 import TitleText from "../../../components/TitleText";
 import { extractErrorMessage } from "../../../utils/extractErrorMessage";
-import { CheckinInvoiceModel } from "../../../model/CheckinInvoiceModel";
 import { formatDateTimeByType } from "../../../utils/formatDateTimeByType";
 import { numberWithCommas } from "../../../utils/numberWithCommas";
 import { useAxiosPut } from "../../../hooks/useAxiosPut";
 import toast from "react-hot-toast";
+import useGetSingleInvoiceSearch from "../../../hooks/useGetSingleInvoiceSearch";
+import { getBranchName } from "../../../utils/branchName";
 
 export default function FittingForm() {
-  const { putHandler, putHandlerloading, putHandlerError } = useAxiosPut();
-  const [searchValue, setSearchValue] = useState("");
-  const [selectedInvoice, setSelectedInvoice] =
-    useState<CheckinInvoiceModel | null>(null);
-  const [updating, setUpdating] = useState(false);
-
   const {
-    invoiceList,
-    invoiceListLoading,
-    invoiceListSearch,
-    invoiceListRefres,
-    invoiceListError,
-  } = useGetCheckinInvoiceList();
+    invoiceSearchData,
+    invoiceSearchLoading,
+    invoiceSearchHandle,
+    invoiceSearchError,
+  } = useGetSingleInvoiceSearch();
+  const { putHandler, putHandlerloading, putHandlerError } = useAxiosPut();
+  const [searchValue, setSearchValue] = useState(`${getBranchName()}`);
+  const [updating, setUpdating] = useState(false);
 
   // When user clicks Search, filter by invoice number
   const handleSearch = () => {
-    setSelectedInvoice(null);
-    invoiceListSearch({
-      page: 1,
-      invoice_number: searchValue,
-      search: null,
-      mobile: null,
-      nic: null,
-      progress_status: null,
-      page_size: 1,
-    });
+    invoiceSearchHandle(searchValue, "factory");
   };
-
-  // Update selectedInvoice when invoiceList changes
-  useEffect(() => {
-    setSelectedInvoice(invoiceList?.length > 0 ? invoiceList[0] : null);
-  }, [invoiceList]);
 
   // Handle fitting status update
   const handleStatusChange = async (newStatus: string) => {
-    if (!selectedInvoice) return;
+    if (!invoiceSearchData) return;
     setUpdating(true);
     try {
-      await putHandler(`orders/${selectedInvoice.order}/update-fit-status/`, {
+      await putHandler(`orders/${invoiceSearchData.order}/update-fit-status/`, {
         fitting_status: newStatus,
       });
       toast.success("Fitting status updated");
-      await invoiceListRefres(); // Wait for refresh to complete
+      invoiceSearchHandle(invoiceSearchData.invoice_number, "factory");
     } catch (error) {
       extractErrorMessage(error);
     } finally {
@@ -87,9 +69,9 @@ export default function FittingForm() {
           variant="contained"
           sx={{ minWidth: 100 }}
           onClick={handleSearch}
-          disabled={invoiceListLoading || !searchValue || updating}
+          disabled={invoiceSearchLoading}
         >
-          {invoiceListLoading ? (
+          {invoiceSearchLoading ? (
             <CircularProgress size={22} color="inherit" />
           ) : (
             "Search"
@@ -101,32 +83,34 @@ export default function FittingForm() {
           Nextwork Error check your internet connection
         </Alert>
       )}
-      {selectedInvoice && (
+      {invoiceSearchData && (
         <Box>
           <Divider sx={{ mb: 2 }} />
           <Stack direction="column" spacing={1.5} mb={2} pl={1}>
             <Typography variant="body1">
-              <b>Customer:</b> {selectedInvoice.customer}
+              <b>Customer:</b> {invoiceSearchData.customer_details.name}
             </Typography>
             <Typography variant="body1">
-              <b>Invoice Number:</b> {selectedInvoice.invoice_number}
+              <b>Invoice Number:</b> {invoiceSearchData.invoice_number}
             </Typography>
             <Typography variant="body1">
               <b>Date:</b>{" "}
-              {formatDateTimeByType(selectedInvoice.invoice_date, "both")}
+              {formatDateTimeByType(invoiceSearchData.invoice_date, "both")}
             </Typography>
             <Typography variant="body1">
               <b>Total Price:</b>{" "}
-              {numberWithCommas(selectedInvoice.total_price)}
+              {numberWithCommas(invoiceSearchData.order_details.total_price)}
             </Typography>
             <Typography variant="body1">
               <b>Current Fitting Status:</b>{" "}
-              {selectedInvoice.fitting_status.replace("_", " ").toUpperCase()}
+              {invoiceSearchData.order_details.fitting_status
+                .replace("_", " ")
+                .toUpperCase()}
             </Typography>
             <Typography variant="body1">
               <b>Status Updated At:</b>{" "}
               {formatDateTimeByType(
-                selectedInvoice.fitting_status_updated_date,
+                invoiceSearchData.order_details.fitting_status_updated_date,
                 "both"
               )}
             </Typography>
@@ -134,7 +118,7 @@ export default function FittingForm() {
           <Stack direction="row" spacing={2} mt={2} justifyContent="center">
             <Button
               variant={
-                selectedInvoice.fitting_status === "fitting_ok"
+                invoiceSearchData.order_details.fitting_status === "fitting_ok"
                   ? "contained"
                   : "outlined"
               }
@@ -147,7 +131,7 @@ export default function FittingForm() {
             </Button>
             <Button
               variant={
-                selectedInvoice.fitting_status === "damage"
+                invoiceSearchData.order_details.fitting_status === "damage"
                   ? "contained"
                   : "outlined"
               }
@@ -160,7 +144,7 @@ export default function FittingForm() {
             </Button>
             <Button
               variant={
-                selectedInvoice.fitting_status === "not_fitting"
+                invoiceSearchData.order_details.fitting_status === "not_fitting"
                   ? "contained"
                   : "outlined"
               }
@@ -174,9 +158,15 @@ export default function FittingForm() {
           </Stack>
         </Box>
       )}
-      {!invoiceListLoading && !selectedInvoice && !invoiceListError && (
-        <Typography color="error" mt={2} textAlign="center">
+      {!invoiceSearchLoading && !invoiceSearchData && !invoiceSearchError && (
+        <Typography color="info" mt={2} textAlign="center">
           No matching invoice found.
+        </Typography>
+      )}
+
+      {invoiceSearchLoading && (
+        <Typography color="error" mt={2} textAlign="center">
+          <CircularProgress />
         </Typography>
       )}
     </Paper>
