@@ -49,9 +49,15 @@ export default function DoctorClainInvoiceView() {
             }}
             ref={componentRef}
           >
-            <InvoiceHeading invoiceDate={doctorClaimInvoice.date} />
+            <InvoiceHeading
+              invoiceDate={doctorClaimInvoice.date}
+              hideDate={true}
+            />
 
             <DoctorClaimInvoiceAddress invoiceDetail={doctorClaimInvoice} />
+            <Typography variant="body2" align="center">
+              Invoice Date: {doctorClaimInvoice.invoice_date}
+            </Typography>
 
             <Table sx={{ border: "2px solid #000" }}>
               <TableHead>

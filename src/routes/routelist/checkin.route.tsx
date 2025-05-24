@@ -2,6 +2,7 @@ import { RouteObject } from "react-router";
 import ProtectedChildRoute from "../ProtectedChildRoute";
 import JobProgress from "../../view/checkin/JobProgress";
 import SendOrder from "../../view/checkin/SendOrder";
+import FittingForm from "../../view/checkin/fitting/FittingForm";
 
 export const checkInRoutes: RouteObject[] = [
   {
@@ -17,5 +18,9 @@ export const checkInRoutes: RouteObject[] = [
   {
     path: "send_order",
     element: <SendOrder />,
+  },
+  {
+    path: "checkin-fitting",
+    element: <FittingForm />,
   },
 ];

@@ -96,6 +96,7 @@ export default function DoctorClaimInvoiceForm() {
       total_price: grandTotal,
       branch: getUserCurentBranch()?.id,
       sales_staff: 1,
+      invoice_date: data.invoice_date,
       invoiceItems: [
         ...(doctorClaimPayload?.invoiceItems || []),
         // ...Object.values(FrameInvoiceList).map((item) => {
@@ -185,7 +186,7 @@ export default function DoctorClaimInvoiceForm() {
             />
             <MiniPatientDetails />
 
-            <Box sx={{ display: "flex", gap: 2, my: 1 }}>
+            <Box sx={{ display: "flex", gap: 2, my: 1, alignItems: "center" }}>
               {/* <Button
                 variant="contained"
                 onClick={() =>
@@ -218,7 +219,18 @@ export default function DoctorClaimInvoiceForm() {
               >
                 None Stock Lens
               </Button> */}
+              <TextField
+                {...methods.register("invoice_date")}
+                sx={{ mb: 1, width: 300 }}
+                size="small"
+                label="Invoice Date & Time"
+                type="text"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
               <Button
+                size="small"
                 variant="contained"
                 onClick={() =>
                   dispatch(

@@ -6,7 +6,6 @@ import BranchMobileNum from "../../../components/common/BranchMobileNum";
 import BranchAddress from "../../../components/common/BranchAddress";
 import { useReactToPrint } from "react-to-print";
 import { numberWithCommas } from "../../../utils/numberWithCommas";
-import { dateAndTimeFormat } from "../../../utils/dateAndTimeFormat";
 import { clearDoctorClaim } from "../../../features/invoice/doctorClaimSlice";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
@@ -178,7 +177,7 @@ export default function DoctorClaimChannelInvoiceVIew() {
                   </Typography>
                 </Box>
               </Box>
-              <Typography
+              {/* <Typography
                 variant="body2"
                 align="center"
                 sx={{ fontSize: "12px", mt: 1 }}
@@ -186,7 +185,7 @@ export default function DoctorClaimChannelInvoiceVIew() {
                 Bill Printed On{" "}
                 <span style={{ margin: "0 1mm", fontWeight: "bold" }}>:</span>{" "}
                 {dateAndTimeFormat(new Date().toISOString())}
-              </Typography>
+              </Typography> */}
             </Box>
           </Container>
           <Button

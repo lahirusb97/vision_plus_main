@@ -18,6 +18,7 @@ export interface DoctorClaimPayload {
   sub_total: number;
   total_price: number;
   balance: number;
+  invoice_date: string;
   sales_staff: number;
   invoiceItems: DoctorClaimItem[];
   order_payments: number;
@@ -37,6 +38,7 @@ const initialState: doctorClaimState = {
     discount: 0,
     sub_total: 0,
     total_price: 0,
+    invoice_date: "",
     balance: 0,
     sales_staff: 0,
     invoiceItems: [],
@@ -62,6 +64,7 @@ const doctorClaimSlice = createSlice({
         discount: 0,
         sub_total: 0,
         total_price: 0,
+        invoice_date: "",
         balance: 0,
         sales_staff: 0,
         invoiceItems: [],

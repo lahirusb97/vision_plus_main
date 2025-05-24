@@ -92,7 +92,7 @@ export default function SolderingInvoiceTable() {
   };
 
   return (
-    <Paper sx={{ p: 2 }}>
+    <Paper sx={{ p: 2, width: "100%" }}>
       <TitleText title="Soldering Invoice List" />
       <SolderingInvoiceSearch invoiceListSearch={solderingInvoiceListSearch} />
       <TableContainer component={Paper}>

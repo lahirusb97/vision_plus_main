@@ -1,5 +1,9 @@
 import { PaymentModel } from "./PaymentModel";
-import { InvoiceType, ProgressStatus } from "./StaticTypeModels";
+import {
+  InvoiceType,
+  ProgressStatus,
+  TypeFittingStatus,
+} from "./StaticTypeModels";
 
 export interface CheckinInvoiceModel {
   id: number;
@@ -16,4 +20,6 @@ export interface CheckinInvoiceModel {
   on_hold: boolean | null;
   payments: PaymentModel[];
   total_price: string;
+  fitting_status: TypeFittingStatus;
+  fitting_status_updated_date: string;
 }

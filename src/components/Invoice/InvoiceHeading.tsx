@@ -5,9 +5,13 @@ import BranchMobileNum from "../common/BranchMobileNum";
 
 interface InvoiceHeadingProps {
   invoiceDate: string;
+  hideDate?: boolean;
 }
 
-export default function InvoiceHeading({ invoiceDate }: InvoiceHeadingProps) {
+export default function InvoiceHeading({
+  invoiceDate,
+  hideDate,
+}: InvoiceHeadingProps) {
   return (
     <>
       <Box display="flex" justifyContent="center" alignItems="center">
@@ -28,9 +32,11 @@ export default function InvoiceHeading({ invoiceDate }: InvoiceHeadingProps) {
 
       <BranchMobileNum />
 
-      <Typography variant="body2" align="center">
-        Date: {formatDateTimeByType(invoiceDate, "date")}
-      </Typography>
+      {!hideDate && (
+        <Typography variant="body2" align="center">
+          Date: {formatDateTimeByType(invoiceDate, "date")}
+        </Typography>
+      )}
     </>
   );
 }

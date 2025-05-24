@@ -9,6 +9,7 @@ export const schemaDoctorClaimInvoice = z.object({
   online_transfer: z.number().min(0),
   credit_card: z.number().min(0),
   cash: z.number().min(0),
+  invoice_date: z.string(),
 });
 
 export type DoctorClaimInvoiceFormModel = z.infer<
