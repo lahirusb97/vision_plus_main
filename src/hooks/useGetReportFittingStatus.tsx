@@ -146,6 +146,8 @@ const useGetReportFittingStatus = () => {
     }));
     ///* if you use functional prev state you do not need to add params to callback depandancy array
   }, []);
+  //reset params and quary data
+
   return {
     reportFittingStatusLimit: params.page_size,
     reportFittingStatusList: dataList,

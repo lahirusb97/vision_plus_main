@@ -1,58 +1,53 @@
+// NavButton.tsx
 import React from "react";
 import Button from "@mui/material/Button";
-import { styled } from "@mui/material/styles";
+import { styled, useTheme } from "@mui/material/styles";
 import { useLocation, useNavigate } from "react-router";
-import { useTheme } from "@mui/material/styles";
-import { yellow } from "@mui/material/colors";
-import { teal } from "@mui/material/colors";
+import { teal, yellow } from "@mui/material/colors";
 
-// Define props including the onClick function
 interface NavButtonProps {
   name: string;
   path: string;
   bgColor?: string;
 }
-//remember to aad / to front of the path  toy pass as props
-const NavButton: React.FC<NavButtonProps> = ({ name, path, bgColor }) => {
-  const theme = useTheme();
-  const navigation = useNavigate();
-  const currentPath = useLocation().pathname; // Get the current path
 
-  const handleNavigation = () => {
-    navigation(path); // Navigate to the specified path
-  };
-  const avilableBgColoer = bgColor ? bgColor : teal[800];
-  // Adjust styles based on the current theme and active state
+const NavButton: React.FC<NavButtonProps> = ({ name, path, bgColor }) => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const theme = useTheme();
+
+  // Robust: active if exact or child route
+  const isActive =
+    location.pathname === path ||
+    (location.pathname.startsWith(path + "/") &&
+      // Ensure it's not a parent match if it's a child route
+      path.split("/").length >= location.pathname.split("/").length);
+
   const MyButton = styled(Button)(() => ({
-    backgroundColor:
-      currentPath === path
-        ? theme.palette.mode === "dark"
-          ? yellow[300]
-          : "#FF7043" // Highlight for active button
-        : theme.palette.mode === "dark"
-        ? yellow[100]
-        : avilableBgColoer, // Default background color
-    color:
-      currentPath === path
-        ? theme.palette.mode === "dark"
-          ? theme.palette.grey[900]
-          : "white"
-        : theme.palette.mode === "dark"
-        ? teal[800]
-        : "white", // Text color
+    backgroundColor: isActive
+      ? theme.palette.mode === "dark"
+        ? yellow[300]
+        : "#FF7043"
+      : bgColor || teal[800],
+    color: isActive
+      ? theme.palette.mode === "dark"
+        ? theme.palette.grey[900]
+        : "white"
+      : theme.palette.mode === "dark"
+      ? teal[800]
+      : "white",
+    fontWeight: isActive ? "bold" : "normal",
+    margin: "0 .5em",
+    textTransform: "capitalize",
     "&:hover": {
       backgroundColor:
         theme.palette.mode === "dark" ? theme.palette.grey[100] : teal[900],
-      transition: "background-color 0.3s ease", // Smooth transition
+      transition: "background-color 0.3s ease",
     },
-    margin: "0 .5em",
-    // border: currentPath === path ? `2px solid ${teal[700]}` : "none", // Add a border for active state
-    fontWeight: currentPath === path ? "bold" : "normal", // Bold text for active state
-    textTransform: "capitalize",
   }));
 
   return (
-    <MyButton size="small" onClick={handleNavigation}>
+    <MyButton size="small" onClick={() => navigate(path)}>
       {name}
     </MyButton>
   );

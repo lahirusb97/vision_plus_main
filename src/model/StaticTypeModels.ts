@@ -18,4 +18,8 @@ export type TypeOrderStatus =
 export type TypeBraned = "branded" | "non_branded";
 export type TypeWhatappMSG = "sent" | "not_sent" | null;
 export type TypeInStockBrand = "frame" | "lens" | "both";
-export type TypeFittingStatus = "not_fitting" | "fitting_ok" | "damage";
+export type TypeFittingStatus =
+  | "not_fitting"
+  | "fitting_ok"
+  | "damage"
+  | "pending";

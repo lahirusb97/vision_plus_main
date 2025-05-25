@@ -1,13 +1,16 @@
 import React from "react";
-import { Navigate, Outlet } from "react-router";
+import { Navigate, Outlet, useLocation } from "react-router";
 import NavBar from "../view/navbar/NavBar";
-import { Paper, Box } from "@mui/material";
+import { Paper, Box, Breadcrumbs } from "@mui/material";
 import { getUserAuth, getUserCurentBranch } from "../utils/authDataConver";
+import CustomeBreadcrumbs from "../components/common/CustomeBreadcrumbs";
 
 const LoginProtectedRoute: React.FC = () => {
   const user = getUserAuth();
-
+  const location = useLocation();
   const curentBranch = getUserCurentBranch();
+
+  const skipSegments = ["edit", "update", "full_edit"];
 
   return user && curentBranch ? (
     <Paper
@@ -28,9 +31,22 @@ const LoginProtectedRoute: React.FC = () => {
           maxWidth: "1200px",
           minWidth: "1000px",
           paddingTop: 1,
+          position: "relative",
         }}
       >
-        <Outlet />
+        <Box
+          sx={{
+            position: "absolute",
+            top: 0,
+            left: "50%",
+            transform: "translateX(-50%)",
+          }}
+        >
+          <CustomeBreadcrumbs />
+        </Box>
+        <Box sx={{ mt: 4 }}>
+          <Outlet />
+        </Box>
       </Box>
     </Paper>
   ) : user && !curentBranch ? (

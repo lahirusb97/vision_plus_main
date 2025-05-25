@@ -1,151 +1,162 @@
-import * as React from "react";
+// NavBar.tsx
+import React from "react";
+import { useLocation, useNavigate } from "react-router";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-// Import images for icons
+import { Paper, Box, Button, Typography } from "@mui/material";
+import { LogoutOutlined } from "@mui/icons-material";
+
+// Import your nav components for submenus
+import RefractionNav from "../refraction/RefractionNav";
+import TransactionNav from "../transaction/TransactionNav";
+import StockNav from "../stock/StockNav";
+import SearchNav from "../search/SearchNav";
+import AccountNav from "../account/AccountNav";
+import ChannelNav from "../channel/ChannelNav";
+import ReportsNav from "../reports/ReportsNav";
+import MasterNav from "../master/MasterNav";
+import UserNav from "../user/UserNav";
+import LogsNav from "../user/LogsNav";
+import CheckInNav from "../checkin/CheckInNav";
+
+// Icons
+import RefractionIcon from "../../assets/icons/navbar/Refraction.png";
+import TransationIcon from "../../assets/icons/navbar/Transation.png";
+import StockIcon from "../../assets/icons/navbar/Stock.png";
+import SearchIcon from "../../assets/icons/navbar/Search.png";
 import AccountIcon from "../../assets/icons/navbar/Account.png";
 import ChanneltIcon from "../../assets/icons/navbar/Channel.png";
-import MasterIcon from "../../assets/icons/navbar/Master.png";
-// import MessangerIcon from "../../assets/icons/navbar/Messenger.png";
-import RefractionIcon from "../../assets/icons/navbar/Refraction.png";
 import ReportsIcon from "../../assets/icons/navbar/Reports.png";
-import Search from "../../assets/icons/navbar/Search.png";
-import StockIcon from "../../assets/icons/navbar/Stock.png";
-import TransationIcon from "../../assets/icons/navbar/Transation.png";
+import MasterIcon from "../../assets/icons/navbar/Master.png";
 import UserIcon from "../../assets/icons/navbar/User.png";
 import LogBookIcon from "../../assets/icons/navbar/logbook.webp";
 
-import RefractionNav from "../refraction/RefractionNav";
-import { Box, Button, Paper, Typography } from "@mui/material";
-import ChannelNav from "../channel/ChannelNav";
-import TransactionNav from "../transaction/TransactionNav";
-import StockNav from "../stock/StockNav";
-import { LogoutOutlined } from "@mui/icons-material";
-
-import { useLocation, useNavigate } from "react-router";
-import UserNav from "../user/UserNav";
-import CheckInNav from "../checkin/CheckInNav";
-import SearchNav from "../search/SearchNav";
-import AccountNav from "../account/AccountNav";
-import LogsNav from "../user/LogsNav";
-import MasterNav from "../master/MasterNav";
 import {
   deleteUserData,
   getUserAuth,
   getUserCurentBranch,
 } from "../../utils/authDataConver";
-import ReportsNav from "../reports/ReportsNav";
-import TabPanel from "./TabPanel";
 
-// TabPanel Component
+// Tab panel utility (hidden by default)
+function TabPanel({
+  children,
+  value,
+  tabKey,
+}: {
+  children: React.ReactNode;
+  value: string;
+  tabKey: string;
+}) {
+  return value === tabKey ? <Box>{children}</Box> : null;
+}
 
 export default function NavBar() {
+  // Tab configuration
   const tabs = [
     {
-      id: 0,
+      key: "",
+      label: "Refraction",
       path: "",
       icon: RefractionIcon,
-      label: "Refraction",
       nav: RefractionNav,
     },
     {
-      id: 1,
+      key: "transaction",
+      label: "Transaction",
       path: "transaction/factory_order",
       icon: TransationIcon,
-      label: "Transaction",
       nav: TransactionNav,
     },
     {
-      id: 2,
+      key: "search",
+      label: "Search",
       path: "search",
-      icon: Search,
-      label: "Search ",
+      icon: SearchIcon,
       nav: SearchNav,
     },
     {
-      id: 2,
+      key: "checkin",
+      label: "Check In",
       path: "checkin",
       icon: MasterIcon,
-      label: "Check In",
       nav: CheckInNav,
     },
     {
-      id: 3,
+      key: "account",
+      label: "Account",
       path: "account",
       icon: AccountIcon,
-      label: "Account",
       nav: AccountNav,
     },
     {
-      id: 4,
+      key: "stock",
+      label: "Stock",
       path: "stock/add_frames",
       icon: StockIcon,
-      label: "Stock",
       nav: StockNav,
     },
     {
-      id: 5,
+      key: "channel",
+      label: "Channel",
       path: "channel",
       icon: ChanneltIcon,
-      label: "Channel",
       nav: ChannelNav,
     },
     {
-      id: 6,
+      key: "reports",
+      label: "Reports",
       path: "reports",
       icon: ReportsIcon,
-      label: "Reports",
       nav: ReportsNav,
     },
     {
-      id: 7,
+      key: "master",
+      label: "Master",
       path: "master",
       icon: MasterIcon,
-      label: "Master",
       nav: MasterNav,
     },
-    { id: 8, path: "user", icon: UserIcon, label: "User", nav: UserNav },
-    { id: 9, path: "logs", icon: LogBookIcon, label: "Logs", nav: LogsNav },
+    { key: "user", label: "User", path: "user", icon: UserIcon, nav: UserNav },
+    {
+      key: "logs",
+      label: "Logs",
+      path: "logs",
+      icon: LogBookIcon,
+      nav: LogsNav,
+    },
   ];
 
   const location = useLocation();
-  const firstSegment = location.pathname.split("/")[1] || "home"; // Default to 'home' if empty
-
-  const matchedTab = tabs.find((tab) => {
-    const tabSegment = tab.path.split("/")[0];
-    return tabSegment === firstSegment;
-  });
-
-  const [value, setValue] = React.useState(matchedTab?.id || 0);
-
   const navigate = useNavigate();
-  // Handle Tab Change
-  const handleChange = (
-    _event: React.SyntheticEvent<Element, Event>,
-    newValue: number
-  ) => {
-    setValue(newValue);
-    navigate(`/${tabs[newValue].path}`);
-  };
 
-  // Array of Icons and Labels (dynamically derived)
+  // Determine current tab from first segment
+  const firstSegment = location.pathname.split("/")[1] || "";
+  const tabValue = tabs.find((tab) => firstSegment === tab.key)?.key ?? "";
+
+  const handleTabChange = (_event: React.SyntheticEvent, newValue: string) => {
+    // newValue is the 'key' of the tab (a string)
+    const tab = tabs.find((t) => t.key === newValue);
+    if (tab) navigate(`/${tab.path}`);
+  };
 
   const deleteCookie = () => {
     deleteUserData();
     navigate("/login");
   };
+
   return (
     <Paper sx={{ width: "100%" }}>
-      {/* Wrap Tabs and Logout Button/User Info in a flex container */}
       <Box sx={{ display: "flex", alignItems: "center" }}>
         <Tabs
-          value={value}
-          onChange={handleChange}
+          value={tabValue}
+          onChange={handleTabChange}
           aria-label="icon label tabs example"
           variant="scrollable"
         >
           {tabs.map((tab) => (
             <Tab
-              key={tab.id}
+              key={tab.key}
+              value={tab.key}
               icon={
                 <img
                   src={tab.icon}
@@ -154,26 +165,15 @@ export default function NavBar() {
                 />
               }
               label={tab.label}
-              sx={{
-                textTransform: "capitalize",
-              }}
+              sx={{ textTransform: "capitalize" }}
             />
           ))}
         </Tabs>
-
-        {/* Moved Logout Button and User Info outside Tabs */}
         <Button onClick={deleteCookie}>
           <LogoutOutlined />
         </Button>
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            mx: 1,
-          }}
-        >
-          <Typography textTransform={"capitalize"} variant="body2">
+        <Box sx={{ mx: 1 }}>
+          <Typography textTransform="capitalize" variant="body2">
             <strong>{getUserCurentBranch()?.branch_name} Branch</strong>
           </Typography>
           <Typography variant="body2">
@@ -184,9 +184,9 @@ export default function NavBar() {
         </Box>
       </Box>
 
-      {/* Tab Panels (remain unchanged) */}
-      {tabs.map((tab, index) => (
-        <TabPanel key={index} value={value} index={index}>
+      {/* Tab panels for each section */}
+      {tabs.map((tab) => (
+        <TabPanel key={tab.key} value={tabValue} tabKey={tab.key}>
           <Paper
             elevation={4}
             sx={{ display: "flex", flexWrap: "wrap", gap: 1, py: 1 }}

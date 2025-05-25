@@ -27,8 +27,6 @@ import useGetReportFittingStatus from "../../../hooks/useGetReportFittingStatus"
 import { TypeFittingStatus } from "../../../model/StaticTypeModels";
 import { CheckinInvoiceModel } from "../../../model/CheckinInvoiceModel";
 import CustomerPagination from "../../../components/CustomPagination";
-import { progressStatus } from "../../../utils/progressState";
-import { numberWithCommas } from "../../../utils/numberWithCommas";
 import { formatFittingStatus } from "../../../utils/formatFittingStatus";
 import { formatDateTimeByType } from "../../../utils/formatDateTimeByType";
 
