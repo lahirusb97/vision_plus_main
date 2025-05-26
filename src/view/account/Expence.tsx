@@ -7,7 +7,6 @@ import {
   Grid,
   Paper,
   Divider,
-  Checkbox,
 } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -91,6 +90,7 @@ const Expence = () => {
 
     setFinanceSummaryParams({ date: formattedDate });
   }, []);
+  console.log(financeSummary);
 
   const onSubmit = async (data: ExpenseFormData) => {
     if ((financeSummary?.cash_in_hold || 0) >= data.amount) {

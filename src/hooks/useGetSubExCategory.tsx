@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import axiosClient from "../axiosClient";
+import { REFUND_CHANNEL_ID } from "../data/staticVariables";
 
 export function useGetSubExCategory() {
   const [subExCategories, setSubExCategories] = useState([]);
@@ -14,7 +15,10 @@ export function useGetSubExCategory() {
       const response = await axiosClient.get("expense-subcategories/", {
         signal,
       });
-      setSubExCategories(response.data);
+      const filteredData = response.data.filter(
+        (subCategory: { id: number }) => subCategory.id !== REFUND_CHANNEL_ID
+      );
+      setSubExCategories(filteredData);
     } catch (error) {
       if (axios.isCancel(error)) {
         return;

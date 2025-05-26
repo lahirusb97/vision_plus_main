@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import axiosClient from "../axiosClient";
 import { extractErrorMessage } from "../utils/extractErrorMessage";
+import { REFUND_MAIN_CAT_ID } from "../data/staticVariables";
 
 interface ExpenceCategory {
   id: number;
@@ -29,7 +30,10 @@ export function useGetExCategory(): UseGetExCategoryReturn {
         "expense-categories/",
         { signal }
       );
-      setExCategory(response.data);
+      const filteredData = response.data.filter(
+        (category: { id: number }) => category.id !== REFUND_MAIN_CAT_ID
+      );
+      setExCategory(filteredData);
     } catch (error) {
       if (axios.isCancel(error)) {
         // Request cancelled
