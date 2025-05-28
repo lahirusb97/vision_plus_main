@@ -4,7 +4,15 @@ import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 import { useLocation, useNavigate } from "react-router";
 
-const skipSegments = ["edit", "update", "full_edit", "view", "invoice"]; // Add other words to skip
+const skipSegments = [
+  "edit",
+  "update",
+  "full_edit",
+  "view",
+  "invoice",
+  "refraction",
+  "create",
+]; // Add other words to skip
 
 const segmentLabelMap: Record<string, string> = {
   stock: "Stock",

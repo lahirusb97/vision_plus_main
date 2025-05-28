@@ -27,10 +27,10 @@ import { numberWithCommas } from "../../utils/numberWithCommas";
 import { Close } from "@mui/icons-material";
 import { formatDateTimeByType } from "../../utils/formatDateTimeByType";
 import { toast } from "react-hot-toast";
-import { useAxiosPatch } from "../../hooks/useAxiosPatch";
 import { extractErrorMessage } from "../../utils/extractErrorMessage";
 import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
 import { ExternalLenseOrderInvoiceModel } from "../../model/ExternalLenseOrderInvoiceModel";
+import { useAxiosPost } from "../../hooks/useAxiosPost";
 
 interface CheckBoxTableProps {
   invoiceList: ExternalLenseOrderInvoiceModel[];
@@ -46,11 +46,12 @@ export default function ExternalOrderCheckBoxTable({
   loading,
   invoiceListRefres,
 }: CheckBoxTableProps) {
-  const { patchHandler, patchHandlerError, patchHandlerloading } =
-    useAxiosPatch();
+  const { postHandler, postHandlerError, postHandlerloading } = useAxiosPost();
   const [selectedInvoice, setSelectedInvoice] = useState<SelectedInvoices[]>(
     []
   );
+  const [selectedUrgent, setSelectedUrgent] = useState<number[]>([]);
+
   const [orderProgress, setOrderProgress] = useState("");
   const handleChange = (event: SelectChangeEvent) => {
     setOrderProgress(event.target.value as string);
@@ -68,14 +69,16 @@ export default function ExternalOrderCheckBoxTable({
     }
 
     try {
-      await patchHandler("factory-invoices/bulk-update-whatsapp-sent/", {
+      await postHandler("factory-invoices/bulk-update-whatsapp-sent/", {
         order_ids: selectedInvoice.map((item) => item.order_id),
+        urgent_order_ids: selectedUrgent,
         whatsapp_sent: orderProgress,
       });
 
       toast.success(`Updated ${selectedInvoice.length} item(s) successfully`);
       setOrderProgress("");
       setSelectedInvoice([]);
+      setSelectedUrgent([]);
       invoiceListRefres();
     } catch (error) {
       extractErrorMessage(error);
@@ -94,6 +97,8 @@ export default function ExternalOrderCheckBoxTable({
           <TableHead>
             <TableRow>
               <TableCell align="center">Select</TableCell>
+              <TableCell align="center">Urgent</TableCell>
+
               <TableCell align="center">Patient Name</TableCell>
               <TableCell align="center">Date </TableCell>
               <TableCell align="center">Invoice</TableCell>
@@ -150,6 +155,33 @@ export default function ExternalOrderCheckBoxTable({
                     )}
                   />
                 </TableCell>
+                <TableCell align="center">
+                  <Checkbox
+                    size="small"
+                    sx={{ p: 0 }}
+                    checked={selectedUrgent.includes(row.order_id)}
+                    // Only allow ticking if the order is selected!
+                    disabled={
+                      !selectedInvoice.some(
+                        (item) => item.order_id === row.order_id
+                      )
+                    }
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setSelectedUrgent((prev) => [...prev, row.order_id]);
+                      } else {
+                        setSelectedUrgent((prev) =>
+                          prev.filter((id) => id !== row.order_id)
+                        );
+                      }
+                    }}
+                    // Visually indicate if already urgent (fetched from backend)
+                    indeterminate={
+                      !!row.urgent && !selectedUrgent.includes(row.order_id)
+                    }
+                  />
+                </TableCell>
+
                 <TableCell>{row.customer_name}</TableCell>
                 <TableCell>
                   {formatDateTimeByType(row.invoice_date, "date")}
@@ -186,6 +218,17 @@ export default function ExternalOrderCheckBoxTable({
                     )}
                     {row.fitting_on_collection && (
                       <CircleIcon sx={{ color: "blue", fontSize: "1rem" }} />
+                    )}
+                    {row.urgent && (
+                      <CircleIcon
+                        sx={{
+                          color: "black",
+                          fontSize: "1rem",
+                          verticalAlign: "middle",
+                          ml: 1, // margin-left for spacing
+                        }}
+                        titleAccess="Urgent Order"
+                      />
                     )}
                   </Box>
                 </TableCell>
@@ -296,12 +339,12 @@ export default function ExternalOrderCheckBoxTable({
 
         <Button
           onClick={handleBulkUpdate}
-          disabled={patchHandlerloading}
+          disabled={postHandlerloading}
           fullWidth
           variant="contained"
-          color={patchHandlerError ? "error" : "primary"}
+          color={postHandlerError ? "error" : "primary"}
         >
-          {patchHandlerloading ? "Updating..." : "Update"}
+          {postHandlerloading ? "Updating..." : "Update"}
         </Button>
         <Button
           onClick={() => setSelectedInvoice([])}

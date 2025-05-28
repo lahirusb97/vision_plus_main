@@ -18,4 +18,5 @@ export interface ExternalLenseOrderInvoiceModel {
   progress_status: ProgressStatus;
   on_hold: boolean;
   fitting_on_collection: boolean;
+  urgent: boolean;
 }

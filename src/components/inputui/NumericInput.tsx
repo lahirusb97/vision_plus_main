@@ -1,6 +1,7 @@
 import React from "react";
 import { TextField, TextFieldProps } from "@mui/material";
 import { formatVisionPowerSymbol } from "./formatVisionPowerSymbol";
+import returnPlusSymbol from "../../utils/returnPlusSymbol";
 
 interface NumericInputProps extends Omit<TextFieldProps, "onChange"> {
   value?: string | null;
@@ -22,14 +23,15 @@ const NumericInput: React.FC<NumericInputProps> = ({
 }) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const rawValue = e.target.value?.replace(/[^0-9+-.]/g, "") || "";
-    if (onChange) onChange(rawValue); // Handle the value change
+    const valueWithSymbol = formatVisionPowerSymbol(rawValue);
+    if (onChange) onChange(valueWithSymbol); // Handle the value change
   };
 
   const getError = () => {
     if (!value) return false;
     if (errorCheck) return errorCheck(value);
   };
-
+  const safeValue = value ?? "";
   return (
     <TextField
       {...rest}
@@ -47,7 +49,7 @@ const NumericInput: React.FC<NumericInputProps> = ({
         ...slotProps, // spread any other slotProps you passed in
       }}
       type="text"
-      value={formatVisionPowerSymbol(value)} // return plus values also null covert to ""
+      value={`${returnPlusSymbol(safeValue)}${safeValue}`} // return plus values also null covert to ""
       onChange={handleChange}
       error={getError()}
       size="small"

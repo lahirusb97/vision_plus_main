@@ -66,7 +66,7 @@ export default function LenseFullEdit() {
     watch,
 
     reset,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<LenseFullEditModel>({
     defaultValues: {
       lensType: undefined,
@@ -144,6 +144,7 @@ export default function LenseFullEdit() {
     try {
       await patchHandler(`lenses/${lense_id}/`, postData);
       toast.success("Lense Updated Successfully");
+      reset();
       navigate(-1);
     } catch (error) {
       console.log(error);
@@ -404,7 +405,7 @@ export default function LenseFullEdit() {
           />
           <SubmitCustomBtn
             btnText="Update Lense"
-            loading={patchHandlerloading}
+            loading={patchHandlerloading || isSubmitting}
             isError={patchHandlerError}
           />
         </form>
