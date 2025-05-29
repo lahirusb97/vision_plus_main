@@ -214,11 +214,15 @@ export default function FIttingLabRepoart() {
                 </TableCell>
               </TableRow>
             )}
+
             {orders.map((order) => (
               <TableRow key={order.invoice_number}>
                 <TableCell>{order.invoice_number}</TableCell>
                 <TableCell>
-                  {formatDateTimeByType(order.invoice_date, "both")}
+                  {formatDateTimeByType(
+                    order.fitting_status_updated_date,
+                    "both"
+                  )}
                 </TableCell>
                 {/* <TableCell>{order.customer ?? "-"}</TableCell> */}
                 <TableCell align="center">

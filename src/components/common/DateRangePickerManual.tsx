@@ -28,7 +28,7 @@ export default function DateRangePickerManual({
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <Box display="flex" gap={2}>
+      <Box display="flex" gap={1}>
         <DatePicker
           label="Start Date"
           value={value.start_date}

@@ -28,6 +28,7 @@ export default function FittingForm() {
   const { putHandler, putHandlerloading, putHandlerError } = useAxiosPut();
   const [searchValue, setSearchValue] = useState(`${getBranchName()}`);
   const [updating, setUpdating] = useState(false);
+  console.log(invoiceSearchData);
 
   // When user clicks Search, filter by invoice number
   const handleSearch = () => {

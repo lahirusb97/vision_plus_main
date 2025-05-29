@@ -10,6 +10,9 @@ import DoctorClaimReportIndex from "../../view/reports/doctor_claim/DoctorClaimR
 import DoctorClaimReportChannel from "../../view/reports/doctor_claim/DoctorClaimReportChannel";
 import DoctorClaimReportLayout from "../../view/reports/layout/DoctorClaimReportLayout";
 import FIttingLabRepoart from "../../view/reports/fitting-lab/FIttingLabRepoart";
+import GlassSenderReport from "../../view/reports/GlassSenderReport";
+import EmployerSalesHistory from "../../view/reports/EmployerSalesHistory";
+import EmployerSalesReportLayout from "../../view/reports/layout/EmployerSalesReportLayout";
 
 export const reportRoutes: RouteObject[] = [
   {
@@ -89,6 +92,20 @@ export const reportRoutes: RouteObject[] = [
   {
     path: "report-fitting-lab",
     element: <FIttingLabRepoart />,
+  },
+  {
+    path: "employer-history",
+    element: <EmployerSalesReportLayout />,
+    children: [
+      {
+        index: true,
+        element: <EmployerSalesHistory />,
+      },
+      {
+        path: "glass-sender",
+        element: <GlassSenderReport />,
+      },
+    ],
   },
   // {
   //   path: "report1/", // you can add paths al you need for the UI
