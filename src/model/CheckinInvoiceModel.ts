@@ -22,4 +22,9 @@ export interface CheckinInvoiceModel {
   total_price: string;
   fitting_status: TypeFittingStatus;
   fitting_status_updated_date: string;
+
+  issued_by_id: number | null;
+  issued_by_user_name?: string;
+  issued_by_user_code?: string;
+  issued_date: string | null;
 }

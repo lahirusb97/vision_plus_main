@@ -21,6 +21,7 @@ import { customerPaymentTotal } from "../../utils/customerPaymentTotal";
 import { numberWithCommas } from "../../utils/numberWithCommas";
 import useGetCheckinInvoiceList from "../../hooks/useGetCheckinInvoiceList";
 import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
+import { formatDateTimeByType } from "../../utils/formatDateTimeByType";
 
 const CheckInIndex = () => {
   const {
@@ -52,6 +53,8 @@ const CheckInIndex = () => {
                 <b>Notes</b>
               </TableCell> */}
               <TableCell>Arrival Status</TableCell>
+              <TableCell>Issued By</TableCell>
+              <TableCell>Issued Date</TableCell>
               <TableCell>Status</TableCell>
               <TableCell>Details</TableCell>
             </TableRow>
@@ -90,7 +93,10 @@ const CheckInIndex = () => {
                     ? "Received"
                     : "Not Received"}
                 </TableCell>
-
+                <TableCell>{row.issued_by_user_name}</TableCell>
+                <TableCell>
+                  {formatDateTimeByType(row.issued_date, "both")}
+                </TableCell>
                 <TableCell>
                   <Box sx={{ display: "flex", flexDirection: "rows" }}>
                     {row.on_hold ? (
