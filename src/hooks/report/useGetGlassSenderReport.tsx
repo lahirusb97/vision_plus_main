@@ -17,11 +17,12 @@ export interface GlassSenderReportParams {
   end_date: string | null;
 }
 interface UserFilteredPaginatedResponse<T> extends PaginatedResponse<T> {
-  total_count?: number;
+  user_total_count?: number;
 }
 
 const useGetGlassSenderReport = () => {
   //use null or [] base on scenario
+  const [saleCount, setSaleCount] = useState<number>(0);
   const [dataList, SetDataList] = useState<OrderLiteModel[] | []>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
@@ -56,7 +57,7 @@ const useGetGlassSenderReport = () => {
       if (!controller.signal.aborted) {
         SetDataList(response.data?.results);
         setTotalCount(response.data?.count);
-        console.log(response.data);
+        setSaleCount(response.data?.user_total_count || 0);
 
         if (response.data?.count > 0) {
           toast.success("Maching Invoice found ");
@@ -122,6 +123,7 @@ const useGetGlassSenderReport = () => {
     glassSenderReportListSearch: setParamsData,
     glassSenderReportListRefres: loadData,
     glassSenderReportListChangePageSize: changePageSize,
+    userSaleCount: saleCount,
   };
 };
 

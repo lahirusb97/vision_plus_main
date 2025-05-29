@@ -22,6 +22,7 @@ export default function GlassSenderReport() {
 
   const {
     glassSenderReportList,
+    userSaleCount,
     glassSenderReportListChangePageSize,
     glassSenderReportLimit,
     glassSenderReportListLoading,
@@ -70,6 +71,13 @@ export default function GlassSenderReport() {
   return (
     <Box>
       <TableContainer component={Paper} sx={{ mt: 2 }}>
+        <Box>
+          {user_id && (
+            <Typography variant="subtitle1">
+              Issed Count - {userSaleCount}
+            </Typography>
+          )}
+        </Box>
         {glassSenderReportListLoading ? (
           <Box
             sx={{
