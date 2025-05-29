@@ -3,6 +3,7 @@ import ProtectedChildRoute from "../ProtectedChildRoute";
 import JobProgress from "../../view/checkin/JobProgress";
 import SendOrder from "../../view/checkin/SendOrder";
 import FittingForm from "../../view/checkin/fitting/FittingForm";
+import GlassSender from "../../view/checkin/GlassSender";
 
 export const checkInRoutes: RouteObject[] = [
   {
@@ -22,5 +23,9 @@ export const checkInRoutes: RouteObject[] = [
   {
     path: "checkin-fitting",
     element: <FittingForm />,
+  },
+  {
+    path: "glasses-sender",
+    element: <GlassSender />,
   },
 ];

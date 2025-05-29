@@ -9,14 +9,10 @@ import {
   TableRow,
   Box,
   IconButton,
-  FormControl,
-  MenuItem,
-  Select,
-  InputLabel,
-  SelectChangeEvent,
   Button,
   Typography,
   CircularProgress,
+  Paper,
 } from "@mui/material";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import { grey } from "@mui/material/colors";
@@ -52,17 +48,7 @@ export default function ExternalOrderCheckBoxTable({
   );
   const [selectedUrgent, setSelectedUrgent] = useState<number[]>([]);
 
-  const [orderProgress, setOrderProgress] = useState("");
-  const handleChange = (event: SelectChangeEvent) => {
-    setOrderProgress(event.target.value as string);
-  };
-
   const handleBulkUpdate = async () => {
-    if (!progressStatus) {
-      toast.error("Please select a progress status");
-      return;
-    }
-
     if (selectedInvoice.length === 0) {
       toast.error("Please select at least one invoice");
       return;
@@ -72,11 +58,10 @@ export default function ExternalOrderCheckBoxTable({
       await postHandler("factory-invoices/bulk-update-whatsapp-sent/", {
         order_ids: selectedInvoice.map((item) => item.order_id),
         urgent_order_ids: selectedUrgent,
-        whatsapp_sent: orderProgress,
+        whatsapp_sent: "sent",
       });
 
       toast.success(`Updated ${selectedInvoice.length} item(s) successfully`);
-      setOrderProgress("");
       setSelectedInvoice([]);
       setSelectedUrgent([]);
       invoiceListRefres();
@@ -267,38 +252,30 @@ export default function ExternalOrderCheckBoxTable({
           </TableBody>
         </Table>
       </TableContainer>
-      <Box
+      <Paper
         sx={{
-          minWidth: 300,
+          minWidth: 260,
           flexDirection: "column",
           display: "flex",
           gap: 1,
           marginLeft: 1,
+          p: 1,
         }}
       >
-        <Typography variant="subtitle1">Update Order Progress</Typography>
-        <FormControl size="small" sx={{ minWidth: 300 }}>
-          <InputLabel id="demo-simple-select-label">
-            {" "}
-            Whatapp Message Status
-          </InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={orderProgress}
-            label=" Filter By Order Progress"
-            onChange={handleChange}
-          >
-            <MenuItem value={"sent"}>Sent</MenuItem>
-            <MenuItem value={"not_sent"}>Not Sent</MenuItem>
-          </Select>
-        </FormControl>
+        <Typography
+          textAlign={"center"}
+          fontWeight={"bold"}
+          variant="subtitle1"
+        >
+          WhatsApp Message Sent
+        </Typography>
+
         <Box
           sx={{
             display: "flex",
             gap: ".2rem",
             flexWrap: "wrap",
-            maxWidth: "440px",
+            maxWidth: "300px",
           }}
         >
           {selectedInvoice.map((item) => (
@@ -306,10 +283,14 @@ export default function ExternalOrderCheckBoxTable({
               key={item.order_id}
               sx={{
                 display: "flex",
+                alignItems: "center",
                 gap: ".1rem",
                 bgcolor: grey[200],
-
-                margin: ".2rem",
+                px: 1,
+                py: 0.5,
+                borderRadius: 1,
+                minWidth: 0, // Allow grid to shrink items
+                wordBreak: "break-all", // Ensure long numbers wrap if needed
               }}
             >
               <Typography
@@ -339,12 +320,12 @@ export default function ExternalOrderCheckBoxTable({
 
         <Button
           onClick={handleBulkUpdate}
-          disabled={postHandlerloading}
+          disabled={postHandlerloading || selectedInvoice.length === 0}
           fullWidth
           variant="contained"
           color={postHandlerError ? "error" : "primary"}
         >
-          {postHandlerloading ? "Updating..." : "Update"}
+          {postHandlerloading ? "Updating..." : "Mark as MSG sent"}
         </Button>
         <Button
           onClick={() => setSelectedInvoice([])}
@@ -355,7 +336,7 @@ export default function ExternalOrderCheckBoxTable({
         >
           Clear {selectedInvoice.length} sections
         </Button>
-      </Box>
+      </Paper>
     </Box>
   );
 }

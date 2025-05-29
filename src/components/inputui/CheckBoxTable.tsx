@@ -300,7 +300,11 @@ export default function CheckBoxTable({
 
         <Button
           onClick={handleBulkUpdate}
-          disabled={patchHandlerloading}
+          disabled={
+            patchHandlerloading ||
+            selectedInvoice.length === 0 ||
+            orderProgress === ""
+          }
           fullWidth
           variant="contained"
           color={patchHandlerError ? "error" : "primary"}

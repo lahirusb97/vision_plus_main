@@ -11,12 +11,12 @@ import {
 import { useEffect, useState } from "react";
 
 import CustomerPagination from "../../components/CustomPagination";
-import ProgressStagesColors from "../../components/ProgressStagesColors";
 import useGetExternalLenseOrderList from "../../hooks/useGetExternalLenseOrderList";
 import { TypeWhatappMSG } from "../../model/StaticTypeModels";
 import ExternalOrderCheckBoxTable from "../../components/inputui/ExternalOrderCheckBoxTable";
 import dayjs, { Dayjs } from "dayjs"; // Import 'dayjs' for creating Dayjs objects
 import DateRangePickerManual from "../../components/common/DateRangePickerManual";
+import InvoiceSearchInput from "../../components/common/InvoiceSearchInput";
 export interface DateRangePickerManualState {
   start_date: Dayjs | null;
   end_date: Dayjs | null;
@@ -54,7 +54,17 @@ export default function JobProgress() {
     });
   }, [dateRange, orderProgress]);
   // Persist selections in localStorage/sessionStorage
-
+  const invoiceSearch = (invoice_num: string) => {
+    externalLenseInvoiceListSearch({
+      whatsapp_sent: null,
+      search: null,
+      invoice_number: invoice_num,
+      start_date: dateRange.start_date?.format("YYYY-MM-DD") || null,
+      end_date: dateRange.end_date?.format("YYYY-MM-DD") || null,
+      page_size: 10,
+      page: 1,
+    });
+  };
   return (
     <Box sx={{ display: "flex" }}>
       <TableContainer sx={{ mt: 2 }} elevation={3} component={Paper}>
@@ -67,6 +77,10 @@ export default function JobProgress() {
             flexWrap: "wrap",
           }}
         >
+          <InvoiceSearchInput
+            searchFn={invoiceSearch}
+            placeholder="Invoice Number"
+          />
           <FormControl size="small" sx={{ minWidth: 250 }}>
             <InputLabel id="demo-simple-select-label">
               {" "}
