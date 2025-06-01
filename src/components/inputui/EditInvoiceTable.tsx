@@ -19,7 +19,7 @@ import { PaymentModel } from "../../model/PaymentModel";
 import { formatPaymentMethod } from "../../utils/formatPaymentMethod";
 import { formatDateTimeByType } from "../../utils/formatDateTimeByType";
 import { numberWithCommas } from "../../utils/numberWithCommas";
-import { customerPaymentTotal } from "../../utils/customerPaymentTotal";
+import { channelPaymentsTotal } from "../../utils/channelPaymentsTotal";
 type Props = {
   paymentList: PaymentModel[];
 };
@@ -48,7 +48,12 @@ export default function EditInvoiceTable({ paymentList }: Props) {
   );
 
   //calcuate Total
-  const totalPrePayments = customerPaymentTotal(paymentList);
+  const totalPrePayments = channelPaymentsTotal(
+    watch("payments")?.map((payment: PaymentModel) => ({
+      amount: payment.amount.toString(),
+    })) || []
+  );
+
   const discount = watch("discount") || 0;
   const subtotal = frameTotal + lenseTotal + ExtraTotal;
   const grandTotal = subtotal - discount;

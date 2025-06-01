@@ -1,6 +1,6 @@
 import React from "react";
 import { TextField, TextFieldProps } from "@mui/material";
-import returnPlusSymbol from "../../utils/returnPlusSymbol";
+// import returnPlusSymbol from "../../utils/returnPlusSymbol";
 
 interface NumericInputProps extends Omit<TextFieldProps, "onChange"> {
   value?: string | null;
@@ -47,7 +47,7 @@ const NumericInput: React.FC<NumericInputProps> = ({
         ...slotProps, // spread any other slotProps you passed in
       }}
       type="text"
-      value={`${returnPlusSymbol(safeValue)}${safeValue}`} // return plus values also null covert to ""
+      value={safeValue} // return plus values also null covert to ""
       onChange={handleChange}
       error={getError()}
       size="small"

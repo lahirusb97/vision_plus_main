@@ -1,5 +1,4 @@
-import React, { useEffect } from "react";
-import useGetChannelDeleteStatus from "../../../hooks/useGetChannelDeleteStatus";
+import { useEffect } from "react";
 import { useOutletContext } from "react-router";
 import { LogsDateRangePickerManualState } from "../layout/ChannelLogsLayout";
 import CustomerPagination from "../../../components/CustomPagination";
@@ -15,32 +14,33 @@ import {
 } from "@mui/material";
 import { formatDateTimeByType } from "../../../utils/formatDateTimeByType";
 import { numberWithCommas } from "../../../utils/numberWithCommas";
-export default function ChannelRefundLog() {
+import useGetFactoryOrderDeleteStatus from "../../../hooks/useGetFactoryOrderDeleteStatus";
+export default function FactoryOrderRefundLog() {
   const { start_date, end_date } =
     useOutletContext<LogsDateRangePickerManualState>();
   const {
-    channelStatusList,
-    channelStatusListChangePageSize,
-    channelStatusListError,
-    channelStatusListLimit,
-    channelStatusListLoading,
-    channelStatusListPageNavigation,
-    channelStatusListRefresh,
-    channelStatusListSearch,
-    channelStatusListTotalCount,
-  } = useGetChannelDeleteStatus({
+    factoryOrderStatusList,
+    factoryOrderStatusListChangePageSize,
+    factoryOrderStatusListError,
+    factoryOrderStatusListLimit,
+    factoryOrderStatusListLoading,
+    factoryOrderStatusListPageNavigation,
+    factoryOrderStatusListRefresh,
+    factoryOrderStatusListSearch,
+    factoryOrderStatusListTotalCount,
+  } = useGetFactoryOrderDeleteStatus({
     status: "deactivated_refunded",
   });
   useEffect(() => {
     if (start_date && end_date) {
-      channelStatusListSearch({
+      factoryOrderStatusListSearch({
         start_date: start_date.format("YYYY-MM-DD"),
         end_date: end_date.format("YYYY-MM-DD"),
-        page_size: channelStatusListLimit,
+        page_size: factoryOrderStatusListLimit,
         page: 1,
-        doctor: null,
-        invoice_number: null,
-        search: null,
+        // doctor: null,
+        // invoice_number: null,
+        // search: null,
         status: "deactivated_refunded",
       });
     }
@@ -53,24 +53,24 @@ export default function ChannelRefundLog() {
           <TableRow sx={{ backgroundColor: "#f5f5f5" }}>
             {/* <TableCell align="center">Refund </TableCell> */}
             <TableCell align="center">Refund Date </TableCell>
-            <TableCell align="center">Channel Date </TableCell>
+            <TableCell align="center">Invoice Date </TableCell>
             <TableCell>Invoice No.</TableCell>
             <TableCell>Patient Name </TableCell>
-            <TableCell>Contact Number </TableCell>
+            {/* <TableCell>Total Number </TableCell> */}
             <TableCell>Total Invoice </TableCell>
             <TableCell>Total Payment </TableCell>
             <TableCell>Balance </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {channelStatusListLoading && (
+          {factoryOrderStatusListLoading && (
             <TableRow>
               <TableCell colSpan={10} align="center">
                 <CircularProgress />
               </TableCell>
             </TableRow>
           )}
-          {channelStatusList?.results?.map((row) => (
+          {factoryOrderStatusList?.results?.map((row) => (
             <TableRow key={row.id}>
               {/* <TableCell
                 sx={{
@@ -88,41 +88,48 @@ export default function ChannelRefundLog() {
               <TableCell>
                 {formatDateTimeByType(row.refunded_at, "both")}
               </TableCell>
-              <TableCell>{row.date}</TableCell>
+              <TableCell>{row.issued_date}</TableCell>
 
               <TableCell>{row.invoice_number}</TableCell>
-              <TableCell>{row.patient_name}</TableCell>
-              <TableCell>{row.contact_number}</TableCell>
-              <TableCell>{numberWithCommas(row.amount)}</TableCell>
-              <TableCell>{numberWithCommas(row.total_payment)}</TableCell>
-              <TableCell>{numberWithCommas(row.balance)}</TableCell>
+              <TableCell>{row.customer_name}</TableCell>
+              <TableCell align="right">
+                {numberWithCommas(row.total_price)}
+              </TableCell>
+              <TableCell align="right">
+                {numberWithCommas(row.total_payment)}
+              </TableCell>
+              <TableCell align="right">
+                {numberWithCommas(
+                  Number(row.total_price) - Number(row.total_payment)
+                )}
+              </TableCell>
             </TableRow>
           ))}
-          {!channelStatusListLoading &&
-            !channelStatusListError &&
-            channelStatusList?.results?.length === 0 && (
+          {!factoryOrderStatusListLoading &&
+            !factoryOrderStatusListError &&
+            factoryOrderStatusList?.results?.length === 0 && (
               <TableRow>
                 <TableCell colSpan={9} rowSpan={6} align="center">
                   No data found
                 </TableCell>
               </TableRow>
             )}
-          {channelStatusListError && (
+          {factoryOrderStatusListError && (
             <TableRow>
               <TableCell colSpan={9} rowSpan={6} align="center">
                 {/* //Refreshtable */}
                 <Typography variant="body1">Error loading data</Typography>
-                <Button onClick={channelStatusListRefresh}>Refresh</Button>
+                <Button onClick={factoryOrderStatusListRefresh}>Refresh</Button>
               </TableCell>
             </TableRow>
           )}
         </TableBody>
       </Table>
       <CustomerPagination
-        totalCount={channelStatusListTotalCount}
-        handlePageNavigation={channelStatusListPageNavigation}
-        changePageSize={channelStatusListChangePageSize}
-        page_size={channelStatusListLimit}
+        totalCount={factoryOrderStatusListTotalCount}
+        handlePageNavigation={factoryOrderStatusListPageNavigation}
+        changePageSize={factoryOrderStatusListChangePageSize}
+        page_size={factoryOrderStatusListLimit}
       />
     </div>
   );

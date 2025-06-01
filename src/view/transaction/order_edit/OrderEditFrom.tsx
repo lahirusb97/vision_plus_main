@@ -13,7 +13,6 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  SelectChangeEvent,
   TextField,
   Typography,
 } from "@mui/material";
@@ -62,6 +61,11 @@ import dayjs from "dayjs";
 import useGetBusTitles from "../../../hooks/useGetBusTitles";
 import { BUSID } from "../../../data/staticVariables";
 import { getUserCurentBranch } from "../../../utils/authDataConver";
+import OrderDeleteRefund from "../../../components/common/order-delete-refund-dialog/OrderDeleteRefund";
+import { schemayPaymentUpdateDelete } from "../../../validations/schemayPaymentUpdateDelete";
+import { z } from "zod";
+import PaymentsForm from "../../../components/common/PaymentsForm";
+import stringToIntConver from "../../../utils/stringToIntConver";
 
 export default function OrderEditFrom() {
   const navigate = useNavigate();
@@ -99,8 +103,13 @@ export default function OrderEditFrom() {
   const ExtraTotal = useSelector(
     (state: RootState) => state.invoice_external_lense.externalLenseSubTotal
   );
-  const methods = useForm<FactoryInvoiceFormModel>({
-    resolver: zodResolver(schemaFactoryInvoice.omit({ branch_id: true })),
+
+  //SCHEMAS
+  const orderEditForm = schemaFactoryInvoice.extend({
+    payments: z.array(schemayPaymentUpdateDelete),
+  });
+  const methods = useForm<z.infer<typeof orderEditForm>>({
+    resolver: zodResolver(orderEditForm.omit({ branch_id: true })),
     defaultValues: {
       credit_card: 0,
       cash: 0,
@@ -172,6 +181,17 @@ export default function OrderEditFrom() {
       methods.setValue(
         "progress_status",
         invoiceDetail.order_details.progress_status
+      );
+
+      methods.setValue(
+        "payments",
+        invoiceDetail.order_details.order_payments.map((payment) => ({
+          id: payment.id,
+          amount: stringToIntConver(payment.amount),
+          payment_method: payment.payment_method,
+          is_final: payment.is_final_payment,
+          payment_date: payment.payment_date,
+        }))
       );
     }
     if (invoiceDetail && !invoiceDetailLoading && loadState === 0) {
@@ -268,17 +288,7 @@ export default function OrderEditFrom() {
     return null;
   }
 
-  const submiteFromData = async (data: FactoryInvoiceFormModel) => {
-    const prePayments = invoiceDetail?.order_details.order_payments;
-    const simplifiedPayments = prePayments?.map(
-      ({ id, amount, payment_method, transaction_status }) => ({
-        id,
-        amount: parseInt(amount),
-        payment_method,
-        transaction_status,
-      })
-    );
-
+  const submiteFromData = async (data: z.infer<typeof orderEditForm>) => {
     const lastPayment = parseInt(invoiceDetail?.order_details.sub_total || "0");
     const orderState =
       grandTotal <=
@@ -347,10 +357,7 @@ export default function OrderEditFrom() {
             //!Note here
           })),
         ],
-        order_payments: [
-          ...formatUserPayments(userPayments),
-          ...(simplifiedPayments || []),
-        ],
+        order_payments: [...formatUserPayments(userPayments), ...data.payments],
       };
 
       if (
@@ -368,6 +375,7 @@ export default function OrderEditFrom() {
       toast.error("Payment Amount is greater than Total Amount");
     }
   };
+  console.log(methods.watch("payments"));
 
   const sendDataToDb = async (postData: FactoryOrderInputModel) => {
     try {
@@ -503,6 +511,12 @@ export default function OrderEditFrom() {
                     </FormControl>
                   )}
                 />
+                <Box sx={{ ml: 1, width: 200 }}>
+                  <OrderDeleteRefund
+                    dialogType="both"
+                    order_id={invoiceDetail?.order?.toString()}
+                  />
+                </Box>
               </Box>
             </Box>
 
@@ -599,6 +613,9 @@ export default function OrderEditFrom() {
           <EditInvoiceTable
             paymentList={invoiceDetail?.order_details?.order_payments ?? []}
           />
+          <Box sx={{ mt: 2 }}>
+            <PaymentsForm />
+          </Box>
           <Box
             sx={{
               display: "flex",
@@ -645,6 +662,7 @@ export default function OrderEditFrom() {
           </Box>
         </Box>
       </FormProvider>
+
       <VarificationDialog
         open={validationState.openValidationDialog}
         operationType={validationState.validationType}

@@ -25,3 +25,4 @@ export const BRANCH_ALUTHGAMA_ID: number = 2 as const;
 export const REFUND_MAIN_CAT_ID: number = 1 as const;
 //!REFUND CHANNEL
 export const REFUND_CHANNEL_ID: number = 1 as const;
+export const REFUND_ORDER_ID: number = 2 as const;

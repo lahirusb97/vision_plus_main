@@ -7,14 +7,14 @@ import DateRangePickerManual from "../../../components/common/DateRangePickerMan
 import dayjs, { Dayjs } from "dayjs"; // Import 'dayjs' for creating Dayjs objects
 import AutocompleteInputField from "../../../components/inputui/DropdownInput";
 import useGetUsers from "../../../hooks/useGetUsers";
-export interface EmployerReportFilterParams {
+export interface EmployerReportContext {
   start_date: Dayjs | null;
   end_date: Dayjs | null;
   user_id: number | null;
 }
 export default function EmployerSalesReportLayout() {
   const { users, usersLoading } = useGetUsers();
-  const [filterParams, setFilterParams] = useState<EmployerReportFilterParams>({
+  const [filterParams, setFilterParams] = useState<EmployerReportContext>({
     start_date: dayjs(), // or null
     end_date: dayjs().add(1, "M"),
     user_id: null,

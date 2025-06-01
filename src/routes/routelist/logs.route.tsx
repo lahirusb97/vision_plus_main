@@ -4,7 +4,9 @@ import LensLog from "../../view/audit_logs/LensLog";
 import ChannelDeactivateLog from "../../view/audit_logs/channel-refund-delete/ChannelDeactivateLog";
 import ChannelRefundLog from "../../view/audit_logs/channel-refund-delete/ChannelRefundLog";
 import ChannelLogsLayout from "../../view/audit_logs/layout/ChannelLogsLayout";
-
+import FactoryOrderDeactivateLog from "../../view/audit_logs/factory-order-refund-delete/FactoryOrderDeactivateLog";
+import FactoryOrderRefundLog from "../../view/audit_logs/factory-order-refund-delete/FactoryOrderRefundLog";
+import FactoryOrderLogsLayout from "../../view/audit_logs/layout/FactoryOrderLogsLayout";
 export const logsRoutes: RouteObject[] = [
   {
     path: "",
@@ -26,6 +28,20 @@ export const logsRoutes: RouteObject[] = [
       {
         path: "refund/",
         element: <ChannelRefundLog />,
+      },
+    ],
+  },
+  {
+    path: "factory-order/",
+    element: <FactoryOrderLogsLayout />,
+    children: [
+      {
+        index: true,
+        element: <FactoryOrderDeactivateLog />,
+      },
+      {
+        path: "refund/",
+        element: <FactoryOrderRefundLog />,
       },
     ],
   },

@@ -9,6 +9,7 @@ export default function UserNav() {
       {/* //channel deativate refind 
       //  */}
       <NavButton name="Channel Logs" path={"/logs/channel"} />
+      <NavButton name="Factory Order Logs" path={"/logs/factory-order"} />
     </>
   );
 }

@@ -164,6 +164,7 @@ interface OrderDetails {
   progress_status: ProgressStatus;
   fitting_status: TypeFittingStatus;
   fitting_status_updated_date: string;
+  urgent: boolean;
 }
 
 interface Invoice {

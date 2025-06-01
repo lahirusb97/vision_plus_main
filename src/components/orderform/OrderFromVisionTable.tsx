@@ -19,7 +19,7 @@ export default function OrderFromVisionTable({
     <div>
       <TableContainer
         component={Paper}
-        sx={{ marginTop: "0.4cm", width: "14cm" }}
+        sx={{ marginTop: "0.1cm", width: "14cm" }}
       >
         <Table size="small" sx={{ border: "1px solid black" }}>
           <TableHead>

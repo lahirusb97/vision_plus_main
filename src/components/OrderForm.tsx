@@ -82,7 +82,19 @@ const OrderForm: React.FC<OrderFormProps> = ({ invoiceDetail }) => {
                       <strong> {invoiceDetail?.invoice_number}</strong>
                     </Box>
                   </Box>
-
+                  {invoiceDetail.order_details.urgent && (
+                    <Typography
+                      sx={{
+                        fontFamily: "sans-serif",
+                        fontSize: "5mm",
+                        color: "red",
+                      }}
+                      variant="h6"
+                      fontWeight="bold"
+                    >
+                      VERY URGENT
+                    </Typography>
+                  )}
                   {/* Table Section */}
                   <OrderFromVisionTable RefractionDetails={RefractionDetails} />
 

@@ -7,6 +7,7 @@ import {
   TableRow,
   TableCell,
   TableBody,
+  Typography,
 } from "@mui/material";
 import { useLocation } from "react-router";
 import { useRef } from "react";
@@ -31,7 +32,7 @@ const InvoiceView = () => {
     queryParams.get("invoice_number") || "",
     "factory"
   );
-
+  console.log(invoiceDetail);
   if (invoiceLoading) {
     return (
       <Box
