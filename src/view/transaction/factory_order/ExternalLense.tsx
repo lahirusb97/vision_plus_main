@@ -72,7 +72,7 @@ export default function ExternalLense() {
         <Box
           sx={{
             display: "flex",
-
+            flexDirection: "column",
             alignItems: "center",
             gap: 2,
           }}
@@ -89,54 +89,65 @@ export default function ExternalLense() {
               availableFilters={externaLenseList?.available_filters ?? null}
               setExternalLenseParams={setExternalLenseParams}
             />
+          </Box>
+          <Box
+            sx={{
+              display: "flex",
+
+              alignItems: "center",
+              gap: 2,
+              mt: 1,
+            }}
+          >
             <TextField
-              fullWidth
+              sx={{ width: 880 }}
               label="Lens note"
               type="text"
               size="small"
               value={externalLensNote}
               onChange={(e) => setExternalLensNote(e.target.value)}
             />
+
+            <TextField
+              sx={{ width: 100 }}
+              type="number"
+              size="small"
+              label="Price"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              onFocus={(e) => {
+                if (e.target.value === "0") {
+                  setPrice("");
+                }
+              }}
+              onBlur={(e) => {
+                if (e.target.value === "") {
+                  setPrice("0");
+                }
+              }}
+            />
+            <TextField
+              sx={{ width: 100 }}
+              label="Quantity"
+              type="number"
+              size="small"
+              value={externalLensQty}
+              onChange={(e) => setExternalLensQty(e.target.value)}
+              onFocus={(e) => {
+                if (e.target.value === "0") {
+                  setExternalLensQty("");
+                }
+              }}
+              onBlur={(e) => {
+                if (e.target.value === "") {
+                  setExternalLensQty("0");
+                }
+              }}
+            />
+            <Button onClick={addNoneStockLense} variant="contained">
+              Add
+            </Button>
           </Box>
-          <TextField
-            sx={{ width: 100 }}
-            type="number"
-            size="small"
-            label="Price"
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
-            onFocus={(e) => {
-              if (e.target.value === "0") {
-                setPrice("");
-              }
-            }}
-            onBlur={(e) => {
-              if (e.target.value === "") {
-                setPrice("0");
-              }
-            }}
-          />
-          <TextField
-            sx={{ width: 100 }}
-            label="Quantity"
-            type="number"
-            size="small"
-            value={externalLensQty}
-            onChange={(e) => setExternalLensQty(e.target.value)}
-            onFocus={(e) => {
-              if (e.target.value === "0") {
-                setExternalLensQty("");
-              }
-            }}
-            onBlur={(e) => {
-              if (e.target.value === "") {
-                setExternalLensQty("0");
-              }
-            }}
-          />
-          <Button onClick={addNoneStockLense} variant="contained">
-            Add
-          </Button>
         </Box>
       </Paper>
       <Box sx={{ padding: 2 }}>

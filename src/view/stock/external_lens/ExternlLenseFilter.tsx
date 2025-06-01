@@ -54,31 +54,33 @@ export default function ExternlLenseFilter({
   }, [externalCoatings, availableFilters]);
 
   return (
-    <Box width={"800px"} display="flex" alignItems={"center"} gap={2}>
-      <AutocompleteInputField
-        options={externalFactorys}
-        onChange={(id) => {
-          setExternalLenseParams({ brand: id });
-          setFilterTypes({
-            lens_type: null,
-            coating: null,
-            brand: id,
-          });
-        }}
-        labelName="Lens Factory"
-        loading={externalFactorysLoading}
-        defaultId={filterTypes.brand}
-      />
-      <AutocompleteInputField
-        options={filteredLenseTypes}
-        onChange={(id) => {
-          setExternalLenseParams({ lens_type: id });
-          setFilterTypes((prev) => ({ ...prev, lens_type: id }));
-        }}
-        labelName="Lens Type"
-        loading={lenseTypesLoading || !availableFilters}
-        defaultId={filterTypes.lens_type}
-      />
+    <Box width={"1200px"} display="flex" alignItems={"center"} gap={2}>
+      <Box sx={{ display: "flex", gap: 2 }} width={"800px"}>
+        <AutocompleteInputField
+          options={externalFactorys}
+          onChange={(id) => {
+            setExternalLenseParams({ brand: id });
+            setFilterTypes({
+              lens_type: null,
+              coating: null,
+              brand: id,
+            });
+          }}
+          labelName="Lens Factory"
+          loading={externalFactorysLoading}
+          defaultId={filterTypes.brand}
+        />
+        <AutocompleteInputField
+          options={filteredLenseTypes}
+          onChange={(id) => {
+            setExternalLenseParams({ lens_type: id });
+            setFilterTypes((prev) => ({ ...prev, lens_type: id }));
+          }}
+          labelName="Lens Type"
+          loading={lenseTypesLoading || !availableFilters}
+          defaultId={filterTypes.lens_type}
+        />
+      </Box>
       <AutocompleteInputField
         options={filteredCoatings}
         onChange={(id) => {

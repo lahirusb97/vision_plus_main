@@ -9,12 +9,12 @@ import { getUserAuth } from "./utils/authDataConver";
 // Create an Axios instance with a base URL
 const axiosClient: AxiosInstance = axios.create({
   // baseURL: import.meta.env.VITE_BASE_URL,
-  baseURL: "https://www.onlineict.site/api/",
+  // baseURL: "https://www.onlineict.site/api/",
 
-  // baseURL:
-  //   import.meta.env.VITE_DEV === "true"
-  //     ? import.meta.env.VITE_LOCAL_BASE_URL
-  //     : import.meta.env.VITE_API_BASE_URL,
+  baseURL:
+    import.meta.env.VITE_DEV === "true"
+      ? import.meta.env.VITE_LOCAL_BASE_URL
+      : import.meta.env.VITE_API_BASE_URL,
   withCredentials: false,
 });
 
