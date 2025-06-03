@@ -1,12 +1,13 @@
 import { SizeType, SpeciesType } from "./FrameModel";
 import { Power } from "./LenseModel";
+import { MntOrderModel } from "./MTNOrderModel";
 import { PatientModel } from "./Patient";
 import { PaymentModel } from "./PaymentModel";
+import { ProgressStatusModel } from "./progressStatusModel";
 import { RefractionDetailModel } from "./RefractionDetailModel";
 import {
   InvoiceType,
   LensArrivalStatus,
-  ProgressStatus,
   TypeBraned,
   TypeFittingStatus,
   TypeOrderStatus,
@@ -161,10 +162,11 @@ interface OrderDetails {
   user_date: string | null;
   bus_title: number | null;
   bus_title_name?: string;
-  progress_status: ProgressStatus;
+  progress_status: ProgressStatusModel;
   fitting_status: TypeFittingStatus;
   fitting_status_updated_date: string;
   urgent: boolean;
+  mnt_order: MntOrderModel;
 }
 
 interface Invoice {

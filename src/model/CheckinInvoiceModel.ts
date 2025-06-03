@@ -1,9 +1,6 @@
 import { PaymentModel } from "./PaymentModel";
-import {
-  InvoiceType,
-  ProgressStatus,
-  TypeFittingStatus,
-} from "./StaticTypeModels";
+import { ProgressStatusModel } from "./progressStatusModel";
+import { InvoiceType, TypeFittingStatus } from "./StaticTypeModels";
 
 export interface CheckinInvoiceModel {
   id: number;
@@ -13,7 +10,7 @@ export interface CheckinInvoiceModel {
   daily_invoice_no: string;
   invoice_number: string;
   invoice_date: string; // ISO string; use Date if you plan to parse it
-  progress_status: ProgressStatus; // Extend with other statuses
+  progress_status: ProgressStatusModel; // Extend with other statuses
   lens_arrival_status: string | null; // Change type if the value is more specific
   whatsapp_sent: boolean;
   fitting_on_collection: boolean | null;

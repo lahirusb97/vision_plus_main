@@ -14,6 +14,7 @@ import {
   MenuItem,
   Select,
   TextField,
+  Stack,
   Typography,
 } from "@mui/material";
 import {
@@ -66,6 +67,7 @@ import { schemayPaymentUpdateDelete } from "../../../validations/schemayPaymentU
 import { z } from "zod";
 import PaymentsForm from "../../../components/common/PaymentsForm";
 import stringToIntConver from "../../../utils/stringToIntConver";
+import { formatDateTimeByType } from "../../../utils/formatDateTimeByType";
 
 export default function OrderEditFrom() {
   const navigate = useNavigate();
@@ -107,6 +109,9 @@ export default function OrderEditFrom() {
   //SCHEMAS
   const orderEditForm = schemaFactoryInvoice.extend({
     payments: z.array(schemayPaymentUpdateDelete),
+    mnt: z.boolean().default(false),
+    admin_id: z.number(),
+    user_id: z.number(),
   });
   const methods = useForm<z.infer<typeof orderEditForm>>({
     resolver: zodResolver(orderEditForm.omit({ branch_id: true })),
@@ -173,14 +178,13 @@ export default function OrderEditFrom() {
       methods.setValue("left_pd", invoiceDetail?.order_details?.left_pd);
       methods.setValue("right_pd", invoiceDetail?.order_details?.right_pd);
       methods.setValue("user_date", invoiceDetail?.order_details?.user_date);
-
       methods.setValue(
         "bus_title",
         BUSID === currentBranch ? invoiceDetail.order_details.bus_title : null
       );
       methods.setValue(
         "progress_status",
-        invoiceDetail.order_details.progress_status
+        invoiceDetail.order_details.progress_status.progress_status
       );
 
       methods.setValue(
@@ -358,6 +362,7 @@ export default function OrderEditFrom() {
           })),
         ],
         order_payments: [...formatUserPayments(userPayments), ...data.payments],
+        mnt: data.mnt,
       };
 
       if (
@@ -365,9 +370,16 @@ export default function OrderEditFrom() {
         Object.keys(LenseInvoiceList).length > 0 ||
         Object.keys(FrameInvoiceList).length > 0
       ) {
-        prepareValidation("create", async () => {
-          await sendDataToDb(postData as FactoryOrderInputModel);
-        });
+        prepareValidation(
+          "update",
+          async (verifiedUserId: number, verifiedAdminId: number) => {
+            await sendDataToDb(
+              postData as FactoryOrderInputModel,
+              verifiedUserId,
+              verifiedAdminId
+            );
+          }
+        );
       } else {
         toast.error("No Items ware added");
       }
@@ -377,12 +389,21 @@ export default function OrderEditFrom() {
   };
   console.log(methods.watch("payments"));
 
-  const sendDataToDb = async (postData: FactoryOrderInputModel) => {
+  const sendDataToDb = async (
+    postData: FactoryOrderInputModel,
+    verifiedUserId: number,
+    verifiedAdminId: number
+  ) => {
     try {
       // No refraction Data but have Refraction Number
       const responce = await axiosClient.put(
         `/orders/${invoiceDetail?.order}/`,
-        postData
+        {
+          ...postData,
+
+          admin_id: verifiedAdminId,
+          user_id: verifiedUserId,
+        }
       );
       toast.success("Order & Refraction Details saved successfully");
       const url = `?invoice_number=${encodeURIComponent(
@@ -427,14 +448,48 @@ export default function OrderEditFrom() {
                   display: "flex",
                 }}
               >
-                <RightEyeTable refractionDetail={refractionDetail} />
-                <LeftEyeTable refractionDetail={refractionDetail} />
+                {" "}
+                <Box
+                  sx={{
+                    display: "flex",
+                  }}
+                >
+                  <RightEyeTable refractionDetail={refractionDetail} />
+                  <LeftEyeTable refractionDetail={refractionDetail} />
+                </Box>
+                {!refractionDetailLoading && (
+                  <PationtDetails
+                    prescription={
+                      refractionDetail?.prescription_type_display ||
+                      "Prescription Not Found"
+                    }
+                    refractionNumber={
+                      invoiceDetail?.customer_details?.refraction_number ||
+                      "Refraction Number Not Found"
+                    }
+                  />
+                )}
               </Box>
-              <Typography
-                sx={{ border: "1px solid gray", px: 1, mx: 1, mb: 1 }}
-              >
-                Refraction Remark - {refractionDetail?.refraction_remark}
-              </Typography>
+              <Box sx={{ display: "flex", alignItems: "center" }}>
+                {refractionDetail && (
+                  <SugarCataractText
+                    shuger={refractionDetail.shuger}
+                    cataract={refractionDetail.cataract}
+                    blepharitis={refractionDetail.blepharitis}
+                  />
+                )}
+                <Typography
+                  sx={{
+                    border: "1px solid gray",
+                    px: 1,
+                    mx: 1,
+                    my: 1,
+                    flexGrow: 2,
+                  }}
+                >
+                  Refraction Remark - {refractionDetail?.refraction_remark}
+                </Typography>
+              </Box>
               <Box
                 sx={{
                   display: "flex",
@@ -443,96 +498,120 @@ export default function OrderEditFrom() {
                   ml: 1,
                 }}
               >
-                {refractionDetail && (
-                  <SugarCataractText
-                    shuger={refractionDetail.shuger}
-                    cataract={refractionDetail.cataract}
-                    blepharitis={refractionDetail.blepharitis}
-                  />
-                )}
-                <Box ml={1} display="flex" alignItems="center">
-                  <Typography variant="body1"> On Hold</Typography>
-                  <Checkbox
-                    {...methods.register("on_hold")}
-                    checked={methods.watch("on_hold") || false} // Add fallback to false
-                    onChange={(e) =>
-                      methods.setValue("on_hold", e.target.checked)
-                    }
-                  />
-                </Box>
-
                 <Box display="flex" alignItems="center">
-                  <Typography variant="body1">
-                    | Fiting on Collection
-                  </Typography>
+                  <Box ml={1} display="flex" alignItems="center">
+                    <Typography variant="body1"> On Hold</Typography>
+                    <Checkbox
+                      {...methods.register("on_hold")}
+                      checked={methods.watch("on_hold") || false} // Add fallback to false
+                      onChange={(e) =>
+                        methods.setValue("on_hold", e.target.checked)
+                      }
+                    />
+                  </Box>
+                  <Box ml={1} display="flex" alignItems="center">
+                    <Typography variant="body1">
+                      | Fiting on Collection
+                    </Typography>
 
-                  <Checkbox
-                    {...methods.register("fitting_on_collection")}
-                    checked={methods.watch("fitting_on_collection") || false} // Add fallback to false
-                    onChange={(e) =>
-                      methods.setValue(
-                        "fitting_on_collection",
-                        e.target.checked
-                      )
-                    }
+                    <Checkbox
+                      {...methods.register("fitting_on_collection")}
+                      checked={methods.watch("fitting_on_collection") || false} // Add fallback to false
+                      onChange={(e) =>
+                        methods.setValue(
+                          "fitting_on_collection",
+                          e.target.checked
+                        )
+                      }
+                    />
+                  </Box>
+
+                  <Controller
+                    name="progress_status"
+                    control={methods.control}
+                    render={({ field }) => (
+                      <FormControl size="small" sx={{ minWidth: 250 }}>
+                        <InputLabel id="demo-simple-select-label">
+                          Order Progress Status
+                        </InputLabel>
+                        <Select
+                          labelId="demo-simple-select-label"
+                          id="demo-simple-select"
+                          value={field.value || ""} // Ensure value is never undefined
+                          onChange={(e) => field.onChange(e.target.value)} // Pass the value directly
+                          label="Order Progress Status"
+                          error={
+                            !!methods.formState.errors.progress_status?.message
+                          }
+                        >
+                          <MenuItem value="received_from_customer">
+                            Received From Customer
+                          </MenuItem>
+                          <MenuItem value="issue_to_factory">
+                            Issue to Factory
+                          </MenuItem>
+                          <MenuItem value="received_from_factory">
+                            Received from Factory
+                          </MenuItem>
+                          <MenuItem value="issue_to_customer">
+                            Issue to Customer
+                          </MenuItem>
+                        </Select>
+                      </FormControl>
+                    )}
                   />
-                </Box>
-                <Controller
-                  name="progress_status"
-                  control={methods.control}
-                  render={({ field }) => (
-                    <FormControl size="small" sx={{ minWidth: 250 }}>
-                      <InputLabel id="demo-simple-select-label">
-                        Order Progress Status
-                      </InputLabel>
-                      <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        value={field.value || ""} // Ensure value is never undefined
-                        onChange={(e) => field.onChange(e.target.value)} // Pass the value directly
-                        label="Order Progress Status"
-                        error={
-                          !!methods.formState.errors.progress_status?.message
-                        }
-                      >
-                        <MenuItem value="received_from_customer">
-                          Received From Customer
-                        </MenuItem>
-                        <MenuItem value="issue_to_factory">
-                          Issue to Factory
-                        </MenuItem>
-                        <MenuItem value="received_from_factory">
-                          Received from Factory
-                        </MenuItem>
-                        <MenuItem value="issue_to_customer">
-                          Issue to Customer
-                        </MenuItem>
-                      </Select>
-                    </FormControl>
-                  )}
-                />
-                <Box sx={{ ml: 1, width: 200 }}>
-                  <OrderDeleteRefund
-                    dialogType="both"
-                    order_id={invoiceDetail?.order?.toString()}
-                  />
+                  <Box sx={{ ml: 1, width: 200 }}>
+                    <OrderDeleteRefund
+                      dialogType="both"
+                      order_id={invoiceDetail?.order?.toString()}
+                    />
+                  </Box>
+
+                  <Box display="flex" alignItems="center">
+                    {invoiceDetail?.order_details?.mnt_order?.id && (
+                      <>
+                        <Stack direction="column" alignItems="center">
+                          <Typography variant="caption">
+                            MNT No.
+                            <Typography
+                              component={"span"}
+                              sx={{ fontWeight: "bold", m: 0, p: 0 }}
+                            >
+                              {
+                                invoiceDetail?.order_details?.mnt_order
+                                  ?.mnt_number
+                              }
+                            </Typography>
+                          </Typography>
+
+                          <Typography variant="caption" color="text.secondary">
+                            <span>
+                              {formatDateTimeByType(
+                                invoiceDetail?.order_details?.mnt_order
+                                  ?.created_at,
+                                "both"
+                              )}
+                            </span>
+                          </Typography>
+                        </Stack>
+                      </>
+                    )}
+                    {!invoiceDetail?.order_details?.mnt_order?.id && (
+                      <>
+                        <Typography variant="body1"> Mark As MNT</Typography>
+                        <Checkbox
+                          {...methods.register("mnt")}
+                          checked={methods.watch("mnt") || false}
+                          onChange={(e) =>
+                            methods.setValue("mnt", e.target.checked)
+                          }
+                        />
+                      </>
+                    )}
+                  </Box>
                 </Box>
               </Box>
             </Box>
-
-            {/* sending data trugh invoide details with usefrom hook */}
-            {!refractionDetailLoading && (
-              <PationtDetails
-                prescription={
-                  refractionDetail?.prescription_type_display ||
-                  "Prescription Not Found"
-                }
-                refractionNumber={
-                  invoiceDetail?.customer_details?.refraction_number ||
-                  "Refraction Number Not Found"
-                }
-              />
-            )}
           </Box>
           <Box
             sx={{

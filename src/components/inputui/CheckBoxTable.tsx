@@ -25,12 +25,14 @@ import CircleIcon from "@mui/icons-material/Circle";
 import { progressStatus } from "../../utils/progressState";
 import { customerPaymentTotal } from "../../utils/customerPaymentTotal";
 import { numberWithCommas } from "../../utils/numberWithCommas";
-import { Close } from "@mui/icons-material";
+import { Close, History, HistoryRounded } from "@mui/icons-material";
 import { formatDateTimeByType } from "../../utils/formatDateTimeByType";
 import { toast } from "react-hot-toast";
-import { useAxiosPatch } from "../../hooks/useAxiosPatch";
 import { extractErrorMessage } from "../../utils/extractErrorMessage";
 import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
+import { useAxiosPost } from "../../hooks/useAxiosPost";
+import useGetProgressStatusList from "../../hooks/useGetProgressStatusList";
+import { ProgressHistoryPopover } from "../ProgressHistoryPopover";
 
 interface CheckBoxTableProps {
   invoiceList: CheckinInvoiceModel[];
@@ -46,8 +48,16 @@ export default function CheckBoxTable({
   loading,
   invoiceListRefres,
 }: CheckBoxTableProps) {
-  const { patchHandler, patchHandlerError, patchHandlerloading } =
-    useAxiosPatch();
+  const {
+    progressStatusList,
+    progressStatusListLoading,
+    progressStatusListError,
+    fetchProgressStatus,
+  } = useGetProgressStatusList();
+  const [popoverAnchor, setPopoverAnchor] = useState<null | HTMLElement>(null);
+  const [popoverOrder, setPopoverOrder] = useState<number | null>(null);
+
+  const { postHandler, postHandlerError, postHandlerloading } = useAxiosPost();
   const [selectedInvoice, setSelectedInvoice] = useState<SelectedInvoices[]>(
     []
   );
@@ -68,7 +78,7 @@ export default function CheckBoxTable({
     }
 
     try {
-      await patchHandler("factory-invoices/bulk-update-status/", {
+      await postHandler("factory-invoices/bulk-update-status/", {
         order_ids: selectedInvoice.map((item) => item.order),
         progress_status: orderProgress,
       });
@@ -80,6 +90,19 @@ export default function CheckBoxTable({
     } catch (error) {
       extractErrorMessage(error);
     }
+  };
+
+  const handleShowHistory = (
+    event: React.MouseEvent<HTMLElement>,
+    orderId: number
+  ) => {
+    setPopoverAnchor(event.currentTarget);
+    setPopoverOrder(orderId);
+  };
+
+  const handleClosePopover = () => {
+    setPopoverAnchor(null);
+    setPopoverOrder(null);
   };
 
   return (
@@ -167,7 +190,16 @@ export default function CheckBoxTable({
                       customerPaymentTotal(row.payments)
                   )}
                 </TableCell>
-                <TableCell>{progressStatus(row.progress_status)}</TableCell>
+                <TableCell>
+                  {progressStatus(row.progress_status?.progress_status)}
+                  <IconButton
+                    size="small"
+                    sx={{ p: 0 }}
+                    onClick={(e) => handleShowHistory(e, row.order)}
+                  >
+                    <HistoryRounded fontSize="small" />
+                  </IconButton>
+                </TableCell>
                 {/* <TableCell>{row.notes}</TableCell> */}
                 {/* <TableCell>
                 {row.lens_arrival_status == null
@@ -301,15 +333,15 @@ export default function CheckBoxTable({
         <Button
           onClick={handleBulkUpdate}
           disabled={
-            patchHandlerloading ||
+            postHandlerloading ||
             selectedInvoice.length === 0 ||
             orderProgress === ""
           }
           fullWidth
           variant="contained"
-          color={patchHandlerError ? "error" : "primary"}
+          color={postHandlerError ? "error" : "primary"}
         >
-          {patchHandlerloading ? "Updating..." : "Update"}
+          {postHandlerloading ? "Updating..." : "Update"}
         </Button>
         <Button
           onClick={() => setSelectedInvoice([])}
@@ -321,6 +353,12 @@ export default function CheckBoxTable({
           Clear {selectedInvoice.length} sections
         </Button>
       </Box>
+      <ProgressHistoryPopover
+        open={Boolean(popoverAnchor)}
+        anchorEl={popoverAnchor}
+        onClose={handleClosePopover}
+        orderId={popoverOrder}
+      />
     </Box>
   );
 }
