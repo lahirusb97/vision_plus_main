@@ -110,8 +110,8 @@ export default function OrderEditFrom() {
   const orderEditForm = schemaFactoryInvoice.extend({
     payments: z.array(schemayPaymentUpdateDelete),
     mnt: z.boolean().default(false),
-    admin_id: z.number(),
-    user_id: z.number(),
+    admin_id: z.number().optional(),
+    user_id: z.number().optional(),
   });
   const methods = useForm<z.infer<typeof orderEditForm>>({
     resolver: zodResolver(orderEditForm.omit({ branch_id: true })),
