@@ -362,7 +362,7 @@ export default function OrderEditFrom() {
           })),
         ],
         order_payments: [...formatUserPayments(userPayments), ...data.payments],
-        mnt: data.mnt,
+        // mnt: data.mnt,
       };
 
       if (
@@ -387,7 +387,6 @@ export default function OrderEditFrom() {
       toast.error("Payment Amount is greater than Total Amount");
     }
   };
-  console.log(methods.watch("payments"));
 
   const sendDataToDb = async (
     postData: FactoryOrderInputModel,
@@ -400,11 +399,11 @@ export default function OrderEditFrom() {
         `/orders/${invoiceDetail?.order}/`,
         {
           ...postData,
-
-          admin_id: verifiedAdminId,
           user_id: verifiedUserId,
+          admin_id: verifiedAdminId,
         }
       );
+      console.log(verifiedAdminId);
       toast.success("Order & Refraction Details saved successfully");
       const url = `?invoice_number=${encodeURIComponent(
         responce.data.invoice_number

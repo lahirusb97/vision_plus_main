@@ -21,7 +21,10 @@ type OperationType = "create" | "update" | null;
 interface VerificationDialogProps {
   open: boolean;
   operationType: OperationType;
-  onVerified: (verifiedUserId: number) => Promise<void>; // Now returns Promise
+  onVerified: (
+    verifiedUserId: number,
+    verifiedAdminId: number
+  ) => Promise<void>; // Now returns Promise
   onClose: () => void;
 }
 
@@ -108,7 +111,7 @@ const VerificationDialog: React.FC<VerificationDialogProps> = ({
 
     setIsSubmitting(true);
     try {
-      await onVerified(verifiedUser.id);
+      await onVerified(verifiedUser.id, adminVerifier?.id);
       handleClose();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Operation failed");
