@@ -147,6 +147,7 @@ export default function OrderEditFrom() {
   const [loadState, setLoadState] = useState(0);
   useEffect(() => {
     if (!invoiceDetailLoading && invoiceDetail) {
+      console.log(invoiceDetail);
       methods.setValue("name", invoiceDetail?.customer_details.name);
       methods.setValue("nic", invoiceDetail?.customer_details.nic);
       methods.setValue("address", invoiceDetail?.customer_details?.address);
@@ -365,14 +366,15 @@ export default function OrderEditFrom() {
           })),
         ],
         order_payments: [...formatUserPayments(userPayments), ...data.payments],
-        // mnt: data.mnt,
+        mnt: data.mnt,
       };
-
       if (
         Object.keys(externalLenseInvoiceList).length > 0 ||
         Object.keys(LenseInvoiceList).length > 0 ||
         Object.keys(FrameInvoiceList).length > 0
       ) {
+        console.log(postData);
+
         setAuthDialogOpen(true);
         setPendingPostData(postData);
       } else {
