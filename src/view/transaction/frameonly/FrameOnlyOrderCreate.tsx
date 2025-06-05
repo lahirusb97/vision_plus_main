@@ -22,10 +22,15 @@ import { useValidationState } from "../../../hooks/validations/useValidationStat
 import TitleText from "../../../components/TitleText";
 import SubmitCustomBtn from "../../../components/common/SubmiteCustomBtn";
 import { openStockDrawer } from "../../../features/invoice/stockDrawerSlice";
+import { useState } from "react";
+import AuthDialog from "../../../components/common/AuthDialog";
 export default function FrameOnlyOrderCreate() {
   const dispatch = useDispatch();
-  const { prepareValidation, resetValidation, validationState } =
-    useValidationState();
+
+  const [authDialogOpen, setAuthDialogOpen] = useState(false);
+  const [pendingPostData, setPendingPostData] =
+    useState<FrameOnlyOrderInputModel | null>(null);
+
   const { postHandler, postHandlerloading, postHandlerError } = useAxiosPost();
   const navigate = useNavigate();
   const FrameInvoiceList = useSelector(
@@ -76,13 +81,14 @@ export default function FrameOnlyOrderCreate() {
             ? "issue_to_customer"
             : "received_from_customer",
         };
-        console.log(postData);
-        prepareValidation("create", async (verifiedUserId: number) => {
-          await sendDataToDb(
-            postData as FrameOnlyOrderInputModel,
-            verifiedUserId
-          );
-        });
+        setAuthDialogOpen(true);
+        setPendingPostData(postData);
+        // prepareValidation("create", async (verifiedUserId: number) => {
+        //   await sendDataToDb(
+        //     postData as FrameOnlyOrderInputModel,
+        //     verifiedUserId
+        //   );
+        // });
       } else {
         toast.error("Payment Amount is greater than Total Amount");
       }
@@ -91,14 +97,16 @@ export default function FrameOnlyOrderCreate() {
     }
   };
 
-  const sendDataToDb = async (
-    postData: FrameOnlyOrderInputModel,
-    verifiedUserId: number
-  ) => {
+  const sendDataToDb = async (authData: {
+    admin_id: number | null;
+    user_id: number | null;
+  }) => {
     try {
       const responce = await postHandler("orders/frame-only/", {
-        ...postData,
-        sales_staff_code: verifiedUserId,
+        ...pendingPostData,
+        sales_staff_code: authData.user_id
+          ? authData.user_id
+          : authData.admin_id,
       });
       toast.success("Order saved successfully");
       const url = `?invoice_number=${encodeURIComponent(
@@ -112,7 +120,7 @@ export default function FrameOnlyOrderCreate() {
       extractErrorMessage(error);
     }
   };
-  console.log(methods.watch("phone_number"));
+
   return (
     <>
       <FormProvider {...methods}>
@@ -176,15 +184,11 @@ export default function FrameOnlyOrderCreate() {
           />
         </form>
       </FormProvider>
-      <VarificationDialog
-        open={validationState.openValidationDialog}
-        operationType={validationState.validationType}
-        onVerified={async (verifiedUserId) => {
-          if (validationState.apiCallFunction) {
-            await validationState.apiCallFunction(verifiedUserId);
-          }
-        }}
-        onClose={resetValidation}
+      <AuthDialog
+        open={authDialogOpen}
+        operationType="user"
+        onVerified={sendDataToDb}
+        onClose={() => setAuthDialogOpen(false)}
       />
     </>
   );

@@ -34,6 +34,7 @@ import {
 import { numberWithCommas } from "../../utils/numberWithCommas";
 import TitleText from "../../components/TitleText";
 import { progressStatus } from "../../utils/progressState";
+import { formatDateTimeByType } from "../../utils/formatDateTimeByType";
 const RepaymentForm = () => {
   const navigate = useNavigate();
   const { invoice_number } = useParams();
@@ -65,7 +66,7 @@ const RepaymentForm = () => {
         order_id: invoiceDetail?.order,
         progress_status: data.progress_status
           ? "issue_to_customer"
-          : invoiceDetail?.order_details?.progress_status,
+          : invoiceDetail?.order_details?.progress_status?.progress_status,
         payments: [
           ...formatUserPayments(userPayments),
           ...formatPreviusUserPayments(
@@ -73,7 +74,6 @@ const RepaymentForm = () => {
           ),
         ],
       };
-      console.log(postData);
 
       await putHandler(`/orders/update-payments/`, postData);
       toast.success("Invoice Payment Updated");
@@ -286,9 +286,20 @@ const RepaymentForm = () => {
               }}
             >
               <Typography variant="body1">
-                Current Order Progress -{" "}
-                {invoiceDetail?.order_details.progress_status &&
-                  progressStatus(invoiceDetail?.order_details.progress_status)}
+                Current Progress -{" "}
+                {invoiceDetail?.order_details?.progress_status?.progress_status
+                  ? progressStatus(
+                      invoiceDetail.order_details.progress_status
+                        .progress_status
+                    )
+                  : "N/A"}
+                {" - "}
+                {invoiceDetail?.order_details?.progress_status?.changed_at
+                  ? formatDateTimeByType(
+                      invoiceDetail.order_details.progress_status.changed_at,
+                      "both"
+                    )
+                  : null}
               </Typography>
               <Box ml={1} display="flex" alignItems="center">
                 <Typography variant="body1"> Issue To Good</Typography>
