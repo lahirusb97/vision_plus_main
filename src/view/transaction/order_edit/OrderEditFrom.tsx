@@ -68,6 +68,7 @@ import { z } from "zod";
 import PaymentsForm from "../../../components/common/PaymentsForm";
 import stringToIntConver from "../../../utils/stringToIntConver";
 import { formatDateTimeByType } from "../../../utils/formatDateTimeByType";
+import AuthDialog from "../../../components/common/AuthDialog";
 
 export default function OrderEditFrom() {
   const navigate = useNavigate();
@@ -76,8 +77,10 @@ export default function OrderEditFrom() {
 
   const staticTitleParam = useMemo(() => ({ is_active: true }), []);
   const { busTitlesList, busTitlesLoading } = useGetBusTitles(staticTitleParam);
-  const { prepareValidation, resetValidation, validationState } =
-    useValidationState();
+  const [authDialogOpen, setAuthDialogOpen] = useState(false);
+  const [pendingPostData, setPendingPostData] =
+    useState<FactoryOrderInputModel | null>(null);
+
   const currentBranch = getUserCurentBranch()?.id;
 
   const {
@@ -370,16 +373,8 @@ export default function OrderEditFrom() {
         Object.keys(LenseInvoiceList).length > 0 ||
         Object.keys(FrameInvoiceList).length > 0
       ) {
-        prepareValidation(
-          "update",
-          async (verifiedUserId: number, verifiedAdminId: number) => {
-            await sendDataToDb(
-              postData as FactoryOrderInputModel,
-              verifiedUserId,
-              verifiedAdminId
-            );
-          }
-        );
+        setAuthDialogOpen(true);
+        setPendingPostData(postData);
       } else {
         toast.error("No Items ware added");
       }
@@ -388,22 +383,20 @@ export default function OrderEditFrom() {
     }
   };
 
-  const sendDataToDb = async (
-    postData: FactoryOrderInputModel,
-    verifiedUserId: number,
-    verifiedAdminId: number
-  ) => {
+  const sendDataToDb = async (authData: {
+    admin_id: number | null;
+    user_id: number | null;
+  }) => {
     try {
       // No refraction Data but have Refraction Number
       const responce = await axiosClient.put(
         `/orders/${invoiceDetail?.order}/`,
         {
-          ...postData,
-          user_id: verifiedUserId,
-          admin_id: verifiedAdminId,
+          ...pendingPostData,
+          ...authData,
         }
       );
-      console.log(verifiedAdminId);
+
       toast.success("Order & Refraction Details saved successfully");
       const url = `?invoice_number=${encodeURIComponent(
         responce.data.invoice_number
@@ -741,15 +734,11 @@ export default function OrderEditFrom() {
         </Box>
       </FormProvider>
 
-      <VarificationDialog
-        open={validationState.openValidationDialog}
-        operationType={validationState.validationType}
-        onVerified={async (verifiedUserId) => {
-          if (validationState.apiCallFunction) {
-            await validationState.apiCallFunction(verifiedUserId);
-          }
-        }}
-        onClose={resetValidation}
+      <AuthDialog
+        open={authDialogOpen}
+        operationType="admin"
+        onVerified={sendDataToDb}
+        onClose={() => setAuthDialogOpen(false)}
       />
     </>
   );
