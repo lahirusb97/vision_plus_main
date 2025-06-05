@@ -2,7 +2,7 @@ import Box from "@mui/material/Box";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import {
   Button,
@@ -37,8 +37,6 @@ import StockDrawerBtn from "../../../components/StockDrawerBtn";
 import HidenNoteDialog from "../../../components/HidenNoteDialog";
 import { extractErrorMessage } from "../../../utils/extractErrorMessage";
 import { useFactoryOrderContext } from "../../../context/FactoryOrderContext";
-import VarificationDialog from "../../../components/VarificationDialog";
-import { useValidationState } from "../../../hooks/validations/useValidationState";
 import { getUserCurentBranch } from "../../../utils/authDataConver";
 import SugarCataractText from "../../../components/common/SugarCataractText";
 import PdAndHeightInputs from "../factory_layouts/PdAndHeightInputs";
@@ -50,11 +48,13 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import useGetBusTitles from "../../../hooks/useGetBusTitles";
 import { BUSID } from "../../../data/staticVariables";
+import AuthDialog from "../../../components/common/AuthDialog";
 
 export default function FactoryInvoiceForm() {
-  const { prepareValidation, resetValidation, validationState } =
-    useValidationState();
   const { refraction_id } = useParams();
+  const [authDialogOpen, setAuthDialogOpen] = useState(false);
+  const [pendingPostData, setPendingPostData] =
+    useState<FactoryOrderInputModel | null>(null);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -211,9 +211,8 @@ export default function FactoryInvoiceForm() {
           Object.keys(FrameInvoiceList).length > 0
         ) {
           if (refractionDetail && !refractionDetailLoading) {
-            prepareValidation("create", async (verifiedUserId: number) => {
-              await sendDataToDb(postData, verifiedUserId);
-            });
+            setAuthDialogOpen(true);
+            setPendingPostData(postData);
             //TODO USE THIS AND CREATE THE SYSTEM ALL GOOD TO DO IF NO REFRACTION DETAILS NO DETAIL CREATINS
           } else {
             toast.error("Refraction Detail Not Found");
@@ -228,16 +227,18 @@ export default function FactoryInvoiceForm() {
       toast.error("Selected Petient Does not Have a  Refraction Number");
     }
   };
-  const sendDataToDb = async (
-    postData: FactoryOrderInputModel,
-    verifiedUserId: number
-  ) => {
+  const sendDataToDb = async (authData: {
+    admin_id: number | null;
+    user_id: number | null;
+  }) => {
     try {
       const responce = await axiosClient.post("/orders/", {
-        ...postData,
+        ...pendingPostData,
         order: {
-          ...postData.order,
-          sales_staff_code: verifiedUserId,
+          ...pendingPostData?.order,
+          sales_staff_code: authData.user_id
+            ? authData.user_id
+            : authData.admin_id,
         },
       });
       toast.success("Order saved successfully");
@@ -490,15 +491,11 @@ export default function FactoryInvoiceForm() {
         )}
       </FormProvider>
 
-      <VarificationDialog
-        open={validationState.openValidationDialog}
-        operationType={validationState.validationType}
-        onVerified={async (verifiedUserId) => {
-          if (validationState.apiCallFunction) {
-            await validationState.apiCallFunction(verifiedUserId);
-          }
-        }}
-        onClose={resetValidation}
+      <AuthDialog
+        open={authDialogOpen}
+        operationType="user"
+        onVerified={sendDataToDb}
+        onClose={() => setAuthDialogOpen(false)}
       />
     </>
   );
