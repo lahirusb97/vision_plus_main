@@ -586,6 +586,20 @@ export default function OrderEditFrom() {
                                 "both"
                               )}
                             </span>
+                            <span>
+                              |{" "}
+                              {
+                                invoiceDetail?.order_details?.mnt_order
+                                  ?.admin_username
+                              }
+                            </span>
+                            <span>
+                              |{" "}
+                              {
+                                invoiceDetail?.order_details?.mnt_order
+                                  ?.user_username
+                              }
+                            </span>
                           </Typography>
                         </Stack>
                       </>
