@@ -26,7 +26,7 @@ export default function InvoiceOtherItems({
   const [price, setPrice] = useState<number>(0);
 
   const { otherItem, otherItemLoading, searchOtherItem } = useGetOtherItem();
-
+  console.log(otherItem);
   const handleAddItem = () => {
     if (!selectedItem) return;
 
@@ -87,6 +87,17 @@ export default function InvoiceOtherItems({
           );
         }}
       />
+
+      {selectedItem && (
+        <Typography
+          sx={{
+            mt: 1,
+            color: selectedItem?.stock[0]?.qty > 0 ? "green" : "red",
+          }}
+        >
+          Avilable Qty : {selectedItem?.stock[0]?.qty}
+        </Typography>
+      )}
 
       {selectedItem && (
         <Box mt={2} display="flex" gap={1} alignItems="center">

@@ -12,7 +12,7 @@ import {
 } from "./normalOrderItemsReducer";
 import { OtherItemModel } from "../../../model/OtherItemModel";
 
-import { useEffect, useReducer } from "react";
+import { useEffect, useReducer, useState } from "react";
 import NormalPatientDetail from "./NormalPatientDetail";
 import InvoiceOtherItems from "../../../components/InvoiceOtherItems";
 import PaymentMethodsLayout from "../factory_layouts/PaymentMethodsLayout";
@@ -28,8 +28,24 @@ import useGetSingleInvoice from "../../../hooks/useGetSingleInvoice";
 import DataLoadingError from "../../../components/common/DataLoadingError";
 import LoadingAnimation from "../../../components/LoadingAnimation";
 import InvoiceOtherItemsTableEdit from "./InvoiceOtherItemsTableEdit";
+import { schemayPaymentUpdateDelete } from "../../../validations/schemayPaymentUpdateDelete";
+import { z } from "zod";
+import stringToIntConver from "../../../utils/stringToIntConver";
+import AuthDialog from "../../../components/common/AuthDialog";
+import PaymentsForm from "../../../components/common/PaymentsForm";
 
 export default function NormalOrderEdit() {
+  const normalOrderEditForm = schemaNormalInvoiceFormModel.extend({
+    payments: z.array(schemayPaymentUpdateDelete),
+    mnt: z.boolean().default(false),
+    admin_id: z.number().optional(),
+    user_id: z.number().optional(),
+  });
+
+  const [authDialogOpen, setAuthDialogOpen] = useState(false);
+  const [pendingPostData, setPendingPostData] =
+    useState<NormalOrderInputModel | null>(null);
+
   const initialState: InvoiceItemsState = {
     items: [],
     total: 0,
@@ -42,20 +58,18 @@ export default function NormalOrderEdit() {
     invoiceError,
   } = useGetSingleInvoice(queryParams.get("invoice_number") || "", "normal");
   const navigate = useNavigate();
-  const { prepareValidation, resetValidation, validationState } =
-    useValidationState();
+
   const [stateItems, dispatchItems] = useReducer(
     normalOrderItemsReducer,
     initialState
   );
 
-  const methods = useForm<NormalInvoiceFormModel>({
-    resolver: zodResolver(schemaNormalInvoiceFormModel),
+  const methods = useForm<z.infer<typeof normalOrderEditForm>>({
+    resolver: zodResolver(normalOrderEditForm.omit({ branch_id: true })),
     defaultValues: {
       credit_card: 0,
       cash: 0,
       online_transfer: 0,
-      branch_id: getUserCurentBranch()?.id,
       name: "",
       phone_number: "",
       address: "",
@@ -79,7 +93,9 @@ export default function NormalOrderEdit() {
     });
   };
 
-  const handleNormalInvoice = async (data: NormalInvoiceFormModel) => {
+  const handleNormalInvoice = async (
+    data: z.infer<typeof normalOrderEditForm>
+  ) => {
     //Remove 0 amounts related payments
     const totalPaid =
       (data.credit_card || 0) + (data.cash || 0) + (data.online_transfer || 0);
@@ -91,15 +107,7 @@ export default function NormalOrderEdit() {
       cash: data.cash,
       online_transfer: data.online_transfer,
     };
-    const prePayments = invoiceDetail?.order_details.order_payments;
-    const simplifiedPayments = prePayments?.map(
-      ({ id, amount, payment_method, transaction_status }) => ({
-        id,
-        amount: parseInt(amount),
-        payment_method,
-        transaction_status,
-      })
-    );
+
     const payload = {
       patient: {
         name: data.name,
@@ -119,22 +127,23 @@ export default function NormalOrderEdit() {
       },
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       order_items: stateItems.items.map(({ name, ...rest }) => rest),
-      order_payments: [
-        ...formatUserPayments(userPayments),
-        ...(simplifiedPayments || []),
-      ],
+      order_payments: [...formatUserPayments(userPayments), ...data.payments],
     };
-
-    prepareValidation("create", async () => {
-      await sendDataToDb(payload as NormalOrderInputModel);
-    });
+    setAuthDialogOpen(true);
+    setPendingPostData(payload);
   };
-  const sendDataToDb = async (postData: NormalOrderInputModel) => {
+  const sendDataToDb = async (authData: {
+    admin_id: number | null;
+    user_id: number | null;
+  }) => {
     try {
       // No refraction Data but have Refraction Number
       const responce = await axiosClient.put(
         `/orders/${invoiceDetail?.order}/`,
-        postData
+        {
+          ...pendingPostData,
+          ...authData,
+        }
       );
       toast.success("Order & Refraction Details saved successfully");
       const url = `?invoice_number=${encodeURIComponent(
@@ -154,7 +163,15 @@ export default function NormalOrderEdit() {
         nic: invoiceDetail.customer_details.nic || "",
         dob: invoiceDetail.customer_details.date_of_birth || "",
         discount: parseInt(invoiceDetail.order_details.discount),
+        payments: invoiceDetail.order_details.order_payments.map((payment) => ({
+          id: payment.id,
+          amount: stringToIntConver(payment.amount),
+          payment_method: payment.payment_method,
+          is_final: payment.is_final_payment,
+          payment_date: payment.payment_date,
+        })),
       });
+
       invoiceDetail.order_details.order_items
         .filter((items) => items.other_item !== null)
         .forEach((item) => {
@@ -205,7 +222,9 @@ export default function NormalOrderEdit() {
             }
             paymentList={invoiceDetail?.order_details?.order_payments ?? []}
           />
-
+          <Box sx={{ mt: 2 }}>
+            <PaymentsForm />
+          </Box>
           <Box sx={{ display: "flex", gap: 1, mt: 1 }}>
             <PaymentMethodsLayout />
           </Box>
@@ -228,15 +247,11 @@ export default function NormalOrderEdit() {
           </Box>
         </Box>
       </FormProvider>
-      <VarificationDialog
-        open={validationState.openValidationDialog}
-        operationType={validationState.validationType}
-        onVerified={async (verifiedUserId) => {
-          if (validationState.apiCallFunction) {
-            await validationState.apiCallFunction(verifiedUserId);
-          }
-        }}
-        onClose={resetValidation}
+      <AuthDialog
+        open={authDialogOpen}
+        operationType="user"
+        onVerified={sendDataToDb}
+        onClose={() => setAuthDialogOpen(false)}
       />
     </div>
   );

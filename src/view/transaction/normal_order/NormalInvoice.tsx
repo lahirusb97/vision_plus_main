@@ -1,8 +1,7 @@
-import { useReducer } from "react";
+import { useReducer, useState } from "react";
 import { Box, TextField } from "@mui/material";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import VarificationDialog from "../../../components/VarificationDialog";
 
 import { FormProvider, useForm } from "react-hook-form";
 import InvoiceOtherItems from "../../../components/InvoiceOtherItems";
@@ -20,17 +19,19 @@ import {
 import SaveButton from "../../../components/SaveButton";
 import { getUserCurentBranch } from "../../../utils/authDataConver";
 import { formatUserPayments } from "../../../utils/formatUserPayments";
-import { useValidationState } from "../../../hooks/validations/useValidationState";
 import axiosClient from "../../../axiosClient";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
 import { extractErrorMessage } from "../../../utils/extractErrorMessage";
 import { OtherItemModel } from "../../../model/OtherItemModel";
 import PaymentMethodsLayout from "../factory_layouts/PaymentMethodsLayout";
+import AuthDialog from "../../../components/common/AuthDialog";
 
 const NormalInvoice = () => {
-  const { prepareValidation, resetValidation, validationState } =
-    useValidationState();
+  const [authDialogOpen, setAuthDialogOpen] = useState(false);
+  const [pendingPostData, setPendingPostData] =
+    useState<NormalOrderInputModel | null>(null);
+
   const methods = useForm<NormalInvoiceFormModel>({
     resolver: zodResolver(schemaNormalInvoiceFormModel),
     defaultValues: {
@@ -101,23 +102,21 @@ const NormalInvoice = () => {
       order_payments: formatUserPayments(userPayments),
     };
 
-    prepareValidation("create", async (verifiedUserId: number) => {
-      await sendDataToDb(
-        payload as NormalOrderInputModel,
-        verifiedUserId as number
-      );
-    });
+    setAuthDialogOpen(true);
+    setPendingPostData(payload);
   };
-  const sendDataToDb = async (
-    payload: NormalOrderInputModel,
-    verifiedUserId: number
-  ) => {
+  const sendDataToDb = async (authData: {
+    admin_id: number | null;
+    user_id: number | null;
+  }) => {
     try {
       const responce = await axiosClient.post("/orders/", {
-        ...payload,
+        ...pendingPostData,
         order: {
-          ...payload.order,
-          sales_staff_code: verifiedUserId, // 👈 inject staff code here
+          ...pendingPostData?.order,
+          sales_staff_code: authData.user_id
+            ? authData.user_id
+            : authData.admin_id,
         },
       });
       toast.success("Order saved successfully");
@@ -178,15 +177,11 @@ const NormalInvoice = () => {
           </Box>
         </Box>
       </FormProvider>
-      <VarificationDialog
-        open={validationState.openValidationDialog}
-        operationType={validationState.validationType}
-        onVerified={async (verifiedUserId) => {
-          if (validationState.apiCallFunction) {
-            await validationState.apiCallFunction(verifiedUserId);
-          }
-        }}
-        onClose={resetValidation}
+      <AuthDialog
+        open={authDialogOpen}
+        operationType="user"
+        onVerified={sendDataToDb}
+        onClose={() => setAuthDialogOpen(false)}
       />
     </>
   );
