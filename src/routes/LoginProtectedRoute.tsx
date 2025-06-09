@@ -52,7 +52,7 @@ const LoginProtectedRoute: React.FC = () => {
         >
           <CustomeBreadcrumbs />
         </Box> */}
-        <Box sx={{ mt: 4 }}>
+        <Box sx={{ mt: 0 }}>
           <Outlet />
         </Box>
       </Box>
