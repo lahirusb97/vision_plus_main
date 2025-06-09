@@ -15,6 +15,11 @@
     "test:ui": "vitest --ui"
   },
   "dependencies": {
+    "@firebase/auth": "^1.10.6",
+    "@firebase/auth-compat": "^0.5.26",
+    "@firebase/firestore": "^4.7.17",
+    "@firebase/functions": "^0.12.8",
+    "@firebase/storage": "^0.13.12",
     "@hookform/resolvers": "^3.10.0",
     "@mui/icons-material": "^6.3.1",
     "@mui/styles": "^6.3.1",
@@ -23,9 +28,10 @@
     "@reduxjs/toolkit": "^2.5.1",
     "axios": "^1.7.9",
     "dayjs": "^1.11.13",
-    "firebase": "^10.8.0",
+    "firebase": "^11.9.0",
     "framer-motion": "^12.4.4",
     "lodash": "^4.17.21",
+    "lucide-react": "^0.513.0",
     "material-react-table": "^3.1.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

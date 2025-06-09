@@ -28,14 +28,14 @@ const NavButton: React.FC<NavButtonProps> = ({ name, path, bgColor }) => {
       ? theme.palette.mode === "dark"
         ? yellow[300]
         : "#FF7043"
-      : bgColor || teal[800],
+      : bgColor || "white",
     color: isActive
       ? theme.palette.mode === "dark"
         ? theme.palette.grey[900]
         : "white"
       : theme.palette.mode === "dark"
       ? teal[800]
-      : "white",
+      : "black",
     fontWeight: isActive ? "bold" : "normal",
     margin: "0 .5em",
     textTransform: "capitalize",
@@ -43,11 +43,12 @@ const NavButton: React.FC<NavButtonProps> = ({ name, path, bgColor }) => {
       backgroundColor:
         theme.palette.mode === "dark" ? theme.palette.grey[100] : teal[900],
       transition: "background-color 0.3s ease",
+      color: theme.palette.mode === "dark" ? "black" : "white",
     },
   }));
 
   return (
-    <MyButton size="small" onClick={() => navigate(path)}>
+    <MyButton variant="outlined" size="small" onClick={() => navigate(path)}>
       {name}
     </MyButton>
   );

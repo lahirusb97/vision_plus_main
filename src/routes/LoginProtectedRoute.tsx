@@ -4,6 +4,8 @@ import NavBar from "../view/navbar/NavBar";
 import { Paper, Box, Breadcrumbs } from "@mui/material";
 import { getUserAuth, getUserCurentBranch } from "../utils/authDataConver";
 import CustomeBreadcrumbs from "../components/common/CustomeBreadcrumbs";
+import SideNavBar from "../view/navbar/SideNavBar";
+import { getNavbarState } from "../view/navbar/navstate";
 
 const LoginProtectedRoute: React.FC = () => {
   const user = getUserAuth();
@@ -17,24 +19,30 @@ const LoginProtectedRoute: React.FC = () => {
       sx={{
         minHeight: "100vh",
         display: "flex",
-        flexDirection: "column",
+        // flexDirection: "column",
+        flexDirection: getNavbarState() ? "rows" : "column",
         justifyContent: "center",
         alignItems: "center",
       }}
     >
-      {curentBranch && <NavBar />}
+      {/* {curentBranch && <NavBar />} */}
+      {curentBranch && getNavbarState() ? (
+        <SideNavBar />
+      ) : curentBranch && getNavbarState() === false ? (
+        <NavBar />
+      ) : null}
       <Box
         sx={{
           flex: 1, // Take remaining space
           display: "flex",
           justifyContent: "center", // Horizontally center
-          maxWidth: "1200px",
-          minWidth: "1000px",
+          // maxWidth: "1200px",
+          // minWidth: "1000px",
           paddingTop: 1,
           position: "relative",
         }}
       >
-        <Box
+        {/* <Box
           sx={{
             position: "absolute",
             top: 0,
@@ -43,7 +51,7 @@ const LoginProtectedRoute: React.FC = () => {
           }}
         >
           <CustomeBreadcrumbs />
-        </Box>
+        </Box> */}
         <Box sx={{ mt: 4 }}>
           <Outlet />
         </Box>

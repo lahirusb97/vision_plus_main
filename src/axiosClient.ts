@@ -11,10 +11,7 @@ const axiosClient: AxiosInstance = axios.create({
   // baseURL: import.meta.env.VITE_BASE_URL,
   // baseURL: "https://www.onlineict.site/api/",
 
-  baseURL:
-    import.meta.env.VITE_DEV === "true"
-      ? import.meta.env.VITE_LOCAL_BASE_URL
-      : import.meta.env.VITE_API_BASE_URL,
+  baseURL: "http://127.0.0.1:8005/api/",
   withCredentials: false,
 });
 
