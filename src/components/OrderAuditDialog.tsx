@@ -263,11 +263,9 @@ export default function OrderAuditDialog({ open, onClose, orderId }: Props) {
               </AccordionSummary>
               <AccordionDetails>
                 {orderAuditHistoryList?.order_payments.length ? (
-                  orderAuditHistoryList.order_payments.map((p) => (
-                    <AuditPaymentItem
-                      order_payments={orderAuditHistoryList.order_payments}
-                    />
-                  ))
+                  <AuditPaymentItem
+                    order_payments={orderAuditHistoryList.order_payments}
+                  />
                 ) : (
                   <Typography>No deleted payments.</Typography>
                 )}
