@@ -22,13 +22,13 @@ type OperationType = "admin" | "user";
 interface VerificationDialogProps {
   open: boolean;
   operationType: OperationType;
-  onVerified: (result: {
-    admin_id: number | null;
-    user_id: number | null;
-  }) => Promise<void>;
+  onVerified: (result: DialogAuthData) => Promise<void>;
   onClose: () => void;
 }
-
+export interface DialogAuthData {
+  admin_id: number | null;
+  user_id: number | null;
+}
 interface UserData {
   id: number;
   username: string;

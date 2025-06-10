@@ -23,23 +23,25 @@ import {
 import toast from "react-hot-toast";
 
 import useGetRefractionDetails from "../../hooks/useGetRefractionDetails";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import useGetSingleRefractionNumber from "../../hooks/useGetSingleRefractionNumber";
 import { extractErrorMessage } from "../../utils/extractErrorMessage";
 import { useAxiosPost } from "../../hooks/useAxiosPost";
 import { useAxiosPut } from "../../hooks/useAxiosPut";
 import LoadingAnimation from "../../components/LoadingAnimation";
-import { useValidationState } from "../../hooks/validations/useValidationState";
-import VarificationDialog from "../../components/VarificationDialog";
 
 import { formatDateTimeByType } from "../../utils/formatDateTimeByType";
 import SubmitCustomBtn from "../../components/common/SubmiteCustomBtn";
+import AuthDialog, { DialogAuthData } from "../../components/common/AuthDialog";
 
 export default function RefractionEdit() {
   //USER VALIDATION HOOKS
-
-  const { prepareValidation, resetValidation, validationState } =
-    useValidationState();
+  const [authDialogOpen, setAuthDialogOpen] = useState(false);
+  const [dataSendingType, setDataSendingType] = useState<
+    "create" | "update" | null
+  >("create");
+  const [pendingPostData, setPendingPostData] =
+    useState<RefractionDetailsFormModel | null>(null);
   //API CALLS
   //USER VALIDATION HOOKS
   const navigate = useNavigate();
@@ -87,30 +89,29 @@ export default function RefractionEdit() {
   const onSubmit = async (data: RefractionDetailsFormModel) => {
     if (refraction_id !== undefined && refraction_id !== null) {
       if (refractionDetailExist) {
-        prepareValidation("update", async (verifiedUserId: number) => {
-          await handleRefractionDetailUpdate(data, verifiedUserId);
-        });
+        setDataSendingType("update");
+        setPendingPostData(data);
+        setAuthDialogOpen(true);
       } else {
         //  create
-        prepareValidation("create", async (verifiedUserId: number) => {
-          await handleRefractionDetailCreate(data, verifiedUserId);
-        });
+
+        setDataSendingType("create");
+        setPendingPostData(data);
+        setAuthDialogOpen(true);
       }
     }
   };
 
   //SEND DATA API CALLS
-  const handleRefractionDetailUpdate = async (
-    data: RefractionDetailsFormModel,
-    userId: number
-  ) => {
+  const handleRefractionDetailUpdate = async (authData: DialogAuthData) => {
     if (refractionDetail) {
       try {
         await putHandler(`/refraction-details/${refraction_id}/`, {
-          ...data,
+          ...pendingPostData,
           refraction: refractionDetail.refraction,
           is_manual: refractionDetail.is_manual,
-          user: userId, // Include verified user ID,
+          user: authData.user_id ? authData.user_id : authData.admin_id, // Include verified user ID,
+          ...authData,
         });
         toast.success("Refraction saved successfully");
         methods.reset();
@@ -120,19 +121,13 @@ export default function RefractionEdit() {
       }
     }
   };
-  const handleRefractionDetailCreate = async (
-    data: RefractionDetailsFormModel,
-    userId: number
-  ) => {
+  const handleRefractionDetailCreate = async (authData: DialogAuthData) => {
     if (refraction_id !== undefined && refraction_id !== null) {
       try {
         const payload = {
-          ...data,
-          user: userId, // Include verified user ID,
+          user: authData.user_id ? authData.user_id : authData.admin_id, // Include verified user ID,
           refraction: parseInt(refraction_id),
         };
-        console.log(payload);
-
         await postHandler(`/refraction-details/create/`, payload);
         toast.success("Refraction saved successfully");
         methods.reset();
@@ -368,15 +363,16 @@ export default function RefractionEdit() {
           </form>
         </Box>
       </FormProvider>
-      <VarificationDialog
-        open={validationState.openValidationDialog}
-        operationType={validationState.validationType}
-        onVerified={async (verifiedUserId) => {
-          if (validationState.apiCallFunction) {
-            await validationState.apiCallFunction(verifiedUserId);
-          }
-        }}
-        onClose={resetValidation}
+
+      <AuthDialog
+        open={authDialogOpen}
+        operationType="admin"
+        onVerified={
+          dataSendingType === "update"
+            ? handleRefractionDetailUpdate
+            : handleRefractionDetailCreate
+        }
+        onClose={() => setAuthDialogOpen(false)}
       />
     </>
   );

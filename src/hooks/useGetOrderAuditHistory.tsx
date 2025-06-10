@@ -11,13 +11,15 @@ interface OrderAuditLog {
   old_value: string;
   new_value: string;
   created_at: string;
-  admin_name?: string;
-  user_name?: string;
+  admin_name: string | null;
+  user_name: string | null;
 }
+
 interface OrderAuditHistoryResponse {
   order_items: OrderItem[];
   order_payments: PaymentModel[];
   order_logs: OrderAuditLog[];
+  refraction_logs: OrderAuditLog[];
   invoice_number: string;
 }
 export interface OrderAuditHistoryParams {
@@ -30,6 +32,7 @@ const useGetOrderAuditHistory = (order_id: number | null) => {
     order_items: [],
     order_payments: [],
     order_logs: [],
+    refraction_logs: [],
     invoice_number: "",
   });
   const [loading, setLoading] = useState<boolean>(true);
@@ -71,6 +74,7 @@ const useGetOrderAuditHistory = (order_id: number | null) => {
             order_items: [],
             order_payments: [],
             order_logs: [],
+            refraction_logs: [],
             invoice_number: "",
           });
           extractErrorMessage(err);
