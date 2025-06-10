@@ -9,6 +9,12 @@ interface PaymentModel {
   transaction_status: TransactionStatusTypes;
   is_partial: boolean;
   is_final_payment: boolean;
+  user: number | null;
+  admin: number | null;
+  user_username?: string;
+  admin_username?: string;
+  is_deleted?: boolean;
+  deleted_at?: string;
 }
 
 export type { PaymentModel };

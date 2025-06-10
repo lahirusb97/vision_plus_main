@@ -32,7 +32,7 @@ const InvoiceView = () => {
     queryParams.get("invoice_number") || "",
     "factory"
   );
-  console.log(invoiceDetail);
+
   if (invoiceLoading) {
     return (
       <Box

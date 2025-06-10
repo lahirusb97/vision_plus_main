@@ -69,6 +69,7 @@ import PaymentsForm from "../../../components/common/PaymentsForm";
 import stringToIntConver from "../../../utils/stringToIntConver";
 import { formatDateTimeByType } from "../../../utils/formatDateTimeByType";
 import AuthDialog from "../../../components/common/AuthDialog";
+import OrderAuditDialog from "../../../components/OrderAuditDialog";
 
 export default function OrderEditFrom() {
   const navigate = useNavigate();
@@ -80,6 +81,10 @@ export default function OrderEditFrom() {
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
   const [pendingPostData, setPendingPostData] =
     useState<FactoryOrderInputModel | null>(null);
+  const [auditDialog, setAuditDialog] = useState({
+    open: false,
+    orderId: null,
+  });
 
   const currentBranch = getUserCurentBranch()?.id;
 
@@ -188,7 +193,7 @@ export default function OrderEditFrom() {
       );
       methods.setValue(
         "progress_status",
-        invoiceDetail.order_details.progress_status.progress_status
+        invoiceDetail?.order_details?.progress_status?.progress_status
       );
 
       methods.setValue(
@@ -618,6 +623,21 @@ export default function OrderEditFrom() {
                     )}
                   </Box>
                 </Box>
+                <Button
+                  onClick={() =>
+                    setAuditDialog({
+                      open: true,
+                      orderId: invoiceDetail?.order || null,
+                    })
+                  }
+                >
+                  View Audit
+                </Button>
+                <OrderAuditDialog
+                  open={auditDialog.open}
+                  orderId={auditDialog.orderId}
+                  onClose={() => setAuditDialog({ open: false, orderId: null })}
+                />
               </Box>
             </Box>
           </Box>

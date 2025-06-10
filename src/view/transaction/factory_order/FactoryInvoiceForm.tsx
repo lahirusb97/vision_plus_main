@@ -174,6 +174,7 @@ export default function FactoryInvoiceForm() {
             user_date: data.user_date,
             bus_title: BUSID === currentBranch ? data.bus_title : null,
             progress_status: data.progress_status,
+            urgent: data.urgent,
           },
           order_items: [
             ...Object.values(LenseInvoiceList).map((item) => ({
@@ -305,45 +306,7 @@ export default function FactoryInvoiceForm() {
                     alignItems: "center",
                     ml: 1,
                   }}
-                >
-                  {refractionDetail && (
-                    <SugarCataractText
-                      shuger={refractionDetail.shuger}
-                      cataract={refractionDetail.cataract}
-                      blepharitis={refractionDetail.blepharitis}
-                    />
-                  )}
-                  <Box display="flex" alignItems="center">
-                    <Typography variant="body1"> On Hold</Typography>
-                    <Checkbox {...methods.register("on_hold")} />
-                  </Box>
-
-                  <Box display="flex" alignItems="center">
-                    <Typography variant="body1">
-                      | Fiting on Collection
-                    </Typography>
-                    <Checkbox {...methods.register("fitting_on_collection")} />
-                  </Box>
-                  <Box ml={1} display="flex" alignItems="center">
-                    <Typography variant="body1"> Issue To Good</Typography>
-                    <Controller
-                      name="progress_status"
-                      control={methods.control}
-                      render={({ field }) => (
-                        <Checkbox
-                          checked={field.value === "issue_to_customer"}
-                          onChange={(e) => {
-                            if (e.target.checked) {
-                              field.onChange("issue_to_customer");
-                            } else {
-                              field.onChange("received_from_customer");
-                            }
-                          }}
-                        />
-                      )}
-                    />
-                  </Box>
-                </Box>
+                ></Box>
               </Box>
 
               {/* Passing The Note DAta to show in tthe dialog */}
@@ -357,12 +320,68 @@ export default function FactoryInvoiceForm() {
             </Box>
             <Box
               sx={{
-                maxWidth: "1200px",
-                width: "100%",
-                margin: "0 auto",
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "center",
+                maxWidth: "1200px",
+                width: "100%",
+                justifyContent: "space-between",
+              }}
+            >
+              {refractionDetail && (
+                <SugarCataractText
+                  shuger={refractionDetail.shuger}
+                  cataract={refractionDetail.cataract}
+                  blepharitis={refractionDetail.blepharitis}
+                />
+              )}
+              <Box sx={{ display: "flex", alignItems: "center" }}>
+                <Box display="flex" alignItems="center">
+                  <Typography variant="body1"> On Hold</Typography>
+                  <Checkbox {...methods.register("on_hold")} />
+                </Box>
+
+                <Box display="flex" alignItems="center">
+                  <Typography variant="body1">
+                    | Fiting on Collection
+                  </Typography>
+                  <Checkbox {...methods.register("fitting_on_collection")} />
+                </Box>
+                <Box
+                  sx={{
+                    ml: 1,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Typography variant="body1"> Issue To Good</Typography>
+                  <Controller
+                    name="progress_status"
+                    control={methods.control}
+                    render={({ field }) => (
+                      <Checkbox
+                        checked={field.value === "issue_to_customer"}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            field.onChange("issue_to_customer");
+                          } else {
+                            field.onChange("received_from_customer");
+                          }
+                        }}
+                      />
+                    )}
+                  />
+                </Box>
+                <Box display="flex" alignItems="center">
+                  <Typography variant="body1">| Urgent</Typography>
+                  <Checkbox {...methods.register("urgent")} />
+                </Box>
+              </Box>
+            </Box>
+            <Box
+              sx={{
+                margin: "0 auto",
+                display: "flex",
               }}
             >
               <HidenNoteDialog note={refractionDetail?.note} />

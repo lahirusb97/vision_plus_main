@@ -65,6 +65,12 @@ export interface FrameOrderItem {
   quantity: number;
   price_per_unit: string;
   subtotal: string;
+
+  user: number | null;
+  admin: number | null;
+  user_username?: string;
+  admin_username?: string;
+  deleted_at?: string;
 }
 export interface NormalOrderItem {
   frame: null;
@@ -84,6 +90,12 @@ export interface NormalOrderItem {
   quantity: number;
   price_per_unit: string;
   subtotal: string;
+
+  user: number | null;
+  admin: number | null;
+  user_username?: string;
+  admin_username?: string;
+  deleted_at?: string;
 }
 export interface LensOrderItem {
   lens: number;
@@ -103,6 +115,12 @@ export interface LensOrderItem {
   quantity: number;
   price_per_unit: string;
   subtotal: string;
+
+  user: number | null;
+  admin: number | null;
+  user_username?: string;
+  admin_username?: string;
+  deleted_at?: string;
 }
 
 export interface ExternalLensOrderItem {
@@ -123,9 +141,16 @@ export interface ExternalLensOrderItem {
   lens: null;
   lens_detail: null;
   external_lens_name: string | null;
+  ex_branded_type: TypeBraned;
   id: number;
   order: number;
   lens_powers: Power[] | null;
+  branded_display?: string;
+  user: number | null;
+  admin: number | null;
+  user_username?: string;
+  admin_username?: string;
+  deleted_at?: string;
 }
 
 type OrderItem =

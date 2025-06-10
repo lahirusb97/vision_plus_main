@@ -87,5 +87,6 @@ export const schemaFactoryInvoice = z.object({
       "issue_to_customer",
     ])
     .default("received_from_customer"),
+  urgent: z.boolean({ message: "Urgent is required" }).default(false),
 });
 export type FactoryInvoiceFormModel = z.infer<typeof schemaFactoryInvoice>;

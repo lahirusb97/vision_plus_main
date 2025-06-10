@@ -86,6 +86,7 @@ export default function RefractionNumber() {
             required
             error={!!errors.customer_full_name}
             helperText={errors.customer_full_name?.message}
+            size="small"
           />
           <TextField
             {...register(
@@ -97,6 +98,7 @@ export default function RefractionNumber() {
             margin="normal"
             error={!!errors.nic}
             helperText={errors.nic?.message}
+            size="small"
           />
           <TextField
             {...register("customer_mobile")}
@@ -107,6 +109,7 @@ export default function RefractionNumber() {
             type="number"
             error={!!errors.customer_mobile}
             helperText={errors.customer_mobile?.message}
+            size="small"
           />
 
           <TextField
@@ -124,6 +127,7 @@ export default function RefractionNumber() {
             variant="outlined"
             error={!!errors.branch_id}
             helperText={errors.branch_id?.message}
+            size="small"
             defaultValue={getUserCurentBranch()?.id}
           />
           <SubmitCustomBtn
