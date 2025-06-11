@@ -155,6 +155,7 @@ export default function FactoryInvoiceForm() {
             date_of_birth: data.dob,
           },
           order: {
+            invoice_type: "factory",
             refraction: parseInt(refraction_id),
             status: orderState,
             sub_total: subtotal,

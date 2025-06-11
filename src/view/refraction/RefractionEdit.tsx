@@ -125,6 +125,7 @@ export default function RefractionEdit() {
     if (refraction_id !== undefined && refraction_id !== null) {
       try {
         const payload = {
+          ...pendingPostData,
           user: authData.user_id ? authData.user_id : authData.admin_id, // Include verified user ID,
           refraction: parseInt(refraction_id),
         };
