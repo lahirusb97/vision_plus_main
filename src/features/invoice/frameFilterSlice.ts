@@ -5,6 +5,7 @@ import { SizeType, SpeciesType } from "../../model/FrameModel";
 // Define state interface
 
 export interface FrameFilterModel {
+  id: number | null;
   frame_id: number;
   buyQty: number;
   avilable_qty: number;

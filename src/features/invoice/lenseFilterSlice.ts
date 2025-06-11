@@ -4,6 +4,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Power } from "../../model/LenseModel";
 
 export interface LenseFilterModel {
+  id: number | null;
   lense_id: number;
   buyQty: number;
   avilable_qty: number;

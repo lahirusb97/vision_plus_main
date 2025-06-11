@@ -214,6 +214,7 @@ export default function OrderEditFrom() {
           // const { brand, code, color, id } = item.frame_detail;
           dispatch(
             setFrame({
+              id: item.id,
               frame_id: item.frame,
               buyQty: item.quantity,
               avilable_qty: item.quantity,
@@ -236,6 +237,7 @@ export default function OrderEditFrom() {
         .forEach((item) => {
           dispatch(
             setexternalLense({
+              id: item.id,
               external_lens_id: item.external_lens,
               buyQty: item.quantity,
               price_per_unit: parseInt(item.price_per_unit),
@@ -256,6 +258,7 @@ export default function OrderEditFrom() {
         .forEach((item) => {
           dispatch(
             setLense({
+              id: item.id,
               lense_id: item.lens,
               avilable_qty: item.quantity, //TODO UPDATE BACKEND to get stock avilable qty
               price_per_unit: parseInt(item.price_per_unit),
@@ -348,6 +351,7 @@ export default function OrderEditFrom() {
         },
         order_items: [
           ...Object.values(LenseInvoiceList).map((item) => ({
+            id: item.id,
             lens: item.lense_id,
             quantity: item.buyQty,
             price_per_unit: item.price_per_unit,
@@ -355,6 +359,7 @@ export default function OrderEditFrom() {
           })),
 
           ...Object.values(FrameInvoiceList).map((item) => ({
+            id: item.id,
             frame: item.frame_id,
             quantity: item.buyQty,
             price_per_unit: item.price_per_unit,
@@ -362,6 +367,7 @@ export default function OrderEditFrom() {
           })),
 
           ...Object.values(externalLenseInvoiceList).map((item) => ({
+            id: item.id,
             external_lens: item.external_lens_id,
             quantity: item.buyQty,
             price_per_unit: item.price_per_unit,

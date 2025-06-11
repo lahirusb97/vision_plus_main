@@ -2,6 +2,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface ExternalLenseFilterModel {
+  id: number | null;
   external_lens_id: number;
   buyQty: number;
   price_per_unit: number;
