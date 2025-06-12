@@ -30,6 +30,8 @@ import {
   CheckBoxOutlineBlankOutlined,
   CheckBoxSharp,
 } from "@mui/icons-material";
+const BOOLEAN_FIELDS = ["fitting_on_collection", "on_hold", "urgent"];
+const NUMBER_FIELDS = ["discount", "total_price", "sub_total"];
 
 interface Props {
   open: boolean;
@@ -97,142 +99,99 @@ export default function OrderAuditDialog({ open, onClose, orderId }: Props) {
                 </Typography>
               </AccordionSummary>
               <AccordionDetails>
-                {orderAuditHistoryList?.order_logs?.length ? (
-                  orderAuditHistoryList.order_logs.map((log) => (
-                    <Box
-                      key={log.id}
-                      sx={{
-                        mb: 0.5,
-                        px: 1,
-                        py: 0.5,
-                        borderLeft: "2px solid #1976d2",
-                        backgroundColor: "#fafafa",
-                        borderRadius: 1,
-                      }}
-                    >
-                      <Typography variant="body2" fontWeight={600}>
-                        {formatSqlKey(log.field_name)}:
-                        {orderAuditHistoryList?.order_logs
-                          ?.filter((log) =>
-                            ["discount", "total_price", "sub_total"].includes(
-                              log.field_name
-                            )
-                          )
-                          .map((log) => (
-                            <Box
-                              key={log.id}
-                              sx={{
-                                mb: 0.5,
-                                px: 1,
-                                py: 0.5,
-                                borderLeft: "2px solid #1976d2",
-                                backgroundColor: "#fafafa",
-                                borderRadius: 1,
-                              }}
-                            >
-                              <Typography variant="body2" fontWeight={600}>
-                                {formatSqlKey(log.field_name)}:
-                                <Box
-                                  component="span"
-                                  sx={{ ml: 0.5, color: "#888" }}
-                                >
-                                  {numberWithCommas(
-                                    convertNullEmtyString(log.old_value)
-                                  )}
-                                </Box>
-                                {" → "}
-                                <Box component="span" sx={{ fontWeight: 700 }}>
-                                  {numberWithCommas(
-                                    convertNullEmtyString(log.new_value)
-                                  )}
-                                </Box>
-                              </Typography>
-                              <Typography
-                                variant="caption"
-                                color="text.secondary"
-                                sx={{ mt: 0.25 }}
-                              >
-                                {formatDateTimeByType(log.created_at, "both")}
-                                {log.admin_name &&
-                                  ` / Admin: ${log.admin_name}`}
-                                {log.user_name && ` / User: ${log.user_name}`}
-                              </Typography>
-                            </Box>
-                          ))}
-                        <Box component="span" sx={{ fontWeight: 700 }}>
-                          {orderAuditHistoryList?.order_logs
-                            ?.filter((log) =>
-                              [
-                                "on_hold",
-                                "fitting_on_collection",
-                                "urgent",
-                              ].includes(log.field_name)
-                            )
-                            .map((log) => (
-                              <Box
-                                key={log.id}
-                                sx={{
-                                  mb: 0.5,
-                                  px: 1,
-                                  py: 0.5,
-                                  borderLeft: "2px solid #1976d2",
-                                  backgroundColor: "#fafafa",
-                                  borderRadius: 1,
-                                }}
-                              >
-                                <Typography variant="body2" fontWeight={600}>
-                                  {formatSqlKey(log.field_name)}:
-                                  <Box
-                                    component="span"
-                                    sx={{ ml: 0.5, color: "#888" }}
-                                  >
-                                    {isChecked(log.old_value) ? (
-                                      <CheckBox />
-                                    ) : (
-                                      <CheckBoxOutlineBlankOutlined />
-                                    )}
-                                  </Box>
-                                  {" → "}
-                                  <Box
-                                    component="span"
-                                    sx={{ fontWeight: 700 }}
-                                  >
-                                    {isChecked(log.new_value) ? (
-                                      <CheckBox />
-                                    ) : (
-                                      <CheckBoxOutlineBlankOutlined />
-                                    )}
-                                  </Box>
-                                </Typography>
-                                <Typography
-                                  variant="caption"
-                                  color="text.secondary"
-                                  sx={{ mt: 0.25 }}
-                                >
-                                  {formatDateTimeByType(log.created_at, "both")}
-                                  {log.admin_name &&
-                                    ` / Admin: ${log.admin_name}`}
-                                  {log.user_name && ` / User: ${log.user_name}`}
-                                </Typography>
-                              </Box>
-                            ))}
-                        </Box>
-                      </Typography>
+                {orderAuditHistoryList?.order_logs?.length > 0 ? (
+                  orderAuditHistoryList.order_logs.map((log) => {
+                    const isBoolean = BOOLEAN_FIELDS.includes(log.field_name);
+                    const isNumber = NUMBER_FIELDS.includes(log.field_name);
 
-                      <Typography
-                        variant="caption"
-                        color="text.secondary"
-                        sx={{ mt: 0.25 }}
+                    return (
+                      <Box
+                        key={log.id || `${log.field_name}-${log.created_at}`} // fallback key if id is missing
+                        sx={{
+                          mb: 0.5,
+                          px: 1,
+                          py: 0.5,
+                          borderLeft: "2px solid #1976d2",
+                          backgroundColor: "#fafafa",
+                          borderRadius: 1,
+                        }}
                       >
-                        {formatDateTimeByType(log.created_at, "both")}
-                        {log.admin_name && ` / Admin: ${log.admin_name}`}
-                        {log.user_name && ` / User: ${log.user_name}`}
-                      </Typography>
-                    </Box>
-                  ))
+                        <Typography variant="body2" fontWeight={600}>
+                          {formatSqlKey(log.field_name)}:
+                          {/* Numeric or money fields */}
+                          {isNumber && (
+                            <>
+                              <Box
+                                component="span"
+                                sx={{ ml: 0.5, color: "#888" }}
+                              >
+                                {numberWithCommas(
+                                  convertNullEmtyString(log.old_value)
+                                )}
+                              </Box>
+                              {" → "}
+                              <Box component="span" sx={{ fontWeight: 700 }}>
+                                {numberWithCommas(
+                                  convertNullEmtyString(log.new_value)
+                                )}
+                              </Box>
+                            </>
+                          )}
+                          {/* Boolean fields (checkbox style) */}
+                          {isBoolean && (
+                            <>
+                              <Box component="span" sx={{ ml: 0.5 }}>
+                                {isChecked(log.old_value) ? (
+                                  <CheckBox sx={{ verticalAlign: "middle" }} />
+                                ) : (
+                                  <CheckBoxOutlineBlankOutlined
+                                    sx={{ verticalAlign: "middle" }}
+                                  />
+                                )}
+                              </Box>
+                              {" → "}
+                              <Box component="span" sx={{ fontWeight: 700 }}>
+                                {isChecked(log.new_value) ? (
+                                  <CheckBox sx={{ verticalAlign: "middle" }} />
+                                ) : (
+                                  <CheckBoxOutlineBlankOutlined
+                                    sx={{ verticalAlign: "middle" }}
+                                  />
+                                )}
+                              </Box>
+                            </>
+                          )}
+                          {/* Fallback for other types */}
+                          {!isNumber && !isBoolean && (
+                            <>
+                              <Box
+                                component="span"
+                                sx={{ ml: 0.5, color: "#888" }}
+                              >
+                                {String(log.old_value)}
+                              </Box>
+                              {" → "}
+                              <Box component="span" sx={{ fontWeight: 700 }}>
+                                {String(log.new_value)}
+                              </Box>
+                            </>
+                          )}
+                        </Typography>
+                        <Typography
+                          variant="caption"
+                          color="text.secondary"
+                          sx={{ mt: 0.25 }}
+                        >
+                          {formatDateTimeByType(log.created_at, "both")}
+                          {log.admin_name && ` / Admin: ${log.admin_name}`}
+                          {log.user_name && ` / User: ${log.user_name}`}
+                        </Typography>
+                      </Box>
+                    );
+                  })
                 ) : (
-                  <Typography variant="body2" color="text.secondary">
-                    No field changes tracked.
+                  <Typography color="text.secondary">
+                    No audit logs found.
                   </Typography>
                 )}
               </AccordionDetails>
