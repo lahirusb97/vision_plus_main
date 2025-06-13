@@ -16,6 +16,7 @@ import {
   TextField,
   Stack,
   Typography,
+  Paper,
 } from "@mui/material";
 import {
   FactoryInvoiceFormModel,
@@ -70,6 +71,7 @@ import stringToIntConver from "../../../utils/stringToIntConver";
 import { formatDateTimeByType } from "../../../utils/formatDateTimeByType";
 import AuthDialog from "../../../components/common/AuthDialog";
 import OrderAuditDialog from "../../../components/OrderAuditDialog";
+import NumberInput from "../../../components/inputui/NumberInput";
 
 export default function OrderEditFrom() {
   const navigate = useNavigate();
@@ -118,6 +120,7 @@ export default function OrderEditFrom() {
   const orderEditForm = schemaFactoryInvoice.extend({
     payments: z.array(schemayPaymentUpdateDelete),
     mnt: z.boolean().default(false),
+    mnt_price: z.number().optional(),
     admin_id: z.number().optional(),
     user_id: z.number().optional(),
   });
@@ -378,6 +381,7 @@ export default function OrderEditFrom() {
         ],
         order_payments: [...formatUserPayments(userPayments), ...data.payments],
         mnt: data.mnt,
+        mnt_price: data.mnt_price,
       };
       if (
         Object.keys(externalLenseInvoiceList).length > 0 ||
@@ -616,8 +620,15 @@ export default function OrderEditFrom() {
                       </>
                     )}
                     {!invoiceDetail?.order_details?.mnt_order?.id && (
-                      <>
-                        <Typography variant="body1"> Mark As MNT</Typography>
+                      <Paper
+                        sx={{
+                          p: 0.5,
+                          mb: 1,
+                          display: "flex",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Typography variant="body1"> MNT</Typography>
                         <Checkbox
                           {...methods.register("mnt")}
                           checked={methods.watch("mnt") || false}
@@ -625,7 +636,13 @@ export default function OrderEditFrom() {
                             methods.setValue("mnt", e.target.checked)
                           }
                         />
-                      </>
+                        {methods.watch("mnt") && (
+                          <NumberInput
+                            registerName="mnt_price"
+                            lableName="MNT Price"
+                          />
+                        )}
+                      </Paper>
                     )}
                   </Box>
                 </Box>

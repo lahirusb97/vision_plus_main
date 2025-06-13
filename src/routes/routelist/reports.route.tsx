@@ -13,6 +13,7 @@ import FIttingLabRepoart from "../../view/reports/fitting-lab/FIttingLabRepoart"
 import GlassSenderReport from "../../view/reports/GlassSenderReport";
 import EmployerSalesHistory from "../../view/reports/EmployerSalesHistory";
 import EmployerSalesReportLayout from "../../view/reports/layout/EmployerSalesReportLayout";
+import MntReport from "../../view/reports/MntReport";
 
 export const reportRoutes: RouteObject[] = [
   {
@@ -104,6 +105,16 @@ export const reportRoutes: RouteObject[] = [
       {
         path: "glass-sender",
         element: <GlassSenderReport />,
+      },
+    ],
+  },
+  {
+    path: "mnt-report",
+    element: <ProtectedChildRoute />,
+    children: [
+      {
+        index: true,
+        element: <MntReport />,
       },
     ],
   },
