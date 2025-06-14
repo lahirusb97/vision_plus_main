@@ -15,6 +15,6 @@ export interface FinanceSummary {
   today_expenses: number;
   today_banking: TodayBanking[];
   today_balance: number;
-  cash_in_hold: number;
+  cash_in_hand: number;
   available_for_deposit: number;
 }

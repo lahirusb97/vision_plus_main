@@ -40,8 +40,6 @@ const Expence = () => {
   const { exCategory, exCategoryLoading } = useGetExCategory();
   const { financeSummary, setFinanceSummaryParams, financeSummaryRefres } =
     useGetFinanceSummary();
-  const { safeTotalBalance, safeTotalBalanceLoading, safeTotalBalanceError } =
-    useGetSafeBalance();
   const {
     expenseList,
     loading: expenseListLoading,
@@ -90,11 +88,9 @@ const Expence = () => {
 
     setFinanceSummaryParams({ date: formattedDate });
   }, []);
-  console.log(financeSummary);
 
   const onSubmit = async (data: ExpenseFormData) => {
-    if ((financeSummary?.cash_in_hold || 0) >= data.amount) {
-      console.log(data);
+    if ((financeSummary?.cash_in_hand || 0) >= data.amount) {
       const postData = {
         branch: data.branch,
         main_category: data.main_category,
@@ -149,7 +145,7 @@ const Expence = () => {
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
               <Typography variant="body1">Avilable Balance </Typography>
               <Typography variant="body1">
-                {numberWithCommas(financeSummary?.cash_in_hold)}{" "}
+                {numberWithCommas(financeSummary?.cash_in_hand)}{" "}
               </Typography>
             </Box>
           </Paper>
