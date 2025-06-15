@@ -8,8 +8,6 @@ import dayjs, { Dayjs } from "dayjs";
 import {
   Box,
   Paper,
-  Stack,
-  Divider,
   Typography,
   Alert,
   Table,
@@ -19,12 +17,16 @@ import {
   TableHead,
   TableRow,
   CircularProgress,
+  IconButton,
+  Tooltip,
 } from "@mui/material";
+import HistoryIcon from "@mui/icons-material/History";
 
 import DateRangePickerManual from "../../components/common/DateRangePickerManual";
 import CustomerPagination from "../../components/CustomPagination";
 import useGetMntOrderReport from "../../hooks/report/useGetMntOrderReport";
 import { MntOrderModel } from "../../model/MTNOrderModel";
+import OrderAuditDialog from "../../components/OrderAuditDialog";
 
 export interface DateRangePickerManualState {
   start_date: Dayjs | null;
@@ -39,12 +41,16 @@ export default function MntReport() {
     end_date: dayjs().add(1, "M"),
   });
 
+  const [auditDialog, setAuditDialog] = useState({
+    open: false,
+    orderId: null as number | null,
+  });
+
   // --- hook pulls data + KPIs --------------------------------------
   const {
     mntReportList,
     mntReportLoading,
     mntReportError,
-    mntReportKPIs,
     mntReportNavigate,
     mntReportTotalCount,
     mntReportSearch,
@@ -76,18 +82,6 @@ export default function MntReport() {
         />
       </Paper>
 
-      {/* KPI Cards */}
-      <Stack direction="row" spacing={2} mb={2}>
-        <KpiCard label="Total Ops" value={mntReportKPIs.totalMntOrders} />
-        <KpiCard
-          label="Unique Orders"
-          value={mntReportKPIs.distinctFactoryOrders}
-        />
-        <KpiCard
-          label="Revenue (LKR)"
-          value={parseFloat(mntReportKPIs.totalMntPrice).toLocaleString()}
-        />
-      </Stack>
 
       {/* Table or Error */}
       {mntReportError ? (
@@ -106,6 +100,7 @@ export default function MntReport() {
                   <TableCell>MNT Price (LKR)</TableCell>
                   <TableCell>Admin Name</TableCell>
                   <TableCell>User Name</TableCell>
+                  <TableCell align="center">Audit</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -126,35 +121,41 @@ export default function MntReport() {
                       </TableCell>
                       <TableCell>{order.admin_username}</TableCell>
                       <TableCell>{order.user_username ?? "__"}</TableCell>
+                      <TableCell align="center">
+                        <Tooltip title="View Audit">
+                          <IconButton
+                            size="small"
+                            onClick={() =>
+                              setAuditDialog({
+                                open: true,
+                                orderId: (order as any).order_id ?? order.id,
+                              })
+                            }
+                          >
+                            <HistoryIcon fontSize="inherit" />
+                          </IconButton>
+                        </Tooltip>
+                      </TableCell>
                     </TableRow>
                   ))
                 )}
               </TableBody>
             </Table>
           )}
-          <CustomerPagination
-            totalCount={mntReportTotalCount}
-            handlePageNavigation={mntReportNavigate}
-            changePageSize={mntReportChangePageSize}
-            page_size={mntReportLimit}
-          />
-        </TableContainer>
+        <CustomerPagination
+          totalCount={mntReportTotalCount}
+          handlePageNavigation={mntReportNavigate}
+          changePageSize={mntReportChangePageSize}
+          page_size={mntReportLimit}
+        />
+      </TableContainer>
       )}
+      <OrderAuditDialog
+        open={auditDialog.open}
+        orderId={auditDialog.orderId}
+        onClose={() => setAuditDialog({ open: false, orderId: null })}
+      />
     </Box>
   );
 }
 
-/* --------------------------------------------------------------- */
-/* Helper component for KPI cards                                 */
-/* --------------------------------------------------------------- */
-function KpiCard({ label, value }: { label: string; value: number | string }) {
-  return (
-    <Paper sx={{ p: 2, flex: 1, textAlign: "center" }}>
-      <Typography variant="subtitle2">{label}</Typography>
-      <Divider sx={{ my: 1 }} />
-      <Typography variant="h5" fontWeight={600}>
-        {value}
-      </Typography>
-    </Paper>
-  );
-}
