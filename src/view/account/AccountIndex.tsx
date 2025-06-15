@@ -169,12 +169,12 @@ const Dashboard = () => {
                     <span>Cash in Hand</span>
                     <span>{numberWithCommas(financeSummary.cash_in_hand)}</span>
                   </Typography>
-                  <Typography sx={flexStyle} variant="body2">
+                  {/* <Typography sx={flexStyle} variant="body2">
                     <span> Avilable For Deposite </span>
                     <span>
                       {numberWithCommas(financeSummary.available_for_deposit)}
                     </span>
-                  </Typography>
+                  </Typography> */}
                   <Typography sx={flexStyle} variant="body2">
                     <span>Before Balance</span>
                     <span>
