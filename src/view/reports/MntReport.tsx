@@ -2,15 +2,31 @@
 // -------------------------------------------------------------------
 // Combines filter, KPI cards and table in ONE component.
 // -------------------------------------------------------------------
-import { useState, useMemo, useEffect } from "react";
+import { useState, useEffect } from "react";
 import dayjs, { Dayjs } from "dayjs";
 
-import { Box, Paper, Stack, Divider, Typography, Alert } from "@mui/material";
-import { DataGrid, GridColDef, GridPaginationModel } from "@mui/x-data-grid";
+import {
+  Box,
+  Paper,
+  Typography,
+  Alert,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  CircularProgress,
+  IconButton,
+  Tooltip,
+} from "@mui/material";
+import HistoryIcon from "@mui/icons-material/History";
 
 import DateRangePickerManual from "../../components/common/DateRangePickerManual";
+import CustomerPagination from "../../components/CustomPagination";
 import useGetMntOrderReport from "../../hooks/report/useGetMntOrderReport";
 import { MntOrderModel } from "../../model/MTNOrderModel";
+import OrderAuditDialog from "../../components/OrderAuditDialog";
 
 export interface DateRangePickerManualState {
   start_date: Dayjs | null;
@@ -25,15 +41,21 @@ export default function MntReport() {
     end_date: dayjs().add(1, "M"),
   });
 
+  const [auditDialog, setAuditDialog] = useState({
+    open: false,
+    orderId: null as number | null,
+  });
+
   // --- hook pulls data + KPIs --------------------------------------
   const {
     mntReportList,
     mntReportLoading,
     mntReportError,
-    mntReportKPIs,
     mntReportNavigate,
     mntReportTotalCount,
     mntReportSearch,
+    mntReportLimit,
+    mntReportChangePageSize,
   } = useGetMntOrderReport();
 
   // --- push date filter to hook whenever the picker changes --------
@@ -45,32 +67,6 @@ export default function MntReport() {
     });
   }, [dateRange]);
 
-  // --- DataGrid columns (memoised) --------------------------------
-  const columns: GridColDef<MntOrderModel>[] = useMemo(
-    () => [
-      { field: "mnt_number", headerName: "MNT No", flex: 1 },
-      { field: "order_id", headerName: "Order ID", flex: 1 },
-      {
-        field: "mnt_price",
-        headerName: "Price (LKR)",
-        flex: 1,
-        valueFormatter: ({ value }) =>
-          parseFloat(value as string).toLocaleString(undefined, {
-            minimumFractionDigits: 2,
-          }),
-      },
-      {
-        field: "created_at",
-        headerName: "Created",
-        flex: 1.4,
-        valueFormatter: ({ value }) =>
-          dayjs(value as string).format("YYYY-MM-DD HH:mm"),
-      },
-      { field: "user_username", headerName: "User", flex: 1 },
-      { field: "admin_username", headerName: "Admin", flex: 1 },
-    ],
-    []
-  );
 
   // -------------------------- UI ----------------------------------
   return (
@@ -86,56 +82,80 @@ export default function MntReport() {
         />
       </Paper>
 
-      {/* KPI Cards */}
-      <Stack direction="row" spacing={2} mb={2}>
-        <KpiCard label="Total Ops" value={mntReportKPIs.totalMntOrders} />
-        <KpiCard
-          label="Unique Orders"
-          value={mntReportKPIs.distinctFactoryOrders}
-        />
-        <KpiCard
-          label="Revenue (LKR)"
-          value={parseFloat(mntReportKPIs.totalMntPrice).toLocaleString()}
-        />
-      </Stack>
 
-      {/* Data Grid or Error */}
+      {/* Table or Error */}
       {mntReportError ? (
         <Alert severity="error">Unable to load MNT orders.</Alert>
       ) : (
-        <DataGrid
-          autoHeight
-          rows={mntReportList}
-          columns={columns}
-          rowCount={mntReportTotalCount}
-          loading={mntReportLoading}
-          pageSizeOptions={[10, 20, 50]}
-          paginationMode="server"
-          disableRowSelectionOnClick
-          onPaginationModelChange={
-            (model: GridPaginationModel) => mntReportNavigate(model.page + 1) // DataGrid is 0-indexed
-          }
-          sx={{
-            "& .MuiDataGrid-cell": { py: 1 },
-            "& .MuiDataGrid-columnHeaders": { backgroundColor: "grey.100" },
-          }}
+        <TableContainer component={Paper}>
+          {mntReportLoading ? (
+            <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
+              <CircularProgress />
+            </Box>
+          ) : (
+            <Table size="small">
+              <TableHead>
+                <TableRow>
+                  <TableCell>MNT Invoice</TableCell>
+                  <TableCell>MNT Price (LKR)</TableCell>
+                  <TableCell>Admin Name</TableCell>
+                  <TableCell>User Name</TableCell>
+                  <TableCell align="center">Audit</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {mntReportList.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={4} align="center">
+                      No records found.
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  mntReportList.map((order: MntOrderModel) => (
+                    <TableRow key={order.id}>
+                      <TableCell>{order.mnt_number}</TableCell>
+                      <TableCell>
+                        {parseFloat(order.mnt_price).toLocaleString(undefined, {
+                          minimumFractionDigits: 2,
+                        })}
+                      </TableCell>
+                      <TableCell>{order.admin_username}</TableCell>
+                      <TableCell>{order.user_username ?? "__"}</TableCell>
+                      <TableCell align="center">
+                        <Tooltip title="View Audit">
+                          <IconButton
+                            size="small"
+                            onClick={() =>
+                              setAuditDialog({
+                                open: true,
+                                orderId: (order as any).order_id ?? order.id,
+                              })
+                            }
+                          >
+                            <HistoryIcon fontSize="inherit" />
+                          </IconButton>
+                        </Tooltip>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          )}
+        <CustomerPagination
+          totalCount={mntReportTotalCount}
+          handlePageNavigation={mntReportNavigate}
+          changePageSize={mntReportChangePageSize}
+          page_size={mntReportLimit}
         />
+      </TableContainer>
       )}
+      <OrderAuditDialog
+        open={auditDialog.open}
+        orderId={auditDialog.orderId}
+        onClose={() => setAuditDialog({ open: false, orderId: null })}
+      />
     </Box>
   );
 }
 
-/* --------------------------------------------------------------- */
-/* Helper component for KPI cards                                 */
-/* --------------------------------------------------------------- */
-function KpiCard({ label, value }: { label: string; value: number | string }) {
-  return (
-    <Paper sx={{ p: 2, flex: 1, textAlign: "center" }}>
-      <Typography variant="subtitle2">{label}</Typography>
-      <Divider sx={{ my: 1 }} />
-      <Typography variant="h5" fontWeight={600}>
-        {value}
-      </Typography>
-    </Paper>
-  );
-}
