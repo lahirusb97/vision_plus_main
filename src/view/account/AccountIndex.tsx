@@ -166,8 +166,8 @@ const Dashboard = () => {
                     Cash Avilable
                   </Typography>
                   <Typography sx={flexStyle} variant="body2">
-                    <span>Cash in Hold</span>
-                    <span>{numberWithCommas(financeSummary.cash_in_hold)}</span>
+                    <span>Cash in Hand</span>
+                    <span>{numberWithCommas(financeSummary.cash_in_hand)}</span>
                   </Typography>
                   <Typography sx={flexStyle} variant="body2">
                     <span> Avilable For Deposite </span>
