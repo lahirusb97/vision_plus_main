@@ -38,6 +38,7 @@ const useGetMntOrderReport = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<boolean>(false);
   const [totalCount, setTotalCount] = useState<number>(0);
+  const [totalMntPrice, setTotalMntPrice] = useState<string>("0.00");
 
   /** Aggregated KPIs returned by the endpoint */
   const [kpi, setKpi] = useState<{
@@ -80,7 +81,7 @@ const useGetMntOrderReport = () => {
 
       if (!controller.signal.aborted) {
         setDataList(data.results.orders);
-
+        setTotalMntPrice(data.results.total_mnt_price);
         setTotalCount(data.count);
 
         if (data.count === 0) {
@@ -94,6 +95,7 @@ const useGetMntOrderReport = () => {
 
       if (!controller.signal.aborted) {
         setDataList([]);
+        setTotalMntPrice("0.00");
         setError(true);
         extractErrorMessage(err as AxiosError);
       }
@@ -123,6 +125,7 @@ const useGetMntOrderReport = () => {
     mntReportList: dataList,
     mntReportLoading: loading,
     mntReportError: error,
+    mntReportTotalMntPrice: totalMntPrice,
     mntReportTotalCount: totalCount,
     mntReportNavigate: handlePageNavigation,
     mntReportSearch: setParamsData,

@@ -59,6 +59,7 @@ export default function MntReport() {
     mntReportTotalCount,
     mntReportSearch,
     mntReportLimit,
+    mntReportTotalMntPrice,
     mntReportChangePageSize,
   } = useGetMntOrderReport();
 
@@ -82,7 +83,14 @@ export default function MntReport() {
           onChange={(range) => setDateRange((prev) => ({ ...prev, ...range }))}
         />
       </Paper>
-
+      <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
+        <Typography variant="subtitle1" gutterBottom>
+          Total Invoice Count : {mntReportTotalCount}
+        </Typography>
+        <Typography variant="subtitle1" gutterBottom>
+          Total Mnt Cost : {numberWithCommas(mntReportTotalMntPrice)}
+        </Typography>
+      </Box>
       {/* Table or Error */}
       {mntReportError ? (
         <Alert severity="error">Unable to load MNT orders.</Alert>
@@ -99,11 +107,13 @@ export default function MntReport() {
                   <TableCell align="center">Audit</TableCell>
                   <TableCell align="center">Invoice</TableCell>
                   <TableCell align="center">MNT Invoice</TableCell>
-                  <TableCell align="right">MNT Price </TableCell>
-                  <TableCell align="right">Total Price</TableCell>
+
                   <TableCell>Admin Name</TableCell>
                   <TableCell>User Name</TableCell>
                   <TableCell align="center">Date</TableCell>
+                  <TableCell align="right">Total Price</TableCell>
+
+                  <TableCell align="right">MNT Price </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -138,16 +148,17 @@ export default function MntReport() {
                         {order.invoice_number}
                       </TableCell>
                       <TableCell align="center">{order.mnt_number}</TableCell>
+
+                      <TableCell>{order.admin_username}</TableCell>
+                      <TableCell>{order.user_username ?? "__"}</TableCell>
+                      <TableCell align="center">
+                        {formatDateTimeByType(order.created_at, "both")}
+                      </TableCell>
                       <TableCell align="right">
                         {numberWithCommas(order.order_total_price)}
                       </TableCell>
                       <TableCell align="right">
                         {numberWithCommas(order.mnt_price)}
-                      </TableCell>
-                      <TableCell>{order.admin_username}</TableCell>
-                      <TableCell>{order.user_username ?? "__"}</TableCell>
-                      <TableCell align="center">
-                        {formatDateTimeByType(order.created_at, "both")}
                       </TableCell>
                     </TableRow>
                   ))
