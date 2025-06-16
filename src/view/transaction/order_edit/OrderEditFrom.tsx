@@ -198,6 +198,7 @@ export default function OrderEditFrom() {
         "progress_status",
         invoiceDetail?.order_details?.progress_status?.progress_status
       );
+      methods.setValue("urgent", invoiceDetail?.order_details?.urgent);
 
       methods.setValue(
         "payments",
@@ -351,6 +352,7 @@ export default function OrderEditFrom() {
           user_date: data.user_date,
           bus_title: BUSID === currentBranch ? data.bus_title : null,
           progress_status: data.progress_status,
+          urgent: data.urgent,
         },
         order_items: [
           ...Object.values(LenseInvoiceList).map((item) => ({
@@ -739,6 +741,10 @@ export default function OrderEditFrom() {
                 />
               </Box>
             )}
+            <Box display="flex" alignItems="center">
+              <Typography variant="body1">| Urgent</Typography>
+              <Checkbox {...methods.register("urgent")} />
+            </Box>
           </Box>
           <EditInvoiceTable
             paymentList={invoiceDetail?.order_details?.order_payments ?? []}
