@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import { OtherItemModel } from "../model/OtherItemModel";
 import { numberWithCommas } from "../utils/numberWithCommas";
+import { parseInt } from "lodash";
 
 interface InvoiceOtherItemsProps {
   onAddItem: (item: OtherItemModel, qty: number, price: number) => void;
@@ -23,7 +24,7 @@ export default function InvoiceOtherItems({
 }: InvoiceOtherItemsProps) {
   const [selectedItem, setSelectedItem] = useState<OtherItemModel | null>(null);
   const [qty, setQty] = useState<number>(1);
-  const [price, setPrice] = useState<number>(0);
+  const [price, setPrice] = useState<string>("");
 
   const { otherItem, otherItemLoading, searchOtherItem } = useGetOtherItem();
   console.log(otherItem);
@@ -31,10 +32,10 @@ export default function InvoiceOtherItems({
     if (!selectedItem) return;
 
     // Dispatch action to add item to parent reducer
-    onAddItem(selectedItem, qty, price);
+    onAddItem(selectedItem, qty, Number(price || 0));
     setSelectedItem(null);
     setQty(1);
-    setPrice(0);
+    setPrice("");
   };
 
   return (
@@ -55,7 +56,7 @@ export default function InvoiceOtherItems({
         value={selectedItem}
         onChange={(_, newValue) => {
           setSelectedItem(newValue);
-          if (newValue) setPrice(parseFloat(newValue.item.price));
+          if (newValue) setPrice(newValue.item.price.toString());
         }}
         renderInput={(params) => (
           <TextField
@@ -121,8 +122,8 @@ export default function InvoiceOtherItems({
                 size="small"
                 label="Unit Price"
                 type="number"
-                value={price}
-                onChange={(e) => setPrice(Math.max(0, Number(e.target.value)))}
+                value={parseInt(price)}
+                onChange={(e) => setPrice(e.target.value)}
                 InputProps={{
                   startAdornment: <Typography>Rs</Typography>,
                 }}
@@ -134,7 +135,7 @@ export default function InvoiceOtherItems({
 
             <Grid item xs={4}>
               <Typography>
-                Subtotal : Rs. {numberWithCommas(qty * price)}
+                Subtotal : Rs. {numberWithCommas(qty * Number(price))}
               </Typography>
             </Grid>
           </Grid>
@@ -146,7 +147,7 @@ export default function InvoiceOtherItems({
           variant="contained"
           onClick={handleAddItem}
           color="primary"
-          disabled={!selectedItem || qty <= 0 || price <= 0}
+          disabled={!selectedItem || qty <= 0 || Number(price) <= 0}
           size="small"
         >
           Add to Invoice
