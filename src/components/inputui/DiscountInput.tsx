@@ -38,6 +38,7 @@ const DiscountInput: React.FC = () => {
           setValue("discount", 0);
         }
       }}
+      defaultValue={0}
     />
   );
 };
