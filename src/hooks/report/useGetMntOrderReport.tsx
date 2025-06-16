@@ -10,7 +10,6 @@ import { getUserCurentBranch } from "../../utils/authDataConver";
 import { paramsNullCleaner } from "../../utils/paramsNullCleaner";
 import { extractErrorMessage } from "../../utils/extractErrorMessage";
 import toast from "react-hot-toast";
-import { PaginatedResponse } from "../../model/PaginatedResponse";
 import { MntOrderModel } from "../../model/MTNOrderModel";
 
 // ---------------- Types ----------------
@@ -21,10 +20,16 @@ export interface MntOrderReportParams {
   end_date: string | null; // YYYY-MM-DD
 }
 
-interface MntOrderReportPayload extends PaginatedResponse<MntOrderModel> {
+interface MntOrderReportresponce {
   total_mnt_orders: number;
   total_mnt_price: string;
-  distinct_factory_orders: number;
+  orders: MntOrderModel[];
+}
+interface MntOrderReportpaginated {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: MntOrderReportresponce;
 }
 
 const useGetMntOrderReport = () => {
@@ -62,7 +67,7 @@ const useGetMntOrderReport = () => {
     setError(false);
 
     try {
-      const { data } = await axiosClient.get<MntOrderReportPayload>(
+      const { data } = await axiosClient.get<MntOrderReportpaginated>(
         "report/mnt-order-report/",
         {
           params: {
@@ -74,14 +79,9 @@ const useGetMntOrderReport = () => {
       );
 
       if (!controller.signal.aborted) {
-        setDataList(data.results);
-        setTotalCount(data.count);
+        setDataList(data.results.orders);
 
-        setKpi({
-          totalMntOrders: data.total_mnt_orders,
-          totalMntPrice: data.total_mnt_price,
-          distinctFactoryOrders: data.distinct_factory_orders,
-        });
+        setTotalCount(data.count);
 
         if (data.count === 0) {
           toast.error("No MNT orders found for the selected range");
@@ -124,7 +124,6 @@ const useGetMntOrderReport = () => {
     mntReportLoading: loading,
     mntReportError: error,
     mntReportTotalCount: totalCount,
-    mntReportKPIs: kpi,
     mntReportNavigate: handlePageNavigation,
     mntReportSearch: setParamsData,
     mntReportRefresh: loadData,

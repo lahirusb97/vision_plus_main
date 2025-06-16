@@ -7,4 +7,6 @@ export interface MntOrderModel {
   user_username: string | null;
   admin_username: string;
   mnt_price: string;
+  invoice_number: string;
+  order_total_price: string;
 }

@@ -69,7 +69,6 @@ const isPrescriptionField = (field: string) => field === "prescription_type";
 export default function OrderAuditDialog({ open, onClose, orderId }: Props) {
   const { orderAuditHistoryList, orderAuditHistoryLoading } =
     useGetOrderAuditHistory(open ? orderId : null);
-  console.log(orderAuditHistoryList);
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
