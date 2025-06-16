@@ -58,6 +58,7 @@ const FrameCodeAdd = () => {
         <InfoChip label="Brand" value={singleBrand?.name} />
         <form onSubmit={handleSubmit}>
           <TextField
+            autoFocus
             fullWidth
             label="Frame Code "
             name="name"

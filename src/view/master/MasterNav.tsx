@@ -5,10 +5,7 @@ export default function MasterNav() {
     <>
       {/* Pass unique onClick handlers */}
       <NavButton name="Soldering" path={"/master"} />
-      <NavButton
-        name="Send External Order"
-        path={"/master/soldering-invoice"}
-      />
+      <NavButton name="Soldering Orders" path={"/master/soldering-invoice"} />
     </>
   );
 }

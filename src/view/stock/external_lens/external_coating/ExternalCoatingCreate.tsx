@@ -47,6 +47,7 @@ export default function ExternalCoatingCreate() {
         <TitleText title="Create External Coating" />
 
         <TextField
+          autoFocus
           label="Name"
           size="small"
           fullWidth

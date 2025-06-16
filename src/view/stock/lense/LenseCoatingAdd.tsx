@@ -45,6 +45,7 @@ const LenseCoatingAdd = () => {
         <TitleText title="Create Lense Coating" />
         <form onSubmit={handleSubmit}>
           <TextField
+            autoFocus
             fullWidth
             label="Coating Name"
             name="name"

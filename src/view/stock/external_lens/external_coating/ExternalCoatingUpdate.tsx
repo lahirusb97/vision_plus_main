@@ -84,6 +84,7 @@ export default function ExternalCoatingUpdate() {
         <TitleText title="Update External Coating" />
 
         <TextField
+          autoFocus
           label="Name"
           size="small"
           fullWidth

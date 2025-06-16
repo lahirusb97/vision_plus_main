@@ -57,6 +57,7 @@ const FrameBrandEdit = () => {
         <TitleText title="Update Frame Brand" />
         <form onSubmit={handleSubmit}>
           <TextField
+            autoFocus
             fullWidth
             label="Brand Name"
             name="name"

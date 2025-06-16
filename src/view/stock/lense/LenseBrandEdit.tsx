@@ -73,6 +73,7 @@ const LenseBrandEdit = () => {
         <TitleText title="Update Lense Factory" />
         <form onSubmit={handleSubmit}>
           <TextField
+            autoFocus
             fullWidth
             label="Lense Factory Name"
             name="name"

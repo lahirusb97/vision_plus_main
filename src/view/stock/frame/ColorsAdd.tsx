@@ -41,6 +41,7 @@ const ColorsAdd = () => {
         <TitleText title="Create Frame Color" />
         <form onSubmit={handleSubmit}>
           <TextField
+            autoFocus
             fullWidth
             label="Frame Color Name"
             name="name"

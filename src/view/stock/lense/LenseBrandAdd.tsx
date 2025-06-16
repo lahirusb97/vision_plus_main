@@ -45,6 +45,7 @@ const LenseBrandAdd = () => {
         <TitleText title="Add Lense Factory" />
         <form onSubmit={handleSubmit}>
           <TextField
+            autoFocus
             fullWidth
             label="Lense Factory Name"
             name="name"

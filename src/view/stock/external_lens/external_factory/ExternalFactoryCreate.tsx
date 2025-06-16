@@ -48,6 +48,7 @@ export default function ExternalFactoryCreate() {
         <TitleText title="Create External Factory" />
 
         <TextField
+          autoFocus
           label="Name"
           size="small"
           fullWidth

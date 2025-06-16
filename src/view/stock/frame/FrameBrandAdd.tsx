@@ -45,6 +45,7 @@ const FrameBrandAdd = () => {
         <TitleText title="Create Frame Brand" />
         <form onSubmit={handleSubmit}>
           <TextField
+            autoFocus
             fullWidth
             label="Frame Brand Name"
             name="name"

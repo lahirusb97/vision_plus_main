@@ -1,7 +1,8 @@
 // Action type definition
 type InvoiceItemsAction =
   | { type: "ADD_ITEM"; payload: InvoiceItem }
-  | { type: "REMOVE_ITEM"; payload: number };
+  | { type: "REMOVE_ITEM"; payload: number }
+  | { type: "UPDATE_ITEM"; payload: InvoiceItem };
 
 export function normalOrderItemsReducer(
   state: InvoiceItemsState,
@@ -15,25 +16,23 @@ export function normalOrderItemsReducer(
         (item) => item.other_item === newItem.other_item
       );
 
-      // If the item exists, update its quantity and subtotal
+      // If the item exists, update its quantity (but don't add)
       if (existingItemIndex !== -1) {
         const updatedItems = state.items.map((item, index) => {
           if (index === existingItemIndex) {
-            const updatedQuantity = item.quantity + newItem.quantity; // Add quantity
-            const updatedPrice = newItem.price_per_unit; // Use the new price if it's provided
-            const updatedSubtotal = updatedQuantity * updatedPrice; // Recalculate subtotal
+            // Only update the price and subtotal, don't add to quantity
+            const updatedPrice = newItem.price_per_unit;
+            const updatedSubtotal = item.quantity * updatedPrice;
 
             return {
               ...item,
-              quantity: updatedQuantity,
-              price_per_unit: updatedPrice, // Update price if it changed
+              price_per_unit: updatedPrice,
               subtotal: updatedSubtotal,
             };
           }
           return item;
         });
 
-        // Recalculate total
         const updatedTotal = updatedItems.reduce(
           (total, item) => total + item.subtotal,
           0
@@ -47,7 +46,6 @@ export function normalOrderItemsReducer(
         // If the item doesn't exist, add it to the list
         const updatedItems = [...state.items, newItem];
 
-        // Recalculate total
         const updatedTotal = updatedItems.reduce(
           (total, item) => total + item.subtotal,
           0
@@ -59,13 +57,42 @@ export function normalOrderItemsReducer(
         };
       }
     }
+    case "UPDATE_ITEM": {
+      const updatedItem = action.payload;
+      const existingItemIndex = state.items.findIndex(
+        (item) => item.other_item === updatedItem.other_item
+      );
+
+      if (existingItemIndex === -1) {
+        return state; // Item not found, return current state
+      }
+
+      const updatedItems = state.items.map((item, index) => {
+        if (index === existingItemIndex) {
+          return {
+            ...item,
+            ...updatedItem,
+          };
+        }
+        return item;
+      });
+
+      const updatedTotal = updatedItems.reduce(
+        (total, item) => total + item.subtotal,
+        0
+      );
+      return {
+        ...state,
+        items: updatedItems,
+        total: updatedTotal,
+      };
+    }
     case "REMOVE_ITEM": {
       const itemId = action.payload; // The id of the item to remove
       const updatedItems = state.items.filter(
         (item) => item.other_item !== itemId
       );
 
-      // Recalculate total
       const updatedTotal = updatedItems.reduce(
         (total, item) => total + item.subtotal,
         0

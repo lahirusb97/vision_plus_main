@@ -55,6 +55,7 @@ const ColorsEdit = () => {
         <TitleText title="Update Frame Color" />
         <form onSubmit={handleSubmit}>
           <TextField
+            autoFocus
             fullWidth
             label="Frame Color Name"
             name="name"

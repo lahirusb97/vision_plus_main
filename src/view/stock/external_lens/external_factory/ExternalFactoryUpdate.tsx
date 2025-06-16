@@ -84,6 +84,7 @@ export default function ExternalFactoryUpdate() {
         <TitleText title="Update External Factory" />
 
         <TextField
+          autoFocus
           label="Name"
           size="small"
           fullWidth
