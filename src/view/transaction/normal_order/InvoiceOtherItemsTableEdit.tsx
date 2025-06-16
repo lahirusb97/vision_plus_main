@@ -95,8 +95,6 @@ export default function InvoiceOtherItemsTableEdit({
               <TableCell align="right">
                 <DiscountInput />
               </TableCell>
-
-              <TableCell />
             </TableRow>
             {paymentList.map((item) => (
               <TableRow key={item.id}>
@@ -129,7 +127,6 @@ export default function InvoiceOtherItemsTableEdit({
                   )}
                 </Typography>
               </TableCell>
-              <TableCell />
             </TableRow>
             <TableRow>
               <TableCell colSpan={4} sx={{ fontWeight: "bold" }} align="right">
@@ -152,7 +149,6 @@ export default function InvoiceOtherItemsTableEdit({
               <TableCell
                 sx={{ fontWeight: "bold", border: "none" }}
                 align="right"
-                colSpan={5}
               >
                 {grandTotal -
                   totalPrePayments -
