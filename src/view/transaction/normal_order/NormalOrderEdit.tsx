@@ -45,6 +45,7 @@ export default function NormalOrderEdit() {
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
   const [pendingPostData, setPendingPostData] =
     useState<NormalOrderInputModel | null>(null);
+  const [loadState, setLoadState] = useState(false);
 
   const initialState: InvoiceItemsState = {
     items: [],
@@ -155,7 +156,7 @@ export default function NormalOrderEdit() {
     }
   };
   useEffect(() => {
-    if (invoiceDetail && !invoiceLoading) {
+    if (invoiceDetail && !invoiceLoading && !loadState) {
       methods.reset({
         name: invoiceDetail.customer_details.name,
         phone_number: invoiceDetail.customer_details.phone_number,
@@ -188,8 +189,9 @@ export default function NormalOrderEdit() {
             payload: newItem,
           });
         });
+      setLoadState(true);
     }
-  }, [invoiceDetail, invoiceLoading]);
+  }, [invoiceDetail, invoiceLoading, loadState]);
   if (invoiceLoading) {
     return <LoadingAnimation loadingMsg="Loading Invoice..." />;
   }
