@@ -1,3 +1,6 @@
+import React, { useEffect, useState } from "react";
+import useGetExternalLenseOrderList from "../../../hooks/useGetExternalLenseOrderList";
+import dayjs, { Dayjs } from "dayjs";
 import {
   Box,
   FormControl,
@@ -8,20 +11,15 @@ import {
   SelectChangeEvent,
   TableContainer,
 } from "@mui/material";
-import { useEffect, useState } from "react";
-
-import CustomerPagination from "../../components/CustomPagination";
-import useGetExternalLenseOrderList from "../../hooks/useGetExternalLenseOrderList";
-import { TypeWhatappMSG } from "../../model/StaticTypeModels";
-import ExternalOrderCheckBoxTable from "../../components/inputui/ExternalOrderCheckBoxTable";
-import dayjs, { Dayjs } from "dayjs"; // Import 'dayjs' for creating Dayjs objects
-import DateRangePickerManual from "../../components/common/DateRangePickerManual";
-import InvoiceSearchInput from "../../components/common/InvoiceSearchInput";
-export interface DateRangePickerManualState {
+import DateRangePickerManual from "../../../components/common/DateRangePickerManual";
+import InvoiceSearchInput from "../../../components/common/InvoiceSearchInput";
+import ExternalOrderArrivalStatusCheckBoxTable from "../../../components/inputui/ExternalOrderArrivalStatusCheckBoxTable";
+import CustomerPagination from "../../../components/CustomPagination";
+interface DateRangePickerManualState {
   start_date: Dayjs | null;
   end_date: Dayjs | null;
 }
-export default function JobProgress() {
+export default function LenseArrival() {
   const {
     externalLenseInvoiceLimit,
     externalLenseInvoiceList,
@@ -32,20 +30,20 @@ export default function JobProgress() {
     externalLenseInvoiceListSearch,
     externalLenseInvoiceListRefres,
   } = useGetExternalLenseOrderList();
-
-  const [orderProgress, setOrderProgress] = useState("");
+  const [arrivalStatus, setArrivalStatus] = useState<
+    "received" | "not_received" | null
+  >(null);
   const [dateRange, setDateRange] = useState<DateRangePickerManualState>({
     start_date: dayjs(), // or null
     end_date: dayjs().add(1, "M"),
   });
   const handleChange = (event: SelectChangeEvent) => {
-    setOrderProgress(event.target.value as string);
+    setArrivalStatus(event.target.value as "received" | "not_received" | null);
   };
-
   useEffect(() => {
     externalLenseInvoiceListSearch({
-      arrival_status: null,
-      whatsapp_sent: orderProgress as TypeWhatappMSG,
+      arrival_status: arrivalStatus,
+      whatsapp_sent: "sent",
       search: null,
       invoice_number: null,
       start_date: dateRange.start_date?.format("YYYY-MM-DD") || null,
@@ -53,14 +51,14 @@ export default function JobProgress() {
       page_size: 10,
       page: 1,
     });
-  }, [dateRange, orderProgress]);
+  }, [dateRange, arrivalStatus]);
   // Persist selections in localStorage/sessionStorage
   const invoiceSearch = (invoice_num: string) => {
     externalLenseInvoiceListSearch({
       arrival_status: null,
-      whatsapp_sent: null,
       search: null,
       invoice_number: invoice_num,
+      whatsapp_sent: "sent",
       start_date: dateRange.start_date?.format("YYYY-MM-DD") || null,
       end_date: dateRange.end_date?.format("YYYY-MM-DD") || null,
       page_size: 10,
@@ -86,17 +84,17 @@ export default function JobProgress() {
           <FormControl size="small" sx={{ minWidth: 250 }}>
             <InputLabel id="demo-simple-select-label">
               {" "}
-              Filter By Whatapp MSG
+              Filter By Arrival Status
             </InputLabel>
             <Select
               labelId="demo-simple-select-label"
               id="demo-simple-select"
-              value={orderProgress}
-              label=" Filter By Order Progress"
+              value={arrivalStatus || ""}
+              label=" Filter By Arrival Status"
               onChange={handleChange}
             >
-              <MenuItem value={"sent"}>Message Sent</MenuItem>
-              <MenuItem value={"not_sent"}>Message Not Sent</MenuItem>
+              <MenuItem value={"received"}>Received</MenuItem>
+              <MenuItem value={"not_received"}>Not Received</MenuItem>
             </Select>
           </FormControl>
           <DateRangePickerManual
@@ -108,19 +106,18 @@ export default function JobProgress() {
               setDateRange((prev) => ({ ...prev, ...range }))
             }
           />
-          {/* <ProgressStagesColors /> */}
+          <ExternalOrderArrivalStatusCheckBoxTable
+            invoiceListRefres={externalLenseInvoiceListRefres}
+            invoiceList={externalLenseInvoiceList}
+            loading={externalLenseInvoiceListLoading}
+          />
+          <CustomerPagination
+            totalCount={externalLenseInvoiceListTotalCount}
+            handlePageNavigation={externalLenseInvoiceListPageNavigation}
+            changePageSize={externalLenseInvoiceListChangePageSize}
+            page_size={externalLenseInvoiceLimit}
+          />
         </Box>
-        <ExternalOrderCheckBoxTable
-          invoiceListRefres={externalLenseInvoiceListRefres}
-          invoiceList={externalLenseInvoiceList}
-          loading={externalLenseInvoiceListLoading}
-        />
-        <CustomerPagination
-          totalCount={externalLenseInvoiceListTotalCount}
-          handlePageNavigation={externalLenseInvoiceListPageNavigation}
-          changePageSize={externalLenseInvoiceListChangePageSize}
-          page_size={externalLenseInvoiceLimit}
-        />
       </TableContainer>
     </Box>
   );

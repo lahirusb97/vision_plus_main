@@ -84,7 +84,9 @@ const CheckInIndex = () => {
                       customerPaymentTotal(row.payments)
                   )}
                 </TableCell>
-                <TableCell>{progressStatus(row.progress_status)}</TableCell>
+                <TableCell>
+                  {progressStatus(row.progress_status.progress_status)}
+                </TableCell>
                 {/* <TableCell>{row.notes}</TableCell> */}
                 <TableCell align="center">
                   {row.lens_arrival_status == null

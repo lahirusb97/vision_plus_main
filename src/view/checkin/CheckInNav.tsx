@@ -8,6 +8,7 @@ export default function CheckInNav() {
       <NavButton name="Send External Order" path={"/checkin/send_order"} />
       <NavButton name="Fitting Lab" path={"/checkin/checkin-fitting"} />
       <NavButton name="Glasses Sender" path={"/checkin/glasses-sender"} />
+      <NavButton name="Lense Arrival" path={"/checkin/lense-arrival"} />
     </>
   );
 }

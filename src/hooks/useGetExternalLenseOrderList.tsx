@@ -17,6 +17,7 @@ export interface ExternalLenseOrderListParams {
   whatsapp_sent: TypeWhatappMSG;
   start_date: string | null;
   end_date: string | null;
+  arrival_status: "received" | "not_received" | null;
 }
 const useGetExternalLenseOrderList = () => {
   //use null or [] base on scenario
@@ -34,6 +35,7 @@ const useGetExternalLenseOrderList = () => {
     whatsapp_sent: null,
     start_date: null,
     end_date: null,
+    arrival_status: null,
   });
   const abortControllerRef = useRef<AbortController | null>(null);
 

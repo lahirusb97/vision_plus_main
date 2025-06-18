@@ -4,6 +4,7 @@ import JobProgress from "../../view/checkin/JobProgress";
 import SendOrder from "../../view/checkin/SendOrder";
 import FittingForm from "../../view/checkin/fitting/FittingForm";
 import GlassSender from "../../view/checkin/GlassSender";
+import LenseArrival from "../../view/checkin/arrival_status/LenseArrival";
 
 export const checkInRoutes: RouteObject[] = [
   {
@@ -27,5 +28,9 @@ export const checkInRoutes: RouteObject[] = [
   {
     path: "glasses-sender",
     element: <GlassSender />,
+  },
+  {
+    path: "lense-arrival",
+    element: <LenseArrival />,
   },
 ];

@@ -10,10 +10,10 @@ import {
   Box,
   IconButton,
   Button,
+  Typography,
   CircularProgress,
   Paper,
   Tooltip,
-  Typography,
 } from "@mui/material";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import { grey } from "@mui/material/colors";
@@ -58,13 +58,11 @@ export default function ExternalOrderCheckBoxTable({
     }
 
     try {
-      await postHandler("factory-invoices/bulk-update-whatsapp-sent/", {
+      await postHandler("arrival-status/bulk-create/", {
         order_ids: selectedInvoice.map((item) => item.order_id),
-        urgent_order_ids: selectedUrgent,
-        whatsapp_sent: "sent",
       });
 
-      toast.success(`Updated ${selectedInvoice.length} item(s) successfully`);
+      toast.success(`Arrival Status updated successfully`);
       setSelectedInvoice([]);
       setSelectedUrgent([]);
       invoiceListRefres();
@@ -72,7 +70,7 @@ export default function ExternalOrderCheckBoxTable({
       extractErrorMessage(error);
     }
   };
-
+  console.log(invoiceList);
   return (
     <Box
       sx={{
@@ -85,7 +83,6 @@ export default function ExternalOrderCheckBoxTable({
           <TableHead>
             <TableRow>
               <TableCell align="center">Select</TableCell>
-              <TableCell align="center">Urgent</TableCell>
 
               <TableCell align="center">Patient Name</TableCell>
               <TableCell align="center">Date </TableCell>
@@ -97,7 +94,7 @@ export default function ExternalOrderCheckBoxTable({
               {/* <TableCell>
                 <b>Notes</b>
               </TableCell> */}
-              {/* <TableCell>Arrival Status</TableCell> */}
+              <TableCell>Arrival Status</TableCell>
               <TableCell>Status</TableCell>
               <TableCell>Details</TableCell>
             </TableRow>
@@ -143,7 +140,7 @@ export default function ExternalOrderCheckBoxTable({
                     )}
                   />
                 </TableCell>
-                <TableCell align="center">
+                {/* <TableCell align="center">
                   <Checkbox
                     size="small"
                     sx={{ p: 0 }}
@@ -168,7 +165,7 @@ export default function ExternalOrderCheckBoxTable({
                       !!row.urgent && !selectedUrgent.includes(row.order_id)
                     }
                   />
-                </TableCell>
+                </TableCell> */}
 
                 <TableCell>{row.customer_name}</TableCell>
                 <TableCell>
@@ -198,14 +195,6 @@ export default function ExternalOrderCheckBoxTable({
                   )}
                 </TableCell>
 
-                {/* <TableCell>{row.notes}</TableCell> */}
-                {/* <TableCell>
-                {row.lens_arrival_status == null
-                  ? "_"
-                  : row.lens_arrival_status == "received"
-                  ? "Received"
-                  : "Not Received"}
-              </TableCell> */}
                 <TableCell align="center">
                   {row.whatsapp_sent ? (
                     <StatusWithTimestamp
@@ -216,7 +205,16 @@ export default function ExternalOrderCheckBoxTable({
                     "Not Sent"
                   )}
                 </TableCell>
-
+                <TableCell align="center">
+                  {row.arrival_status ? (
+                    <StatusWithTimestamp
+                      label={row.arrival_status.arrival_status}
+                      iso={row.arrival_status.created_at}
+                    />
+                  ) : (
+                    "Not Received"
+                  )}
+                </TableCell>
                 <TableCell align="center">
                   <OrderStatusSymbols
                     on_hold={row.on_hold}
@@ -274,7 +272,7 @@ export default function ExternalOrderCheckBoxTable({
           fontWeight={"bold"}
           variant="subtitle1"
         >
-          WhatsApp Message Sent
+          Lense Arrived
         </Typography>
 
         <Box
