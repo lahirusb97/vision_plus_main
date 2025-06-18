@@ -85,7 +85,7 @@ export default function OrderEditFrom() {
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
   const [pendingPostData, setPendingPostData] =
     useState<FactoryOrderInputModel | null>(null);
-  const [auditDialog, setAuditDialog] = useState <{
+  const [auditDialog, setAuditDialog] = useState<{
     open: boolean;
     orderId: number | null;
   }>({

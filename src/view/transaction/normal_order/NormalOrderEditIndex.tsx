@@ -4,7 +4,7 @@ import { useNavigate } from "react-router";
 import { getBranchName } from "../../../utils/branchName";
 
 export default function NormalOrderEditIndex() {
-  const [searchQuery, setSearchQuery] = useState(`${getBranchName()}`);
+  const [searchQuery, setSearchQuery] = useState(`${getBranchName()}N`);
   const navigate = useNavigate();
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // Prevents page reload

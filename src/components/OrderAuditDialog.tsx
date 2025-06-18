@@ -30,6 +30,7 @@ import {
   CheckBoxOutlineBlankOutlined,
   CheckBoxSharp,
 } from "@mui/icons-material";
+import { AufitNormalItem } from "./AufitNormalItem";
 const BOOLEAN_FIELDS = ["fitting_on_collection", "on_hold", "urgent"];
 const NUMBER_FIELDS = ["discount", "total_price", "sub_total"];
 
@@ -289,6 +290,9 @@ export default function OrderAuditDialog({ open, onClose, orderId }: Props) {
                 {orderAuditHistoryList?.order_items.length ? (
                   <>
                     <AuditFrameItem
+                      order_items={orderAuditHistoryList.order_items}
+                    />
+                    <AufitNormalItem
                       order_items={orderAuditHistoryList.order_items}
                     />
                     <AufitLensItem

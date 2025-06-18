@@ -23,7 +23,7 @@ export default function InvoiceOtherItems({
   onAddItem,
 }: InvoiceOtherItemsProps) {
   const [selectedItem, setSelectedItem] = useState<OtherItemModel | null>(null);
-  const [qty, setQty] = useState<number>(1);
+  const [qty, setQty] = useState<string>("1");
   const [price, setPrice] = useState<string>("");
 
   const { otherItem, otherItemLoading, searchOtherItem } = useGetOtherItem();
@@ -32,9 +32,9 @@ export default function InvoiceOtherItems({
     if (!selectedItem) return;
 
     // Dispatch action to add item to parent reducer
-    onAddItem(selectedItem, qty, Number(price || 0));
+    onAddItem(selectedItem, Number(qty || 0), Number(price || 0));
     setSelectedItem(null);
-    setQty(1);
+    setQty("1");
     setPrice("");
   };
 
@@ -109,7 +109,7 @@ export default function InvoiceOtherItems({
                 label="Quantity"
                 type="number"
                 value={qty}
-                onChange={(e) => setQty(Math.max(1, Number(e.target.value)))}
+                onChange={(e) => setQty(e.target.value)}
                 inputProps={{ min: 1 }}
                 fullWidth
                 variant="outlined"
@@ -135,7 +135,7 @@ export default function InvoiceOtherItems({
 
             <Grid item xs={4}>
               <Typography>
-                Subtotal : Rs. {numberWithCommas(qty * Number(price))}
+                Subtotal : Rs. {numberWithCommas(Number(qty) * Number(price))}
               </Typography>
             </Grid>
           </Grid>
@@ -147,7 +147,7 @@ export default function InvoiceOtherItems({
           variant="contained"
           onClick={handleAddItem}
           color="primary"
-          disabled={!selectedItem || qty <= 0 || Number(price) <= 0}
+          disabled={!selectedItem || Number(qty) <= 0 || Number(price) <= 0}
           size="small"
         >
           Add to Invoice

@@ -3,8 +3,7 @@ import { Controller, useFormContext } from "react-hook-form";
 import NumericInput from "../../../components/inputui/NumericInput";
 
 export default function PdAndHeightInputs() {
-  const { control, formState } = useFormContext();
-  console.log(formState.errors);
+  const { control } = useFormContext();
 
   return (
     <>

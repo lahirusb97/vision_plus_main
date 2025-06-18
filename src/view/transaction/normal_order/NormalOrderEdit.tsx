@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Box, TextField } from "@mui/material";
+import { Box, Button, TextField } from "@mui/material";
 
 import { useLocation, useNavigate } from "react-router";
 import { schemaNormalInvoiceFormModel } from "../../../validations/schemaNormalInvoice";
@@ -33,8 +33,20 @@ import { z } from "zod";
 import stringToIntConver from "../../../utils/stringToIntConver";
 import AuthDialog from "../../../components/common/AuthDialog";
 import PaymentsForm from "../../../components/common/PaymentsForm";
+import OrderDeleteRefund from "../../../components/common/order-delete-refund-dialog/OrderDeleteRefund";
+import OrderAuditDialog from "../../../components/OrderAuditDialog";
+import { History } from "lucide-react";
 
 export default function NormalOrderEdit() {
+  const [authDialogOpen, setAuthDialogOpen] = useState(false);
+
+  const [auditDialog, setAuditDialog] = useState<{
+    open: boolean;
+    orderId: number | null;
+  }>({
+    open: false,
+    orderId: null,
+  });
   const normalOrderEditForm = schemaNormalInvoiceFormModel.extend({
     payments: z.array(schemayPaymentUpdateDelete),
     mnt: z.boolean().default(false),
@@ -42,7 +54,6 @@ export default function NormalOrderEdit() {
     user_id: z.number().optional(),
   });
 
-  const [authDialogOpen, setAuthDialogOpen] = useState(false);
   const [pendingPostData, setPendingPostData] =
     useState<NormalOrderInputModel | null>(null);
   const [loadState, setLoadState] = useState(false);
@@ -64,6 +75,7 @@ export default function NormalOrderEdit() {
     normalOrderItemsReducer,
     initialState
   );
+  console.log(stateItems);
 
   const methods = useForm<z.infer<typeof normalOrderEditForm>>({
     resolver: zodResolver(normalOrderEditForm.omit({ branch_id: true })),
@@ -146,6 +158,7 @@ export default function NormalOrderEdit() {
           ...authData,
         }
       );
+
       toast.success("Order & Refraction Details saved successfully");
       const url = `?invoice_number=${encodeURIComponent(
         responce.data.invoice_number
@@ -177,6 +190,7 @@ export default function NormalOrderEdit() {
         .filter((items) => items.other_item !== null)
         .forEach((item) => {
           const newItem = {
+            id: item.id,
             other_item: item.other_item, // Assuming 'item' has 'id' and 'name'
             name: item.other_item_detail.name,
             quantity: item.quantity,
@@ -215,7 +229,29 @@ export default function NormalOrderEdit() {
           {/* Row 1: Name, Phone No, Address, Sales Staff Code */}
           <NormalPatientDetail />
           <InvoiceOtherItems onAddItem={handleAddItem} />
-
+          <OrderDeleteRefund
+            dialogType="both"
+            order_id={invoiceDetail?.order?.toString()}
+          />
+          <Button
+            sx={{ ml: 1 }}
+            variant="outlined"
+            color="info"
+            onClick={() =>
+              setAuditDialog({
+                open: true,
+                orderId: invoiceDetail?.order || null,
+              })
+            }
+          >
+            history
+            <History style={{ width: 18 }} />
+          </Button>
+          <OrderAuditDialog
+            open={auditDialog.open}
+            orderId={auditDialog.orderId}
+            onClose={() => setAuditDialog({ open: false, orderId: null })}
+          />
           <InvoiceOtherItemsTableEdit
             items={stateItems.items}
             total={stateItems.total}
