@@ -9,6 +9,7 @@ import {
   Paper,
   IconButton,
   CircularProgress,
+  Typography,
 } from "@mui/material";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import CircleIcon from "@mui/icons-material/Circle";
@@ -22,6 +23,7 @@ import { numberWithCommas } from "../../utils/numberWithCommas";
 import useGetCheckinInvoiceList from "../../hooks/useGetCheckinInvoiceList";
 import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
 import { formatDateTimeByType } from "../../utils/formatDateTimeByType";
+import StatusWithTimestamp from "../../components/common/SmallDateAndTime";
 
 const CheckInIndex = () => {
   const {
@@ -33,6 +35,7 @@ const CheckInIndex = () => {
     invoiceListLoading,
     invoiceListTotalCount,
   } = useGetCheckinInvoiceList();
+
   return (
     <div style={{ padding: 20, maxWidth: "1200px", minWidth: "900px" }}>
       <FactoryInvoiceSearch invoiceListSearch={invoiceListSearch} />
@@ -71,7 +74,27 @@ const CheckInIndex = () => {
               <TableRow key={row.id}>
                 <TableCell>{row.customer}</TableCell>
                 <TableCell>{dateAndTimeFormat(row.invoice_date)}</TableCell>
-                <TableCell>{row.invoice_number}</TableCell>
+                <TableCell>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                    }}
+                  >
+                    <span>{row.invoice_number}</span>
+
+                    {row.mnt_number && (
+                      <Typography
+                        variant="caption"
+                        component="span"
+                        sx={{ fontSize: "0.65rem", color: "text.secondary" }}
+                      >
+                        {row.mnt_number}
+                      </Typography>
+                    )}
+                  </Box>
+                </TableCell>
                 <TableCell align="right">
                   {numberWithCommas(row.total_price)}
                 </TableCell>
@@ -84,16 +107,28 @@ const CheckInIndex = () => {
                       customerPaymentTotal(row.payments)
                   )}
                 </TableCell>
-                <TableCell>
-                  {progressStatus(row.progress_status.progress_status)}
+                <TableCell align="center">
+                  {row.progress_status ? (
+                    <StatusWithTimestamp
+                      label={progressStatus(
+                        row.progress_status.progress_status
+                      )}
+                      iso={row.progress_status.changed_at}
+                    />
+                  ) : (
+                    "—"
+                  )}
                 </TableCell>
                 {/* <TableCell>{row.notes}</TableCell> */}
                 <TableCell align="center">
-                  {row.lens_arrival_status == null
-                    ? "_"
-                    : row.lens_arrival_status == "received"
-                    ? "Received"
-                    : "Not Received"}
+                  {row.arrival_status ? (
+                    <StatusWithTimestamp
+                      label={row.arrival_status.arrival_status}
+                      iso={row.arrival_status.created_at}
+                    />
+                  ) : (
+                    "Not Received"
+                  )}
                 </TableCell>
                 <TableCell>{row.issued_by_user_name}</TableCell>
                 <TableCell>

@@ -2,12 +2,12 @@ import { PaymentModel } from "./PaymentModel";
 import { ProgressStatusModel } from "./progressStatusModel";
 import { ProgressStatus } from "./StaticTypeModels";
 
-interface WhatsAppSent {
+export interface WhatsAppSent {
   id: number;
   status: "sent" | "mnt_marked";
   created_at: string;
 }
-interface ArrivalStatus {
+export interface ArrivalStatus {
   id: number;
   arrival_status: "received" | "mnt_marked";
   created_at: string;

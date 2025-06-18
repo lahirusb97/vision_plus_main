@@ -111,13 +111,13 @@ export default function LenseArrival() {
             invoiceList={externalLenseInvoiceList}
             loading={externalLenseInvoiceListLoading}
           />
-          <CustomerPagination
-            totalCount={externalLenseInvoiceListTotalCount}
-            handlePageNavigation={externalLenseInvoiceListPageNavigation}
-            changePageSize={externalLenseInvoiceListChangePageSize}
-            page_size={externalLenseInvoiceLimit}
-          />
         </Box>
+        <CustomerPagination
+          totalCount={externalLenseInvoiceListTotalCount}
+          handlePageNavigation={externalLenseInvoiceListPageNavigation}
+          changePageSize={externalLenseInvoiceListChangePageSize}
+          page_size={externalLenseInvoiceLimit}
+        />
       </TableContainer>
     </Box>
   );
