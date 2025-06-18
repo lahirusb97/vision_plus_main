@@ -31,14 +31,14 @@ export default function LenseArrival() {
     externalLenseInvoiceListRefres,
   } = useGetExternalLenseOrderList();
   const [arrivalStatus, setArrivalStatus] = useState<
-    "received" | "not_received" | null
-  >(null);
+    "received" | "not_received"
+  >("not_received");
   const [dateRange, setDateRange] = useState<DateRangePickerManualState>({
     start_date: dayjs(), // or null
     end_date: dayjs().add(1, "M"),
   });
   const handleChange = (event: SelectChangeEvent) => {
-    setArrivalStatus(event.target.value as "received" | "not_received" | null);
+    setArrivalStatus(event.target.value as "received" | "not_received");
   };
   useEffect(() => {
     externalLenseInvoiceListSearch({

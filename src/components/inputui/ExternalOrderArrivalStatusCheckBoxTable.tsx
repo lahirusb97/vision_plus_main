@@ -94,9 +94,9 @@ export default function ExternalOrderCheckBoxTable({
               {/* <TableCell>
                 <b>Notes</b>
               </TableCell> */}
-              <TableCell>Arrival Status</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>Details</TableCell>
+              <TableCell align="center">Arrival Status</TableCell>
+              <TableCell align="center">Status</TableCell>
+              <TableCell align="center">Details</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

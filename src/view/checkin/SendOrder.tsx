@@ -33,7 +33,7 @@ export default function JobProgress() {
     externalLenseInvoiceListRefres,
   } = useGetExternalLenseOrderList();
 
-  const [orderProgress, setOrderProgress] = useState("");
+  const [orderProgress, setOrderProgress] = useState("not_sent");
   const [dateRange, setDateRange] = useState<DateRangePickerManualState>({
     start_date: dayjs(), // or null
     end_date: dayjs().add(1, "M"),
