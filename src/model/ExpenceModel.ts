@@ -19,6 +19,8 @@ export interface ExpenseItem {
   amount: string;
   note: string;
   paid_from_safe: boolean;
+  main_category_id: number;
+  sub_category_id: number;
 }
 
 export interface ExpenseReport {

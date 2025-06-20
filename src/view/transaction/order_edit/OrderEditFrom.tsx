@@ -17,6 +17,7 @@ import {
   Stack,
   Typography,
   Paper,
+  IconButton,
 } from "@mui/material";
 import {
   FactoryInvoiceFormModel,
@@ -72,6 +73,7 @@ import { formatDateTimeByType } from "../../../utils/formatDateTimeByType";
 import AuthDialog from "../../../components/common/AuthDialog";
 import OrderAuditDialog from "../../../components/OrderAuditDialog";
 import NumberInput from "../../../components/inputui/NumberInput";
+import { History } from "lucide-react";
 
 export default function OrderEditFrom() {
   const navigate = useNavigate();
@@ -649,6 +651,9 @@ export default function OrderEditFrom() {
                   </Box>
                 </Box>
                 <Button
+                  sx={{ ml: 1 }}
+                  variant="outlined"
+                  color="info"
                   onClick={() =>
                     setAuditDialog({
                       open: true,
@@ -656,7 +661,8 @@ export default function OrderEditFrom() {
                     })
                   }
                 >
-                  View Audit
+                  history
+                  <History style={{ width: 18 }} />
                 </Button>
                 <OrderAuditDialog
                   open={auditDialog.open}

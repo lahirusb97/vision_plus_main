@@ -7,6 +7,8 @@ import ChannelLogsLayout from "../../view/audit_logs/layout/ChannelLogsLayout";
 import FactoryOrderDeactivateLog from "../../view/audit_logs/factory-order-refund-delete/FactoryOrderDeactivateLog";
 import FactoryOrderRefundLog from "../../view/audit_logs/factory-order-refund-delete/FactoryOrderRefundLog";
 import FactoryOrderLogsLayout from "../../view/audit_logs/layout/FactoryOrderLogsLayout";
+import OrderAuditLayout from "../../view/audit_logs/layout/OrderAuditLayout";
+import OrderAudits from "../../view/audit_logs/OrderAudits";
 export const logsRoutes: RouteObject[] = [
   {
     path: "",
@@ -42,6 +44,16 @@ export const logsRoutes: RouteObject[] = [
       {
         path: "refund/",
         element: <FactoryOrderRefundLog />,
+      },
+    ],
+  },
+  {
+    path: "order-audit/",
+    element: <OrderAuditLayout />,
+    children: [
+      {
+        index: true,
+        element: <OrderAudits />,
       },
     ],
   },

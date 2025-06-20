@@ -5,6 +5,7 @@ import { ExpenseItem } from "../model/ExpenceModel";
 import { formatDateTimeByType } from "../utils/formatDateTimeByType";
 import { Edit } from "@mui/icons-material";
 import { useNavigate } from "react-router";
+import { REFUND_MAIN_CAT_ID } from "../data/staticVariables";
 interface ChannelTableProps {
   data: ExpenseItem[];
   loading: boolean;
@@ -71,7 +72,7 @@ export const ExpencePaymentTable = ({ data, loading }: ChannelTableProps) => {
     ],
     [data]
   );
-
+  console.log("data", data);
   return (
     <Box>
       <MaterialReactTable
@@ -88,6 +89,7 @@ export const ExpencePaymentTable = ({ data, loading }: ChannelTableProps) => {
         renderRowActions={({ row }) => (
           <Box>
             <IconButton
+              disabled={row.original.main_category_id === REFUND_MAIN_CAT_ID}
               size="small"
               onClick={() => {
                 const params = new URLSearchParams({

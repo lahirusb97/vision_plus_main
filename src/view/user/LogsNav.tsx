@@ -10,6 +10,7 @@ export default function UserNav() {
       //  */}
       <NavButton name="Channel Logs" path={"/logs/channel"} />
       <NavButton name="Factory Order Logs" path={"/logs/factory-order"} />
+      <NavButton name="Order Audit" path={"/logs/order-audit"} />
     </>
   );
 }

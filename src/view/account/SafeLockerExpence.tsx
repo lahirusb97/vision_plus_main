@@ -138,7 +138,7 @@ const SafeLockerExpence = () => {
             size="small"
             sx={{ my: 1 }}
             variant="outlined"
-            onClick={() => navigate("manage")}
+            onClick={() => navigate("/account/expence/manage")}
           >
             Manage Expence Category
           </Button>
