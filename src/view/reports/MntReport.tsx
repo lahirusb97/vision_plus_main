@@ -30,7 +30,7 @@ import OrderAuditDialog from "../../components/OrderAuditDialog";
 import { numberWithCommas } from "../../utils/numberWithCommas";
 import TitleText from "../../components/TitleText";
 import { formatDateTimeByType } from "../../utils/formatDateTimeByType";
-import InvoicePreviewBtn from "../../components/common/invoicePreviewBtn";
+import InvoicePreviewBtn from "../../components/common/InvoicePreviewBtn";
 
 export interface DateRangePickerManualState {
   start_date: Dayjs | null;
