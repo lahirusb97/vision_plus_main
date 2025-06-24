@@ -4,16 +4,17 @@ import { Box, IconButton, Tooltip, Typography } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 // import HistoryIcon from "@mui/icons-material/History";
 import LoopIcon from "@mui/icons-material/Loop";
-import useGetFrames from "../../hooks/lense/useGetFrames";
+import useGetFrames from "../../../hooks/lense/useGetFrames";
 import { useNavigate } from "react-router";
-import { useDeleteDialog } from "../../context/DeleteDialogContext";
-import { FrameModel } from "../../model/FrameModel";
-import TitleText from "../../components/TitleText";
-import { numberWithCommas } from "../../utils/numberWithCommas";
-import { Edit, PriceChange } from "@mui/icons-material";
-import { LENS_AND_FRAME_STORE_ID } from "../../data/staticVariables";
+import { useDeleteDialog } from "../../../context/DeleteDialogContext";
+import { FrameModel } from "../../../model/FrameModel";
+import TitleText from "../../../components/TitleText";
+import { numberWithCommas } from "../../../utils/numberWithCommas";
+import { Edit, EmojiTransportation, PriceChange } from "@mui/icons-material";
+import { LENS_AND_FRAME_STORE_ID } from "../../../data/staticVariables";
+import { Truck } from "lucide-react";
 
-const FrameStore = () => {
+const InventoryFrameStore = () => {
   const { frames, framesLoading, refresh } = useGetFrames({
     store: Number(LENS_AND_FRAME_STORE_ID),
   });
@@ -70,6 +71,15 @@ const FrameStore = () => {
                 onClick={() => handleUpdate(row.original.id)}
               >
                 <LoopIcon sx={{ fontSize: "1.4rem" }} />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Transfer Quantity">
+              <IconButton
+                size="small"
+                color="info"
+                onClick={() => handleTransfer(row.original.id)}
+              >
+                <Truck style={{ width: "1.2rem" }} />
               </IconButton>
             </Tooltip>
           </Box>
@@ -183,7 +193,7 @@ const FrameStore = () => {
   };
 
   const handleFrameFullEdit = (id: number) => {
-    navigate(`./full_edit/${id}`);
+    navigate(`frame-full-edit/${id}`);
   };
   // const handleHistory = (id: number) => {
   //   // console.log(`View History for Frame ID: ${id}`);
@@ -194,13 +204,19 @@ const FrameStore = () => {
   const handleEdit = (id: number) => {
     // console.log(`Edit Frame ID: ${id}`);
     // Add edit logic
-    navigate(`./edit/${id}`);
+    navigate(`frame-price-edit/${id}`);
   };
 
   const handleUpdate = (id: number) => {
     // console.log(`Update Quantity for Frame ID: ${id}`);
     // Add update logic
-    navigate(`./update/${id}`);
+    navigate(`frame-update/${id}`);
+  };
+
+  const handleTransfer = (id: number) => {
+    // console.log(`Update Quantity for Frame ID: ${id}`);
+    // Add update logic
+    navigate(`frame-transfer/${id}`);
   };
 
   return (
@@ -240,4 +256,4 @@ const FrameStore = () => {
   );
 };
 
-export default FrameStore;
+export default InventoryFrameStore;

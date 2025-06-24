@@ -26,3 +26,7 @@ export const REFUND_MAIN_CAT_ID: number = 1 as const;
 //!REFUND CHANNEL
 export const REFUND_CHANNEL_ID: number = 1 as const;
 export const REFUND_ORDER_ID: number = 2 as const;
+
+//!STIRE
+export const MAIN_STORE_ID: string = "5" as const;
+export const LENS_AND_FRAME_STORE_ID: string = "4" as const;

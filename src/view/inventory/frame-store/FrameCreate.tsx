@@ -13,15 +13,15 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import DropdownInput from "../../components/inputui/DropdownInput";
-import useGetBrands from "../../hooks/lense/useGetBrand";
-import useGetCodes from "../../hooks/lense/useGetCode";
-import useGetColors from "../../hooks/lense/useGetColors";
+import DropdownInput from "../../../components/inputui/DropdownInput";
+import useGetBrands from "../../../hooks/lense/useGetBrand";
+import useGetCodes from "../../../hooks/lense/useGetCode";
+import useGetColors from "../../../hooks/lense/useGetColors";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
 
-import { CodeModel } from "../../model/CodeModel";
+import { CodeModel } from "../../../model/CodeModel";
 import {
   frameSizeFull,
   frameSizeHalf,
@@ -29,14 +29,15 @@ import {
   frameSpeciesMetal,
   frameSpeciesMetalPlastic,
   frameSpeciesPlastic,
+  LENS_AND_FRAME_STORE_ID,
   MAIN_STORE_ID,
-} from "../../data/staticVariables";
-import { FrameFormModel, schemaFrame } from "../../validations/schemaFrame";
-import { getUserCurentBranch } from "../../utils/authDataConver";
-import { useAxiosPost } from "../../hooks/useAxiosPost";
-import { extractErrorMessage } from "../../utils/extractErrorMessage";
-import SaveButton from "../../components/SaveButton";
-const AddFrames = () => {
+} from "../../../data/staticVariables";
+import { FrameFormModel, schemaFrame } from "../../../validations/schemaFrame";
+import { getUserCurentBranch } from "../../../utils/authDataConver";
+import { useAxiosPost } from "../../../hooks/useAxiosPost";
+import { extractErrorMessage } from "../../../utils/extractErrorMessage";
+import SaveButton from "../../../components/SaveButton";
+const FrameCreate = () => {
   const { postHandler, postHandlerloading } = useAxiosPost();
   const { brands, brandsLoading } = useGetBrands("frame");
   const { codes, codesLoading } = useGetCodes();
@@ -85,7 +86,7 @@ const AddFrames = () => {
     formData.append("price", frameData.price.toString());
     formData.append("size", frameData.size.toString());
     //store
-    formData.append("store", MAIN_STORE_ID);
+    formData.append("branch", LENS_AND_FRAME_STORE_ID);
     formData.append("species", frameData.species.toString());
     formData.append("brand_type", frameData.brand_type);
     if (frameData.image) {
@@ -358,4 +359,4 @@ const AddFrames = () => {
   );
 };
 
-export default AddFrames;
+export default FrameCreate;

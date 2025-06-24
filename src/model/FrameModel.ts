@@ -27,6 +27,8 @@ interface FrameModel {
   stock: FrameStockModel[]; // Stock details for this frame
   brand_type: TypeBraned;
   brand_type_display: string;
+  image_url: string | null;
+  store: number;
 }
 
 export type { FrameModel, FrameStockModel };

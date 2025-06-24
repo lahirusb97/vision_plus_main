@@ -44,11 +44,14 @@ import CheckInNav from "../checkin/CheckInNav";
 // import LogBookIcon from "../../assets/icons/navbar/logbook.webp";
 import {
   ArrowLeftRight,
+  Blend,
   BookOpenCheck,
   Building2Icon,
   Calculator,
   FileSearch2,
   Frame,
+  FrameIcon,
+  Glasses,
   NotebookIcon,
   PackageOpen,
   ReceiptText,
@@ -63,6 +66,9 @@ import {
   getUserCurentBranch,
 } from "../../utils/authDataConver";
 import { setNavbarState } from "./navstate";
+import FrameStoreNav from "../inventory/frame-store/FrameStoreNav";
+import LensStoreNav from "../inventory/lens-store/LensStoreNav";
+import { LENS_AND_FRAME_STORE_ID } from "../../data/staticVariables";
 
 // Tab panel utility (hidden by default)
 // function TabPanel({
@@ -78,6 +84,8 @@ import { setNavbarState } from "./navstate";
 // }
 
 export default function NavBar() {
+  const curentBranch = getUserCurentBranch();
+
   // Tab configuration
   const tabs = [
     {
@@ -86,6 +94,7 @@ export default function NavBar() {
       path: "",
       icon: <ScanEye />,
       nav: RefractionNav,
+      inventory: false,
     },
     {
       key: "transaction",
@@ -93,6 +102,7 @@ export default function NavBar() {
       path: "transaction/factory_order",
       icon: <ArrowLeftRight />,
       nav: TransactionNav,
+      inventory: false,
     },
     {
       key: "search",
@@ -100,6 +110,7 @@ export default function NavBar() {
       path: "search",
       icon: <FileSearch2 />,
       nav: SearchNav,
+      inventory: false,
     },
     {
       key: "checkin",
@@ -107,6 +118,7 @@ export default function NavBar() {
       path: "checkin",
       icon: <BookOpenCheck />,
       nav: CheckInNav,
+      inventory: false,
     },
     {
       key: "account",
@@ -114,6 +126,7 @@ export default function NavBar() {
       path: "account",
       icon: <Calculator />,
       nav: AccountNav,
+      inventory: false,
     },
     {
       key: "stock",
@@ -121,6 +134,7 @@ export default function NavBar() {
       path: "stock/add_frames",
       icon: <PackageOpen />,
       nav: StockNav,
+      inventory: false,
     },
     {
       key: "channel",
@@ -128,6 +142,7 @@ export default function NavBar() {
       path: "channel",
       icon: <Stethoscope />,
       nav: ChannelNav,
+      inventory: false,
     },
     {
       key: "reports",
@@ -135,6 +150,7 @@ export default function NavBar() {
       path: "reports",
       icon: <ReceiptText />,
       nav: ReportsNav,
+      inventory: false,
     },
     {
       key: "master",
@@ -142,6 +158,7 @@ export default function NavBar() {
       path: "master",
       icon: <Frame />,
       nav: MasterNav,
+      inventory: false,
     },
     {
       key: "user",
@@ -149,6 +166,7 @@ export default function NavBar() {
       path: "user",
       icon: <UserRoundCog />,
       nav: UserNav,
+      inventory: false,
     },
     {
       key: "logs",
@@ -156,6 +174,24 @@ export default function NavBar() {
       path: "logs",
       icon: <NotebookIcon />,
       nav: LogsNav,
+      inventory: false,
+    },
+    //add store routes
+    {
+      key: "inventory-frame",
+      label: "Inventory",
+      path: "inventory-frame",
+      icon: <Blend />,
+      nav: FrameStoreNav,
+      inventory: true,
+    },
+    {
+      key: "inventory-lens",
+      label: "Lens Store",
+      path: "inventory-lens",
+      icon: <Blend />,
+      nav: LensStoreNav,
+      inventory: true,
     },
   ];
 
@@ -209,34 +245,40 @@ export default function NavBar() {
             },
           }}
         >
-          {tabs.map((tab) => (
-            <Tab
-              key={tab.key}
-              value={tab.key}
-              icon={tab.icon}
-              label={
-                <Box
-                  sx={{
-                    display: { xs: "none", sm: "block" },
-                    fontSize: { xs: 10, sm: 12, md: 13 },
-                  }}
-                >
-                  {tab.label}
-                </Box>
-              }
-              sx={{
-                textTransform: "capitalize",
-                p: { xs: 0, sm: 0.5, md: 1 }, // Less padding for compactness
-                minWidth: 60, // Reduce minWidth
-                maxWidth: 100, // Prevent too wide tabs
-                fontSize: { xs: 10, sm: 12, md: 13 },
-                m: 0,
-                lineHeight: 1.2, // Tighten vertical space
-                minHeight: 32, // Less height
-                height: { xs: 32, sm: 36, md: 40 },
-              }}
-            />
-          ))}
+          {tabs
+            .filter(
+              (tab) =>
+                tab.inventory ===
+                (curentBranch?.id === Number(LENS_AND_FRAME_STORE_ID))
+            )
+            .map((tab) => (
+              <Tab
+                key={tab.key}
+                value={tab.key}
+                icon={tab.icon}
+                label={
+                  <Box
+                    sx={{
+                      display: { xs: "none", sm: "block" },
+                      fontSize: { xs: 10, sm: 12, md: 13 },
+                    }}
+                  >
+                    {tab.label}
+                  </Box>
+                }
+                sx={{
+                  textTransform: "capitalize",
+                  p: { xs: 0, sm: 0.5, md: 1 }, // Less padding for compactness
+                  minWidth: 60, // Reduce minWidth
+                  maxWidth: 100, // Prevent too wide tabs
+                  fontSize: { xs: 10, sm: 12, md: 13 },
+                  m: 0,
+                  lineHeight: 1.2, // Tighten vertical space
+                  minHeight: 32, // Less height
+                  height: { xs: 32, sm: 36, md: 40 },
+                }}
+              />
+            ))}
           <Button onClick={deleteCookie}>
             <LogoutOutlined />
           </Button>

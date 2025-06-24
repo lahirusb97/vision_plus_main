@@ -6,6 +6,7 @@ import { useLocation, useNavigate } from "react-router";
 import theme from "../../theme/theme";
 import { setNavbarState } from "./navstate";
 import { BuildTwoTone } from "@mui/icons-material";
+import { getUserCurentBranch } from "../../utils/authDataConver";
 
 export default function SideNavBar() {
   //get curent pahth
@@ -53,6 +54,8 @@ export default function SideNavBar() {
     const match = segments.includes(itemPath); // true
     return match; // true
   };
+  const curentBranch = getUserCurentBranch();
+  console.log(curentBranch);
   return (
     <Box sx={{ height: "100vh", width: "70px" }}>
       {navBarArray.map((item, idx) => (

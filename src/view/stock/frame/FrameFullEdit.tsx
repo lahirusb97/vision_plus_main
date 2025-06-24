@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import {
   FormControl,
   FormControlLabel,
+  FormHelperText,
+  Input,
   InputLabel,
   MenuItem,
   Paper,
@@ -41,6 +43,7 @@ import ImportantNotice from "../../../components/common/ImportantNotice";
 import { useAxiosPut } from "../../../hooks/useAxiosPut";
 import SubmitCustomBtn from "../../../components/common/SubmiteCustomBtn";
 import { useNavigate } from "react-router";
+import ImageViewModel from "../../../components/common/ImageViewModel";
 const FrameFullEdit = () => {
   const navigate = useNavigate();
   const { frame_id } = useParams();
@@ -50,7 +53,7 @@ const FrameFullEdit = () => {
   const { brands, brandsLoading } = useGetBrands("frame");
   const { codes, codesLoading } = useGetCodes();
   const { colors, colorsLoading } = useGetColors();
-
+  console.log("singleFrame", singleFrame);
   const {
     register,
     handleSubmit,
@@ -68,6 +71,7 @@ const FrameFullEdit = () => {
       size: undefined,
       species: undefined,
       qty: undefined,
+      image: undefined,
       limit: undefined,
       branch_id: getUserCurentBranch()?.id,
       brand_type: "non_branded",
@@ -85,27 +89,51 @@ const FrameFullEdit = () => {
 
   // Submit handler
   const submitData = async (frameData: FrameFormModel) => {
-    const postData = {
-      brand: frameData.brand,
-      code: frameData.code,
-      color: frameData.color,
-      price: frameData.price,
-      size: frameData.size,
-      species: frameData.species,
-      brand_type: frameData.brand_type,
+    const formData = new FormData();
+    // const postData = {
+    //   brand: frameData.brand,
+    //   code: frameData.code,
+    //   color: frameData.color,
+    //   price: frameData.price,
+    //   size: frameData.size,
+    //   species: frameData.species,
+    //   brand_type: frameData.brand_type,
 
-      stock: [
+    //   stock: [
+    //     {
+    //       initial_count: frameData.qty,
+    //       qty: frameData.qty,
+    //       branch_id: frameData.branch_id,
+    //       limit: frameData.limit,
+    //     },
+    //   ],
+    // };
+    formData.append("brand", frameData.brand.toString());
+    formData.append("code", frameData.code.toString());
+    formData.append("color", frameData.color.toString());
+    formData.append("price", frameData.price.toString());
+    formData.append("size", frameData.size.toString());
+    //store
+
+    formData.append("species", frameData.species.toString());
+    formData.append("brand_type", frameData.brand_type);
+    if (frameData.image) {
+      formData.append("image", frameData.image);
+    }
+    //add stock
+    formData.append(
+      "stock",
+      JSON.stringify([
         {
           initial_count: frameData.qty,
           qty: frameData.qty,
           branch_id: frameData.branch_id,
           limit: frameData.limit,
         },
-      ],
-    };
-
+      ])
+    );
     try {
-      await putHandler(`frames/${frame_id}/`, postData);
+      await putHandler(`frames/${frame_id}/`, formData);
 
       toast.success("Frame Updated successfully");
       navigate(-1);
@@ -139,7 +167,7 @@ const FrameFullEdit = () => {
   if (singleFrameLoading) {
     return <LoadingAnimation loadingMsg="Loading Frame Data" />;
   }
-
+  console.log("singleFrame", singleFrame);
   return (
     <div>
       <Paper
@@ -367,7 +395,37 @@ const FrameFullEdit = () => {
             helperText={errors.branch_id?.message}
             defaultValue={getUserCurentBranch()?.id}
           />
+          <ImageViewModel image={singleFrame?.image_url} />
 
+          <Controller
+            name="image"
+            control={control}
+            render={({ field: { onChange, value }, fieldState: { error } }) => (
+              <FormControl
+                fullWidth
+                error={!!error}
+                variant="outlined"
+                margin="normal"
+              >
+                <InputLabel shrink htmlFor="image-upload">
+                  Frame Image
+                </InputLabel>
+                <Input
+                  id="image-upload"
+                  type="file"
+                  inputProps={{ accept: "image/*" }} // Still valid on the <Input />, just not TextField
+                  onChange={(e) => {
+                    const input = e.target as HTMLInputElement;
+                    const file = input.files?.[0] || null;
+                    onChange(file);
+                  }}
+                />
+                <FormHelperText>
+                  {error ? error.message : "Accepted formats: jpg, png, webp."}
+                </FormHelperText>
+              </FormControl>
+            )}
+          />
           <SubmitCustomBtn
             btnText="Save"
             loading={putHandlerloading}

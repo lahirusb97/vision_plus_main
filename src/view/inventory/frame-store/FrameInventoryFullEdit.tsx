@@ -13,15 +13,14 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import DropdownInput from "../../components/inputui/DropdownInput";
-import useGetBrands from "../../hooks/lense/useGetBrand";
-import useGetCodes from "../../hooks/lense/useGetCode";
-import useGetColors from "../../hooks/lense/useGetColors";
+import DropdownInput from "../../../components/inputui/DropdownInput";
+import useGetBrands from "../../../hooks/lense/useGetBrand";
+import useGetColors from "../../../hooks/lense/useGetColors";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
 
-import { CodeModel } from "../../model/CodeModel";
+import { CodeModel } from "../../../model/CodeModel";
 import {
   frameSizeFull,
   frameSizeHalf,
@@ -29,19 +28,32 @@ import {
   frameSpeciesMetal,
   frameSpeciesMetalPlastic,
   frameSpeciesPlastic,
-  MAIN_STORE_ID,
-} from "../../data/staticVariables";
-import { FrameFormModel, schemaFrame } from "../../validations/schemaFrame";
-import { getUserCurentBranch } from "../../utils/authDataConver";
-import { useAxiosPost } from "../../hooks/useAxiosPost";
-import { extractErrorMessage } from "../../utils/extractErrorMessage";
-import SaveButton from "../../components/SaveButton";
-const AddFrames = () => {
-  const { postHandler, postHandlerloading } = useAxiosPost();
+} from "../../../data/staticVariables";
+import { FrameFormModel, schemaFrame } from "../../../validations/schemaFrame";
+import { getUserCurentBranch } from "../../../utils/authDataConver";
+import { extractErrorMessage } from "../../../utils/extractErrorMessage";
+import useGetCodes from "../../../hooks/lense/useGetCode";
+import TitleText from "../../../components/TitleText";
+import useGetSingleFrame from "../../../hooks/lense/useGetSingleFrame";
+import DataLoadingError from "../../../components/common/DataLoadingError";
+import LoadingAnimation from "../../../components/LoadingAnimation";
+import { useParams } from "react-router";
+import stringToIntConver from "../../../utils/stringToIntConver";
+import ImportantNotice from "../../../components/common/ImportantNotice";
+import { useAxiosPut } from "../../../hooks/useAxiosPut";
+import SubmitCustomBtn from "../../../components/common/SubmiteCustomBtn";
+import { useNavigate } from "react-router";
+import ImageViewModel from "../../../components/common/ImageViewModel";
+const FrameInventoryFullEdit = () => {
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const { singleFrame, singleFrameError, singleFrameLoading } =
+    useGetSingleFrame(id);
+  const { putHandler, putHandlerloading } = useAxiosPut();
   const { brands, brandsLoading } = useGetBrands("frame");
   const { codes, codesLoading } = useGetCodes();
   const { colors, colorsLoading } = useGetColors();
-
+  console.log("singleFrame", singleFrame);
   const {
     register,
     handleSubmit,
@@ -58,15 +70,15 @@ const AddFrames = () => {
       price: undefined,
       size: undefined,
       species: undefined,
-      image: undefined,
       qty: undefined,
+      image: undefined,
       limit: undefined,
       branch_id: getUserCurentBranch()?.id,
       brand_type: "non_branded",
     },
   });
   const [avilableCodes, setAvilableCodes] = useState<CodeModel[]>([]);
-  console.log(watch("image"));
+  console.log("form species after reset", watch("species"));
   useEffect(() => {
     if (watch("brand")) {
       setAvilableCodes(codes.filter((item) => item.brand === watch("brand")));
@@ -78,14 +90,31 @@ const AddFrames = () => {
   // Submit handler
   const submitData = async (frameData: FrameFormModel) => {
     const formData = new FormData();
-    // Add frame fields
+    // const postData = {
+    //   brand: frameData.brand,
+    //   code: frameData.code,
+    //   color: frameData.color,
+    //   price: frameData.price,
+    //   size: frameData.size,
+    //   species: frameData.species,
+    //   brand_type: frameData.brand_type,
+
+    //   stock: [
+    //     {
+    //       initial_count: frameData.qty,
+    //       qty: frameData.qty,
+    //       branch_id: frameData.branch_id,
+    //       limit: frameData.limit,
+    //     },
+    //   ],
+    // };
     formData.append("brand", frameData.brand.toString());
     formData.append("code", frameData.code.toString());
     formData.append("color", frameData.color.toString());
     formData.append("price", frameData.price.toString());
     formData.append("size", frameData.size.toString());
     //store
-    formData.append("store", MAIN_STORE_ID);
+
     formData.append("species", frameData.species.toString());
     formData.append("brand_type", frameData.brand_type);
     if (frameData.image) {
@@ -103,16 +132,42 @@ const AddFrames = () => {
         },
       ])
     );
-
     try {
-      await postHandler("frames/", formData);
-      toast.success("Frame added successfully");
-      reset();
+      await putHandler(`frames/${id}/`, formData);
+
+      toast.success("Frame Updated successfully");
+      navigate(-1);
     } catch (error) {
       extractErrorMessage(error);
     }
   };
 
+  useEffect(() => {
+    if (singleFrame) {
+      reset({
+        brand: singleFrame.brand,
+        code: singleFrame.code,
+        color: singleFrame.color,
+        price: stringToIntConver(singleFrame.price),
+        size: singleFrame.size,
+        species: singleFrame.species,
+        qty: singleFrame.stock[0]?.qty || 0,
+        limit: singleFrame.stock[0]?.limit || 0,
+        branch_id: singleFrame.stock[0]?.branch_id,
+        brand_type: singleFrame.brand_type,
+      });
+    }
+
+    console.log("singleFrame", singleFrame);
+  }, [singleFrame]);
+
+  if (singleFrameError) {
+    return <DataLoadingError />;
+  }
+  if (singleFrameLoading) {
+    return <LoadingAnimation loadingMsg="Loading Frame Data" />;
+  }
+  console.log("singleFrame", singleFrame);
   return (
     <div>
       <Paper
@@ -123,16 +178,15 @@ const AddFrames = () => {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          gap: 2,
         }}
       >
-        <Typography
-          sx={{ marginBottom: 1, fontWeight: "bold" }}
-          variant="h4"
-          gutterBottom
-        >
-          Frame Create
-        </Typography>
+        <TitleText title="Frame Full Edit" />
+
+        <ImportantNotice
+          notice="Please note: modifying any of the fields below will update historical invoices and patient records. Proceed with caution."
+          notice2="If you want only quantity or price changes use Update Stock or Update Price buttons"
+          dismissible={false}
+        />
         <form
           style={{
             display: "flex",
@@ -160,7 +214,9 @@ const AddFrames = () => {
           {errors.brand && (
             <Typography color="error">{errors.brand.message}</Typography>
           )}
+
           {/* Code Dropdown */}
+
           <Controller
             name="code"
             control={control}
@@ -171,7 +227,9 @@ const AddFrames = () => {
                 onChange={(selectedId) => field.onChange(selectedId)}
                 loading={codesLoading}
                 labelName="Select Code"
-                defaultId={watch("code") ? watch("code") : null}
+                defaultId={
+                  watch("brand") && watch("code") ? watch("code") : null
+                }
               />
             )}
           />
@@ -179,6 +237,7 @@ const AddFrames = () => {
           {errors.code && (
             <Typography color="error">{errors.code.message}</Typography>
           )}
+
           <Controller
             name="color"
             control={control}
@@ -196,6 +255,7 @@ const AddFrames = () => {
           {errors.color && (
             <Typography color="error">{errors.color.message}</Typography>
           )}
+
           {/* Species Dropdown */}
           <Controller
             name="size"
@@ -221,6 +281,7 @@ const AddFrames = () => {
           {errors.size && (
             <Typography color="error">{errors.size.message}</Typography>
           )}
+
           {/* Species Dropdown */}
           <Controller
             name="species"
@@ -231,10 +292,12 @@ const AddFrames = () => {
                 <Select
                   size="small"
                   {...field}
+                  key={field.value}
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
                   label="species"
-                  value={field.value || ""}
+                  value={field.value}
+                  onChange={(e) => field.onChange(e.target.value)}
                 >
                   <MenuItem value={frameSpeciesMetal}>Metal</MenuItem>
                   <MenuItem value={frameSpeciesPlastic}>Plastic</MenuItem>
@@ -258,6 +321,12 @@ const AddFrames = () => {
             error={!!errors.price}
             helperText={errors.price?.message}
             {...register("price", { valueAsNumber: true })}
+            inputProps={{
+              min: 0,
+            }}
+            InputLabelProps={{
+              shrink: true,
+            }}
           />
           {/* Quantity Field */}
           <TextField
@@ -272,6 +341,9 @@ const AddFrames = () => {
             variant="outlined"
             error={!!errors.qty}
             helperText={errors.qty?.message}
+            InputLabelProps={{
+              shrink: true,
+            }}
           />
           <TextField
             size="small"
@@ -285,6 +357,9 @@ const AddFrames = () => {
             variant="outlined"
             error={!!errors.limit}
             helperText={errors.limit?.message}
+            InputLabelProps={{
+              shrink: true,
+            }}
           />
           <Controller
             name="brand_type"
@@ -305,6 +380,22 @@ const AddFrames = () => {
               </RadioGroup>
             )}
           />
+          <TextField
+            size="small"
+            sx={{ display: "none" }}
+            inputProps={{
+              min: 0,
+            }}
+            {...register("branch_id", { valueAsNumber: true })}
+            label="Branch Id"
+            type="number"
+            fullWidth
+            variant="outlined"
+            error={!!errors.branch_id}
+            helperText={errors.branch_id?.message}
+            defaultValue={getUserCurentBranch()?.id}
+          />
+          <ImageViewModel image={singleFrame?.image_url} />
 
           <Controller
             name="image"
@@ -335,27 +426,15 @@ const AddFrames = () => {
               </FormControl>
             )}
           />
-          <TextField
-            size="small"
-            sx={{ display: "none" }}
-            inputProps={{
-              min: 0,
-            }}
-            {...register("branch_id", { valueAsNumber: true })}
-            label="Branch Id"
-            type="number"
-            fullWidth
-            variant="outlined"
-            error={!!errors.branch_id}
-            helperText={errors.branch_id?.message}
-            defaultValue={getUserCurentBranch()?.id}
+          <SubmitCustomBtn
+            btnText="Save"
+            loading={putHandlerloading}
+            isError={singleFrameError}
           />
-          {/* Submit Button */}
-          <SaveButton btnText="Save" loading={postHandlerloading} />
         </form>
       </Paper>
     </div>
   );
 };
 
-export default AddFrames;
+export default FrameInventoryFullEdit;

@@ -59,32 +59,13 @@ export default function ExternalLensCreate() {
   };
 
   return (
-    <Box display={"flex"} gap={2}>
-      <Paper sx={{ minWidth: 400, p: 1 }}>
-        <TitleText title="External Lens Variations Create" />
-        <AddVariationComp
-          loading={externalFactorysLoading}
-          textName="External Lens Factorys"
-          Urlpath="lense_factory"
-          dataList={externalFactorys}
-          // pathroute={"external-lens-brands"}
-          // refresh={externalFactorysRefresh}
-        />
-        <AddVariationComp
-          loading={externalCoatingsLoading}
-          textName="External Lens Coatings"
-          Urlpath="lense_coating"
-          dataList={externalCoatings}
-          // pathroute={"external-lens-coatings"}
-          // refresh={externalCoatingsRefresh}
-        />
-      </Paper>
+    <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
       <Paper
         sx={{
           display: "flex",
           flexDirection: "column",
           gap: 1,
-          minWidth: 400,
+          minWidth: 800,
           p: 1,
         }}
         component={"form"}
@@ -169,6 +150,25 @@ export default function ExternalLensCreate() {
             isError={postHandlerError}
           />
         </FormControl>
+      </Paper>
+      <Paper sx={{ p: 1 }}>
+        <TitleText title="External Lens Variations Create" />
+        <AddVariationComp
+          loading={externalFactorysLoading}
+          textName="External Lens Factorys"
+          Urlpath="lense_factory"
+          dataList={externalFactorys}
+          // pathroute={"external-lens-brands"}
+          // refresh={externalFactorysRefresh}
+        />
+        <AddVariationComp
+          loading={externalCoatingsLoading}
+          textName="External Lens Coatings"
+          Urlpath="lense_coating"
+          dataList={externalCoatings}
+          // pathroute={"external-lens-coatings"}
+          // refresh={externalCoatingsRefresh}
+        />
       </Paper>
     </Box>
   );

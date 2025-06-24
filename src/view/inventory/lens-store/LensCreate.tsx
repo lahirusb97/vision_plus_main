@@ -9,10 +9,10 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import DropdownInput from "../../components/inputui/DropdownInput"; // Import your reusable dropdown component
-import useGetLenseTypes from "../../hooks/lense/useGetLenseType";
-import useGetCoatings from "../../hooks/lense/useGetCoatings";
-import useGetBrands from "../../hooks/lense/useGetBrand";
+import DropdownInput from "../../../components/inputui/DropdownInput"; // Import your reusable dropdown component
+import useGetLenseTypes from "../../../hooks/lense/useGetLenseType";
+import useGetCoatings from "../../../hooks/lense/useGetCoatings";
+import useGetBrands from "../../../hooks/lense/useGetBrand";
 import { useForm, Controller } from "react-hook-form";
 import toast from "react-hot-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,19 +20,20 @@ import {
   addID,
   bifocalID,
   cylID,
+  LENS_AND_FRAME_STORE_ID,
   MAIN_STORE_ID,
   progresiveID,
   singleVisionID,
   sphID,
-} from "../../data/staticVariables";
-import { LenseFormModel, schemaLens } from "../../validations/schemaLens";
-import { getUserCurentBranch } from "../../utils/authDataConver";
-import { useAxiosPost } from "../../hooks/useAxiosPost";
-import { extractErrorMessage } from "../../utils/extractErrorMessage";
-import SaveButton from "../../components/SaveButton";
-import { TypeLensSide } from "../../model/StaticTypeModels";
+} from "../../../data/staticVariables";
+import { LenseFormModel, schemaLens } from "../../../validations/schemaLens";
+import { getUserCurentBranch } from "../../../utils/authDataConver";
+import { useAxiosPost } from "../../../hooks/useAxiosPost";
+import { extractErrorMessage } from "../../../utils/extractErrorMessage";
+import SaveButton from "../../../components/SaveButton";
+import { TypeLensSide } from "../../../model/StaticTypeModels";
 
-const AddLens = () => {
+const LensCreate = () => {
   const { lenseTypes, lenseTypesLoading } = useGetLenseTypes();
   const leftToastRef = useRef<string | null>(null);
   const rightToastRef = useRef<string | null>(null);
@@ -122,7 +123,7 @@ const AddLens = () => {
           coating: coating,
           price: price,
           brand: brand,
-          store: MAIN_STORE_ID,
+          store: LENS_AND_FRAME_STORE_ID,
         },
         stock: [
           { initial_count: qty, qty: qty, branch_id: branch_id, limit: limit },
@@ -373,4 +374,4 @@ const AddLens = () => {
   );
 };
 
-export default AddLens;
+export default LensCreate;

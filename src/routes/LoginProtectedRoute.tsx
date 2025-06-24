@@ -11,7 +11,7 @@ const LoginProtectedRoute: React.FC = () => {
   const user = getUserAuth();
   const location = useLocation();
   const curentBranch = getUserCurentBranch();
-
+  // console.log(curentBranch);
   const skipSegments = ["edit", "update", "full_edit"];
 
   return user && curentBranch ? (

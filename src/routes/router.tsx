@@ -19,6 +19,8 @@ import RegisterUser from "../view/auth/RegisterUser";
 import { searchRoutes } from "./routelist/search.route";
 import { logsRoutes } from "./routelist/logs.route";
 import { masterRoutes } from "./routelist/master.route";
+import { frameAndLensStoreRoutes } from "./routelist/frame-and-lens-store.route";
+import { LensStoreRoutes } from "./routelist/lens-store.route";
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -87,6 +89,16 @@ export const router = createBrowserRouter([
         path: "logs",
         element: <ProtectedChildRoute />,
         children: logsRoutes,
+      },
+      {
+        path: "inventory-frame",
+        element: <ProtectedChildRoute />,
+        children: frameAndLensStoreRoutes,
+      },
+      {
+        path: "inventory-lens",
+        element: <ProtectedChildRoute />,
+        children: LensStoreRoutes,
       },
     ],
   },

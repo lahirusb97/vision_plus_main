@@ -26,11 +26,14 @@ export const schemaFrame = z.object({
     Plastic: frameSpeciesPlastic,
     "Metal/Plastic": frameSpeciesMetalPlastic,
   }),
+  image: z.instanceof(File).optional(),
   qty: z.number({ invalid_type_error: "Quantity is required" }),
   initial_count: z
     .number({ invalid_type_error: "Quantity is required" })
     .optional(),
-  limit: z.number({ invalid_type_error: "Quantity is required" }).optional(),
+  limit: z
+    .number({ invalid_type_error: "Quantity Limit is required" })
+    .optional(),
   brand_type: z.enum(["non_branded", "branded"]),
   branch_id: z.number({ invalid_type_error: "Quantity is required" }),
 });
