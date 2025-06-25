@@ -163,7 +163,7 @@ const FrameInventoryTransfer = () => {
                 </Typography>
                 <StockCountDisplay
                   currentQty={singleFrame?.stock[0]?.qty || 0}
-                  changeQty={watch("qty") || 0}
+                  changeQty={watch("qty") ? -Math.abs(watch("qty")) : 0}
                 />
                 <TextField
                   fullWidth
@@ -174,6 +174,14 @@ const FrameInventoryTransfer = () => {
                     setValueAs: (value) =>
                       value === "" ? undefined : Number(value),
                   })}
+                  slotProps={{
+                    input: {
+                      inputProps: {
+                        min: 1,
+                        max: singleFrame?.stock[0]?.qty || 1,
+                      },
+                    },
+                  }}
                   error={!!errors.qty}
                   helperText={errors.qty?.message}
                   sx={{ marginBottom: 2 }}

@@ -7,12 +7,12 @@ export default function FrameStoreNav() {
       <NavButton name="Frame Store" path="/inventory-frame/frame-store" />
       <NavButton
         name="Frame Stock Updates"
-        path="/inventory-frame/frame-stock-updates"
+        path="/inventory-frame/frame-stock-update"
       />
       <NavButton name="Frame Report" path="/inventory-frame/frame-report" />
       <NavButton
         name="Variation Create"
-        path="/inventory-frame/variation-create"
+        path="/inventory-frame/add_variation"
       />
     </>
   );
