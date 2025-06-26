@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import axiosClient from "../../axiosClient";
-import { FrameModel } from "../../model/FrameModel";
+import { FrameModel, SizeType, SpeciesType } from "../../model/FrameModel";
 import { getUserCurentBranch } from "../../utils/authDataConver";
 import { extractErrorMessage } from "../../utils/extractErrorMessage";
 import { paramsNullCleaner } from "../../utils/paramsNullCleaner";
@@ -11,6 +11,11 @@ export interface FilteredFrameGroup {
   brand_id: number;
   code: string;
   code_id: number;
+  color_name: string;
+  size: SizeType;
+  species: SpeciesType;
+  price: number;
+  total_qty: number;
   frames: FrameModel[];
 }
 interface UseGetFrameReturn {

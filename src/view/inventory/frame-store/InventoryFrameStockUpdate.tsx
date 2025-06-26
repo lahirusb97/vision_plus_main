@@ -1,184 +1,39 @@
 import { useMemo } from "react";
-import { MaterialReactTable } from "material-react-table";
-import { Box, IconButton, Tooltip, Typography } from "@mui/material";
+import {
+  MaterialReactTable,
+  useMaterialReactTable,
+  type MRT_ColumnDef,
+  type MRT_Row,
+} from "material-react-table";
+import {
+  Box,
+  IconButton,
+  Tooltip,
+  Typography,
+  Stack,
+  Divider,
+} from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-// import HistoryIcon from "@mui/icons-material/History";
 import LoopIcon from "@mui/icons-material/Loop";
-import { useNavigate } from "react-router";
-import { useDeleteDialog } from "../../../context/DeleteDialogContext";
-import { FrameModel } from "../../../model/FrameModel";
-import TitleText from "../../../components/TitleText";
+import { AddBox, DeleteOutline, Edit, PriceChange } from "@mui/icons-material";
+import { Delete, Truck } from "lucide-react";
 import { numberWithCommas } from "../../../utils/numberWithCommas";
-import { Edit, PriceChange } from "@mui/icons-material";
-import { Truck } from "lucide-react";
-import useGetFramesFilter from "../../../hooks/lense/useGetFramesFilter";
+import AddIcon from "@mui/icons-material/Add";
+import { Minus } from "lucide-react";
+import useGetFramesFilter, {
+  FilteredFrameGroup,
+} from "../../../hooks/lense/useGetFramesFilter";
+import { FrameModel } from "../../../model/FrameModel";
+import { useDeleteDialog } from "../../../context/DeleteDialogContext";
 
-const InventoryFrameStockUpdate = () => {
-  const { frames, framesLoading, refresh } = useGetFramesFilter();
+const DetailPanel = ({
+  row,
+  refresh,
+}: {
+  row: FrameModel[];
+  refresh: () => void;
+}) => {
   const { openDialog } = useDeleteDialog();
-
-  // Define columns
-  const columns = useMemo(
-    () => [
-      {
-        header: "Action",
-        id: "action",
-        size: 100,
-        muiTableHeadCellProps: { align: "center" as const },
-        muiTableBodyCellProps: { align: "center" as const },
-        Cell: ({ row }: { row: { original: FrameModel } }) => (
-          <Box sx={{ display: "flex", gap: 1 }}>
-            <Tooltip title="Deactivate Frame">
-              <IconButton
-                size="small"
-                color="error"
-                onClick={() => handleDelete(row.original)}
-              >
-                <DeleteIcon sx={{ fontSize: "1.4rem" }} />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Frame Full Edit">
-              <IconButton
-                size="small"
-                onClick={() => handleFrameFullEdit(row.original.id)}
-              >
-                <Edit sx={{ fontSize: "1.4rem" }} />
-              </IconButton>
-            </Tooltip>
-            {/* <IconButton
-              size="small"
-              color="info"
-              title="History"
-              onClick={() => handleHistory(row.original.id)}
-            >
-              <HistoryIcon sx={{ fontSize: "1.4rem" }} />
-            </IconButton> */}
-            <Tooltip title="Update Price">
-              <IconButton
-                size="small"
-                onClick={() => handleEdit(row.original.id)}
-              >
-                <PriceChange sx={{ fontSize: "1.4rem" }} />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Update Quantity">
-              <IconButton
-                size="small"
-                color="warning"
-                onClick={() => handleUpdate(row.original.id)}
-              >
-                <LoopIcon sx={{ fontSize: "1.4rem" }} />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Transfer Quantity">
-              <IconButton
-                size="small"
-                color="info"
-                onClick={() => handleTransfer(row.original.id)}
-              >
-                <Truck style={{ width: "1.2rem" }} />
-              </IconButton>
-            </Tooltip>
-          </Box>
-        ),
-      },
-      {
-        header: "Brand",
-        accessorKey: "brand_name",
-        muiTableHeadCellProps: { align: "center" as const },
-        muiTableBodyCellProps: { align: "center" as const },
-        size: 130,
-      },
-      {
-        header: "Code",
-        accessorKey: "code_name",
-        muiTableHeadCellProps: { align: "center" as const },
-        muiTableBodyCellProps: { align: "center" as const },
-        size: 130,
-      },
-      {
-        header: "Color",
-        accessorKey: "color_name",
-        muiTableHeadCellProps: { align: "center" as const },
-        muiTableBodyCellProps: { align: "center" as const },
-        size: 130,
-      },
-      {
-        header: "Species",
-        accessorKey: "species",
-        muiTableHeadCellProps: { align: "center" as const },
-        muiTableBodyCellProps: { align: "center" as const },
-        size: 50,
-      },
-      {
-        header: "Branded",
-        accessorKey: "brand_type_display",
-        muiTableHeadCellProps: { align: "center" as const },
-        muiTableBodyCellProps: { align: "center" as const },
-        size: 60,
-      },
-      {
-        header: "Price",
-        accessorKey: "price",
-        muiTableHeadCellProps: { align: "right" as const },
-        muiTableBodyCellProps: { align: "right" as const },
-        size: 80,
-        Cell: ({ row }: { row: { original: FrameModel } }) => (
-          <Typography align="right" variant="body2">
-            {numberWithCommas(row.original.price)}
-          </Typography>
-        ),
-      },
-      {
-        header: "Quantity",
-        accessorFn: (row: FrameModel) => row.stock?.[0]?.qty ?? 0,
-        size: 50,
-        muiTableHeadCellProps: { align: "center" as const },
-        muiTableBodyCellProps: { align: "center" as const },
-        Cell: ({ row }: { row: { original: FrameModel } }) => (
-          <Typography variant="body2">
-            {row.original.stock?.[0]?.qty ?? 0}
-          </Typography>
-        ),
-      },
-      {
-        header: "Alert Limit",
-        muiTableHeadCellProps: { align: "center" as const },
-        muiTableBodyCellProps: { align: "center" as const },
-        accessorFn: (row: FrameModel) => row.stock?.[0]?.limit ?? 0,
-        size: 50,
-      },
-      {
-        header: "Low Stocks",
-        accessorFn: (row: FrameModel) => {
-          const qty = row.stock?.[0]?.qty ?? 0;
-          const limit = row.stock?.[0]?.limit ?? 0;
-          return qty <= limit;
-        },
-        enableSorting: true, // explicitly enable sorting
-        size: 50,
-        muiTableHeadCellProps: { align: "center" as const },
-        muiTableBodyCellProps: { align: "center" as const },
-        Cell: ({ row }: { row: { original: FrameModel } }) => {
-          const qty = row.original.stock?.[0]?.qty ?? 0;
-          const limit = row.original.stock?.[0]?.limit ?? 0;
-          return (
-            <Typography
-              variant="body2"
-              sx={{
-                color: qty <= limit ? "error.main" : "success.main",
-              }}
-            >
-              {qty <= limit ? "Low Stock" : "OK"}
-            </Typography>
-          );
-        },
-      },
-    ],
-    [frames]
-  );
-  const navigate = useNavigate();
-  // Handlers for actions
   const handleDelete = async (row: FrameModel) => {
     openDialog(
       `/frames/${row.id}/`,
@@ -188,69 +43,274 @@ const InventoryFrameStockUpdate = () => {
       refresh
     );
   };
-
-  const handleFrameFullEdit = (id: number) => {
-    navigate(`frame-full-edit/${id}`);
-  };
-  // const handleHistory = (id: number) => {
-  //   // console.log(`View History for Frame ID: ${id}`);
-  //   // Add history logic
-  //   navigate(`./history/${id}`);
-  // };
-
-  const handleEdit = (id: number) => {
-    // console.log(`Edit Frame ID: ${id}`);
-    // Add edit logic
-    navigate(`frame-price-edit/${id}`);
-  };
-
-  const handleUpdate = (id: number) => {
-    // console.log(`Update Quantity for Frame ID: ${id}`);
-    // Add update logic
-    navigate(`frame-update/${id}`);
-  };
-
-  const handleTransfer = (id: number) => {
-    // console.log(`Update Quantity for Frame ID: ${id}`);
-    // Add update logic
-    navigate(`frame-transfer/${id}`);
-  };
+  if (!row || row.length === 0) {
+    return (
+      <Box p={2}>
+        <Typography variant="body2" color="text.secondary">
+          No frames available
+        </Typography>
+      </Box>
+    );
+  }
 
   return (
-    <Box sx={{ padding: 4, maxWidth: "1200px" }}>
-      <TitleText title="  Frame Store" />
+    <Box p={2}>
+      {/* Table Header */}
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: "80px repeat(6, 1fr) 200px 120px",
+          fontWeight: 600,
+          px: 2,
+          py: 1,
+          borderBottom: "2px solid #ccc",
+          bgcolor: "#f9f9f9",
+        }}
+      >
+        <Typography variant="caption" align="center">
+          Actions
+        </Typography>
+        <Typography variant="caption">Image</Typography>
+        <Typography variant="caption">Color</Typography>
+        <Typography variant="caption">Code</Typography>
+        <Typography variant="caption">Brand</Typography>
+        <Typography variant="caption">Species</Typography>
+        <Typography variant="caption">Size</Typography>
+        <Typography variant="caption">Price</Typography>
+        <Typography variant="caption">Stock / Branch</Typography>
+      </Box>
 
-      <MaterialReactTable
-        enableColumnFilters // 👈 enables filters
-        enableFilters // 👈 required for custom filter functions
-        columns={columns}
-        data={[]}
-        enableColumnActions={false}
-        state={{ isLoading: framesLoading, showSkeletons: framesLoading }}
-        muiTableBodyRowProps={{
-          sx: { "&:hover": { backgroundColor: "#f5f5fa" } },
-        }}
-        initialState={{
-          sorting: [{ id: "Low Stocks", desc: true }],
-          density: "compact",
-          pagination: { pageIndex: 0, pageSize: 15 },
-        }}
-        enableSorting
-        enablePagination
-        muiTableProps={{
-          sx: {
-            borderRadius: 2,
-            overflow: "hidden",
-          },
-        }}
-        muiTableBodyCellProps={{
-          sx: {
-            padding: 0,
-          },
-        }}
-      />
+      {/* Table Body */}
+      {row.map((frame) => (
+        <Box
+          key={frame.id}
+          sx={{
+            display: "grid",
+            gridTemplateColumns: "90px repeat(6, 1fr) 200px 120px",
+            alignItems: "center",
+            px: 2,
+            py: 1.5,
+            borderBottom: "1px solid #eee",
+          }}
+        >
+          {/* Actions */}
+          <Box display="flex " flexWrap="wrap" gap={1} justifyContent="center">
+            <Tooltip title="Edit">
+              <IconButton size="small">
+                <Edit fontSize="small" />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Delete">
+              <IconButton
+                onClick={() => handleDelete(frame)}
+                size="small"
+                color="error"
+              >
+                <DeleteOutline fontSize="small" />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Adjust Stock">
+              <IconButton size="small">
+                <PriceChange fontSize="small" />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Transfer">
+              <IconButton size="small">
+                <Truck size={16} />
+              </IconButton>
+            </Tooltip>
+          </Box>
+          {/* Image */}
+          {frame.image_url ? (
+            <Box
+              component="img"
+              src={frame.image_url}
+              alt="Frame Image"
+              sx={{
+                width: 56,
+                height: 56,
+                borderRadius: 1,
+                objectFit: "cover",
+              }}
+            />
+          ) : (
+            <Box
+              sx={{
+                width: 56,
+                height: 56,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                bgcolor: "#f0f0f0",
+                borderRadius: 1,
+              }}
+            >
+              <Typography variant="caption" color="text.secondary">
+                No Image
+              </Typography>
+            </Box>
+          )}
+
+          {/* Info Columns */}
+          <Typography variant="body2">{frame.color_name}</Typography>
+          <Typography variant="body2">{frame.code_name}</Typography>
+          <Typography variant="body2">
+            {frame.brand_name} ({frame.brand_type_display})
+          </Typography>
+          <Typography variant="body2">{frame.species}</Typography>
+          <Typography variant="body2">{frame.size}</Typography>
+          <Typography variant="body2">
+            {frame.price ? `${numberWithCommas(parseFloat(frame.price))}` : "0"}
+          </Typography>
+
+          {/* Stock / Branch */}
+          <Box>
+            {frame.stock?.length > 0 ? (
+              <Stack spacing={0.5}>
+                {frame.stock.map((s) => (
+                  <Box
+                    key={s.id}
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      border: "1px solid #eee",
+                      borderRadius: 1,
+                      px: 1,
+                      py: 0.25,
+                      bgcolor: "#fefefe",
+                    }}
+                  >
+                    <Typography variant="caption">{s.branch_name}</Typography>
+                    <Typography variant="caption" fontWeight={500}>
+                      {s.qty} pcs
+                    </Typography>
+                  </Box>
+                ))}
+              </Stack>
+            ) : (
+              <Typography variant="caption" color="text.secondary">
+                No stock
+              </Typography>
+            )}
+          </Box>
+        </Box>
+      ))}
+    </Box>
+  );
+};
+// Main Table Component
+const InventoryFrameStore = () => {
+  const { frames, framesLoading, refresh } = useGetFramesFilter();
+
+  const columns = useMemo<MRT_ColumnDef<FilteredFrameGroup>[]>(
+    () => [
+      {
+        header: "Action",
+        size: 200,
+        Cell: ({ row }) => (
+          <Box display="flex" gap={1} justifyContent="center">
+            <Tooltip title="Edit">
+              <IconButton size="small">
+                <AddBox fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          </Box>
+        ),
+      },
+      {
+        accessorKey: "brand",
+        header: "Brand",
+        size: 200,
+      },
+      {
+        accessorKey: "code",
+        header: "Code",
+        size: 150,
+      },
+      {
+        accessorKey: "size",
+        header: "Size",
+        size: 150,
+      },
+      {
+        accessorKey: "species",
+        header: "Species",
+        size: 150,
+      },
+      {
+        accessorKey: "price",
+        header: "Price",
+        size: 150,
+        Cell: ({ row }) => numberWithCommas(row.original.price),
+      },
+      {
+        header: "Colors",
+        size: 100,
+        Cell: ({ row }) => row.original.frames?.length || 0,
+      },
+      {
+        id: "total_qty",
+        header: "Stock Qty",
+        size: 100,
+        Cell: ({ row }) => row.original.total_qty,
+      },
+    ],
+    []
+  );
+
+  const table = useMaterialReactTable({
+    columns,
+    data: frames,
+    getRowId: (row) => `${row.brand_id}-${row.code_id}`,
+    enableColumnFilters: false,
+    enableGlobalFilter: false,
+    enablePagination: true,
+    enableSorting: true,
+    state: {
+      isLoading: framesLoading,
+    },
+    muiExpandButtonProps: ({ row }) => ({
+      children: row.getIsExpanded() ? (
+        <Minus size={18} />
+      ) : (
+        <AddIcon fontSize="small" />
+      ),
+    }),
+    renderDetailPanel: ({ row }) => (
+      <DetailPanel row={row.original.frames} refresh={refresh} />
+    ),
+
+    muiTableBodyRowProps: {
+      sx: {
+        "&:hover": {
+          backgroundColor: "action.hover",
+          cursor: "pointer",
+        },
+      },
+    },
+    renderTopToolbarCustomActions: () => (
+      <Box sx={{ display: "flex", alignItems: "center", gap: 2, p: 1 }}>
+        <Typography variant="h6">Frame Inventory</Typography>
+        <Tooltip title="Refresh">
+          <IconButton onClick={refresh} disabled={framesLoading}>
+            <LoopIcon />
+          </IconButton>
+        </Tooltip>
+      </Box>
+    ),
+    muiTableContainerProps: {
+      sx: {
+        maxHeight: "calc(100vh - 200px)",
+      },
+    },
+  });
+
+  return (
+    <Box>
+      <MaterialReactTable table={table} />
+      
     </Box>
   );
 };
 
-export default InventoryFrameStockUpdate;
+export default InventoryFrameStore;
