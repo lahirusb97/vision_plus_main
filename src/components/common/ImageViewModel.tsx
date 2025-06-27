@@ -27,7 +27,7 @@ export default function ImageViewModel({
   const handleClose = () => setOpen(false);
   ///.env vite import
   //img utl
-
+  console.log("image", image);
   return (
     <div>
       <Button variant="outlined" onClick={handleOpen}>

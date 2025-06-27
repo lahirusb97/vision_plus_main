@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import {
   MaterialReactTable,
   useMaterialReactTable,
@@ -25,183 +25,15 @@ import useGetFramesFilter, {
 } from "../../../hooks/lense/useGetFramesFilter";
 import { FrameModel } from "../../../model/FrameModel";
 import { useDeleteDialog } from "../../../context/DeleteDialogContext";
+import DialogFrameAddByColor from "../../../components/inventory-frame/DialogFrameAddByColor";
 
-const DetailPanel = ({
-  row,
-  refresh,
-}: {
-  row: FrameModel[];
-  refresh: () => void;
-}) => {
-  const { openDialog } = useDeleteDialog();
-  const handleDelete = async (row: FrameModel) => {
-    openDialog(
-      `/frames/${row.id}/`,
-      `Frame of Brand - ${row.brand_name} & Code - ${row.code_name}`,
-      "Your can activate this frame again using Logs section frame store",
-      "Deactivate",
-      refresh
-    );
-  };
-  if (!row || row.length === 0) {
-    return (
-      <Box p={2}>
-        <Typography variant="body2" color="text.secondary">
-          No frames available
-        </Typography>
-      </Box>
-    );
-  }
-
-  return (
-    <Box p={2}>
-      {/* Table Header */}
-      <Box
-        sx={{
-          display: "grid",
-          gridTemplateColumns: "80px repeat(6, 1fr) 200px 120px",
-          fontWeight: 600,
-          px: 2,
-          py: 1,
-          borderBottom: "2px solid #ccc",
-          bgcolor: "#f9f9f9",
-        }}
-      >
-        <Typography variant="caption" align="center">
-          Actions
-        </Typography>
-        <Typography variant="caption">Image</Typography>
-        <Typography variant="caption">Color</Typography>
-        <Typography variant="caption">Code</Typography>
-        <Typography variant="caption">Brand</Typography>
-        <Typography variant="caption">Species</Typography>
-        <Typography variant="caption">Size</Typography>
-        <Typography variant="caption">Price</Typography>
-        <Typography variant="caption">Stock / Branch</Typography>
-      </Box>
-
-      {/* Table Body */}
-      {row.map((frame) => (
-        <Box
-          key={frame.id}
-          sx={{
-            display: "grid",
-            gridTemplateColumns: "90px repeat(6, 1fr) 200px 120px",
-            alignItems: "center",
-            px: 2,
-            py: 1.5,
-            borderBottom: "1px solid #eee",
-          }}
-        >
-          {/* Actions */}
-          <Box display="flex " flexWrap="wrap" gap={1} justifyContent="center">
-            <Tooltip title="Edit">
-              <IconButton size="small">
-                <Edit fontSize="small" />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Delete">
-              <IconButton
-                onClick={() => handleDelete(frame)}
-                size="small"
-                color="error"
-              >
-                <DeleteOutline fontSize="small" />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Adjust Stock">
-              <IconButton size="small">
-                <PriceChange fontSize="small" />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Transfer">
-              <IconButton size="small">
-                <Truck size={16} />
-              </IconButton>
-            </Tooltip>
-          </Box>
-          {/* Image */}
-          {frame.image_url ? (
-            <Box
-              component="img"
-              src={frame.image_url}
-              alt="Frame Image"
-              sx={{
-                width: 56,
-                height: 56,
-                borderRadius: 1,
-                objectFit: "cover",
-              }}
-            />
-          ) : (
-            <Box
-              sx={{
-                width: 56,
-                height: 56,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                bgcolor: "#f0f0f0",
-                borderRadius: 1,
-              }}
-            >
-              <Typography variant="caption" color="text.secondary">
-                No Image
-              </Typography>
-            </Box>
-          )}
-
-          {/* Info Columns */}
-          <Typography variant="body2">{frame.color_name}</Typography>
-          <Typography variant="body2">{frame.code_name}</Typography>
-          <Typography variant="body2">
-            {frame.brand_name} ({frame.brand_type_display})
-          </Typography>
-          <Typography variant="body2">{frame.species}</Typography>
-          <Typography variant="body2">{frame.size}</Typography>
-          <Typography variant="body2">
-            {frame.price ? `${numberWithCommas(parseFloat(frame.price))}` : "0"}
-          </Typography>
-
-          {/* Stock / Branch */}
-          <Box>
-            {frame.stock?.length > 0 ? (
-              <Stack spacing={0.5}>
-                {frame.stock.map((s) => (
-                  <Box
-                    key={s.id}
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      border: "1px solid #eee",
-                      borderRadius: 1,
-                      px: 1,
-                      py: 0.25,
-                      bgcolor: "#fefefe",
-                    }}
-                  >
-                    <Typography variant="caption">{s.branch_name}</Typography>
-                    <Typography variant="caption" fontWeight={500}>
-                      {s.qty} pcs
-                    </Typography>
-                  </Box>
-                ))}
-              </Stack>
-            ) : (
-              <Typography variant="caption" color="text.secondary">
-                No stock
-              </Typography>
-            )}
-          </Box>
-        </Box>
-      ))}
-    </Box>
-  );
-};
 // Main Table Component
 const InventoryFrameStore = () => {
   const { frames, framesLoading, refresh } = useGetFramesFilter();
-
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedFrame, setSelectedFrame] = useState<FrameModel | undefined>(
+    undefined
+  );
   const columns = useMemo<MRT_ColumnDef<FilteredFrameGroup>[]>(
     () => [
       {
@@ -210,7 +42,13 @@ const InventoryFrameStore = () => {
         Cell: ({ row }) => (
           <Box display="flex" gap={1} justifyContent="center">
             <Tooltip title="Edit">
-              <IconButton size="small">
+              <IconButton
+                onClick={() => {
+                  setSelectedFrame(row.original.frames[0]);
+                  setOpenDialog(true);
+                }}
+                size="small"
+              >
                 <AddBox fontSize="small" />
               </IconButton>
             </Tooltip>
@@ -218,12 +56,12 @@ const InventoryFrameStore = () => {
         ),
       },
       {
-        accessorKey: "brand",
+        accessorKey: "brand_name",
         header: "Brand",
         size: 200,
       },
       {
-        accessorKey: "code",
+        accessorKey: "code_name",
         header: "Code",
         size: 150,
       },
@@ -237,22 +75,21 @@ const InventoryFrameStore = () => {
         header: "Species",
         size: 150,
       },
+      // {
+      //   accessorKey: "price",
+      //   header: "Price",
+      //   size: 150,
+      //   Cell: ({ row }) => numberWithCommas(row.original.price),
+      // },
       {
-        accessorKey: "price",
-        header: "Price",
-        size: 150,
-        Cell: ({ row }) => numberWithCommas(row.original.price),
-      },
-      {
+        accessorKey: "total_color",
         header: "Colors",
         size: 100,
-        Cell: ({ row }) => row.original.frames?.length || 0,
       },
       {
         id: "total_qty",
         header: "Stock Qty",
         size: 100,
-        Cell: ({ row }) => row.original.total_qty,
       },
     ],
     []
@@ -308,9 +145,184 @@ const InventoryFrameStore = () => {
   return (
     <Box>
       <MaterialReactTable table={table} />
-      
+      <DialogFrameAddByColor
+        open={openDialog}
+        onClose={() => {
+          setOpenDialog(false);
+          setSelectedFrame(undefined);
+        }}
+        frame={selectedFrame}
+        onSuccess={refresh}
+      />
     </Box>
   );
 };
 
 export default InventoryFrameStore;
+
+interface DetailPanelProps {
+  row: FrameModel[];
+  refresh: () => void;
+}
+
+export const DetailPanel = ({ row, refresh }: DetailPanelProps) => {
+  const { openDialog } = useDeleteDialog();
+
+  const handleDelete = (frame: FrameModel) => {
+    openDialog(
+      `/frames/${frame.id}/`,
+      `Frame of Brand - ${frame.brand_name} & Code - ${frame.code_name}`,
+      "You can activate this frame again using the Logs section.",
+      "Deactivate",
+      refresh
+    );
+  };
+
+  if (!row || row.length === 0) {
+    return (
+      <Box p={2}>
+        <Typography variant="body2" color="text.secondary">
+          No frames available.
+        </Typography>
+      </Box>
+    );
+  }
+
+  return (
+    <Box p={2}>
+      {/* Header */}
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: "80px 56px repeat(6, 1fr) 200px",
+          alignItems: "center",
+          px: 2,
+          py: 1,
+          bgcolor: "#f5f5f5",
+          borderBottom: "2px solid #ddd",
+          fontWeight: 600,
+        }}
+      >
+        <Typography variant="caption" align="center">
+          Actions
+        </Typography>
+        <Typography variant="caption">Image</Typography>
+        <Typography variant="caption">Color</Typography>
+        {/* <Typography variant="caption">Code</Typography> */}
+        {/* <Typography variant="caption">Brand</Typography> */}
+        {/* <Typography variant="caption">Species</Typography> */}
+        {/* <Typography variant="caption">Size</Typography> */}
+        <Typography variant="caption">Price</Typography>
+        <Typography variant="caption">Stock</Typography>
+      </Box>
+
+      {/* Frame Rows */}
+      {row.map((frame) => (
+        <Box
+          key={frame.id}
+          sx={{
+            display: "grid",
+            gridTemplateColumns: "80px 56px repeat(6, 1fr) 200px",
+            alignItems: "center",
+            px: 2,
+            py: 1.5,
+            borderBottom: "1px solid #eee",
+            "&:hover": {
+              backgroundColor: "#fafafa",
+            },
+          }}
+        >
+          {/* Actions */}
+          <Box display="flex" flexWrap="wrap" gap={0.5} justifyContent="center">
+            <Tooltip title="Edit">
+              <IconButton size="small">
+                <Edit fontSize="small" />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Delete">
+              <IconButton
+                size="small"
+                color="error"
+                onClick={() => handleDelete(frame)}
+              >
+                <DeleteOutline fontSize="small" />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Adjust Stock">
+              <IconButton size="small">
+                <PriceChange fontSize="small" />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Transfer">
+              <IconButton size="small">
+                <Truck size={16} />
+              </IconButton>
+            </Tooltip>
+          </Box>
+
+          {/* Image */}
+          {frame.image_url ? (
+            <img
+              src={`${import.meta.env.VITE_API_BASE_URL}${frame.image_url}`}
+              alt="Frame"
+              style={{
+                width: 56,
+                height: 56,
+                borderRadius: 1,
+                objectFit: "cover",
+              }}
+            />
+          ) : (
+            <Box
+              sx={{
+                width: 56,
+                height: 56,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                bgcolor: "#f0f0f0",
+                borderRadius: 1,
+              }}
+            >
+              <Typography variant="caption" color="text.secondary">
+                No Image
+              </Typography>
+            </Box>
+          )}
+
+          {/* Frame Info */}
+          <Typography variant="body2">{frame.color_name}</Typography>
+          {/* <Typography variant="body2">{frame.code_name}</Typography>
+          <Typography variant="body2">
+            {frame.brand_name} ({frame.brand_type_display})
+          </Typography>
+          <Typography variant="body2">{frame.species}</Typography>
+          <Typography variant="body2">{frame.size}</Typography> */}
+          <Typography variant="body2">
+            {numberWithCommas(frame.price)}
+          </Typography>
+
+          {/* Stock */}
+          <Box>
+            {frame.stock?.length > 0 ? (
+              <Stack spacing={0.5}>
+                {frame.stock.map((s) => (
+                  <Box key={s.id}>
+                    <Typography variant="caption">{s.branch_name}</Typography>
+                    <Typography variant="caption" fontWeight={600}>
+                      {s.qty} pcs
+                    </Typography>
+                  </Box>
+                ))}
+              </Stack>
+            ) : (
+              <Typography variant="caption" color="text.secondary">
+                No stock
+              </Typography>
+            )}
+          </Box>
+        </Box>
+      ))}
+    </Box>
+  );
+};

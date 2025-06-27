@@ -84,8 +84,6 @@ const AddFrames = () => {
     formData.append("color", frameData.color.toString());
     formData.append("price", frameData.price.toString());
     formData.append("size", frameData.size.toString());
-    //store
-    formData.append("store", MAIN_STORE_ID);
     formData.append("species", frameData.species.toString());
     formData.append("brand_type", frameData.brand_type);
     if (frameData.image) {
