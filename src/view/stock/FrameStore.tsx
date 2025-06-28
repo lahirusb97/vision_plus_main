@@ -72,6 +72,15 @@ const FrameStore = () => {
                 <LoopIcon sx={{ fontSize: "1.4rem" }} />
               </IconButton>
             </Tooltip>
+            <Tooltip title="History">
+              <IconButton
+                size="small"
+                color="warning"
+                onClick={() => handleActionHistory(row.original.id)}
+              >
+                <LoopIcon sx={{ fontSize: "1.4rem" }} />
+              </IconButton>
+            </Tooltip>
           </Box>
         ),
       },
@@ -201,6 +210,11 @@ const FrameStore = () => {
     // console.log(`Update Quantity for Frame ID: ${id}`);
     // Add update logic
     navigate(`./update/${id}`);
+  };
+  const handleActionHistory = (id: number) => {
+    // console.log(`Update Quantity for Frame ID: ${id}`);
+    // Add update logic
+    navigate(`./frame-action-history/${id}`);
   };
 
   return (

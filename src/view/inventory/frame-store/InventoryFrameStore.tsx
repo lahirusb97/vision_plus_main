@@ -12,14 +12,20 @@ import TitleText from "../../../components/TitleText";
 import { numberWithCommas } from "../../../utils/numberWithCommas";
 import { Edit, EmojiTransportation, PriceChange } from "@mui/icons-material";
 import { LENS_AND_FRAME_STORE_ID } from "../../../data/staticVariables";
-import { Truck } from "lucide-react";
+import { History, Truck } from "lucide-react";
 
 const InventoryFrameStore = () => {
+  const navigate = useNavigate();
+
   const { frames, framesLoading, refresh } = useGetFrames({
     store: Number(LENS_AND_FRAME_STORE_ID),
   });
   const { openDialog } = useDeleteDialog();
-
+  const handleActionHistory = (id: number) => {
+    // console.log(`Update Quantity for Frame ID: ${id}`);
+    // Add update logic
+    navigate(`./frame-action-history/${id}`);
+  };
   // Define columns
   const columns = useMemo(
     () => [
@@ -80,6 +86,15 @@ const InventoryFrameStore = () => {
                 onClick={() => handleTransfer(row.original.id)}
               >
                 <Truck style={{ width: "1.2rem" }} />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="History">
+              <IconButton
+                size="small"
+                color="warning"
+                onClick={() => handleActionHistory(row.original.id)}
+              >
+                <History style={{ width: "1.2rem" }} />
               </IconButton>
             </Tooltip>
           </Box>
@@ -180,7 +195,6 @@ const InventoryFrameStore = () => {
     ],
     [frames]
   );
-  const navigate = useNavigate();
   // Handlers for actions
   const handleDelete = async (row: FrameModel) => {
     openDialog(
