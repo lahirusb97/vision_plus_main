@@ -87,7 +87,7 @@ const InventoryFrameStore = () => {
         size: 100,
       },
       {
-        id: "total_qty",
+        accessorKey: "total_qty",
         header: "Stock Qty",
         size: 100,
       },
@@ -263,7 +263,7 @@ export const DetailPanel = ({ row, refresh }: DetailPanelProps) => {
           {/* Image */}
           {frame.image_url ? (
             <img
-              src={`${import.meta.env.VITE_API_BASE_URL}${frame.image_url}`}
+              src={frame.image_url}
               alt="Frame"
               style={{
                 width: 56,

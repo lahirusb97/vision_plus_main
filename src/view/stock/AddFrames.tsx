@@ -49,6 +49,7 @@ const AddFrames = () => {
     formState: { errors },
     reset,
     watch,
+    setValue,
   } = useForm<FrameFormModel>({
     resolver: zodResolver(schemaFrame),
     defaultValues: {
@@ -86,9 +87,11 @@ const AddFrames = () => {
     formData.append("size", frameData.size.toString());
     formData.append("species", frameData.species.toString());
     formData.append("brand_type", frameData.brand_type);
-    if (frameData.image) {
+    // Handle file upload
+    if (frameData.image instanceof File) {
       formData.append("image", frameData.image);
     }
+
     //add stock
     formData.append(
       "stock",
@@ -320,11 +323,10 @@ const AddFrames = () => {
                 <Input
                   id="image-upload"
                   type="file"
-                  inputProps={{ accept: "image/*" }} // Still valid on the <Input />, just not TextField
+                  inputProps={{ accept: "image/*" }}
                   onChange={(e) => {
-                    const input = e.target as HTMLInputElement;
-                    const file = input.files?.[0] || null;
-                    onChange(file);
+                    const file = e.target.files?.[0] || null;
+                    setValue("image", file);
                   }}
                 />
                 <FormHelperText>

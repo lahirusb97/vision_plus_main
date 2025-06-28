@@ -90,7 +90,7 @@ const FrameCreate = () => {
     formData.append("species", frameData.species.toString());
     formData.append("brand_type", frameData.brand_type);
     if (frameData.image) {
-      formData.append("image", frameData.image);
+      formData.append("image_file", frameData.image);
     }
     //add stock
     formData.append(

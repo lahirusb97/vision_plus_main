@@ -7,6 +7,9 @@ import {
   Box,
   Typography,
   TextField,
+  FormControlLabel,
+  Radio,
+  RadioGroup,
 } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -49,30 +52,33 @@ const DialogFrameAddByColor = ({
       schemaFrame.pick({
         color: true,
         qty: true,
-        limit: true,
         brand_type: true,
       })
     ),
     defaultValues: {
       color: frame?.color || undefined,
       qty: undefined,
-      limit: undefined,
       brand_type: frame?.brand_type || "non_branded",
     },
   });
+  //form state error
 
   const onSubmit = async (frameData: FrameFormModel) => {
     const formData = new FormData();
     // Add frame fields
+    console.log("FRAME", frame);
     if (frame) {
       formData.append("brand", frame.brand.toString());
       formData.append("code", frame.code.toString());
       formData.append("color", frameData.color.toString());
-      formData.append("price", frame.price.toString());
-      formData.append("size", frame.size.toString());
-      formData.append("species", frame.species.toString());
+      formData.append("price", frame.price);
+      formData.append("size", frame.size);
+      formData.append("species", frame.species);
       formData.append("brand_type", frameData.brand_type);
-      formData.append("uploaded_url", frame.image_url);
+
+      // Handle null/undefined image with a fallback to empty string
+      formData.append("image_id", frame.image?.toString() || "");
+
       //add stock
       formData.append(
         "stock",
@@ -103,7 +109,7 @@ const DialogFrameAddByColor = ({
     reset();
     onClose();
   };
-
+  console.log("FRAME", frame);
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
       <DialogTitle>{"Add New Frame by Color"}</DialogTitle>
@@ -131,9 +137,9 @@ const DialogFrameAddByColor = ({
                   />
                 )}
               />
-              {errors.code && (
+              {errors.color && (
                 <Typography color="error" variant="caption">
-                  {errors.code.message}
+                  {errors.color.message}
                 </Typography>
               )}
             </Box>
@@ -149,6 +155,25 @@ const DialogFrameAddByColor = ({
               variant="outlined"
               error={!!errors.qty}
               helperText={errors.qty?.message}
+            />
+            <Controller
+              name="brand_type"
+              control={control}
+              render={({ field }) => (
+                <RadioGroup row {...field}>
+                  <FormControlLabel
+                    value="branded"
+                    control={<Radio />}
+                    label="Branded"
+                  />
+                  <FormControlLabel
+                    defaultChecked
+                    value="non_branded"
+                    control={<Radio />}
+                    label="Non-Branded"
+                  />
+                </RadioGroup>
+              )}
             />
           </Box>
         </DialogContent>

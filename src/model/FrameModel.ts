@@ -23,7 +23,7 @@ interface FrameModel {
   price: string; // Price of the frame (as string for precision)
   size: SizeType; // Size (e.g., "Half", "Full")
   species: SpeciesType; // Species (e.g., "Metal", "Plastic")
-  image: string | null; // Optional image URL or null if no image
+  image: number | null; // Optional image URL or null if no image
   stock: FrameStockModel[]; // Stock details for this frame
   brand_type: TypeBraned;
   brand_type_display: string;
