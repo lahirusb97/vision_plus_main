@@ -37,6 +37,8 @@ import ExternalCoatingCreate from "../../view/stock/external_lens/external_coati
 import ExternalCoatingUpdate from "../../view/stock/external_lens/external_coating/ExternalCoatingUpdate";
 import FrameFullEdit from "../../view/stock/frame/FrameFullEdit";
 import LenseFullEdit from "../../view/stock/lense/LenseFullEdit";
+import FrameActionHistory from "../../components/common/frame-store/FrameActionHistory";
+import FrameInventoryTransfer from "../../view/inventory/frame-store/FrameInventoryTransfer";
 export const stockRoutes: RouteObject[] = [
   {
     path: "add_frames",
@@ -47,9 +49,24 @@ export const stockRoutes: RouteObject[] = [
     element: <ProtectedChildRoute />,
     children: [
       {
-        index: true,
-        element: <FrameStore />,
+        path: "",
+        element: <ProtectedChildRoute />,
+        children: [
+          {
+            index: true,
+            element: <FrameStore />,
+          },
+          {
+            path: "frame-action-history/:id",
+            element: <FrameActionHistory />,
+          },
+          {
+            path: "frame-transfer/:id",
+            element: <FrameInventoryTransfer />,
+          },
+        ],
       },
+
       {
         path: "update/:id",
         element: <FrameUpdate />,

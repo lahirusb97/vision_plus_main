@@ -12,6 +12,7 @@ import TitleText from "../../components/TitleText";
 import { numberWithCommas } from "../../utils/numberWithCommas";
 import { Edit, PriceChange } from "@mui/icons-material";
 import { LENS_AND_FRAME_STORE_ID } from "../../data/staticVariables";
+import { Truck } from "lucide-react";
 
 const FrameStore = () => {
   const { frames, framesLoading, refresh } = useGetFrames({
@@ -70,6 +71,15 @@ const FrameStore = () => {
                 onClick={() => handleUpdate(row.original.id)}
               >
                 <LoopIcon sx={{ fontSize: "1.4rem" }} />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Transfer Quantity">
+              <IconButton
+                size="small"
+                color="info"
+                onClick={() => handleTransfer(row.original.id)}
+              >
+                <Truck style={{ width: "1.2rem" }} />
               </IconButton>
             </Tooltip>
             <Tooltip title="History">
@@ -216,7 +226,11 @@ const FrameStore = () => {
     // Add update logic
     navigate(`./frame-action-history/${id}`);
   };
-
+  const handleTransfer = (id: number) => {
+    // console.log(`Update Quantity for Frame ID: ${id}`);
+    // Add update logic
+    navigate(`frame-transfer/${id}`);
+  };
   return (
     <Box sx={{ padding: 4, maxWidth: "1200px" }}>
       <TitleText title="  Frame Store" />

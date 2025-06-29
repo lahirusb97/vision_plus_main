@@ -24,7 +24,7 @@ const InventoryFrameStore = () => {
   const handleActionHistory = (id: number) => {
     // console.log(`Update Quantity for Frame ID: ${id}`);
     // Add update logic
-    navigate(`./frame-action-history/${id}`);
+    navigate(`frame-action-history/${id}`);
   };
   // Define columns
   const columns = useMemo(
