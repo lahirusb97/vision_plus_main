@@ -22,6 +22,7 @@ import ColorsEdit from "../../view/stock/frame/ColorsEdit";
 import FrameCodeAdd from "../../view/stock/frame/FrameCodeAdd";
 import FrameCodeEdit from "../../view/stock/frame/FrameCodeEdit";
 import FrameActionHistory from "../../components/common/frame-store/FrameActionHistory";
+import FrameInventoryReport from "../../components/common/frame-store/FrameInventoryReport";
 
 export const frameAndLensStoreRoutes: RouteObject[] = [
   {
@@ -61,6 +62,10 @@ export const frameAndLensStoreRoutes: RouteObject[] = [
         element: <FrameInventoryFullEdit />,
       },
     ],
+  },
+  {
+    path: "frame-report",
+    element: <FrameInventoryReport />,
   },
   {
     path: "frame-stock-update",

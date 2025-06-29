@@ -89,7 +89,7 @@ const AddFrames = () => {
     formData.append("brand_type", frameData.brand_type);
     // Handle file upload
     if (frameData.image instanceof File) {
-      formData.append("image", frameData.image);
+      formData.append("image_file", frameData.image);
     }
 
     //add stock

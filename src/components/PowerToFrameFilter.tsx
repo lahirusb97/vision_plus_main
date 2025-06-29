@@ -21,7 +21,7 @@ export default function PowerToFrameFilter() {
   const selectedFrameList = useSelector(
     (state: RootState) => state.invoice_frame_filer.selectedFrameList
   );
-  const { frames, framesLoading } = useGetFrames();
+  const { frames, framesLoading } = useGetFrames({ store: null });
   const { brands, brandsLoading } = useGetBrands("frame");
 
   const { codes, codesLoading } = useGetCodes();
