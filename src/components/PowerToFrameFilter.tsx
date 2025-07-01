@@ -133,6 +133,7 @@ export default function PowerToFrameFilter() {
       ) {
         dispatch(
           setFrame({
+            id: null,
             frame_id: selectedFrame.id,
             avilable_qty: selectedFrame.stock[0].qty,
             price_per_unit: parseInt(price),

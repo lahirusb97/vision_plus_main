@@ -12,6 +12,7 @@ export interface FilteredFrameGroup {
   code: string;
   code_id: number;
   color_name: string;
+  image_url: string;
   size: SizeType;
   species: SpeciesType;
   price: number;

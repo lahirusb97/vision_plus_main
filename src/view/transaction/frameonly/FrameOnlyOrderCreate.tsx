@@ -80,6 +80,7 @@ export default function FrameOnlyOrderCreate() {
           progress_status: data.progress_status
             ? "issue_to_customer"
             : "received_from_customer",
+          order_remark: data.order_remark,
         };
         setAuthDialogOpen(true);
         setPendingPostData(postData);
@@ -161,6 +162,15 @@ export default function FrameOnlyOrderCreate() {
             </Box>
           </Box>
           <InvoiceTable />
+          <TextField
+            fullWidth
+            size="small"
+            {...methods.register("order_remark")}
+            sx={{ maxWidth: "1200px" }}
+            placeholder="Order remark"
+            rows={3} // Defines the number of visible lines
+            multiline
+          />
           <Box sx={{ display: "flex", gap: 1, mt: 1 }}>
             <PaymentMethodsLayout />
           </Box>

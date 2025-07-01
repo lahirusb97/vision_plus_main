@@ -26,6 +26,7 @@ import useGetFramesFilter, {
 import { FrameModel } from "../../../model/FrameModel";
 import { useDeleteDialog } from "../../../context/DeleteDialogContext";
 import DialogFrameAddByColor from "../../../components/inventory-frame/DialogFrameAddByColor";
+import { useNavigate } from "react-router";
 
 // Main Table Component
 const InventoryFrameStore = () => {
@@ -53,6 +54,23 @@ const InventoryFrameStore = () => {
               </IconButton>
             </Tooltip>
           </Box>
+        ),
+      },
+      {
+        accessorKey: "image_url",
+        header: "Image",
+        size: 200,
+        Cell: ({ row }) => (
+          <img
+            src={row.original.image_url}
+            alt="Frame"
+            style={{
+              width: 56,
+              height: 56,
+              borderRadius: 1,
+              objectFit: "cover",
+            }}
+          />
         ),
       },
       {
@@ -167,7 +185,7 @@ interface DetailPanelProps {
 
 export const DetailPanel = ({ row, refresh }: DetailPanelProps) => {
   const { openDialog } = useDeleteDialog();
-
+  const navigate = useNavigate();
   const handleDelete = (frame: FrameModel) => {
     openDialog(
       `/frames/${frame.id}/`,
@@ -235,7 +253,14 @@ export const DetailPanel = ({ row, refresh }: DetailPanelProps) => {
           {/* Actions */}
           <Box display="flex" flexWrap="wrap" gap={0.5} justifyContent="center">
             <Tooltip title="Edit">
-              <IconButton size="small">
+              <IconButton
+                onClick={() =>
+                  navigate(
+                    `/inventory-frame/frame-store/frame-full-edit/${frame.id}`
+                  )
+                }
+                size="small"
+              >
                 <Edit fontSize="small" />
               </IconButton>
             </Tooltip>
@@ -249,19 +274,33 @@ export const DetailPanel = ({ row, refresh }: DetailPanelProps) => {
               </IconButton>
             </Tooltip>
             <Tooltip title="Adjust Stock">
-              <IconButton size="small">
+              <IconButton
+                onClick={() =>
+                  navigate(
+                    `/inventory-frame/frame-store/frame-price-edit/${frame.id}`
+                  )
+                }
+                size="small"
+              >
                 <PriceChange fontSize="small" />
               </IconButton>
             </Tooltip>
             <Tooltip title="Transfer">
-              <IconButton size="small">
+              <IconButton
+                onClick={() =>
+                  navigate(
+                    `/inventory-frame/frame-store/frame-transfer/${frame.id}`
+                  )
+                }
+                size="small"
+              >
                 <Truck size={16} />
               </IconButton>
             </Tooltip>
           </Box>
 
           {/* Image */}
-          {frame.image_url ? (
+          {/* {frame.image_url ? (
             <img
               src={frame.image_url}
               alt="Frame"
@@ -288,7 +327,7 @@ export const DetailPanel = ({ row, refresh }: DetailPanelProps) => {
                 No Image
               </Typography>
             </Box>
-          )}
+          )} */}
 
           {/* Frame Info */}
           <Typography variant="body2">{frame.color_name}</Typography>

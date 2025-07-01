@@ -29,13 +29,14 @@ const NavButton: React.FC<NavButtonProps> = ({ name, path, bgColor }) => {
         ? yellow[300]
         : "#FF7043"
       : bgColor || "white",
-    color: isActive
-      ? theme.palette.mode === "dark"
-        ? theme.palette.grey[900]
-        : "white"
-      : theme.palette.mode === "dark"
-      ? teal[800]
-      : "black",
+    color:
+      isActive || bgColor
+        ? theme.palette.mode === "dark"
+          ? theme.palette.grey[900]
+          : "white"
+        : theme.palette.mode === "dark"
+        ? teal[800]
+        : "black",
     fontWeight: isActive ? "bold" : "normal",
     margin: "0 .5em",
     textTransform: "capitalize",

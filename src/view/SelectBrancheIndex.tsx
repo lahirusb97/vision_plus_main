@@ -79,43 +79,6 @@ export default function SelectBrancheIndex() {
               <span>{branch.branch_name}</span>
             </Button>
           ))}
-
-          <Button
-            onClick={() => {
-              const currentBranch = saveUserCurentBranch({
-                id: 0,
-                branch_name: "Lens & Frame Store",
-                location: "Lens & Frame Store",
-              });
-              if (currentBranch) {
-                navigate("/");
-              }
-            }}
-            variant="outlined"
-            sx={{
-              width: "100%",
-              fontWeight: 500,
-              fontSize: 15,
-              px: 1.5,
-              py: 0.75,
-              my: 0.5,
-              borderRadius: 2,
-              justifyContent: "flex-start",
-              textTransform: "none",
-              color: "#1565c0",
-              borderColor: "#90caf9",
-              "&:hover": {
-                background: "#e3edfa",
-                borderColor: "#1976d2",
-              },
-              transition: "all 0.2s",
-            }}
-          >
-            <span style={{ marginRight: 10 }}>
-              <ShoppingCart size={20} />
-            </span>
-            <span>Lens & Frame Store</span>
-          </Button>
         </Box>
         <Divider sx={{ width: "100%", my: 1 }} />
         <Button
