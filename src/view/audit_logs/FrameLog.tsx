@@ -11,11 +11,13 @@ import toast from "react-hot-toast";
 import { RestoreFromTrash } from "@mui/icons-material";
 
 const FrameLog = () => {
-  const { frames, framesLoading, refresh, setFrameParamsData } = useGetFrames();
+  const { frames, framesLoading, refresh, setFrameParamsData } = useGetFrames({
+    store: null,
+  });
   const { openMutationDialog } = useMutationDialog();
 
   useEffect(() => {
-    setFrameParamsData({ status: "inactive" });
+    setFrameParamsData({ status: "inactive", store: null });
   }, []);
   // Define columns
   const columns = useMemo(

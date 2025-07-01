@@ -35,6 +35,7 @@ import { numberWithCommas } from "../../utils/numberWithCommas";
 import TitleText from "../../components/TitleText";
 import { progressStatus } from "../../utils/progressState";
 import { formatDateTimeByType } from "../../utils/formatDateTimeByType";
+import PaymentMethodsLayout from "./factory_layouts/PaymentMethodsLayout";
 const RepaymentForm = () => {
   const navigate = useNavigate();
   const { invoice_number } = useParams();
@@ -313,9 +314,7 @@ const RepaymentForm = () => {
               </Box>
             </Box>
             <Box sx={{ display: "flex" }}>
-              <OnlinePayInput />
-              <CardInput />
-              <CashInput />
+              <PaymentMethodsLayout />
             </Box>
             <SubmitCustomBtn
               btnText="Add payment"

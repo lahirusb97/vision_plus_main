@@ -28,119 +28,154 @@ interface BranchOption {
   name: string;
 }
 
+interface BranchData {
+  branch_id: number;
+  branch_name: string;
+  stock_count: number;
+  stock_received: number;
+}
+
+interface FrameSalesHistory {
+  frame_id: number;
+  brand: string;
+  code: string;
+  color: string;
+  size: string;
+  species: string;
+  store_branch_qty: number;
+  other_branches_qty: number;
+  total_qty: number;
+  sold_count: number;
+  current_branch_qty: number;
+  as_of_date: string;
+  branches: BranchData[];
+}
+
 const FrameInventoryReport = () => {
-  // State for filters
   const [branchId, setBranchId] = useState<string>();
   const [startDate, setStartDate] = useState<Dayjs | null>(null);
   const [endDate, setEndDate] = useState<Dayjs | null>(dayjs());
 
-  // Fetch branches
   const { brancheData, branchloading } = useGetBranch();
 
-  // Format branches for dropdown and filter out branch with ID 4
   const branchOptions: BranchOption[] = useMemo(() => {
     if (!brancheData) return [];
     return brancheData
-      .filter((branch) => branch.id !== 4) // Exclude branch with ID 4
+      .filter((branch) => branch.id !== 4)
       .map((branch) => ({
         id: branch.id.toString(),
         name: branch.branch_name,
       }));
   }, [brancheData]);
 
-  // Set the first branch as selected by default when branches are loaded
   useEffect(() => {
     if (branchOptions.length > 0 && !branchId && !branchloading) {
       setBranchId(branchOptions[0].id);
     }
   }, [branchOptions, branchId, branchloading]);
 
-  // Fetch frame sales history
   const {
-    frameSalesHistoryList: data,
-    frameSalesHistoryListLoading: loading,
-    frameSalesHistoryListError: error,
-    frameSalesHistoryListSearch: setSearchParams,
+    frameSalesHistoryList,
+    frameSalesHistoryListLoading,
+    frameSalesHistoryListSearch,
   } = useGetFrameSalesHistory(branchId);
 
-  // Handle branch change
   const handleBranchChange = (event: SelectChangeEvent) => {
     setBranchId(event.target.value);
   };
 
-  // Handle search
   const handleSearch = () => {
-    setSearchParams({
+    frameSalesHistoryListSearch({
       branch_id: branchId,
       date_start: startDate ? startDate.format("YYYY-MM-DD") : null,
       date_end: endDate ? endDate.format("YYYY-MM-DD") : null,
-      store_branch_id: "", // Add your store branch ID if needed
+      store_branch_id: "",
     });
   };
 
-  // Define columns for the table
-  const columns = useMemo<MRT_ColumnDef<any>[]>(
-    () => [
-      {
-        accessorKey: "brand",
-        header: "Brand",
-        size: 150,
-      },
-      {
-        accessorKey: "code",
-        header: "Code",
-        size: 100,
-      },
-      {
-        accessorKey: "color",
-        header: "Color",
-        size: 100,
-      },
-      {
-        accessorKey: "size",
-        header: "Size",
-        size: 80,
-      },
-      {
-        accessorKey: "species",
-        header: "Species",
-        size: 100,
-      },
-      {
-        accessorKey: "current_branch_qty",
-        header: "Branch Qty",
-        size: 100,
-      },
-      {
-        accessorKey: "store_branch_qty",
-        header: "Store Qty",
-        size: 100,
-      },
-      {
-        accessorKey: "other_branches_qty",
-        header: "Total Branches Qty",
-        size: 150,
-      },
-      {
-        accessorKey: "total_qty",
-        header: "Total Qty",
-        size: 100,
-      },
-      {
-        accessorKey: "sold_count",
-        header: "Sold Count",
-        size: 100,
-      },
-    ],
-    []
-  );
-
-  // Handle reset
   const handleReset = () => {
     setBranchId("");
     setStartDate(null);
     setEndDate(null);
   };
+
+  const transformedData = useMemo(() => {
+    return (frameSalesHistoryList || []).map((item) => {
+      const branchData: Record<string, any> = {};
+      item.branches.forEach((branch) => {
+        branchData[`branch_${branch.branch_id}_stock`] = branch.stock_count;
+        branchData[`branch_${branch.branch_id}_received`] =
+          branch.stock_received;
+      });
+
+      return {
+        ...item,
+        ...branchData,
+      };
+    });
+  }, [frameSalesHistoryList]);
+
+  const branchGroupedColumns = useMemo<
+    MRT_ColumnDef<FrameSalesHistory>[]
+  >(() => {
+    const first = frameSalesHistoryList?.[0];
+    if (!first) return [];
+
+    const colors = ["#e3f2fd", "#fce4ec", "#e8f5e9", "#fff3e0", "#f3e5f5"]; // light blue, pink, green, orange, purple
+    let colorIndex = 0;
+
+    return first.branches.map((branch) => {
+      const bgColor = colors[colorIndex % colors.length];
+      colorIndex++;
+
+      return {
+        header: branch.branch_name,
+        columns: [
+          {
+            accessorKey: `branch_${branch.branch_id}_stock`,
+            header: "Stock",
+            size: 120,
+            muiTableHeadCellProps: {
+              sx: { backgroundColor: bgColor },
+            },
+            muiTableBodyCellProps: {
+              sx: { backgroundColor: `${bgColor}33` }, // semi-transparent
+            },
+          },
+          {
+            accessorKey: `branch_${branch.branch_id}_received`,
+            header: "Received",
+            size: 120,
+            muiTableHeadCellProps: {
+              sx: { backgroundColor: bgColor },
+            },
+            muiTableBodyCellProps: {
+              sx: { backgroundColor: `${bgColor}33` },
+            },
+          },
+        ],
+      };
+    });
+  }, [frameSalesHistoryList]);
+
+  const columns = useMemo<MRT_ColumnDef<FrameSalesHistory>[]>(() => {
+    return [
+      {
+        header: "Frame Info",
+        columns: [
+          { accessorKey: "brand", header: "Brand", size: 150 },
+          { accessorKey: "code", header: "Code", size: 100 },
+          { accessorKey: "color", header: "Color", size: 100 },
+          { accessorKey: "size", header: "Size", size: 80 },
+          { accessorKey: "species", header: "Species", size: 100 },
+          { accessorKey: "total_qty", header: "Total Qty", size: 100 },
+          { accessorKey: "sold_count", header: "Sold Count", size: 120 },
+          { accessorKey: "as_of_date", header: "As of Date", size: 140 },
+        ],
+      },
+      ...branchGroupedColumns,
+    ];
+  }, [branchGroupedColumns]);
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -153,7 +188,6 @@ const FrameInventoryReport = () => {
           {/* Filters */}
           <Paper sx={{ p: 2, mb: 3 }} elevation={1}>
             <Grid container spacing={2} alignItems="flex-end">
-              {/* Branch Select */}
               <Grid item xs={12} sm={4}>
                 <FormControl fullWidth size="small">
                   <InputLabel id="branch-select-label">Branch</InputLabel>
@@ -174,7 +208,6 @@ const FrameInventoryReport = () => {
                 </FormControl>
               </Grid>
 
-              {/* Start Date */}
               <Grid item xs={12} sm={2.5}>
                 <DatePicker
                   label="Start Date"
@@ -186,7 +219,6 @@ const FrameInventoryReport = () => {
                 />
               </Grid>
 
-              {/* End Date */}
               <Grid item xs={12} sm={2.5}>
                 <DatePicker
                   label="End Date"
@@ -198,20 +230,23 @@ const FrameInventoryReport = () => {
                 />
               </Grid>
 
-              {/* Action Buttons */}
               <Grid item xs={12} sm={3} sx={{ display: "flex", gap: 1 }}>
                 <Button
                   variant="contained"
                   onClick={handleSearch}
-                  disabled={loading}
+                  disabled={frameSalesHistoryListLoading}
                   fullWidth
                 >
-                  {loading ? <CircularProgress size={24} /> : "Search"}
+                  {frameSalesHistoryListLoading ? (
+                    <CircularProgress size={24} />
+                  ) : (
+                    "Search"
+                  )}
                 </Button>
                 <Button
                   variant="outlined"
                   onClick={handleReset}
-                  disabled={loading}
+                  disabled={frameSalesHistoryListLoading}
                   fullWidth
                 >
                   Reset
@@ -224,9 +259,9 @@ const FrameInventoryReport = () => {
           <Box sx={{ mt: 3 }}>
             <MaterialReactTable
               columns={columns}
-              data={data || []}
+              data={transformedData}
               state={{
-                isLoading: loading,
+                isLoading: frameSalesHistoryListLoading,
               }}
               enableColumnActions
               enablePagination
@@ -257,6 +292,7 @@ const FrameInventoryReport = () => {
               muiTableContainerProps={{
                 sx: {
                   maxHeight: "calc(100vh - 300px)",
+                  overflowX: "auto",
                 },
               }}
             />

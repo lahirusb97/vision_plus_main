@@ -1,10 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import axiosClient from "../../axiosClient";
 import { extractErrorMessage } from "../../utils/extractErrorMessage";
-import toast from "react-hot-toast";
-
 import axios from "axios";
-import { getUserCurentBranch } from "../../utils/authDataConver";
 import { paramsNullCleaner } from "../../utils/paramsNullCleaner";
 import { LENS_AND_FRAME_STORE_ID } from "../../data/staticVariables";
 import dayjs from "dayjs";
@@ -13,6 +10,12 @@ export interface FrameHistoryParams {
   store_branch_id: string;
   date_start: string | null;
   date_end: string | null;
+}
+interface StockBranchData {
+  branch_id: number;
+  branch_name: string;
+  stock_count: number;
+  stock_received: number;
 }
 interface FrameSalesHistory {
   frame_id: number;
@@ -26,6 +29,8 @@ interface FrameSalesHistory {
   total_qty: number;
   sold_count: number;
   current_branch_qty: number;
+  as_of_date: string;
+  branches: StockBranchData[];
 }
 const useGetFrameSalesHistory = (id: string) => {
   //use null or [] base on scenario

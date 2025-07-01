@@ -27,7 +27,7 @@ const useGetFrames = ({
   const [framesError, setFramesError] = useState<boolean>(false);
   const [params, setParams] = useState<FrameParams>({
     status: "active",
-    store: store,
+    store: store ? store : null,
   });
 
   const abortControllerRef = useRef<AbortController | null>(null);
