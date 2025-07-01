@@ -18,7 +18,7 @@ import {
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { MaterialReactTable, type MRT_ColumnDef } from "material-react-table";
+import { MaterialReactTable, type MRT_ColumnDef, useMaterialReactTable } from "material-react-table";
 import { useGetBranch } from "../../../hooks/useGetBranch";
 import useGetFrameSalesHistory from "../../../hooks/report/useGetFrameSalesHistory";
 import dayjs, { Dayjs } from "dayjs";
@@ -33,6 +33,7 @@ interface BranchData {
   branch_name: string;
   stock_count: number;
   stock_received: number;
+  sold_qty: number;
 }
 
 interface FrameSalesHistory {
@@ -104,13 +105,26 @@ const FrameInventoryReport = () => {
       const branchData: Record<string, any> = {};
       item.branches.forEach((branch) => {
         branchData[`branch_${branch.branch_id}_stock`] = branch.stock_count;
-        branchData[`branch_${branch.branch_id}_received`] =
-          branch.stock_received;
+        branchData[`branch_${branch.branch_id}_received`] = branch.stock_received;
+        branchData[`branch_${branch.branch_id}_sold`] = branch.sold_qty || 0;
       });
+
+      // Handle sold_count which can be an object or number
+      let soldCount = 0;
+      if (typeof item.sold_count === "number") {
+        soldCount = item.sold_count;
+      } else if (item.sold_count && typeof item.sold_count === "object") {
+        // Sum all values if sold_count is an object
+        soldCount = Object.values(item.sold_count).reduce(
+          (sum: number, val: any) => sum + (Number(val) || 0),
+          0
+        );
+      }
 
       return {
         ...item,
         ...branchData,
+        sold_count: soldCount, // Ensure sold_count is always a number
       };
     });
   }, [frameSalesHistoryList]);
@@ -134,24 +148,77 @@ const FrameInventoryReport = () => {
           {
             accessorKey: `branch_${branch.branch_id}_stock`,
             header: "Stock",
-            size: 120,
+            size: 100,
             muiTableHeadCellProps: {
-              sx: { backgroundColor: bgColor },
+              sx: { 
+                backgroundColor: bgColor,
+                fontWeight: 'bold',
+                borderBottom: '2px solid #ddd'
+              },
             },
             muiTableBodyCellProps: {
-              sx: { backgroundColor: `${bgColor}33` }, // semi-transparent
+              sx: { 
+                backgroundColor: `${bgColor}33`,
+                fontWeight: 'bold',
+                borderBottom: '1px solid #eee'
+              },
             },
+            aggregationFn: 'sum',
+            AggregatedCell: ({ cell, row }) => (
+              <Box sx={{ fontWeight: 'bold' }}>
+                {cell.getValue<number>()?.toLocaleString()}
+              </Box>
+            ),
           },
           {
             accessorKey: `branch_${branch.branch_id}_received`,
             header: "Received",
-            size: 120,
+            size: 100,
             muiTableHeadCellProps: {
-              sx: { backgroundColor: bgColor },
+              sx: { 
+                backgroundColor: bgColor,
+                fontWeight: 'bold',
+                borderBottom: '2px solid #ddd'
+              },
             },
             muiTableBodyCellProps: {
-              sx: { backgroundColor: `${bgColor}33` },
+              sx: { 
+                backgroundColor: `${bgColor}33`,
+                borderBottom: '1px solid #eee'
+              },
             },
+            aggregationFn: 'sum',
+            AggregatedCell: ({ cell }) => (
+              <Box sx={{ fontWeight: 'bold' }}>
+                {cell.getValue<number>()?.toLocaleString()}
+              </Box>
+            ),
+          },
+          {
+            accessorKey: `branch_${branch.branch_id}_sold`,
+            header: "Sold",
+            size: 80,
+            muiTableHeadCellProps: {
+              sx: { 
+                backgroundColor: bgColor,
+                fontWeight: 'bold',
+                borderBottom: '2px solid #ddd'
+              },
+            },
+            muiTableBodyCellProps: {
+              sx: { 
+                backgroundColor: `${bgColor}33`,
+                color: 'error.main',
+                fontWeight: 'bold',
+                borderBottom: '1px solid #eee'
+              },
+            },
+            aggregationFn: 'sum',
+            AggregatedCell: ({ cell }) => (
+              <Box sx={{ color: 'error.main', fontWeight: 'bold' }}>
+                {cell.getValue<number>()?.toLocaleString()}
+              </Box>
+            ),
           },
         ],
       };
@@ -261,27 +328,6 @@ const FrameInventoryReport = () => {
               columns={columns}
               data={transformedData}
               state={{
-                isLoading: frameSalesHistoryListLoading,
-              }}
-              enableColumnActions
-              enablePagination
-              enableSorting
-              enableTopToolbar
-              enableBottomToolbar
-              muiTablePaperProps={{
-                elevation: 0,
-                sx: {
-                  border: "1px solid #e0e0e0",
-                  borderRadius: 1,
-                },
-              }}
-              muiTableHeadCellProps={{
-                sx: {
-                  fontWeight: "bold",
-                  backgroundColor: "#f5f5f5",
-                },
-              }}
-              muiTableBodyCellProps={{
                 sx: {
                   borderRight: "1px solid #f0f0f0",
                   "&:last-child": {
