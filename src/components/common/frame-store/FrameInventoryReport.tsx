@@ -18,10 +18,15 @@ import {
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { MaterialReactTable, type MRT_ColumnDef, useMaterialReactTable } from "material-react-table";
+import {
+  MaterialReactTable,
+  type MRT_ColumnDef,
+  useMaterialReactTable,
+} from "material-react-table";
 import { useGetBranch } from "../../../hooks/useGetBranch";
 import useGetFrameSalesHistory from "../../../hooks/report/useGetFrameSalesHistory";
 import dayjs, { Dayjs } from "dayjs";
+import { useTheme, useMediaQuery } from "@mui/material";
 
 interface BranchOption {
   id: string;
@@ -53,6 +58,8 @@ interface FrameSalesHistory {
 }
 
 const FrameInventoryReport = () => {
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const [branchId, setBranchId] = useState<string>();
   const [startDate, setStartDate] = useState<Dayjs | null>(null);
   const [endDate, setEndDate] = useState<Dayjs | null>(dayjs());
@@ -105,7 +112,8 @@ const FrameInventoryReport = () => {
       const branchData: Record<string, any> = {};
       item.branches.forEach((branch) => {
         branchData[`branch_${branch.branch_id}_stock`] = branch.stock_count;
-        branchData[`branch_${branch.branch_id}_received`] = branch.stock_received;
+        branchData[`branch_${branch.branch_id}_received`] =
+          branch.stock_received;
         branchData[`branch_${branch.branch_id}_sold`] = branch.sold_qty || 0;
       });
 
@@ -150,22 +158,22 @@ const FrameInventoryReport = () => {
             header: "Stock",
             size: 100,
             muiTableHeadCellProps: {
-              sx: { 
+              sx: {
                 backgroundColor: bgColor,
-                fontWeight: 'bold',
-                borderBottom: '2px solid #ddd'
+                fontWeight: "bold",
+                borderBottom: "2px solid #ddd",
               },
             },
             muiTableBodyCellProps: {
-              sx: { 
+              sx: {
                 backgroundColor: `${bgColor}33`,
-                fontWeight: 'bold',
-                borderBottom: '1px solid #eee'
+                fontWeight: "bold",
+                borderBottom: "1px solid #eee",
               },
             },
-            aggregationFn: 'sum',
+            aggregationFn: "sum",
             AggregatedCell: ({ cell, row }) => (
-              <Box sx={{ fontWeight: 'bold' }}>
+              <Box sx={{ fontWeight: "bold" }}>
                 {cell.getValue<number>()?.toLocaleString()}
               </Box>
             ),
@@ -175,21 +183,21 @@ const FrameInventoryReport = () => {
             header: "Received",
             size: 100,
             muiTableHeadCellProps: {
-              sx: { 
+              sx: {
                 backgroundColor: bgColor,
-                fontWeight: 'bold',
-                borderBottom: '2px solid #ddd'
+                fontWeight: "bold",
+                borderBottom: "2px solid #ddd",
               },
             },
             muiTableBodyCellProps: {
-              sx: { 
+              sx: {
                 backgroundColor: `${bgColor}33`,
-                borderBottom: '1px solid #eee'
+                borderBottom: "1px solid #eee",
               },
             },
-            aggregationFn: 'sum',
+            aggregationFn: "sum",
             AggregatedCell: ({ cell }) => (
-              <Box sx={{ fontWeight: 'bold' }}>
+              <Box sx={{ fontWeight: "bold" }}>
                 {cell.getValue<number>()?.toLocaleString()}
               </Box>
             ),
@@ -199,23 +207,23 @@ const FrameInventoryReport = () => {
             header: "Sold",
             size: 80,
             muiTableHeadCellProps: {
-              sx: { 
+              sx: {
                 backgroundColor: bgColor,
-                fontWeight: 'bold',
-                borderBottom: '2px solid #ddd'
+                fontWeight: "bold",
+                borderBottom: "2px solid #ddd",
               },
             },
             muiTableBodyCellProps: {
-              sx: { 
+              sx: {
                 backgroundColor: `${bgColor}33`,
-                color: 'error.main',
-                fontWeight: 'bold',
-                borderBottom: '1px solid #eee'
+                color: "error.main",
+                fontWeight: "bold",
+                borderBottom: "1px solid #eee",
               },
             },
-            aggregationFn: 'sum',
+            aggregationFn: "sum",
             AggregatedCell: ({ cell }) => (
-              <Box sx={{ color: 'error.main', fontWeight: 'bold' }}>
+              <Box sx={{ color: "error.main", fontWeight: "bold" }}>
                 {cell.getValue<number>()?.toLocaleString()}
               </Box>
             ),
@@ -237,7 +245,6 @@ const FrameInventoryReport = () => {
           { accessorKey: "species", header: "Species", size: 100 },
           { accessorKey: "total_qty", header: "Total Qty", size: 100 },
           { accessorKey: "sold_count", header: "Sold Count", size: 120 },
-          { accessorKey: "as_of_date", header: "As of Date", size: 140 },
         ],
       },
       ...branchGroupedColumns,
@@ -246,6 +253,12 @@ const FrameInventoryReport = () => {
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <Box sx={{ 
+        width: '100%',
+        maxWidth: '100vw',
+        overflowX: 'hidden',
+        p: isSmallScreen ? 1 : 2,
+      }}>
       <Card>
         <CardContent>
           <Typography variant="h6" gutterBottom>
@@ -253,56 +266,48 @@ const FrameInventoryReport = () => {
           </Typography>
 
           {/* Filters */}
-          <Paper sx={{ p: 2, mb: 3 }} elevation={1}>
+          <Paper sx={{ p: { xs: 2, sm: 3 }, mb: 3 }} elevation={1}>
             <Grid container spacing={2} alignItems="flex-end">
-              <Grid item xs={12} sm={4}>
-                <FormControl fullWidth size="small">
-                  <InputLabel id="branch-select-label">Branch</InputLabel>
-                  <Select
-                    labelId="branch-select-label"
-                    id="branch-select"
-                    value={branchId}
-                    label="Branch"
-                    onChange={handleBranchChange}
-                    disabled={branchloading}
-                  >
-                    {branchOptions.map((branch) => (
-                      <MenuItem key={branch.id} value={branch.id}>
-                        {branch.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
-
-              <Grid item xs={12} sm={2.5}>
+              <Grid item xs={12} sm={6} md={3}>
                 <DatePicker
                   label="Start Date"
                   value={startDate}
                   onChange={(newValue) => setStartDate(newValue)}
                   renderInput={(params) => (
-                    <TextField {...params} fullWidth size="small" />
+                    <TextField 
+                      {...params} 
+                      fullWidth 
+                      size="small"
+                      sx={{ '& .MuiInputBase-root': { height: '40px' } }}
+                    />
                   )}
                 />
               </Grid>
 
-              <Grid item xs={12} sm={2.5}>
+              <Grid item xs={12} sm={6} md={3}>
                 <DatePicker
                   label="End Date"
                   value={endDate}
                   onChange={(newValue) => setEndDate(newValue)}
                   renderInput={(params) => (
-                    <TextField {...params} fullWidth size="small" />
+                    <TextField 
+                      {...params} 
+                      fullWidth 
+                      size="small"
+                      sx={{ '& .MuiInputBase-root': { height: '40px' } }}
+                    />
                   )}
                 />
               </Grid>
 
-              <Grid item xs={12} sm={3} sx={{ display: "flex", gap: 1 }}>
+              <Grid item xs={6} sm={3} md={2} sx={{ mt: { xs: 0, sm: 0 } }}>
                 <Button
                   variant="contained"
                   onClick={handleSearch}
                   disabled={frameSalesHistoryListLoading}
                   fullWidth
+                  size="medium"
+                  sx={{ height: '40px' }}
                 >
                   {frameSalesHistoryListLoading ? (
                     <CircularProgress size={24} />
@@ -310,11 +315,16 @@ const FrameInventoryReport = () => {
                     "Search"
                   )}
                 </Button>
+              </Grid>
+
+              <Grid item xs={6} sm={3} md={2} sx={{ mt: { xs: 0, sm: 0 } }}>
                 <Button
                   variant="outlined"
                   onClick={handleReset}
                   disabled={frameSalesHistoryListLoading}
                   fullWidth
+                  size="medium"
+                  sx={{ height: '40px' }}
                 >
                   Reset
                 </Button>
@@ -323,7 +333,51 @@ const FrameInventoryReport = () => {
           </Paper>
 
           {/* Data Table */}
-          <Box sx={{ mt: 3 }}>
+          <Box sx={{ 
+            mt: 3,
+            width: '100%',
+            maxWidth: '100%',
+            overflow: 'hidden',
+            '& .MuiTableContainer-root': {
+              maxWidth: '100%',
+              maxHeight: 'calc(100vh - 300px)',
+              overflow: 'auto',
+              '&::-webkit-scrollbar': {
+                height: '8px',
+                width: '8px',
+              },
+              '&::-webkit-scrollbar-thumb': {
+                backgroundColor: '#bdbdbd',
+                borderRadius: '4px',
+              },
+              '& .MuiTable-root': {
+                minWidth: 'max-content',
+                width: '100%',
+              },
+              '& .MuiTableCell-root': {
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                maxWidth: '200px',
+                padding: '8px 16px',
+              },
+              '& .MuiTableHead-root': {
+                position: 'sticky',
+                top: 0,
+                zIndex: 1,
+                '& .MuiTableCell-root': {
+                  fontWeight: 'bold',
+                  backgroundColor: '#f5f5f5',
+                  borderBottom: '2px solid #e0e0e0',
+                },
+              },
+              '& .MuiTableBody-root': {
+                '& tr:hover': {
+                  backgroundColor: 'rgba(0, 0, 0, 0.04)',
+                },
+              },
+            },
+          }}>
             <MaterialReactTable
               columns={columns}
               data={transformedData}
@@ -345,6 +399,7 @@ const FrameInventoryReport = () => {
           </Box>
         </CardContent>
       </Card>
+      </Box>
     </LocalizationProvider>
   );
 };
