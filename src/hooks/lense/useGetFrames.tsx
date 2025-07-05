@@ -15,7 +15,7 @@ interface UseGetFrameReturn {
 }
 interface FrameParams {
   status: "inactive" | "active" | "all" | null;
-  store: number | null;
+  store_id: number | null;
 }
 const useGetFrames = ({
   store,
@@ -27,7 +27,7 @@ const useGetFrames = ({
   const [framesError, setFramesError] = useState<boolean>(false);
   const [params, setParams] = useState<FrameParams>({
     status: "active",
-    store: store ? store : null,
+    store_id: store ? store : null,
   });
 
   const abortControllerRef = useRef<AbortController | null>(null);
