@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import {
   MaterialReactTable,
   MRT_Column,
@@ -32,7 +32,46 @@ const InventoryLenseStore = () => {
   });
 
   const { openDialog } = useDeleteDialog();
+  // State to store quantity inputs for selected rows with lens IDs
+  const [quantities, setQuantities] = useState<{
+    [key: number]: number | undefined;
+  }>(() => {
+    // Initialize quantities from lenses data if needed
+    const initialQuantities: { [key: number]: number | undefined } = {};
+    lenses.forEach((lens) => {
+      initialQuantities[lens.id] = lens.stock?.[0]?.qty ?? 0;
+    });
+    return initialQuantities;
+  });
+  console.log(quantities);
+  // Handler to update quantity for a specific lens
+  const handleQuantityChange = (lensId: number, value: string) => {
+    const numValue = value === "" ? undefined : parseInt(value);
+    setQuantities((prev) => ({
+      ...prev,
+      [lensId]: numValue ?? 0, // Default to 0 if undefined
+    }));
+  };
 
+  // Handler for onBlur event: set empty value to 0
+  const handleBlur = (lensId: number, value: string) => {
+    if (value === "") {
+      setQuantities((prev) => ({
+        ...prev,
+        [lensId]: 0,
+      }));
+    }
+  };
+
+  // Handler for onFocus event: clear field if value is 0
+  const handleFocus = (
+    lensId: number,
+    event: React.FocusEvent<HTMLInputElement>
+  ) => {
+    if (quantities[lensId] === 0 || quantities[lensId] === undefined) {
+      event.target.value = "";
+    }
+  };
   // Define columns
   const columns = useMemo(
     () => [
@@ -91,7 +130,45 @@ const InventoryLenseStore = () => {
           </Box>
         ),
       },
-
+      {
+        id: "qty_input",
+        header: "Qty Input",
+        accessorKey: "",
+        size: 100,
+        muiTableHeadCellProps: { align: "center" as const },
+        muiTableBodyCellProps: { align: "center" as const },
+        Cell: ({
+          row,
+        }: {
+          row: { original: LenseModel; getIsSelected: () => boolean };
+        }) => (
+          <Box sx={{ display: "flex", justifyContent: "center" }}>
+            {row.getIsSelected() ? (
+              <TextField
+                size="small"
+                type="number"
+                value={quantities[row.original.id] ?? ""}
+                onChange={(e) =>
+                  handleQuantityChange(row.original.id, e.target.value)
+                }
+                onBlur={(e) => handleBlur(row.original.id, e.target.value)}
+                onFocus={(e) =>
+                  handleFocus(
+                    row.original.id,
+                    e as React.FocusEvent<HTMLInputElement>
+                  )
+                }
+                sx={{ width: "80px" }}
+                inputProps={{ min: 0 }}
+              />
+            ) : (
+              <Typography align="center" variant="body2">
+                Not Selected
+              </Typography>
+            )}
+          </Box>
+        ),
+      },
       {
         header: "Lense Factory",
         accessorKey: "brand_name",
@@ -326,7 +403,7 @@ const InventoryLenseStore = () => {
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [lenses]
+    [lenses, quantities]
   );
   const navigate = useNavigate();
   // Handlers for actions
@@ -363,6 +440,7 @@ const InventoryLenseStore = () => {
       <MaterialReactTable
         enableColumnFilters // 👈 enables filters
         enableFilters // 👈 required for custom filter functions
+        enableRowSelection
         state={{
           isLoading: lensesLoading,
         }}
