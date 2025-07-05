@@ -16,7 +16,7 @@ import { Truck } from "lucide-react";
 
 const FrameStore = () => {
   const { frames, framesLoading, refresh } = useGetFrames({
-    store: Number(LENS_AND_FRAME_STORE_ID),
+    store_id: null,
   });
   const { openDialog } = useDeleteDialog();
 

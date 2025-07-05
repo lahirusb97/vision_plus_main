@@ -16,6 +16,8 @@ interface StockBranchData {
   branch_name: string;
   stock_count: number;
   stock_received: number;
+  stock_removed: number;
+  sold_qty: number;
 }
 interface FrameSalesHistory {
   frame_id: number;
@@ -55,7 +57,7 @@ const useGetFrameSalesHistory = (id: string) => {
     try {
       const queryParams = {
         ...paramsNullCleaner(params),
-        store_branch_id: LENS_AND_FRAME_STORE_ID, // Ensure store_branch_id is always included
+        store_id: LENS_AND_FRAME_STORE_ID, // Ensure store_branch_id is always included
       };
 
       const response: { data: FrameSalesHistory[] } = await axiosClient.get(

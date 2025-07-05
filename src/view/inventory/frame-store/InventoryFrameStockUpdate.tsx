@@ -224,7 +224,7 @@ export const DetailPanel = ({ row, refresh }: DetailPanelProps) => {
         <Typography variant="caption" align="center">
           Actions
         </Typography>
-        <Typography variant="caption">Image</Typography>
+  
         <Typography variant="caption">Color</Typography>
         {/* <Typography variant="caption">Code</Typography> */}
         {/* <Typography variant="caption">Brand</Typography> */}

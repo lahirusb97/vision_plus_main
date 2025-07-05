@@ -38,6 +38,7 @@ interface BranchData {
   branch_name: string;
   stock_count: number;
   stock_received: number;
+  stock_removed: number;
   sold_qty: number;
 }
 
@@ -59,7 +60,7 @@ interface FrameSalesHistory {
 
 const FrameInventoryReport = () => {
   const theme = useTheme();
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const [branchId, setBranchId] = useState<string>();
   const [startDate, setStartDate] = useState<Dayjs | null>(null);
   const [endDate, setEndDate] = useState<Dayjs | null>(dayjs());
@@ -114,6 +115,8 @@ const FrameInventoryReport = () => {
         branchData[`branch_${branch.branch_id}_stock`] = branch.stock_count;
         branchData[`branch_${branch.branch_id}_received`] =
           branch.stock_received;
+        branchData[`branch_${branch.branch_id}_removed`] =
+          branch.stock_removed || 0;
         branchData[`branch_${branch.branch_id}_sold`] = branch.sold_qty || 0;
       });
 
@@ -228,6 +231,32 @@ const FrameInventoryReport = () => {
               </Box>
             ),
           },
+          {
+            accessorKey: `branch_${branch.branch_id}_removed`,
+            header: "Removed",
+            size: 80,
+            muiTableHeadCellProps: {
+              sx: {
+                backgroundColor: bgColor,
+                fontWeight: "bold",
+                borderBottom: "2px solid #ddd",
+              },
+            },
+            muiTableBodyCellProps: {
+              sx: {
+                backgroundColor: `${bgColor}33`,
+                color: "error.main",
+                fontWeight: "bold",
+                borderBottom: "1px solid #eee",
+              },
+            },
+            aggregationFn: "sum",
+            AggregatedCell: ({ cell }) => (
+              <Box sx={{ color: "error.main", fontWeight: "bold" }}>
+                {cell.getValue<number>()?.toLocaleString()}
+              </Box>
+            ),
+          },
         ],
       };
     });
@@ -243,8 +272,12 @@ const FrameInventoryReport = () => {
           { accessorKey: "color", header: "Color", size: 100 },
           { accessorKey: "size", header: "Size", size: 80 },
           { accessorKey: "species", header: "Species", size: 100 },
-          { accessorKey: "total_qty", header: "Total Qty", size: 100 },
-          { accessorKey: "sold_count", header: "Sold Count", size: 120 },
+          {
+            accessorKey: "total_available",
+            header: "Total Available",
+            size: 100,
+          },
+          { accessorKey: "sold_count", header: "Total Sold", size: 120 },
         ],
       },
       ...branchGroupedColumns,
@@ -253,152 +286,156 @@ const FrameInventoryReport = () => {
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <Box sx={{ 
-        width: '100%',
-        maxWidth: '100vw',
-        overflowX: 'hidden',
-        p: isSmallScreen ? 1 : 2,
-      }}>
-      <Card>
-        <CardContent>
-          <Typography variant="h6" gutterBottom>
-            Frame Inventory Report
-          </Typography>
+      <Box
+        sx={{
+          width: "100%",
+          maxWidth: "100vw",
+          overflowX: "hidden",
+          p: isSmallScreen ? 1 : 2,
+        }}
+      >
+        <Card>
+          <CardContent>
+            <Typography variant="h6" gutterBottom>
+              Frame Inventory Report
+            </Typography>
 
-          {/* Filters */}
-          <Paper sx={{ p: { xs: 2, sm: 3 }, mb: 3 }} elevation={1}>
-            <Grid container spacing={2} alignItems="flex-end">
-              <Grid item xs={12} sm={6} md={3}>
-                <DatePicker
-                  label="Start Date"
-                  value={startDate}
-                  onChange={(newValue) => setStartDate(newValue)}
-                  renderInput={(params) => (
-                    <TextField 
-                      {...params} 
-                      fullWidth 
-                      size="small"
-                      sx={{ '& .MuiInputBase-root': { height: '40px' } }}
-                    />
-                  )}
-                />
+            {/* Filters */}
+            <Paper sx={{ p: { xs: 2, sm: 3 }, mb: 3 }} elevation={1}>
+              <Grid container spacing={2} alignItems="flex-end">
+                <Grid item xs={12} sm={6} md={3}>
+                  <DatePicker
+                    label="Start Date"
+                    value={startDate}
+                    onChange={(newValue) => setStartDate(newValue)}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        fullWidth
+                        size="small"
+                        sx={{ "& .MuiInputBase-root": { height: "40px" } }}
+                      />
+                    )}
+                  />
+                </Grid>
+
+                <Grid item xs={12} sm={6} md={3}>
+                  <DatePicker
+                    label="End Date"
+                    value={endDate}
+                    onChange={(newValue) => setEndDate(newValue)}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        fullWidth
+                        size="small"
+                        sx={{ "& .MuiInputBase-root": { height: "40px" } }}
+                      />
+                    )}
+                  />
+                </Grid>
+
+                <Grid item xs={6} sm={3} md={2} sx={{ mt: { xs: 0, sm: 0 } }}>
+                  <Button
+                    variant="contained"
+                    onClick={handleSearch}
+                    disabled={frameSalesHistoryListLoading}
+                    fullWidth
+                    size="medium"
+                    sx={{ height: "40px" }}
+                  >
+                    {frameSalesHistoryListLoading ? (
+                      <CircularProgress size={24} />
+                    ) : (
+                      "Search"
+                    )}
+                  </Button>
+                </Grid>
+
+                <Grid item xs={6} sm={3} md={2} sx={{ mt: { xs: 0, sm: 0 } }}>
+                  <Button
+                    variant="outlined"
+                    onClick={handleReset}
+                    disabled={frameSalesHistoryListLoading}
+                    fullWidth
+                    size="medium"
+                    sx={{ height: "40px" }}
+                  >
+                    Reset
+                  </Button>
+                </Grid>
               </Grid>
+            </Paper>
 
-              <Grid item xs={12} sm={6} md={3}>
-                <DatePicker
-                  label="End Date"
-                  value={endDate}
-                  onChange={(newValue) => setEndDate(newValue)}
-                  renderInput={(params) => (
-                    <TextField 
-                      {...params} 
-                      fullWidth 
-                      size="small"
-                      sx={{ '& .MuiInputBase-root': { height: '40px' } }}
-                    />
-                  )}
-                />
-              </Grid>
-
-              <Grid item xs={6} sm={3} md={2} sx={{ mt: { xs: 0, sm: 0 } }}>
-                <Button
-                  variant="contained"
-                  onClick={handleSearch}
-                  disabled={frameSalesHistoryListLoading}
-                  fullWidth
-                  size="medium"
-                  sx={{ height: '40px' }}
-                >
-                  {frameSalesHistoryListLoading ? (
-                    <CircularProgress size={24} />
-                  ) : (
-                    "Search"
-                  )}
-                </Button>
-              </Grid>
-
-              <Grid item xs={6} sm={3} md={2} sx={{ mt: { xs: 0, sm: 0 } }}>
-                <Button
-                  variant="outlined"
-                  onClick={handleReset}
-                  disabled={frameSalesHistoryListLoading}
-                  fullWidth
-                  size="medium"
-                  sx={{ height: '40px' }}
-                >
-                  Reset
-                </Button>
-              </Grid>
-            </Grid>
-          </Paper>
-
-          {/* Data Table */}
-          <Box sx={{ 
-            mt: 3,
-            width: '100%',
-            maxWidth: '100%',
-            overflow: 'hidden',
-            '& .MuiTableContainer-root': {
-              maxWidth: '100%',
-              maxHeight: 'calc(100vh - 300px)',
-              overflow: 'auto',
-              '&::-webkit-scrollbar': {
-                height: '8px',
-                width: '8px',
-              },
-              '&::-webkit-scrollbar-thumb': {
-                backgroundColor: '#bdbdbd',
-                borderRadius: '4px',
-              },
-              '& .MuiTable-root': {
-                minWidth: 'max-content',
-                width: '100%',
-              },
-              '& .MuiTableCell-root': {
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                maxWidth: '200px',
-                padding: '8px 16px',
-              },
-              '& .MuiTableHead-root': {
-                position: 'sticky',
-                top: 0,
-                zIndex: 1,
-                '& .MuiTableCell-root': {
-                  fontWeight: 'bold',
-                  backgroundColor: '#f5f5f5',
-                  borderBottom: '2px solid #e0e0e0',
-                },
-              },
-              '& .MuiTableBody-root': {
-                '& tr:hover': {
-                  backgroundColor: 'rgba(0, 0, 0, 0.04)',
-                },
-              },
-            },
-          }}>
-            <MaterialReactTable
-              columns={columns}
-              data={transformedData}
-              state={{
-                sx: {
-                  borderRight: "1px solid #f0f0f0",
-                  "&:last-child": {
-                    borderRight: "none",
+            {/* Data Table */}
+            <Box
+              sx={{
+                mt: 3,
+                width: "100%",
+                maxWidth: "100%",
+                overflow: "hidden",
+                "& .MuiTableContainer-root": {
+                  maxWidth: "100%",
+                  maxHeight: "calc(100vh - 300px)",
+                  overflow: "auto",
+                  "&::-webkit-scrollbar": {
+                    height: "8px",
+                    width: "8px",
+                  },
+                  "&::-webkit-scrollbar-thumb": {
+                    backgroundColor: "#bdbdbd",
+                    borderRadius: "4px",
+                  },
+                  "& .MuiTable-root": {
+                    minWidth: "max-content",
+                    width: "100%",
+                  },
+                  "& .MuiTableCell-root": {
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    maxWidth: "200px",
+                    padding: "8px 16px",
+                  },
+                  "& .MuiTableHead-root": {
+                    position: "sticky",
+                    top: 0,
+                    zIndex: 1,
+                    "& .MuiTableCell-root": {
+                      fontWeight: "bold",
+                      backgroundColor: "#f5f5f5",
+                      borderBottom: "2px solid #e0e0e0",
+                    },
+                  },
+                  "& .MuiTableBody-root": {
+                    "& tr:hover": {
+                      backgroundColor: "rgba(0, 0, 0, 0.04)",
+                    },
                   },
                 },
               }}
-              muiTableContainerProps={{
-                sx: {
-                  maxHeight: "calc(100vh - 300px)",
-                  overflowX: "auto",
-                },
-              }}
-            />
-          </Box>
-        </CardContent>
-      </Card>
+            >
+              <MaterialReactTable
+                columns={columns}
+                data={transformedData}
+                state={{
+                  sx: {
+                    borderRight: "1px solid #f0f0f0",
+                    "&:last-child": {
+                      borderRight: "none",
+                    },
+                  },
+                }}
+                muiTableContainerProps={{
+                  sx: {
+                    maxHeight: "calc(100vh - 300px)",
+                    overflowX: "auto",
+                  },
+                }}
+              />
+            </Box>
+          </CardContent>
+        </Card>
       </Box>
     </LocalizationProvider>
   );

@@ -10,7 +10,7 @@ import { useDeleteDialog } from "../../../context/DeleteDialogContext";
 import { FrameModel } from "../../../model/FrameModel";
 import TitleText from "../../../components/TitleText";
 import { numberWithCommas } from "../../../utils/numberWithCommas";
-import { Edit, EmojiTransportation, PriceChange } from "@mui/icons-material";
+import { Edit,  PriceChange } from "@mui/icons-material";
 import { LENS_AND_FRAME_STORE_ID } from "../../../data/staticVariables";
 import { History, Truck } from "lucide-react";
 
@@ -18,7 +18,7 @@ const InventoryFrameStore = () => {
   const navigate = useNavigate();
 
   const { frames, framesLoading, refresh } = useGetFrames({
-    store: Number(LENS_AND_FRAME_STORE_ID),
+    store_id: Number(LENS_AND_FRAME_STORE_ID),
   });
   const { openDialog } = useDeleteDialog();
   const handleActionHistory = (id: number) => {

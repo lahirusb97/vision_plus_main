@@ -1,8 +1,6 @@
 import { RouteObject } from "react-router";
 import LensCreate from "../../view/inventory/lens-store/LensCreate";
-import LensStore from "../../view/inventory/lens-store/LensStore";
 import ProtectedChildRoute from "../ProtectedChildRoute";
-import LenseStore from "../../view/stock/LenseStore";
 import LenseUpdate from "../../view/stock/lense/LenseUpdate";
 import LenseEdit from "../../view/stock/lense/LenseEdit";
 import LenseFullEdit from "../../view/stock/lense/LenseFullEdit";
@@ -11,10 +9,11 @@ import FrameInventoryTransfer from "../../view/inventory/frame-store/FrameInvent
 import FrameInventoryReport from "../../components/common/frame-store/FrameInventoryReport";
 import LensStoreReport from "../../view/inventory/lens-store/LensStoreReport";
 import LensInventoryUpdate from "../../view/inventory/lens-store/LensInventoryUpdate";
+import InventoryLenseStore from "../../view/inventory/lens-store/inventory-LenseStore";
 export const LensStoreRoutes: RouteObject[] = [
   {
     path: "",
-    element: <LensStore />,
+    element: <InventoryLenseStore />,
   },
   {
     path: "lens-create",
@@ -26,7 +25,7 @@ export const LensStoreRoutes: RouteObject[] = [
     children: [
       {
         index: true,
-        element: <LenseStore />,
+        element: <InventoryLenseStore />,
       },
       {
         path: "update/:id",
