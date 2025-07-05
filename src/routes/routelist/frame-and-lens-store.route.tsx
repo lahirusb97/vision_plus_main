@@ -1,5 +1,5 @@
 import { RouteObject } from "react-router";
-import LensStore from "../../view/inventory/lens-store/LensStore";
+import InventoryLenseStore from "../../view/inventory/lens-store/inventory-LenseStore";
 import FrameCreate from "../../view/inventory/frame-store/FrameCreate";
 import InventoryFrameStore from "../../view/inventory/frame-store/InventoryFrameStore";
 import ProtectedChildRoute from "../ProtectedChildRoute";
@@ -27,7 +27,7 @@ import FrameInventoryReport from "../../components/common/frame-store/FrameInven
 export const frameAndLensStoreRoutes: RouteObject[] = [
   {
     path: "",
-    element: <LensStore />,
+    element: <InventoryLenseStore />,
   },
   {
     path: "frame-create",
