@@ -90,7 +90,7 @@ const FrameInventoryReport = () => {
     lensSalesHistoryListLoading,
     lensSalesHistoryListSearch,
   } = useGetLensSalesHistory();
-
+  console.log(lensSalesHistoryList);
   const handleBranchChange = (event: SelectChangeEvent) => {
     setBranchId(event.target.value);
   };
@@ -142,16 +142,22 @@ const FrameInventoryReport = () => {
     });
   }, [lensSalesHistoryList]);
 
-  const branchGroupedColumns = useMemo<
-    MRT_ColumnDef<LensSalesHistory>[]
-  >(() => {
-    const first = lensSalesHistoryList?.[0];
-    if (!first) return [];
+  const branchGroupedColumns = useMemo<MRT_ColumnDef<LensSalesHistory>[]>(() => {
+    if (!lensSalesHistoryList?.length) return [];
+
+    // Get all unique branches across all items
+    const allBranches = Array.from(
+      new Map(
+        lensSalesHistoryList
+          .flatMap((item) => item.branches)
+          .map((branch) => [branch.branch_id, branch])
+      ).values()
+    );
 
     const colors = ["#e3f2fd", "#fce4ec", "#e8f5e9", "#fff3e0", "#f3e5f5"]; // light blue, pink, green, orange, purple
     let colorIndex = 0;
 
-    return first.branches.map((branch) => {
+    return allBranches.map((branch) => {
       const bgColor = colors[colorIndex % colors.length];
       colorIndex++;
 
