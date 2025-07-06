@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import {
   MaterialReactTable,
   MRT_Column,
@@ -7,7 +7,10 @@ import {
 import {
   Autocomplete,
   Box,
+  Button,
+  Checkbox,
   IconButton,
+  Input,
   TextField,
   Tooltip,
   Typography,
@@ -24,13 +27,77 @@ import TitleText from "../../components/TitleText";
 import { Edit, PriceChange } from "@mui/icons-material";
 import returnPlusSymbol from "../../utils/returnPlusSymbol";
 import { numberWithCommas } from "../../utils/numberWithCommas";
+import { getUserCurentBranch } from "../../utils/authDataConver";
+import StoreQtyActionDialog from "../inventory/lens-store/store-qty-action-dialog";
 
-const LenseStore = () => {
+export type LenseModelWithQuantity = LenseModel & {
+  selectedQuantity: string;
+};
+const AdvanceTransferLenseStore = () => {
   const { lenses, lensesLoading, refresh } = useGetLenses({
     store_id: null,
   });
-
+  const [selectedRows, setSelectedRows] = useState<LenseModelWithQuantity[]>(
+    []
+  );
   const { openDialog } = useDeleteDialog();
+
+  // Dialog state
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogAction, setDialogAction] = useState<
+    "add" | "remove" | "transfer" | null
+  >(null);
+
+  // Handler to update quantity for a specific lens
+  const handleQuantityChange = (lensId: number, value: string) => {
+    // If empty string, set to undefined to allow clearing the field
+    console.log(lensId, value);
+    setSelectedRows((prev) =>
+      prev.map((lense) =>
+        lense.id === lensId
+          ? {
+              ...lense,
+              selectedQuantity: value,
+            }
+          : lense
+      )
+    );
+  };
+
+  // Handler for onBlur event: set empty value to 0
+  const handleBlur = (id: number) => {
+    setSelectedRows((prev) =>
+      prev.map((lense) =>
+        lense.id === id &&
+        (!lense.selectedQuantity || lense.selectedQuantity.trim() === "")
+          ? { ...lense, selectedQuantity: "0" }
+          : lense
+      )
+    );
+  };
+
+  // Handler for onFocus event: clear field if value is 0
+  const handleFocus = (id: number) => {
+    const selectedLens = selectedRows.find((item) => item.id === id);
+    if (selectedLens?.selectedQuantity === "0") {
+      setSelectedRows((prev) =>
+        prev.map((lense) =>
+          lense.id === id ? { ...lense, selectedQuantity: "" } : lense
+        )
+      );
+    }
+  };
+
+  // Handle dialog actions
+  const handleDialogAction = (action: "add" | "remove" | "transfer") => {
+    setDialogAction(action);
+    setDialogOpen(true);
+  };
+
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+    setDialogAction(null);
+  };
 
   // Define columns
   const columns = useMemo(
@@ -81,12 +148,44 @@ const LenseStore = () => {
               <IconButton
                 size="small"
                 color="warning"
-                title="Update Quantity"
                 onClick={() => handleUpdate(row.original.id)}
               >
                 <LoopIcon sx={{ fontSize: "1.4rem" }} />
               </IconButton>
             </Tooltip>
+            <Box>
+              <Checkbox
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setSelectedRows((prev) => [
+                      ...prev,
+                      { ...row.original, selectedQuantity: "0" },
+                    ]);
+                  } else {
+                    setSelectedRows((prev) =>
+                      prev.filter((item) => item.id !== row.original.id)
+                    );
+                  }
+                }}
+              />
+              {selectedRows.some((item) => item.id === row.original.id) && (
+                <Input
+                  type="number"
+                  value={
+                    selectedRows.find((item) => item.id === row.original.id)
+                      ?.selectedQuantity ?? ""
+                  }
+                  onChange={(e) =>
+                    handleQuantityChange(row.original.id, e.target.value)
+                  }
+                  placeholder="Quantity"
+                  onBlur={() => handleBlur(row.original.id)}
+                  onFocus={() => handleFocus(row.original.id)}
+                  sx={{ width: "80px" }}
+                  inputProps={{ min: 0 }}
+                />
+              )}
+            </Box>
           </Box>
         ),
       },
@@ -325,9 +424,10 @@ const LenseStore = () => {
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [lenses]
+    [lenses, selectedRows]
   );
   const navigate = useNavigate();
+
   // Handlers for actions
   const handleDelete = (row: LenseModel) => {
     openDialog(
@@ -360,6 +460,37 @@ const LenseStore = () => {
     <Box sx={{ padding: 4, maxWidth: "1200px" }}>
       <TitleText title="  Lenses Store" />
       <MaterialReactTable
+        enableTopToolbar
+        renderTopToolbarCustomActions={({ table }) => {
+          const hasSelection = selectedRows.length > 0;
+
+          return (
+            <Box sx={{ display: "flex", gap: 1 }}>
+              <Button
+                variant="contained"
+                onClick={() => handleDialogAction("add")}
+                disabled={!hasSelection}
+              >
+                Add Qty
+              </Button>
+              <Button
+                variant="outlined"
+                onClick={() => handleDialogAction("transfer")}
+                disabled={!hasSelection}
+              >
+                Transfer Qty
+              </Button>
+              <Button
+                color="error"
+                variant="outlined"
+                onClick={() => handleDialogAction("remove")}
+                disabled={!hasSelection}
+              >
+                Remove Qty
+              </Button>
+            </Box>
+          );
+        }}
         enableColumnFilters // 👈 enables filters
         enableFilters // 👈 required for custom filter functions
         state={{
@@ -386,8 +517,15 @@ const LenseStore = () => {
           },
         }}
       />
+      <StoreQtyActionDialog
+        open={dialogOpen}
+        onClose={handleDialogClose}
+        actionType={dialogAction}
+        quantities={selectedRows}
+        refresh={refresh}
+      />
     </Box>
   );
 };
 
-export default LenseStore;
+export default AdvanceTransferLenseStore;
