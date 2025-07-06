@@ -30,3 +30,6 @@ export const REFUND_ORDER_ID: number = 2 as const;
 //!STIRE
 export const MAIN_STORE_ID: string = "5" as const;
 export const LENS_AND_FRAME_STORE_ID: string = "4" as const;
+
+//!base url
+export const BASE_URL: string = "http://localhost:8005/" as const;
