@@ -26,13 +26,22 @@ import { Edit, PriceChange } from "@mui/icons-material";
 import returnPlusSymbol from "../../../utils/returnPlusSymbol";
 import { numberWithCommas } from "../../../utils/numberWithCommas";
 import { getUserCurentBranch } from "../../../utils/authDataConver";
+import StoreQtyActionDialog from "./store-qty-action-dialog";
 
 const InventoryLenseStore = () => {
+  const [table, setTable] = useState<any>(null);
   const { lenses, lensesLoading, refresh } = useGetLenses({
     store_id: getUserCurentBranch()?.id ?? null,
   });
 
   const { openDialog } = useDeleteDialog();
+
+  // Dialog state
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogAction, setDialogAction] = useState<
+    "add" | "remove" | "transfer" | null
+  >(null);
+
   // State to store quantity inputs for selected rows with lens IDs
   const [quantities, setQuantities] = useState<{
     [key: number]: number | undefined;
@@ -83,6 +92,39 @@ const InventoryLenseStore = () => {
     if (quantities[lensId] === 0 || quantities[lensId] === undefined) {
       event.target.value = "";
     }
+  };
+
+  // Handle dialog actions
+  const handleDialogAction = (action: "add" | "remove" | "transfer") => {
+    setDialogAction(action);
+    setDialogOpen(true);
+  };
+
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+    setDialogAction(null);
+  };
+
+  const handleDialogConfirm = (
+    data: { itemId: number; qty: number }[],
+    action: string | null
+  ) => {
+    if (!action) return;
+
+    // Here you would typically make an API call to update the quantities
+    console.log(`Performing ${action} action with data:`, data);
+
+    // Update local state for demonstration
+    const updatedQuantities = { ...quantities };
+    data.forEach(({ itemId, qty }) => {
+      updatedQuantities[itemId] =
+        (quantities[itemId] || 0) +
+        (action === "add" ? qty : action === "remove" ? -qty : 0);
+    });
+    setQuantities(updatedQuantities);
+
+    // Show success message or handle errors
+    // refresh(); // Uncomment to refresh data from server
   };
   // Define columns
   const columns = useMemo(
@@ -444,30 +486,43 @@ const InventoryLenseStore = () => {
     // Add update logic
     navigate(`update/${id}`);
   };
-
+  console.log(quantities);
   return (
     <Box sx={{ padding: 4, maxWidth: "1200px" }}>
       <TitleText title="  Lenses Store" />
       <MaterialReactTable
         enableTopToolbar
-        renderTopToolbarCustomActions={({ table }) => (
-          <Box sx={{ display: "flex", gap: 1 }}>
-            <Button variant="contained" onClick={() => {}}>
-              Add Qty
-            </Button>
-            <Button
-              variant="outlined"
-              onClick={() => {
-                console.log(table.getSelectedRowModel().rows);
-              }}
-            >
-              Transfer Qty
-            </Button>
-            <Button color="error" variant="outlined" onClick={() => {}}>
-              Remove Qty
-            </Button>
-          </Box>
-        )}
+        renderTopToolbarCustomActions={({ table }) => {
+          const selectedRows = table.getSelectedRowModel().rows;
+          const hasSelection = selectedRows.length > 0;
+
+          return (
+            <Box sx={{ display: "flex", gap: 1 }}>
+              <Button
+                variant="contained"
+                onClick={() => handleDialogAction("add")}
+                disabled={!hasSelection}
+              >
+                Add Qty
+              </Button>
+              <Button
+                variant="outlined"
+                onClick={() => handleDialogAction("transfer")}
+                disabled={!hasSelection}
+              >
+                Transfer Qty
+              </Button>
+              <Button
+                color="error"
+                variant="outlined"
+                onClick={() => handleDialogAction("remove")}
+                disabled={!hasSelection}
+              >
+                Remove Qty
+              </Button>
+            </Box>
+          );
+        }}
         enableColumnFilters // 👈 enables filters
         enableFilters // 👈 required for custom filter functions
         enableRowSelection
@@ -494,6 +549,14 @@ const InventoryLenseStore = () => {
             padding: 0,
           },
         }}
+      />
+      <StoreQtyActionDialog
+        open={dialogOpen}
+        onClose={handleDialogClose}
+        actionType={dialogAction}
+        selectedItems={table?.getSelectedRowModel()?.rows || []}
+        quantities={quantities}
+        onConfirm={handleDialogConfirm}
       />
     </Box>
   );
