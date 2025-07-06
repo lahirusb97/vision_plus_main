@@ -10,6 +10,7 @@ import FrameInventoryReport from "../../components/common/frame-store/FrameInven
 import LensStoreReport from "../../view/inventory/lens-store/LensStoreReport";
 import LensInventoryUpdate from "../../view/inventory/lens-store/LensInventoryUpdate";
 import InventoryLenseStore from "../../view/inventory/lens-store/inventory-LenseStore";
+import InventoryLensSalesReport from "../../view/inventory/lens-store/inventory-lens-sales-report";
 export const LensStoreRoutes: RouteObject[] = [
   {
     path: "",
@@ -51,7 +52,7 @@ export const LensStoreRoutes: RouteObject[] = [
   },
   {
     path: "lens-report",
-    element: <LensStoreReport />,
+    element: <InventoryLensSalesReport />,
   },
   {
     path: "lens-stock-updates",
