@@ -7,6 +7,7 @@ import {
 import {
   Autocomplete,
   Box,
+  Button,
   IconButton,
   TextField,
   Tooltip,
@@ -46,11 +47,22 @@ const InventoryLenseStore = () => {
   console.log(quantities);
   // Handler to update quantity for a specific lens
   const handleQuantityChange = (lensId: number, value: string) => {
-    const numValue = value === "" ? undefined : parseInt(value);
-    setQuantities((prev) => ({
-      ...prev,
-      [lensId]: numValue ?? 0, // Default to 0 if undefined
-    }));
+    // If empty string, set to undefined to allow clearing the field
+    if (value === "") {
+      setQuantities((prev) => ({
+        ...prev,
+        [lensId]: undefined,
+      }));
+    } else {
+      // Only parse as number if not empty
+      const numValue = parseInt(value);
+      if (!isNaN(numValue)) {
+        setQuantities((prev) => ({
+          ...prev,
+          [lensId]: numValue,
+        }));
+      }
+    }
   };
 
   // Handler for onBlur event: set empty value to 0
@@ -121,7 +133,6 @@ const InventoryLenseStore = () => {
               <IconButton
                 size="small"
                 color="warning"
-                title="Update Quantity"
                 onClick={() => handleUpdate(row.original.id)}
               >
                 <LoopIcon sx={{ fontSize: "1.4rem" }} />
@@ -438,6 +449,25 @@ const InventoryLenseStore = () => {
     <Box sx={{ padding: 4, maxWidth: "1200px" }}>
       <TitleText title="  Lenses Store" />
       <MaterialReactTable
+        enableTopToolbar
+        renderTopToolbarCustomActions={({ table }) => (
+          <Box sx={{ display: "flex", gap: 1 }}>
+            <Button variant="contained" onClick={() => {}}>
+              Add Qty
+            </Button>
+            <Button
+              variant="outlined"
+              onClick={() => {
+                console.log(table.getSelectedRowModel().rows);
+              }}
+            >
+              Transfer Qty
+            </Button>
+            <Button color="error" variant="outlined" onClick={() => {}}>
+              Remove Qty
+            </Button>
+          </Box>
+        )}
         enableColumnFilters // 👈 enables filters
         enableFilters // 👈 required for custom filter functions
         enableRowSelection
