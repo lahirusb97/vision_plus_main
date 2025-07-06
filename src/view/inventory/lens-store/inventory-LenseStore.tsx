@@ -8,7 +8,9 @@ import {
   Autocomplete,
   Box,
   Button,
+  Checkbox,
   IconButton,
+  Input,
   TextField,
   Tooltip,
   Typography,
@@ -28,12 +30,16 @@ import { numberWithCommas } from "../../../utils/numberWithCommas";
 import { getUserCurentBranch } from "../../../utils/authDataConver";
 import StoreQtyActionDialog from "./store-qty-action-dialog";
 
+export type LenseModelWithQuantity = LenseModel & {
+  selectedQuantity: string;
+};
 const InventoryLenseStore = () => {
-  const [table, setTable] = useState<any>(null);
   const { lenses, lensesLoading, refresh } = useGetLenses({
     store_id: getUserCurentBranch()?.id ?? null,
   });
-
+  const [selectedRows, setSelectedRows] = useState<LenseModelWithQuantity[]>(
+    []
+  );
   const { openDialog } = useDeleteDialog();
 
   // Dialog state
@@ -42,55 +48,43 @@ const InventoryLenseStore = () => {
     "add" | "remove" | "transfer" | null
   >(null);
 
-  // State to store quantity inputs for selected rows with lens IDs
-  const [quantities, setQuantities] = useState<{
-    [key: number]: number | undefined;
-  }>(() => {
-    // Initialize quantities from lenses data if needed
-    const initialQuantities: { [key: number]: number | undefined } = {};
-    lenses.forEach((lens) => {
-      initialQuantities[lens.id] = lens.stock?.[0]?.qty ?? 0;
-    });
-    return initialQuantities;
-  });
-  console.log(quantities);
   // Handler to update quantity for a specific lens
   const handleQuantityChange = (lensId: number, value: string) => {
     // If empty string, set to undefined to allow clearing the field
-    if (value === "") {
-      setQuantities((prev) => ({
-        ...prev,
-        [lensId]: undefined,
-      }));
-    } else {
-      // Only parse as number if not empty
-      const numValue = parseInt(value);
-      if (!isNaN(numValue)) {
-        setQuantities((prev) => ({
-          ...prev,
-          [lensId]: numValue,
-        }));
-      }
-    }
+    console.log(lensId, value);
+    setSelectedRows((prev) =>
+      prev.map((lense) =>
+        lense.id === lensId
+          ? {
+              ...lense,
+              selectedQuantity: value,
+            }
+          : lense
+      )
+    );
   };
 
   // Handler for onBlur event: set empty value to 0
-  const handleBlur = (lensId: number, value: string) => {
-    if (value === "") {
-      setQuantities((prev) => ({
-        ...prev,
-        [lensId]: 0,
-      }));
-    }
+  const handleBlur = (id: number) => {
+    setSelectedRows((prev) =>
+      prev.map((lense) =>
+        lense.id === id &&
+        (!lense.selectedQuantity || lense.selectedQuantity.trim() === "")
+          ? { ...lense, selectedQuantity: "0" }
+          : lense
+      )
+    );
   };
 
   // Handler for onFocus event: clear field if value is 0
-  const handleFocus = (
-    lensId: number,
-    event: React.FocusEvent<HTMLInputElement>
-  ) => {
-    if (quantities[lensId] === 0 || quantities[lensId] === undefined) {
-      event.target.value = "";
+  const handleFocus = (id: number) => {
+    const selectedLens = selectedRows.find((item) => item.id === id);
+    if (selectedLens?.selectedQuantity === "0") {
+      setSelectedRows((prev) =>
+        prev.map((lense) =>
+          lense.id === id ? { ...lense, selectedQuantity: "" } : lense
+        )
+      );
     }
   };
 
@@ -105,27 +99,6 @@ const InventoryLenseStore = () => {
     setDialogAction(null);
   };
 
-  const handleDialogConfirm = (
-    data: { itemId: number; qty: number }[],
-    action: string | null
-  ) => {
-    if (!action) return;
-
-    // Here you would typically make an API call to update the quantities
-    console.log(`Performing ${action} action with data:`, data);
-
-    // Update local state for demonstration
-    const updatedQuantities = { ...quantities };
-    data.forEach(({ itemId, qty }) => {
-      updatedQuantities[itemId] =
-        (quantities[itemId] || 0) +
-        (action === "add" ? qty : action === "remove" ? -qty : 0);
-    });
-    setQuantities(updatedQuantities);
-
-    // Show success message or handle errors
-    // refresh(); // Uncomment to refresh data from server
-  };
   // Define columns
   const columns = useMemo(
     () => [
@@ -180,48 +153,43 @@ const InventoryLenseStore = () => {
                 <LoopIcon sx={{ fontSize: "1.4rem" }} />
               </IconButton>
             </Tooltip>
-          </Box>
-        ),
-      },
-      {
-        id: "qty_input",
-        header: "Qty Input",
-        accessorKey: "",
-        size: 100,
-        muiTableHeadCellProps: { align: "center" as const },
-        muiTableBodyCellProps: { align: "center" as const },
-        Cell: ({
-          row,
-        }: {
-          row: { original: LenseModel; getIsSelected: () => boolean };
-        }) => (
-          <Box sx={{ display: "flex", justifyContent: "center" }}>
-            {row.getIsSelected() ? (
-              <TextField
-                size="small"
-                type="number"
-                value={quantities[row.original.id] ?? ""}
-                onChange={(e) =>
-                  handleQuantityChange(row.original.id, e.target.value)
-                }
-                onBlur={(e) => handleBlur(row.original.id, e.target.value)}
-                onFocus={(e) =>
-                  handleFocus(
-                    row.original.id,
-                    e as React.FocusEvent<HTMLInputElement>
-                  )
-                }
-                sx={{ width: "80px" }}
-                inputProps={{ min: 0 }}
+            <Box>
+              <Checkbox
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setSelectedRows((prev) => [
+                      ...prev,
+                      { ...row.original, selectedQuantity: "0" },
+                    ]);
+                  } else {
+                    setSelectedRows((prev) =>
+                      prev.filter((item) => item.id !== row.original.id)
+                    );
+                  }
+                }}
               />
-            ) : (
-              <Typography align="center" variant="body2">
-                Not Selected
-              </Typography>
-            )}
+              {selectedRows.some((item) => item.id === row.original.id) && (
+                <Input
+                  type="number"
+                  value={
+                    selectedRows.find((item) => item.id === row.original.id)
+                      ?.selectedQuantity ?? ""
+                  }
+                  onChange={(e) =>
+                    handleQuantityChange(row.original.id, e.target.value)
+                  }
+                  placeholder="Quantity"
+                  onBlur={() => handleBlur(row.original.id)}
+                  onFocus={() => handleFocus(row.original.id)}
+                  sx={{ width: "80px" }}
+                  inputProps={{ min: 0 }}
+                />
+              )}
+            </Box>
           </Box>
         ),
       },
+
       {
         header: "Lense Factory",
         accessorKey: "brand_name",
@@ -456,9 +424,10 @@ const InventoryLenseStore = () => {
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [lenses, quantities]
+    [lenses, selectedRows]
   );
   const navigate = useNavigate();
+
   // Handlers for actions
   const handleDelete = (row: LenseModel) => {
     openDialog(
@@ -486,14 +455,13 @@ const InventoryLenseStore = () => {
     // Add update logic
     navigate(`update/${id}`);
   };
-  console.log(quantities);
+
   return (
     <Box sx={{ padding: 4, maxWidth: "1200px" }}>
       <TitleText title="  Lenses Store" />
       <MaterialReactTable
         enableTopToolbar
         renderTopToolbarCustomActions={({ table }) => {
-          const selectedRows = table.getSelectedRowModel().rows;
           const hasSelection = selectedRows.length > 0;
 
           return (
@@ -525,7 +493,6 @@ const InventoryLenseStore = () => {
         }}
         enableColumnFilters // 👈 enables filters
         enableFilters // 👈 required for custom filter functions
-        enableRowSelection
         state={{
           isLoading: lensesLoading,
         }}
@@ -554,9 +521,8 @@ const InventoryLenseStore = () => {
         open={dialogOpen}
         onClose={handleDialogClose}
         actionType={dialogAction}
-        selectedItems={table?.getSelectedRowModel()?.rows || []}
-        quantities={quantities}
-        onConfirm={handleDialogConfirm}
+        quantities={selectedRows}
+        refresh={refresh}
       />
     </Box>
   );
