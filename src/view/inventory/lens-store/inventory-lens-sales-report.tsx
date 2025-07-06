@@ -1,531 +1,495 @@
-import { useMemo, useState } from "react";
+import React, { useState, useMemo, useEffect } from "react";
+import {
+  Box,
+  Card,
+  CardContent,
+  CircularProgress,
+  Typography,
+  Grid,
+  Paper,
+  TextField,
+  Button,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Select,
+  SelectChangeEvent,
+} from "@mui/material";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import {
   MaterialReactTable,
-  MRT_Column,
-  MRT_TableInstance,
+  type MRT_ColumnDef,
+  useMaterialReactTable,
 } from "material-react-table";
-import {
-  Autocomplete,
-  Box,
-  Button,
-  Checkbox,
-  IconButton,
-  Input,
-  TextField,
-  Tooltip,
-  Typography,
-} from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
-// import HistoryIcon from "@mui/icons-material/History";
-import LoopIcon from "@mui/icons-material/Loop";
-import { useNavigate } from "react-router";
-import useGetLenses from "../../../hooks/lense/useGetLense";
-import { useDeleteDialog } from "../../../context/DeleteDialogContext";
+import { useGetBranch } from "../../../hooks/useGetBranch";
+import useGetFrameSalesHistory from "../../../hooks/report/useGetFrameSalesHistory";
+import dayjs, { Dayjs } from "dayjs";
+import { useTheme, useMediaQuery } from "@mui/material";
+import useGetLensSalesHistory from "../../../hooks/report/useGetLensSalesHistory";
+import { LenseModel, Power } from "../../../model/LenseModel";
 import { addID, cylID, sphID } from "../../../data/staticVariables";
-import { LenseModel } from "../../../model/LenseModel";
-import TitleText from "../../../components/TitleText";
-import { Edit, PriceChange } from "@mui/icons-material";
 import returnPlusSymbol from "../../../utils/returnPlusSymbol";
-import { numberWithCommas } from "../../../utils/numberWithCommas";
-import { getUserCurentBranch } from "../../../utils/authDataConver";
-import StoreQtyActionDialog from "./store-qty-action-dialog";
 
-export type LenseModelWithQuantity = LenseModel & {
-  selectedQuantity: string;
-};
-const InventoryLensSalesReport = () => {
-  const { lenses, lensesLoading, refresh } = useGetLenses({
-    store_id: getUserCurentBranch()?.id ?? null,
-  });
-  const [selectedRows, setSelectedRows] = useState<LenseModelWithQuantity[]>(
-    []
-  );
-  const { openDialog } = useDeleteDialog();
+interface BranchOption {
+  id: string;
+  name: string;
+}
 
-  // Dialog state
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [dialogAction, setDialogAction] = useState<
-    "add" | "remove" | "transfer" | null
-  >(null);
+interface BranchData {
+  branch_id: number;
+  branch_name: string;
+  stock_count: number;
+  stock_received: number;
+  stock_removed: number;
+  sold_qty: number;
+}
 
-  // Handler to update quantity for a specific lens
-  const handleQuantityChange = (lensId: number, value: string) => {
-    // If empty string, set to undefined to allow clearing the field
-    console.log(lensId, value);
-    setSelectedRows((prev) =>
-      prev.map((lense) =>
-        lense.id === lensId
-          ? {
-              ...lense,
-              selectedQuantity: value,
-            }
-          : lense
-      )
-    );
-  };
+interface LensSalesHistory {
+  lens_id: number;
+  lens_type: string;
+  coating: string;
+  brand: string;
+  species: string;
+  other_branches_qty: number;
+  sold_count: number;
+  total_available: number;
+  as_of_date: string;
+  powers: Power[];
+  branches: BranchData[];
+}
 
-  // Handler for onBlur event: set empty value to 0
-  const handleBlur = (id: number) => {
-    setSelectedRows((prev) =>
-      prev.map((lense) =>
-        lense.id === id &&
-        (!lense.selectedQuantity || lense.selectedQuantity.trim() === "")
-          ? { ...lense, selectedQuantity: "0" }
-          : lense
-      )
-    );
-  };
+const FrameInventoryReport = () => {
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const [branchId, setBranchId] = useState<string>();
+  const [startDate, setStartDate] = useState<Dayjs | null>(null);
+  const [endDate, setEndDate] = useState<Dayjs | null>(dayjs());
 
-  // Handler for onFocus event: clear field if value is 0
-  const handleFocus = (id: number) => {
-    const selectedLens = selectedRows.find((item) => item.id === id);
-    if (selectedLens?.selectedQuantity === "0") {
-      setSelectedRows((prev) =>
-        prev.map((lense) =>
-          lense.id === id ? { ...lense, selectedQuantity: "" } : lense
-        )
-      );
+  const { brancheData, branchloading } = useGetBranch();
+
+  const branchOptions: BranchOption[] = useMemo(() => {
+    if (!brancheData) return [];
+    return brancheData
+      .filter((branch) => branch.id !== 4)
+      .map((branch) => ({
+        id: branch.id.toString(),
+        name: branch.branch_name,
+      }));
+  }, [brancheData]);
+
+  useEffect(() => {
+    if (branchOptions.length > 0 && !branchId && !branchloading) {
+      setBranchId(branchOptions[0].id);
     }
+  }, [branchOptions, branchId, branchloading]);
+
+  const {
+    lensSalesHistoryList,
+    lensSalesHistoryListLoading,
+    lensSalesHistoryListSearch,
+  } = useGetLensSalesHistory();
+
+  const handleBranchChange = (event: SelectChangeEvent) => {
+    setBranchId(event.target.value);
   };
 
-  // Handle dialog actions
-  const handleDialogAction = (action: "add" | "remove" | "transfer") => {
-    setDialogAction(action);
-    setDialogOpen(true);
+  const handleSearch = () => {
+    lensSalesHistoryListSearch({
+      branch_id: null,
+      date_start: startDate ? startDate.format("YYYY-MM-DD") : null,
+      date_end: endDate ? endDate.format("YYYY-MM-DD") : null,
+      store_branch_id: "",
+    });
   };
 
-  const handleDialogClose = () => {
-    setDialogOpen(false);
-    setDialogAction(null);
+  const handleReset = () => {
+    setBranchId("");
+    setStartDate(null);
+    setEndDate(null);
   };
 
-  // Define columns
-  const columns = useMemo(
-    () => [
-      {
-        header: "Action",
-        id: "action",
-        size: 100,
-        muiTableHeadCellProps: { align: "center" as const },
-        muiTableBodyCellProps: { align: "center" as const },
-        Cell: ({ row }: { row: { original: LenseModel } }) => (
-          <Box sx={{ display: "flex", gap: 1 }}>
-            <Tooltip title="Deactivate Lense">
-              <IconButton
-                size="small"
-                color="error"
-                onClick={() => handleDelete(row.original)}
-              >
-                <DeleteIcon sx={{ fontSize: "1.4rem" }} />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Lense Full Edit">
-              <IconButton
-                size="small"
-                onClick={() => handleLenseFullEdit(row.original.id)}
-              >
-                <Edit sx={{ fontSize: "1.4rem" }} />
-              </IconButton>
-            </Tooltip>
-            {/* <IconButton
-              size="small"
-              color="info"
-              title="History"
-              onClick={() => handleHistory(row.original.id)}
-            >
-              <HistoryIcon sx={{ fontSize: "1.4rem" }} />
-            </IconButton> */}
-            <Tooltip title="Update Lense Price">
-              <IconButton
-                size="small"
-                color="warning"
-                onClick={() => handleEdit(row.original.id)}
-              >
-                <PriceChange sx={{ fontSize: "1.4rem" }} />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Update Lense Quantity">
-              <IconButton
-                size="small"
-                color="warning"
-                onClick={() => handleUpdate(row.original.id)}
-              >
-                <LoopIcon sx={{ fontSize: "1.4rem" }} />
-              </IconButton>
-            </Tooltip>
-            <Box>
-              <Checkbox
-                onChange={(e) => {
-                  if (e.target.checked) {
-                    setSelectedRows((prev) => [
-                      ...prev,
-                      { ...row.original, selectedQuantity: "0" },
-                    ]);
-                  } else {
-                    setSelectedRows((prev) =>
-                      prev.filter((item) => item.id !== row.original.id)
-                    );
-                  }
-                }}
-              />
-              {selectedRows.some((item) => item.id === row.original.id) && (
-                <Input
-                  type="number"
-                  value={
-                    selectedRows.find((item) => item.id === row.original.id)
-                      ?.selectedQuantity ?? ""
-                  }
-                  onChange={(e) =>
-                    handleQuantityChange(row.original.id, e.target.value)
-                  }
-                  placeholder="Quantity"
-                  onBlur={() => handleBlur(row.original.id)}
-                  onFocus={() => handleFocus(row.original.id)}
-                  sx={{ width: "80px" }}
-                  inputProps={{ min: 0 }}
-                />
-              )}
-            </Box>
-          </Box>
-        ),
-      },
+  const transformedData = useMemo(() => {
+    return (lensSalesHistoryList || []).map((item) => {
+      const branchData: Record<string, any> = {};
+      item.branches.forEach((branch) => {
+        branchData[`branch_${branch.branch_id}_stock`] = branch.stock_count;
+        branchData[`branch_${branch.branch_id}_received`] =
+          branch.stock_received;
+        branchData[`branch_${branch.branch_id}_removed`] =
+          branch.stock_removed || 0;
+        branchData[`branch_${branch.branch_id}_sold`] = branch.sold_qty || 0;
+      });
 
-      {
-        header: "Lense Factory",
-        accessorKey: "brand_name",
-        muiTableHeadCellProps: { align: "center" as const },
-        muiTableBodyCellProps: { align: "center" as const },
-        size: 130,
-        Filter: ({ column }: { column: MRT_Column<LenseModel> }) => {
-          const allBrands = Array.from(
-            new Set(lenses.map((l) => l.brand_name))
-          ).filter(Boolean);
+      // Handle sold_count which can be an object or number
+      let soldCount = 0;
+      if (typeof item.sold_count === "number") {
+        soldCount = item.sold_count;
+      } else if (item.sold_count && typeof item.sold_count === "object") {
+        // Sum all values if sold_count is an object
+        soldCount = Object.values(item.sold_count).reduce(
+          (sum: number, val: any) => sum + (Number(val) || 0),
+          0
+        );
+      }
 
-          return (
-            <Autocomplete
-              size="small"
-              options={allBrands}
-              onChange={(_, value) => column.setFilterValue(value ?? "")}
-              renderInput={(params) => (
-                <TextField {...params} label="Filter" variant="standard" />
-              )}
-              value={column.getFilterValue() || ""}
-              isOptionEqualToValue={(option, value) => option === value}
-              clearOnEscape
-            />
-          );
-        },
-      },
-      {
-        header: "Lense Type",
-        accessorKey: "type_name",
-        muiTableHeadCellProps: { align: "center" as const },
-        muiTableBodyCellProps: { align: "center" as const },
-        size: 130,
-        Filter: ({
-          column,
-          table,
-        }: {
-          column: MRT_Column<LenseModel>;
-          table: MRT_TableInstance<LenseModel>;
-        }) => {
-          // Get selected brand from filters
-          const brandFilter = table
-            .getState()
-            .columnFilters.find((f) => f.id === "brand_name");
-          const selectedBrand = brandFilter?.value;
-          // Show only types for selected brand
-          const filteredTypes = Array.from(
-            new Set(
-              lenses
-                .filter((l) => !selectedBrand || l.brand_name === selectedBrand)
-                .map((l) => l.type_name)
-            )
-          ).filter(Boolean);
+      return {
+        ...item,
+        ...branchData,
+        sold_count: soldCount, // Ensure sold_count is always a number
+      };
+    });
+  }, [lensSalesHistoryList]);
 
-          return (
-            <Autocomplete
-              size="small"
-              options={filteredTypes}
-              onChange={(_, value) => column.setFilterValue(value ?? "")}
-              renderInput={(params) => (
-                <TextField {...params} label="Filter" variant="standard" />
-              )}
-              value={column.getFilterValue() || ""}
-              isOptionEqualToValue={(option, value) => option === value}
-              clearOnEscape
-            />
-          );
-        },
-      },
-      {
-        header: "Coating",
-        accessorKey: "coating_name",
-        muiTableHeadCellProps: { align: "center" as const },
-        muiTableBodyCellProps: { align: "center" as const },
-        size: 130,
-        Filter: ({
-          column,
-          table,
-        }: {
-          column: MRT_Column<LenseModel>;
-          table: MRT_TableInstance<LenseModel>;
-        }) => {
-          // Get selected brand & type from filters
-          const brandFilter = table
-            .getState()
-            .columnFilters.find((f) => f.id === "brand_name");
-          const selectedBrand = brandFilter?.value;
-          const typeFilter = table
-            .getState()
-            .columnFilters.find((f) => f.id === "type_name");
-          const selectedType = typeFilter?.value;
+  const branchGroupedColumns = useMemo<
+    MRT_ColumnDef<LensSalesHistory>[]
+  >(() => {
+    const first = lensSalesHistoryList?.[0];
+    if (!first) return [];
 
-          // Show only coatings for selected brand+type
-          const filteredCoatings = Array.from(
-            new Set(
-              lenses
-                .filter(
-                  (l) =>
-                    (!selectedBrand || l.brand_name === selectedBrand) &&
-                    (!selectedType || l.type_name === selectedType)
-                )
-                .map((l) => l.coating_name)
-            )
-          ).filter(Boolean);
+    const colors = ["#e3f2fd", "#fce4ec", "#e8f5e9", "#fff3e0", "#f3e5f5"]; // light blue, pink, green, orange, purple
+    let colorIndex = 0;
 
-          return (
-            <Autocomplete
-              size="small"
-              options={filteredCoatings}
-              onChange={(_, value) => column.setFilterValue(value ?? "")}
-              renderInput={(params) => (
-                <TextField {...params} label="Filter" variant="standard" />
-              )}
-              value={column.getFilterValue() || ""}
-              isOptionEqualToValue={(option, value) => option === value}
-              clearOnEscape
-            />
-          );
-        },
-      },
-      {
-        header: "Price",
-        accessorKey: "price",
-        muiTableHeadCellProps: { align: "right" as const },
-        muiTableBodyCellProps: { align: "right" as const },
-        size: 80,
-        Cell: ({ row }: { row: { original: LenseModel } }) => (
-          <Typography align="right" variant="body2">
-            {numberWithCommas(row.original.price)}
-          </Typography>
-        ),
-      },
-      {
-        header: "Side",
-        id: "side",
-        muiTableHeadCellProps: { align: "center" as const },
-        muiTableBodyCellProps: { align: "center" as const },
-        Cell: ({ row }: { row: { original: LenseModel } }) => {
-          const sphEntry = row.original.powers.find((p) => p.power === sphID);
-          return sphEntry && sphEntry.side ? sphEntry.side : "-";
-        },
-        size: 30,
-      },
-      {
-        header: "SPH",
-        id: "sph",
-        muiTableHeadCellProps: { align: "center" as const },
-        muiTableBodyCellProps: { align: "center" as const },
-        accessorFn: (row: LenseModel) => {
-          const sph = row.powers.find((p) => p.power === sphID);
-          return sph
-            ? `${returnPlusSymbol(sph.value)}${parseFloat(sph.value).toFixed(
-                2
-              )}`
-            : null;
-        },
-        size: 30,
-      },
-      {
-        header: "CYL",
-        id: "cyl",
-        muiTableHeadCellProps: { align: "center" as const },
-        muiTableBodyCellProps: { align: "center" as const },
-        accessorFn: (row: LenseModel) => {
-          const cyl = row.powers.find((p) => p.power === cylID);
-          return cyl
-            ? `${returnPlusSymbol(cyl.value)}${parseFloat(cyl.value).toFixed(
-                2
-              )}`
-            : null;
-        },
-        size: 30,
-      },
-      {
-        header: "ADD",
-        id: "add",
-        muiTableHeadCellProps: { align: "center" as const },
-        muiTableBodyCellProps: { align: "center" as const },
-        accessorFn: (row: LenseModel) => {
-          const add = row.powers.find((p) => p.power === addID);
-          return add
-            ? `${returnPlusSymbol(add.value)}${parseFloat(add.value).toFixed(
-                2
-              )}`
-            : null;
-        },
-        size: 30,
-      },
-      {
-        header: "Quantity",
-        accessorFn: (row: LenseModel) => row.stock?.[0]?.qty ?? 0,
-        muiTableHeadCellProps: { align: "center" as const },
-        muiTableBodyCellProps: { align: "center" as const },
-        size: 50,
-        Cell: ({ row }: { row: { original: LenseModel } }) => (
-          <Typography align="center" variant="body2">
-            {row.original.stock?.[0]?.qty ?? 0}
-          </Typography>
-        ),
-      },
-      {
-        header: "Stock Limit",
-        muiTableHeadCellProps: { align: "center" as const },
-        muiTableBodyCellProps: { align: "center" as const },
-        accessorFn: (row: LenseModel) => row.stock?.[0]?.limit ?? 0,
-        size: 50,
-      },
-      {
-        header: "Low Stocks",
-        accessorFn: (row: LenseModel) => {
-          const qty = row.stock?.[0]?.qty ?? 0;
-          const limit = row.stock?.[0]?.limit ?? 0;
-          return qty <= limit;
-        },
-        enableSorting: true, // explicitly enable sorting
-        size: 50,
-        muiTableHeadCellProps: { align: "center" as const },
-        muiTableBodyCellProps: { align: "center" as const },
-        Cell: ({ row }: { row: { original: LenseModel } }) => {
-          const qty = row.original.stock?.[0]?.qty ?? 0;
-          const limit = row.original.stock?.[0]?.limit ?? 0;
-          return (
-            <Typography
-              variant="body2"
-              sx={{
-                color: qty <= limit ? "error.main" : "success.main",
-              }}
-            >
-              {qty <= limit ? "Low Stock" : "OK"}
-            </Typography>
-          );
-        },
-      },
-    ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [lenses, selectedRows]
-  );
-  const navigate = useNavigate();
+    return first.branches.map((branch) => {
+      const bgColor = colors[colorIndex % colors.length];
+      colorIndex++;
 
-  // Handlers for actions
-  const handleDelete = (row: LenseModel) => {
-    openDialog(
-      `lenses/${row.id}/`,
-      `Lense of Type - ${row.type} & Brand - ${row.brand}`,
-      "Your can activate this lense again using Logs section lens store",
-      "Deactivate",
-      refresh
-    );
-  };
-  const handleLenseFullEdit = (id: number) => {
-    navigate(`./full_edit/${id}`);
-  };
-  // const handleHistory = (id: number) => {
-  //   // Add history logic
-  //   navigate(`history/${id}`);
-  // };
+      return {
+        header: branch.branch_name,
+        columns: [
+          {
+            accessorKey: `branch_${branch.branch_id}_stock`,
+            header: "Stock",
+            size: 100,
+            muiTableHeadCellProps: {
+              sx: {
+                backgroundColor: bgColor,
+                fontWeight: "bold",
+                borderBottom: "2px solid #ddd",
+              },
+            },
+            muiTableBodyCellProps: {
+              sx: {
+                backgroundColor: `${bgColor}33`,
+                fontWeight: "bold",
+                borderBottom: "1px solid #eee",
+              },
+            },
+            aggregationFn: "sum",
+            AggregatedCell: ({ cell, row }) => (
+              <Box sx={{ fontWeight: "bold" }}>
+                {cell.getValue<number>()?.toLocaleString()}
+              </Box>
+            ),
+          },
+          {
+            accessorKey: `branch_${branch.branch_id}_received`,
+            header: "Received",
+            size: 100,
+            muiTableHeadCellProps: {
+              sx: {
+                backgroundColor: bgColor,
+                fontWeight: "bold",
+                borderBottom: "2px solid #ddd",
+              },
+            },
+            muiTableBodyCellProps: {
+              sx: {
+                backgroundColor: `${bgColor}33`,
+                borderBottom: "1px solid #eee",
+              },
+            },
+            aggregationFn: "sum",
+            AggregatedCell: ({ cell }) => (
+              <Box sx={{ fontWeight: "bold" }}>
+                {cell.getValue<number>()?.toLocaleString()}
+              </Box>
+            ),
+          },
+          {
+            accessorKey: `branch_${branch.branch_id}_sold`,
+            header: "Sold",
+            size: 80,
+            muiTableHeadCellProps: {
+              sx: {
+                backgroundColor: bgColor,
+                fontWeight: "bold",
+                borderBottom: "2px solid #ddd",
+              },
+            },
+            muiTableBodyCellProps: {
+              sx: {
+                backgroundColor: `${bgColor}33`,
+                color: "error.main",
+                fontWeight: "bold",
+                borderBottom: "1px solid #eee",
+              },
+            },
+            aggregationFn: "sum",
+            AggregatedCell: ({ cell }) => (
+              <Box sx={{ color: "error.main", fontWeight: "bold" }}>
+                {cell.getValue<number>()?.toLocaleString()}
+              </Box>
+            ),
+          },
+          {
+            accessorKey: `branch_${branch.branch_id}_removed`,
+            header: "Removed",
+            size: 80,
+            muiTableHeadCellProps: {
+              sx: {
+                backgroundColor: bgColor,
+                fontWeight: "bold",
+                borderBottom: "2px solid #ddd",
+              },
+            },
+            muiTableBodyCellProps: {
+              sx: {
+                backgroundColor: `${bgColor}33`,
+                color: "error.main",
+                fontWeight: "bold",
+                borderBottom: "1px solid #eee",
+              },
+            },
+            aggregationFn: "sum",
+            AggregatedCell: ({ cell }) => (
+              <Box sx={{ color: "error.main", fontWeight: "bold" }}>
+                {cell.getValue<number>()?.toLocaleString()}
+              </Box>
+            ),
+          },
+        ],
+      };
+    });
+  }, [lensSalesHistoryList]);
 
-  const handleEdit = (id: number) => {
-    // Add edit logic
-    navigate(`edit/${id}`);
-  };
-
-  const handleUpdate = (id: number) => {
-    // Add update logic
-    navigate(`update/${id}`);
-  };
+  const columns = useMemo<MRT_ColumnDef<LensSalesHistory>[]>(() => {
+    return [
+      {
+        header: "Frame Info",
+        columns: [
+          { accessorKey: "lens_type", header: "Brand", size: 150 },
+          { accessorKey: "coating", header: "Code", size: 100 },
+          { accessorKey: "brand", header: "Color", size: 100 },
+          {
+            header: "Side",
+            id: "side",
+            muiTableHeadCellProps: { align: "center" as const },
+            muiTableBodyCellProps: { align: "center" as const },
+            Cell: ({ row }: { row: { original: LenseModel } }) => {
+              const sphEntry = row.original.powers.find(
+                (p) => p.power === sphID
+              );
+              return sphEntry && sphEntry.side ? sphEntry.side : "-";
+            },
+            size: 30,
+          },
+          {
+            header: "SPH",
+            id: "sph",
+            muiTableHeadCellProps: { align: "center" as const },
+            muiTableBodyCellProps: { align: "center" as const },
+            accessorFn: (row: LenseModel) => {
+              const sph = row.powers.find((p) => p.power === sphID);
+              console.log(row);
+              return sph
+                ? `${returnPlusSymbol(String(sph.value))}${parseFloat(
+                    String(sph.value)
+                  ).toFixed(2)}`
+                : "-";
+            },
+            size: 30,
+          },
+          {
+            header: "CYL",
+            id: "cyl",
+            muiTableHeadCellProps: { align: "center" as const },
+            muiTableBodyCellProps: { align: "center" as const },
+            accessorFn: (row: LenseModel) => {
+              const cyl = row.powers.find((p) => p.power === cylID);
+              return cyl
+                ? `${returnPlusSymbol(String(cyl.value))}${parseFloat(
+                    String(cyl.value)
+                  ).toFixed(2)}`
+                : "-";
+            },
+            size: 30,
+          },
+          {
+            header: "ADD",
+            id: "add",
+            muiTableHeadCellProps: { align: "center" as const },
+            muiTableBodyCellProps: { align: "center" as const },
+            accessorFn: (row: LenseModel) => {
+              const add = row.powers.find((p) => p.power === addID);
+              return add
+                ? `${returnPlusSymbol(String(add.value))}${parseFloat(
+                    String(add.value)
+                  ).toFixed(2)}`
+                : "-";
+            },
+            size: 30,
+          },
+          {
+            accessorKey: "total_available",
+            header: "Total Available",
+            size: 100,
+          },
+          { accessorKey: "sold_count", header: "Total Sold", size: 120 },
+        ],
+      },
+      ...branchGroupedColumns,
+    ];
+  }, [branchGroupedColumns]);
 
   return (
-    <Box sx={{ padding: 4, maxWidth: "1200px" }}>
-      <TitleText title="  Lenses Store" />
-      <MaterialReactTable
-        enableTopToolbar
-        renderTopToolbarCustomActions={({ table }) => {
-          const hasSelection = selectedRows.length > 0;
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <Box
+        sx={{
+          width: "100%",
+          maxWidth: "100vw",
+          overflowX: "hidden",
+          p: isSmallScreen ? 1 : 2,
+        }}
+      >
+        <Card>
+          <CardContent>
+            <Typography variant="h6" gutterBottom>
+              Frame Inventory Report
+            </Typography>
 
-          return (
-            <Box sx={{ display: "flex", gap: 1 }}>
-              <Button
-                variant="contained"
-                onClick={() => handleDialogAction("add")}
-                disabled={!hasSelection}
-              >
-                Add Qty
-              </Button>
-              <Button
-                variant="outlined"
-                onClick={() => handleDialogAction("transfer")}
-                disabled={!hasSelection}
-              >
-                Transfer Qty
-              </Button>
-              <Button
-                color="error"
-                variant="outlined"
-                onClick={() => handleDialogAction("remove")}
-                disabled={!hasSelection}
-              >
-                Remove Qty
-              </Button>
+            {/* Filters */}
+            <Paper sx={{ p: { xs: 2, sm: 3 }, mb: 3 }} elevation={1}>
+              <Grid container spacing={2} alignItems="flex-end">
+                <Grid item xs={12} sm={6} md={3}>
+                  <DatePicker
+                    label="Start Date"
+                    value={startDate}
+                    onChange={(newValue) => setStartDate(newValue)}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        fullWidth
+                        size="small"
+                        sx={{ "& .MuiInputBase-root": { height: "40px" } }}
+                      />
+                    )}
+                  />
+                </Grid>
+
+                <Grid item xs={12} sm={6} md={3}>
+                  <DatePicker
+                    label="End Date"
+                    value={endDate}
+                    onChange={(newValue) => setEndDate(newValue)}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        fullWidth
+                        size="small"
+                        sx={{ "& .MuiInputBase-root": { height: "40px" } }}
+                      />
+                    )}
+                  />
+                </Grid>
+
+                <Grid item xs={6} sm={3} md={2} sx={{ mt: { xs: 0, sm: 0 } }}>
+                  <Button
+                    variant="contained"
+                    onClick={handleSearch}
+                    disabled={lensSalesHistoryListLoading}
+                    fullWidth
+                    size="medium"
+                    sx={{ height: "40px" }}
+                  >
+                    {lensSalesHistoryListLoading ? (
+                      <CircularProgress size={24} />
+                    ) : (
+                      "Search"
+                    )}
+                  </Button>
+                </Grid>
+
+                <Grid item xs={6} sm={3} md={2} sx={{ mt: { xs: 0, sm: 0 } }}>
+                  <Button
+                    variant="outlined"
+                    onClick={handleReset}
+                    disabled={lensSalesHistoryListLoading}
+                    fullWidth
+                    size="medium"
+                    sx={{ height: "40px" }}
+                  >
+                    Reset
+                  </Button>
+                </Grid>
+              </Grid>
+            </Paper>
+
+            {/* Data Table */}
+            <Box
+              sx={{
+                mt: 3,
+                width: "100%",
+                maxWidth: "100%",
+                overflow: "hidden",
+                "& .MuiTableContainer-root": {
+                  maxWidth: "100%",
+                  maxHeight: "calc(100vh - 300px)",
+                  overflow: "auto",
+                  "&::-webkit-scrollbar": {
+                    height: "8px",
+                    width: "8px",
+                  },
+                  "&::-webkit-scrollbar-thumb": {
+                    backgroundColor: "#bdbdbd",
+                    borderRadius: "4px",
+                  },
+                  "& .MuiTable-root": {
+                    minWidth: "max-content",
+                    width: "100%",
+                  },
+                  "& .MuiTableCell-root": {
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    maxWidth: "200px",
+                    padding: "8px 16px",
+                  },
+                  "& .MuiTableHead-root": {
+                    position: "sticky",
+                    top: 0,
+                    zIndex: 1,
+                    "& .MuiTableCell-root": {
+                      fontWeight: "bold",
+                      backgroundColor: "#f5f5f5",
+                      borderBottom: "2px solid #e0e0e0",
+                    },
+                  },
+                  "& .MuiTableBody-root": {
+                    "& tr:hover": {
+                      backgroundColor: "rgba(0, 0, 0, 0.04)",
+                    },
+                  },
+                },
+              }}
+            >
+              <MaterialReactTable
+                columns={columns}
+                data={transformedData}
+                muiTableContainerProps={{
+                  sx: {
+                    maxHeight: "calc(100vh - 300px)",
+                    overflowX: "auto",
+                  },
+                }}
+              />
             </Box>
-          );
-        }}
-        enableColumnFilters // 👈 enables filters
-        enableFilters // 👈 required for custom filter functions
-        state={{
-          isLoading: lensesLoading,
-        }}
-        initialState={{
-          sorting: [
-            { id: "sph", desc: false },
-            { id: "cyl", desc: false },
-            { id: "add", desc: false },
-          ],
-          showColumnFilters: true,
-          density: "compact",
-          pagination: { pageIndex: 0, pageSize: 15 },
-        }}
-        columns={columns}
-        data={lenses}
-        enableColumnActions={false}
-        enableSorting
-        enablePagination
-        muiTableBodyCellProps={{
-          sx: {
-            padding: 0,
-          },
-        }}
-      />
-      <StoreQtyActionDialog
-        open={dialogOpen}
-        onClose={handleDialogClose}
-        actionType={dialogAction}
-        quantities={selectedRows}
-        refresh={refresh}
-      />
-    </Box>
+          </CardContent>
+        </Card>
+      </Box>
+    </LocalizationProvider>
   );
 };
 
-export default InventoryLensSalesReport;
+export default FrameInventoryReport;

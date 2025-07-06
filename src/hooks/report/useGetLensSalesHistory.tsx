@@ -7,7 +7,7 @@ import { LENS_AND_FRAME_STORE_ID } from "../../data/staticVariables";
 import dayjs from "dayjs";
 import { Power } from "../../model/LenseModel";
 export interface LensHistoryParams {
-  branch_id: string;
+  branch_id: string | null;
   store_branch_id: string;
   date_start: string | null;
   date_end: string | null;
@@ -33,7 +33,7 @@ interface LensSalesHistory {
   powers: Power[];
   branches: StockBranchData[];
 }
-const useGetLensSalesHistory = (id: string) => {
+const useGetLensSalesHistory = () => {
   //use null or [] base on scenario
   const [dataList, SetDataList] = useState<LensSalesHistory[] | []>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -41,7 +41,7 @@ const useGetLensSalesHistory = (id: string) => {
   const [params, setParams] = useState<LensHistoryParams>({
     date_start: "2024-01-01",
     date_end: dayjs().format("YYYY-MM-DD"),
-    branch_id: id,
+    branch_id: null,
     store_branch_id: LENS_AND_FRAME_STORE_ID,
   });
   const abortControllerRef = useRef<AbortController | null>(null);
