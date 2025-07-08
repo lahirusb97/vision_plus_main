@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
 import { Image } from "lucide-react";
-import { BASE_URL } from "../../data/staticVariables";
+import { API_BASE_URL } from "../../data/staticVariables";
 
 const style = {
   position: "absolute",
@@ -50,7 +50,7 @@ export default function ImageViewModel({
           </Box>
           <img
             style={{ width: "600px", height: "400px", objectFit: "contain" }}
-            src={`${BASE_URL}${image}` || ""}
+            src={`${API_BASE_URL}${image}` || ""}
             alt=""
           />
         </Box>

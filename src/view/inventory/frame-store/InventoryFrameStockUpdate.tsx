@@ -27,6 +27,7 @@ import { FrameModel } from "../../../model/FrameModel";
 import { useDeleteDialog } from "../../../context/DeleteDialogContext";
 import DialogFrameAddByColor from "../../../components/inventory-frame/DialogFrameAddByColor";
 import { useNavigate } from "react-router";
+import { API_BASE_URL } from "../../../data/staticVariables";
 
 // Main Table Component
 const InventoryFrameStore = () => {
@@ -62,7 +63,7 @@ const InventoryFrameStore = () => {
         size: 200,
         Cell: ({ row }) => (
           <img
-            src={row.original.image_url}
+            src={API_BASE_URL + row.original.image_url}
             alt="Frame"
             style={{
               width: 56,
@@ -224,7 +225,7 @@ export const DetailPanel = ({ row, refresh }: DetailPanelProps) => {
         <Typography variant="caption" align="center">
           Actions
         </Typography>
-  
+
         <Typography variant="caption">Color</Typography>
         {/* <Typography variant="caption">Code</Typography> */}
         {/* <Typography variant="caption">Brand</Typography> */}
