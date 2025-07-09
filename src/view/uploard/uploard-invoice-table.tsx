@@ -1,15 +1,14 @@
 import {
   Box,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
+  Grid,
+  Card,
+  CardContent,
+  CardActions,
+  Typography,
   IconButton,
   CircularProgress,
-  Typography,
+  Tooltip,
+  Button,
 } from "@mui/material";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import CircleIcon from "@mui/icons-material/Circle";
@@ -21,11 +20,10 @@ import ProgressStagesColors from "../../components/ProgressStagesColors";
 import { customerPaymentTotal } from "../../utils/customerPaymentTotal";
 import { numberWithCommas } from "../../utils/numberWithCommas";
 import useGetCheckinInvoiceList from "../../hooks/useGetCheckinInvoiceList";
-import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
-import { formatDateTimeByType } from "../../utils/formatDateTimeByType";
 import StatusWithTimestamp from "../../components/common/SmallDateAndTime";
+import { UploadRounded } from "@mui/icons-material";
 
-const uploardInvoiceTable = () => {
+const UploadInvoiceCards = () => {
   const {
     invoiceList,
     invoiceLimit,
@@ -37,78 +35,80 @@ const uploardInvoiceTable = () => {
   } = useGetCheckinInvoiceList();
 
   return (
-    <div style={{ padding: 20, maxWidth: "1200px", minWidth: "900px" }}>
+    <div style={{ padding: 20, width: "100vw" }}>
       <FactoryInvoiceSearch invoiceListSearch={invoiceListSearch} />
-      {/* Status Indicators */}
       <ProgressStagesColors />
-      <TableContainer component={Paper}>
-        <Table size="small">
-          <TableHead>
-            <TableRow sx={{ backgroundColor: "#f5f5f5" }}>
-              <TableCell align="center">Invoice</TableCell>
-              <TableCell>Patient Name</TableCell>
-              <TableCell align="center">Date </TableCell>
-              <TableCell>Invoice Total</TableCell>
-              <TableCell>Total Payment</TableCell>
-              <TableCell>Balance</TableCell>
-              <TableCell align="center">Progress</TableCell>
-              {/* <TableCell>
-                  <b>Notes</b>
-                </TableCell> */}
-              {/* <TableCell>Arrival Status</TableCell> */}
-              {/* <TableCell>Issued By</TableCell> */}
-              {/* <TableCell>Issued Date</TableCell> */}
-              {/* <TableCell>Status</TableCell> */}
-              <TableCell>Details</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {invoiceListLoading && (
-              <TableRow>
-                <TableCell colSpan={10} align="center">
-                  <CircularProgress />
-                </TableCell>
-              </TableRow>
-            )}
-            {invoiceList.map((row) => (
-              <TableRow key={row.id}>
-                <TableCell>
+      {invoiceListLoading ? (
+        <Box sx={{ display: "flex", justifyContent: "center", my: 2 }}>
+          <CircularProgress />
+        </Box>
+      ) : invoiceList.length === 0 ? (
+        <Typography align="center" sx={{ my: 2 }}>
+          No data found
+        </Typography>
+      ) : (
+        <Grid container spacing={2}>
+          {invoiceList.map((row) => (
+            <Grid item xs={12} sm={6} md={4} key={row.id}>
+              <Card>
+                <CardContent>
                   <Box
                     sx={{
                       display: "flex",
-                      flexDirection: "column",
+                      justifyContent: "space-between",
                       alignItems: "center",
+                      mb: 1,
                     }}
                   >
-                    <span>{row.invoice_number}</span>
-
-                    {row.mnt_number && (
-                      <Typography
-                        variant="caption"
-                        component="span"
-                        sx={{ fontSize: "0.65rem", color: "text.secondary" }}
-                      >
-                        {row.mnt_number}
-                      </Typography>
-                    )}
+                    <Box>
+                      <Typography variant="h6">{row.invoice_number}</Typography>
+                      {row.mnt_number && (
+                        <Typography variant="caption">
+                          {row.mnt_number}
+                        </Typography>
+                      )}
+                    </Box>
+                    <Box>
+                      <Tooltip title={row.on_hold ? "On Hold" : "Not On Hold"}>
+                        <CircleIcon
+                          color={row.on_hold ? "error" : "success"}
+                          fontSize="small"
+                        />
+                      </Tooltip>
+                      {row.fitting_on_collection && (
+                        <Tooltip title="Fitting on Collection">
+                          <CircleIcon color="primary" fontSize="small" />
+                        </Tooltip>
+                      )}
+                    </Box>
                   </Box>
-                </TableCell>
-                <TableCell>{row.customer}</TableCell>
-                <TableCell>{dateAndTimeFormat(row.invoice_date)}</TableCell>
-
-                <TableCell align="right">
-                  {numberWithCommas(row.total_price)}
-                </TableCell>
-                <TableCell align="right">
-                  {numberWithCommas(customerPaymentTotal(row.payments))}
-                </TableCell>
-                <TableCell align="right">
-                  {numberWithCommas(
-                    parseInt(row.total_price) -
-                      customerPaymentTotal(row.payments)
-                  )}
-                </TableCell>
-                <TableCell align="center">
+                  <Typography variant="subtitle1">{row.customer}</Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {dateAndTimeFormat(row.invoice_date)}
+                  </Typography>
+                  <Box sx={{ display: "flex", gap: 2, my: 1 }}>
+                    <Box>
+                      <Typography variant="caption">Total</Typography>
+                      <Typography>
+                        {numberWithCommas(row.total_price)}
+                      </Typography>
+                    </Box>
+                    <Box>
+                      <Typography variant="caption">Paid</Typography>
+                      <Typography>
+                        {numberWithCommas(customerPaymentTotal(row.payments))}
+                      </Typography>
+                    </Box>
+                    <Box>
+                      <Typography variant="caption">Balance</Typography>
+                      <Typography>
+                        {numberWithCommas(
+                          parseInt(row.total_price) -
+                            customerPaymentTotal(row.payments)
+                        )}
+                      </Typography>
+                    </Box>
+                  </Box>
                   {row.progress_status ? (
                     <StatusWithTimestamp
                       label={progressStatus(
@@ -117,44 +117,36 @@ const uploardInvoiceTable = () => {
                       iso={row.progress_status.changed_at}
                     />
                   ) : (
-                    "—"
+                    <Typography>—</Typography>
                   )}
-                </TableCell>
-
-                <TableCell>
-                  <Box sx={{ display: "flex", flexDirection: "rows" }}>
-                    {row.on_hold ? (
-                      <CircleIcon sx={{ color: "red", fontSize: "1rem" }} />
-                    ) : (
-                      <CircleIcon sx={{ color: "green", fontSize: "1rem" }} />
-                    )}
-                    {row.fitting_on_collection && (
-                      <CircleIcon sx={{ color: "blue", fontSize: "1rem" }} />
-                    )}
-                    <a
-                      href={`/transaction/invoice/view/${row.invoice_number}/?invoice_number=${row.invoice_number}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{ textDecoration: "none", color: "inherit" }} // Optional: keep icon color
-                    >
-                      <IconButton size="small" sx={{ p: 0 }} color="inherit">
-                        <AssignmentIcon fontSize="small" />
-                      </IconButton>
-                    </a>
-                  </Box>
-                </TableCell>
-              </TableRow>
-            ))}
-            {!invoiceListLoading && invoiceList.length === 0 && (
-              <TableRow>
-                <TableCell colSpan={9} rowSpan={6} align="center">
-                  No data found
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
+                </CardContent>
+                <CardActions sx={{ justifyContent: "space-between" }}>
+                  <IconButton
+                    size="small"
+                    component="a"
+                    href={`/transaction/invoice/view/${row.invoice_number}/?invoice_number=${row.invoice_number}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <AssignmentIcon fontSize="small" />
+                  </IconButton>
+                  <Button
+                    size="small"
+                    component="a"
+                    href={`/image-upload/${row.order}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    variant="contained"
+                  >
+                    Uploard
+                    <UploadRounded fontSize="small" />
+                  </Button>
+                </CardActions>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+      )}
       <CustomerPagination
         totalCount={invoiceListTotalCount}
         handlePageNavigation={invoiceListPageNavigation}
@@ -165,4 +157,4 @@ const uploardInvoiceTable = () => {
   );
 };
 
-export default uploardInvoiceTable;
+export default UploadInvoiceCards;

@@ -1,9 +1,21 @@
 import { RouteObject } from "react-router";
 import UploardInvoiceTable from "../../view/uploard/uploard-invoice-table";
+import ProtectedChildRoute from "../ProtectedChildRoute";
+import UploardView from "../../view/uploard/UploardView";
 
 export const imageUploadRoutes: RouteObject[] = [
   {
     path: "",
-    element: <UploardInvoiceTable />,
+    element: <ProtectedChildRoute />,
+    children: [
+      {
+        index: true,
+        element: <UploardInvoiceTable />,
+      },
+      {
+        path: ":invoice_number",
+        element: <UploardView />,
+      },
+    ],
   },
 ];

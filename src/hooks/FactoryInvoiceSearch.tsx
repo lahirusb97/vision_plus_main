@@ -6,7 +6,7 @@ import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormControl from "@mui/material/FormControl";
-import { Box, Button, TextField } from "@mui/material";
+import { Box, Button, TextField, useMediaQuery, useTheme } from "@mui/material";
 import { useEffect } from "react";
 import { getBranchName } from "../utils/branchName";
 import { CheckinInvoiceListParams } from "./useGetCheckinInvoiceList";
@@ -24,6 +24,9 @@ interface FactoryInvoiceSearchProps {
 export default function FactoryInvoiceSearch({
   invoiceListSearch,
 }: FactoryInvoiceSearchProps) {
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+
   const {
     control,
     handleSubmit,
@@ -52,6 +55,7 @@ export default function FactoryInvoiceSearch({
     };
     invoiceListSearch(filterParams);
   };
+
   useEffect(() => {
     if (watch("searchOption") === "invoice_number") {
       setValue("searchTerm", getBranchName());
@@ -67,12 +71,14 @@ export default function FactoryInvoiceSearch({
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(" ");
   }
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form autoComplete="off">
       <Box
         sx={{
           display: "flex",
-          alignItems: "flex-start",
+          flexDirection: { xs: "column", sm: "row" },
+          alignItems: { xs: "stretch", sm: "flex-start" },
           gap: 2,
           p: 1,
           borderRadius: 2,
@@ -80,9 +86,9 @@ export default function FactoryInvoiceSearch({
         }}
       >
         {/* Search Input */}
-        <Box>
+        <Box sx={{ flexGrow: 1 }}>
           <TextField
-            sx={{ width: 220 }}
+            fullWidth
             size="small"
             label={`Enter Patient ${formatSearchOption(watch("searchOption"))}`}
             error={!!errors.searchTerm}
@@ -92,17 +98,27 @@ export default function FactoryInvoiceSearch({
         </Box>
 
         {/* Search Button */}
-        <Button type="submit" variant="contained" startIcon={<SearchIcon />}>
+        <Button
+          type="submit"
+          variant="contained"
+          startIcon={<SearchIcon />}
+          sx={{ alignSelf: { xs: "stretch", sm: "center" } }}
+          onClick={handleSubmit(onSubmit)}
+        >
           Search
         </Button>
 
-        {/* Radio Group (Horizontal) */}
+        {/* Radio Group */}
         <FormControl>
           <Controller
             name="searchOption"
             control={control}
             render={({ field }) => (
-              <RadioGroup {...field} row>
+              <RadioGroup
+                {...field}
+                row={!isSmallScreen}
+                sx={{ justifyContent: "center" }}
+              >
                 <FormControlLabel
                   value="invoice_number"
                   control={<Radio size="small" />}
