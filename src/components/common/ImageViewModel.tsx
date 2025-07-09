@@ -50,7 +50,7 @@ export default function ImageViewModel({
           </Box>
           <img
             style={{ width: "600px", height: "400px", objectFit: "contain" }}
-            src={`${API_BASE_URL}${image}` || ""}
+            src={image || "/no-image.png"}
             alt=""
           />
         </Box>

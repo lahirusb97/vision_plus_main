@@ -11,7 +11,6 @@ import { FrameModel } from "../../model/FrameModel";
 import TitleText from "../../components/TitleText";
 import { numberWithCommas } from "../../utils/numberWithCommas";
 import { Edit, PriceChange } from "@mui/icons-material";
-import { LENS_AND_FRAME_STORE_ID } from "../../data/staticVariables";
 import { Truck } from "lucide-react";
 
 const FrameStore = () => {

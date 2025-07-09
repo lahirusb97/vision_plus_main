@@ -63,7 +63,7 @@ const InventoryFrameStore = () => {
         size: 200,
         Cell: ({ row }) => (
           <img
-            src={API_BASE_URL + row.original.image_url}
+            src={row.original.image_url}
             alt="Frame"
             style={{
               width: 56,

@@ -21,6 +21,7 @@ import { logsRoutes } from "./routelist/logs.route";
 import { masterRoutes } from "./routelist/master.route";
 import { frameAndLensStoreRoutes } from "./routelist/frame-and-lens-store.route";
 import { LensStoreRoutes } from "./routelist/lens-store.route";
+import { imageUploadRoutes } from "./routelist/image-uploard.route";
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -99,6 +100,11 @@ export const router = createBrowserRouter([
         path: "inventory-lens",
         element: <ProtectedChildRoute />,
         children: LensStoreRoutes,
+      },
+      {
+        path: "image-upload",
+        element: <ProtectedChildRoute />,
+        children: imageUploadRoutes,
       },
     ],
   },

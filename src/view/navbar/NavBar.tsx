@@ -16,6 +16,7 @@ import {
   BuildTwoTone,
   LogoutOutlined,
   NavigateBefore,
+  UploadRounded,
 } from "@mui/icons-material";
 
 // Import your nav components for submenus
@@ -69,6 +70,7 @@ import { setNavbarState } from "./navstate";
 import FrameStoreNav from "../inventory/frame-store/FrameStoreNav";
 import LensStoreNav from "../inventory/lens-store/LensStoreNav";
 import { LENS_AND_FRAME_STORE_ID } from "../../data/staticVariables";
+import ImageUploardNav from "../uploard/ImageUploardNav";
 
 // Tab panel utility (hidden by default)
 // function TabPanel({
@@ -174,6 +176,14 @@ export default function NavBar() {
       path: "logs",
       icon: <NotebookIcon />,
       nav: LogsNav,
+      inventory: false,
+    },
+    {
+      key: "image-upload",
+      label: "Upload",
+      path: "image-upload",
+      icon: <UploadRounded />,
+      nav: ImageUploardNav,
       inventory: false,
     },
     //add store routes
@@ -332,9 +342,9 @@ export default function NavBar() {
               </Typography>
             </Box>
           </Box>
-          <IconButton onClick={setNavbarState}>
+          {/* <IconButton onClick={setNavbarState}>
             <BuildTwoTone />
-          </IconButton>
+          </IconButton> */}
         </Tabs>
         {/* //! need sever logout */}
       </Box>
