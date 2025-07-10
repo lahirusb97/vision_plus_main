@@ -13,7 +13,7 @@ export const imageUploadRoutes: RouteObject[] = [
         element: <UploardInvoiceTable />,
       },
       {
-        path: ":invoice_number",
+        path: ":order_id",
         element: <UploardView />,
       },
     ],
