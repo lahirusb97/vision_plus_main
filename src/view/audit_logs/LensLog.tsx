@@ -12,11 +12,13 @@ import axiosClient from "../../axiosClient";
 import toast from "react-hot-toast";
 
 const LensLog = () => {
-  const { lenses, lensesLoading, refresh, setLenseParamsData } = useGetLenses();
+  const { lenses, lensesLoading, refresh, setLenseParamsData } = useGetLenses({
+    store_id: null,
+  });
   const { openMutationDialog } = useMutationDialog();
 
   useEffect(() => {
-    setLenseParamsData({ status: "inactive" });
+    setLenseParamsData({ status: "inactive", store_id: null });
   }, []);
   // Define columns
   const columns = useMemo(
