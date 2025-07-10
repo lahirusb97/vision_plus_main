@@ -44,6 +44,7 @@ import { useAxiosPut } from "../../../hooks/useAxiosPut";
 import SubmitCustomBtn from "../../../components/common/SubmiteCustomBtn";
 import { useNavigate } from "react-router";
 import ImageViewModel from "../../../components/common/ImageViewModel";
+import ImageUploadAdvanceInput from "../../../components/common/ImageUploadAdvanceInput";
 const FrameFullEdit = () => {
   const navigate = useNavigate();
   const { frame_id } = useParams();
@@ -400,30 +401,12 @@ const FrameFullEdit = () => {
           <Controller
             name="image"
             control={control}
-            render={({ field: { onChange, value }, fieldState: { error } }) => (
-              <FormControl
-                fullWidth
-                error={!!error}
-                variant="outlined"
-                margin="normal"
-              >
-                <InputLabel shrink htmlFor="image-upload">
-                  Frame Image
-                </InputLabel>
-                <Input
-                  id="image-upload"
-                  type="file"
-                  inputProps={{ accept: "image/*" }} // Still valid on the <Input />, just not TextField
-                  onChange={(e) => {
-                    const input = e.target as HTMLInputElement;
-                    const file = input.files?.[0] || null;
-                    onChange(file);
-                  }}
-                />
-                <FormHelperText>
-                  {error ? error.message : "Accepted formats: jpg, png, webp."}
-                </FormHelperText>
-              </FormControl>
+            render={() => (
+              <ImageUploadAdvanceInput
+                control={control}
+                name="image"
+                placeholder="Upload Image"
+              />
             )}
           />
           <SubmitCustomBtn

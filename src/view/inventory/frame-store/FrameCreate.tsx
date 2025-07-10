@@ -37,6 +37,7 @@ import { getUserCurentBranch } from "../../../utils/authDataConver";
 import { useAxiosPost } from "../../../hooks/useAxiosPost";
 import { extractErrorMessage } from "../../../utils/extractErrorMessage";
 import SaveButton from "../../../components/SaveButton";
+import ImageUploadAdvanceInput from "../../../components/common/ImageUploadAdvanceInput";
 const FrameCreate = () => {
   const { postHandler, postHandlerloading } = useAxiosPost();
   const { brands, brandsLoading } = useGetBrands("frame");
@@ -310,30 +311,12 @@ const FrameCreate = () => {
           <Controller
             name="image"
             control={control}
-            render={({ field: { onChange, value }, fieldState: { error } }) => (
-              <FormControl
-                fullWidth
-                error={!!error}
-                variant="outlined"
-                margin="normal"
-              >
-                <InputLabel shrink htmlFor="image-upload">
-                  Frame Image
-                </InputLabel>
-                <Input
-                  id="image-upload"
-                  type="file"
-                  inputProps={{ accept: "image/*" }} // Still valid on the <Input />, just not TextField
-                  onChange={(e) => {
-                    const input = e.target as HTMLInputElement;
-                    const file = input.files?.[0] || null;
-                    onChange(file);
-                  }}
-                />
-                <FormHelperText>
-                  {error ? error.message : "Accepted formats: jpg, png, webp."}
-                </FormHelperText>
-              </FormControl>
+            render={() => (
+              <ImageUploadAdvanceInput
+                control={control}
+                name="image"
+                placeholder="Upload Image"
+              />
             )}
           />
           <TextField
