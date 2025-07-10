@@ -8,6 +8,7 @@ import {
   Typography,
   useMediaQuery,
   useTheme,
+  CardActionArea,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useState } from "react";
@@ -17,13 +18,22 @@ import { extractErrorMessage } from "../../utils/extractErrorMessage";
 import ImageUploard from "../../components/common/ImageUploard";
 import { useParams } from "react-router";
 import axiosClient from "../../axiosClient";
-
+import { useDeleteDialog } from "../../context/DeleteDialogContext";
+import DialogImageFullScreen from "../../components/common/DialogImageFullScreen";
+import { Fullscreen } from "lucide-react";
+import { PhotoProvider, PhotoView } from "react-photo-view";
+import "react-photo-view/dist/react-photo-view.css";
 export default function EnhancedUploadView() {
   const { order_id } = useParams<{ order_id: string }>();
+  const { openDialog } = useDeleteDialog();
   const { orderImageList, orderImageListLoading, orderImageListRefresh } =
     useGetOrderImages({ order_id: Number(order_id) });
   const { postHandler, postHandlerloading, postHandlerError } = useAxiosPost();
 
+  const [open, setOpen] = useState({
+    open: false,
+    image: "",
+  });
   const [isUploading, setIsUploading] = useState(false);
   const [snackbar, setSnackbar] = useState<{
     open: boolean;
@@ -94,38 +104,67 @@ export default function EnhancedUploadView() {
                 height: "100%",
                 transition: "transform 0.2s",
                 "&:hover": { transform: "scale(1.02)" },
-                cursor: "pointer",
               }}
             >
-              <CardMedia
-                component="img"
-                height="200"
-                image={img.image}
-                alt={`Image uploaded at ${new Date(
-                  img.uploaded_at
-                ).toLocaleString()}`}
-                sx={{ objectFit: "contain" }}
-              />
+              <PhotoProvider>
+                <PhotoView src={img.image}>
+                  <CardMedia
+                    onClick={() => {
+                      setOpen({ open: true, image: img.image });
+                    }}
+                    component="img"
+                    height="200"
+                    image={img.image}
+                    alt={`Image uploaded at ${new Date(
+                      img.uploaded_at
+                    ).toLocaleString()}`}
+                    sx={{ objectFit: "contain", cursor: "pointer" }}
+                  />
+                </PhotoView>
+              </PhotoProvider>
               <CardContent>
                 <Typography variant="caption" color="text.secondary">
                   Uploaded: {new Date(img.uploaded_at).toLocaleString()}
                 </Typography>
               </CardContent>
-              <IconButton
-                size="small"
-                color="error"
-                sx={{
-                  position: "absolute",
-                  bottom: 8,
-                  right: 8,
-                  bgcolor: "rgba(255, 255, 255, 0.8)",
-                  "&:hover": { bgcolor: "rgba(255, 0, 0, 0.1)" },
-                }}
-                onClick={() => handleDeleteImage(img.id)}
-                aria-label={`Delete image ${img.id}`}
+              <CardActionArea
+                sx={{ display: "flex", justifyContent: "space-between" }}
               >
-                <DeleteIcon fontSize="small" />
-              </IconButton>
+                <IconButton
+                  size="small"
+                  color="primary"
+                  sx={{
+                    bgcolor: "rgba(255, 255, 255, 0.8)",
+                    "&:hover": { bgcolor: "rgba(255, 0, 0, 0.1)" },
+                  }}
+                  onClick={() => {
+                    setOpen({ open: true, image: img.image });
+                  }}
+                  aria-label={`Delete image ${img.id}`}
+                >
+                  <Fullscreen fontSize="small" />
+                </IconButton>
+                <IconButton
+                  size="small"
+                  color="error"
+                  sx={{
+                    bgcolor: "rgba(255, 255, 255, 0.8)",
+                    "&:hover": { bgcolor: "rgba(255, 0, 0, 0.1)" },
+                  }}
+                  onClick={() => {
+                    openDialog(
+                      `orders/${order_id}/images/${img.id}/`,
+                      "",
+                      "Image",
+                      "Permanantly Delete",
+                      orderImageListRefresh
+                    );
+                  }}
+                  aria-label={`Delete image ${img.id}`}
+                >
+                  <DeleteIcon fontSize="small" />
+                </IconButton>
+              </CardActionArea>
             </Card>
           </Box>
         ))}
