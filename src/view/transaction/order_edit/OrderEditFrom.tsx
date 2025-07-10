@@ -74,6 +74,8 @@ import AuthDialog from "../../../components/common/AuthDialog";
 import OrderAuditDialog from "../../../components/OrderAuditDialog";
 import NumberInput from "../../../components/inputui/NumberInput";
 import { History } from "lucide-react";
+import { PhotoSharp } from "@mui/icons-material";
+import DialogOrderImage from "../../../components/common/DialogOrderImage";
 
 export default function OrderEditFrom() {
   const navigate = useNavigate();
@@ -85,6 +87,13 @@ export default function OrderEditFrom() {
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
   const [pendingPostData, setPendingPostData] =
     useState<FactoryOrderInputModel | null>(null);
+  const [orderImageDialog, setOrderImageDialog] = useState<{
+    open: boolean;
+    orderId: number | null;
+  }>({
+    open: false,
+    orderId: null,
+  });
   const [auditDialog, setAuditDialog] = useState<{
     open: boolean;
     orderId: number | null;
@@ -667,6 +676,20 @@ export default function OrderEditFrom() {
                   history
                   <History style={{ width: 18 }} />
                 </Button>
+                <Button
+                  sx={{ ml: 1 }}
+                  variant="outlined"
+                  color="info"
+                  onClick={() =>
+                    setOrderImageDialog({
+                      open: true,
+                      orderId: invoiceDetail?.order || null,
+                    })
+                  }
+                >
+                  Images
+                  <PhotoSharp style={{ width: 18 }} />
+                </Button>
                 <OrderAuditDialog
                   open={auditDialog.open}
                   orderId={auditDialog.orderId}
@@ -807,7 +830,11 @@ export default function OrderEditFrom() {
           </Box>
         </Box>
       </FormProvider>
-
+      <DialogOrderImage
+        open={orderImageDialog.open}
+        order_id={orderImageDialog.orderId}
+        onClose={() => setOrderImageDialog({ open: false, orderId: null })}
+      />
       <AuthDialog
         open={authDialogOpen}
         operationType="admin"

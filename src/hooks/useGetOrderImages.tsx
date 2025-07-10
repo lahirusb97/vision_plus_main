@@ -7,7 +7,7 @@ import axios from "axios";
 import { getUserCurentBranch } from "../utils/authDataConver";
 import { paramsNullCleaner } from "../utils/paramsNullCleaner";
 export interface OrderImageListParams {
-  order_id: number;
+  order_id: number | null;
 }
 interface OrderImageData {
   id: number;
@@ -27,50 +27,52 @@ const useGetOrderImages = ({ order_id }: OrderImageListParams) => {
   const abortControllerRef = useRef<AbortController | null>(null);
 
   const loadData = useCallback(async () => {
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-    }
-    const controller = new AbortController();
-    abortControllerRef.current = controller;
-    setLoading(true);
-    try {
-      const response: { data: OrderImageData[] } = await axiosClient.get(
-        `orders/${order_id}/images/`,
-        {
-          params: {
-            ...paramsNullCleaner(params),
-            branch_id: getUserCurentBranch()?.id,
-          },
-          signal: controller.signal,
-        }
-      );
-      // Only update state if this request wasn't aborted
-      if (!controller.signal.aborted) {
-        SetDataList(response.data);
-        setTotalCount(response.data?.length);
-        if (response.data?.length > 0) {
-          toast.success("Images found ");
-        } else {
-          toast.error("No images found");
-        }
+    if (order_id) {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
       }
+      const controller = new AbortController();
+      abortControllerRef.current = controller;
+      setLoading(true);
+      try {
+        const response: { data: OrderImageData[] } = await axiosClient.get(
+          `orders/${order_id}/images/`,
+          {
+            params: {
+              ...paramsNullCleaner(params),
+              branch_id: getUserCurentBranch()?.id,
+            },
+            signal: controller.signal,
+          }
+        );
+        // Only update state if this request wasn't aborted
+        if (!controller.signal.aborted) {
+          SetDataList(response.data);
+          setTotalCount(response.data?.length);
+          if (response.data?.length > 0) {
+            toast.success("Images found ");
+          } else {
+            toast.error("No images found");
+          }
+        }
 
-      // setTotalCount(response.data.count);
-    } catch (err) {
-      // Check if the error is a cancellation
-      if (axios.isCancel(err)) {
-        return;
+        // setTotalCount(response.data.count);
+      } catch (err) {
+        // Check if the error is a cancellation
+        if (axios.isCancel(err)) {
+          return;
+        }
+        // Only update error state if this request wasn't aborted
+        if (!controller.signal.aborted) {
+          SetDataList([]);
+          extractErrorMessage(err);
+          setError(true);
+        }
+      } finally {
+        setLoading(false);
       }
-      // Only update error state if this request wasn't aborted
-      if (!controller.signal.aborted) {
-        SetDataList([]);
-        extractErrorMessage(err);
-        setError(true);
-      }
-    } finally {
-      setLoading(false);
     }
-  }, [params]);
+  }, [params, order_id]);
 
   const setParamsData = (newParams: OrderImageListParams) => {
     // use null to remove params

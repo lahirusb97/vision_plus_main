@@ -19,7 +19,7 @@ import ImageUploard from "../../components/common/ImageUploard";
 import { useParams } from "react-router";
 import axiosClient from "../../axiosClient";
 import { useDeleteDialog } from "../../context/DeleteDialogContext";
-import DialogImageFullScreen from "../../components/common/DialogImageFullScreen";
+import DialogImageFullScreen from "../../components/common/DialogOrderImage";
 import { Fullscreen } from "lucide-react";
 import { PhotoProvider, PhotoView } from "react-photo-view";
 import "react-photo-view/dist/react-photo-view.css";
