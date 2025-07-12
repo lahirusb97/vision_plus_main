@@ -91,7 +91,7 @@ export default function FactoryOrderDeactivateLog() {
                 {formatDateTimeByType(row.deleted_at, "both")}
               </TableCell>
               <TableCell>
-                {formatDateTimeByType(row.issued_date, "both")}
+                {formatDateTimeByType(row.order_date, "both")}
               </TableCell>
               <TableCell>{row.invoice_number}</TableCell>
               <TableCell>{row.customer_name}</TableCell>

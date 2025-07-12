@@ -139,7 +139,7 @@ export default function SolderingPatientDetail({
         }}
       />
       <Box sx={{ display: "flex", gap: 1 }}>
-        <DateInput disabledInput={true} />
+        <DateInput disabledInput={false} />
         <Chip
           sx={{ p: 1, fontWeight: "bold" }}
           label={birthdayToAge(watch("dob"))}
