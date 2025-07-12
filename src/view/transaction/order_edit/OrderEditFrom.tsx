@@ -775,7 +775,11 @@ export default function OrderEditFrom() {
             )}
             <Box display="flex" alignItems="center">
               <Typography variant="body1">| Urgent</Typography>
-              <Checkbox {...methods.register("urgent")} />
+              <Checkbox
+                {...methods.register("urgent")}
+                checked={methods.watch("urgent") || false}
+                onChange={(e) => methods.setValue("urgent", e.target.checked)}
+              />
             </Box>
           </Box>
           <EditInvoiceTable
