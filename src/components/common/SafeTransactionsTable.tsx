@@ -1,6 +1,7 @@
 import { Box, Typography } from "@mui/material";
 import { useMemo } from "react";
 import { MaterialReactTable, MRT_ColumnDef } from "material-react-table";
+
 import { SafeTransaction } from "../../model/SafeTransactionSerializer";
 
 interface TodayBankingTableProps {
@@ -28,11 +29,11 @@ const SafeTransactionsTable: React.FC<TodayBankingTableProps> = ({
           return cell.getValue<number>().toLocaleString();
         },
       },
-      {
-        accessorKey: "reason",
-        header: "Reason",
-        size: 150,
-      },
+      // {
+      //   accessorKey: "reason",
+      //   header: "Reason",
+      //   size: 150,
+      // },
     ],
     [data]
   );
@@ -55,6 +56,7 @@ const SafeTransactionsTable: React.FC<TodayBankingTableProps> = ({
           sx: {
             borderRadius: 2,
             overflow: "hidden",
+            minWidth: "300px",
           },
         }}
         muiTableBodyCellProps={{

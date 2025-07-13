@@ -55,6 +55,7 @@ const OtherIncomePayment: React.FC<TodayBankingTableProps> = ({
           sx: {
             borderRadius: 2,
             overflow: "hidden",
+            minWidth: "400px",
           },
         }}
         muiTableBodyCellProps={{

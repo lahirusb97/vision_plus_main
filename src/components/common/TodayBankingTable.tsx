@@ -40,20 +40,20 @@ const TodayBankingTable: React.FC<TodayBankingTableProps> = ({
           return cell.getValue<number>().toLocaleString();
         },
       },
-      {
-        accessorKey: "is_confirmed",
-        header: "Confirmed",
-        size: 50,
-        Cell: ({ cell }) => {
-          return (
-            <Checkbox
-              size="small"
-              checked={cell.getValue<boolean>()}
-              disabled
-            />
-          );
-        },
-      },
+      // {
+      //   accessorKey: "is_confirmed",
+      //   header: "Confirmed",
+      //   size: 50,
+      //   Cell: ({ cell }) => {
+      //     return (
+      //       <Checkbox
+      //         size="small"
+      //         checked={cell.getValue<boolean>()}
+      //         disabled
+      //       />
+      //     );
+      //   },
+      // },
     ],
     [data]
   );
@@ -76,6 +76,7 @@ const TodayBankingTable: React.FC<TodayBankingTableProps> = ({
           sx: {
             borderRadius: 2,
             overflow: "hidden",
+            minWidth: "350px",
           },
         }}
         muiTableBodyCellProps={{
