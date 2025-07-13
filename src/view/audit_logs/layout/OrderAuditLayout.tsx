@@ -13,7 +13,7 @@ export default function OrderAuditLayout() {
   const [dateRange, setDateRange] =
     useState<OrderAuditDateRangePickerManualState>({
       start_date: dayjs(), // or null
-      end_date: dayjs().add(1, "M"),
+      end_date: dayjs(),
     });
 
   // const reportTabs = [
