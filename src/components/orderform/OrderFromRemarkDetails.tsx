@@ -15,7 +15,7 @@ export default function OrderFromRemarkDetails({
       </Typography>
 
       <Typography variant="body2" fontWeight="bold">
-        {invoiceDetail?.refraction_details?.shuger ? "Shuger " : ""}
+        {invoiceDetail?.refraction_details?.shuger ? "Sugar " : ""}
       </Typography>
       <Typography variant="body2" fontWeight="bold">
         {invoiceDetail?.refraction_details?.cataract ? "Cataract" : ""}

@@ -103,14 +103,14 @@ export default function BankDeposite() {
             <TableHead>
               <TableRow>
                 <TableCell align="center">Edit</TableCell>
-                <TableCell align="center">Confirm</TableCell>
+                {/* <TableCell align="center">Confirm</TableCell> */}
 
                 <TableCell>Date</TableCell>
 
                 <TableCell>Bank Name</TableCell>
                 <TableCell>Account Number</TableCell>
                 <TableCell>Amount</TableCell>
-                <TableCell>Status</TableCell>
+                {/* <TableCell>Status</TableCell> */}
                 <TableCell>Note</TableCell>
               </TableRow>
             </TableHead>
@@ -132,7 +132,7 @@ export default function BankDeposite() {
                       <Edit sx={{ fontSize: "1rem" }} />
                     </IconButton>
                   </TableCell>
-                  <TableCell align="center">
+                  {/* <TableCell align="center">
                     <IconButton
                       size="small"
                       onClick={() => {
@@ -149,15 +149,15 @@ export default function BankDeposite() {
                     >
                       <AddModeratorIcon sx={{ fontSize: "1rem" }} />
                     </IconButton>
-                  </TableCell>
+                  </TableCell> */}
                   <TableCell>{deposit.date}</TableCell>
 
                   <TableCell>{deposit.bank_name}</TableCell>
                   <TableCell>{deposit.account_number}</TableCell>
                   <TableCell>{numberWithCommas(deposit.amount)}</TableCell>
-                  <TableCell>
+                  {/* <TableCell>
                     {deposit.is_confirmed ? "Confirmed" : "Pending"}
-                  </TableCell>
+                  </TableCell> */}
                   <TableCell>{deposit.note}</TableCell>
                 </TableRow>
               ))}
