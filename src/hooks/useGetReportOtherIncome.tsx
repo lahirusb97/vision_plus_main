@@ -7,14 +7,16 @@ import axios from "axios";
 import { OtherIncomeReport } from "../model/OtherIncomeReport";
 import dayjs from "dayjs";
 interface FilterParams {
-  date: string | null;
+  start_date: string | null;
+  // end_date: string | null;
 }
 const useGetReportOtherIncome = () => {
   const [Data, setData] = useState<OtherIncomeReport[] | []>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<boolean>(false);
   const [params, setParams] = useState<FilterParams>({
-    date: dayjs().format("YYYY-MM-DD"),
+    start_date: dayjs().format("YYYY-MM-DD"),
+    // end_date: dayjs().format("YYYY-MM-DD"),
   });
   const abortControllerRef = useRef<AbortController | null>(null);
   const loadData = useCallback(async () => {

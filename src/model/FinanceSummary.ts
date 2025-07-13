@@ -17,4 +17,7 @@ export interface FinanceSummary {
   today_balance: number;
   cash_in_hand: number;
   available_for_deposit: number;
+  today_total_online_payments: number;
+  today_total_credit_card_payments: number;
+  today_total_cash_payments: number;
 }

@@ -37,7 +37,7 @@ export default function OtherIncomeIndex() {
       const formattedDate = selectedDate
         ? selectedDate.format("YYYY-MM-DD")
         : "";
-      setOtherIncomeReportParamsData({ date: formattedDate });
+      setOtherIncomeReportParamsData({ start_date: formattedDate });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDate]);

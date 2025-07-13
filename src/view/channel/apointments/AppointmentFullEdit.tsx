@@ -147,6 +147,7 @@ const AppointmentFullEdit = () => {
       methods.setValue(
         "payments",
         singleAppointment.payments.map((payment) => ({
+          id: payment.id,
           amount: stringToIntConver(payment.amount),
           payment_method: payment.payment_method,
           is_final: payment.is_final,

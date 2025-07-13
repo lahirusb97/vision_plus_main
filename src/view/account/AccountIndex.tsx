@@ -15,6 +15,8 @@ import OtherIncomePayment from "../../components/common/OtherIncomePayment";
 import useGetReportOtherIncome from "../../hooks/useGetReportOtherIncome";
 import useGetSafeBalance from "../../hooks/useGetSafeBalance";
 import { numberWithCommas } from "../../utils/numberWithCommas";
+import SafeTransactionsTable from "../../components/common/SafeTransactionsTable";
+import useGetSafeTransactions from "../../hooks/useGetSafeTransactions";
 
 const Dashboard = () => {
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(dayjs());
@@ -31,7 +33,11 @@ const Dashboard = () => {
   const { financeSummary, setFinanceSummaryParams, financeSummaryLoading } =
     useGetFinanceSummary();
   const { safeTotalBalance } = useGetSafeBalance();
-  console.log("financeSummary", financeSummary);
+  const {
+    safeTransactions,
+    loading: safeTransactionsLoading,
+    handleDateRangeChange: handleSafeTransactionsDateRangeChange,
+  } = useGetSafeTransactions();
 
   const {
     otherIncomeReport,
@@ -43,9 +49,10 @@ const Dashboard = () => {
     if (selectedDate) {
       handleDateRangeChange(formattedDate, formattedDate);
       setInvoiceReportParamsData({ payment_date: formattedDate });
+      handleSafeTransactionsDateRangeChange(formattedDate, formattedDate);
       setFinanceSummaryParams({ date: formattedDate });
       setdailyOrderCountParams({ date: formattedDate });
-      setOtherIncomeReportParamsData({ date: formattedDate });
+      setOtherIncomeReportParamsData({ start_date: formattedDate });
       setChannelReportsParamsData({ payment_date: formattedDate });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -55,56 +62,37 @@ const Dashboard = () => {
     <>
       {financeSummary && dailyOrderCount && (
         <Box p={2} minWidth="1000px" minHeight="50vh">
-          <Grid container spacing={2}>
+          <Box gap={2}>
             {/* Left Side - Tables */}
-            <Grid item xs={12} md={9}>
+            <Box display="flex" gap={2}>
               {/* Expenses Section */}
-              <Box sx={{ mb: 1 }}>
-                <Typography variant="body1">Expenses</Typography>
-                <ExpencePaymentTable
-                  data={expenseList}
-                  loading={expenseListLoading}
-                />
-              </Box>
-
-              {/* Invoice Section */}
-              <Box sx={{ mb: 1 }}>
-                <Typography variant="body1">Invoice</Typography>
-                <InvoicePaymentTable
-                  data={invoiceReport}
-                  loading={invoiceReportLoading}
-                />
-              </Box>
-
-              {/* Channel Section */}
-              <Box sx={{ mb: 1 }}>
-                <Typography variant="body1">Channel</Typography>
-                <ChannelPaymentTable
-                  data={channelReports}
-                  loading={channelReportsLoading}
-                />
-              </Box>
-              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+              <Box flex={1}>
                 <Box sx={{ mb: 1 }}>
-                  <Typography variant="body1">Banking</Typography>
-                  <TodayBankingTable
-                    data={financeSummary.today_banking}
-                    loading={financeSummaryLoading}
+                  <Typography variant="body1">Expenses</Typography>
+                  <ExpencePaymentTable
+                    data={expenseList}
+                    loading={expenseListLoading}
                   />
                 </Box>
+
+                {/* Invoice Section */}
                 <Box sx={{ mb: 1 }}>
-                  <Typography variant="body1">Other Income</Typography>
-                  <OtherIncomePayment
-                    data={otherIncomeReport || []}
-                    loading={otherIncomeReportLoading}
+                  <Typography variant="body1">Invoice</Typography>
+                  <InvoicePaymentTable
+                    data={invoiceReport}
+                    loading={invoiceReportLoading}
+                  />
+                </Box>
+
+                {/* Channel Section */}
+                <Box sx={{ mb: 1 }}>
+                  <Typography variant="body1">Channel</Typography>
+                  <ChannelPaymentTable
+                    data={channelReports}
+                    loading={channelReportsLoading}
                   />
                 </Box>
               </Box>
-              {/* Financial Summary Buttons */}
-            </Grid>
-
-            {/* Right Sidebar Section */}
-            <Grid item xs={12} md={3}>
               <Paper sx={{ p: 1, textAlign: "center" }}>
                 <SingleDatePicker
                   value={selectedDate}
@@ -134,6 +122,30 @@ const Dashboard = () => {
                 <Box>
                   <Typography variant="body2" fontWeight="bold">
                     Total Transactions
+                  </Typography>
+                  <Typography sx={flexStyle} variant="body2">
+                    <span>Total Online Payments</span>{" "}
+                    <span>
+                      {numberWithCommas(
+                        financeSummary.today_total_online_payments
+                      )}
+                    </span>
+                  </Typography>
+                  <Typography sx={flexStyle} variant="body2">
+                    <span>Total Credit Card Payments</span>{" "}
+                    <span>
+                      {numberWithCommas(
+                        financeSummary.today_total_credit_card_payments
+                      )}
+                    </span>
+                  </Typography>
+                  <Typography sx={flexStyle} variant="body2">
+                    <span>Total Cash Payments</span>{" "}
+                    <span>
+                      {numberWithCommas(
+                        financeSummary.today_total_cash_payments
+                      )}
+                    </span>
                   </Typography>
                   <Typography sx={flexStyle} variant="body2">
                     <span>Total Orders Payments</span>{" "}
@@ -201,9 +213,36 @@ const Dashboard = () => {
                 </Box>
               </Paper>
 
-              {/* Sidebar Buttons */}
+              {/* Financial Summary Buttons */}
+            </Box>
+
+            {/* Right Sidebar Section */}
+            <Grid item xs={12} md={3}>
+              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                <Box sx={{ mb: 1 }}>
+                  <Typography variant="body1">Banking</Typography>
+                  <TodayBankingTable
+                    data={financeSummary.today_banking}
+                    loading={financeSummaryLoading}
+                  />
+                </Box>
+                <Box sx={{ mb: 1 }}>
+                  <Typography variant="body1">Other Income</Typography>
+                  <OtherIncomePayment
+                    data={otherIncomeReport || []}
+                    loading={otherIncomeReportLoading}
+                  />
+                </Box>
+                <Box sx={{ mb: 1 }}>
+                  <Typography variant="body1">Safe Transactions</Typography>
+                  <SafeTransactionsTable
+                    data={safeTransactions || []}
+                    loading={safeTransactionsLoading}
+                  />
+                </Box>
+              </Box>
             </Grid>
-          </Grid>
+          </Box>
         </Box>
       )}
     </>
