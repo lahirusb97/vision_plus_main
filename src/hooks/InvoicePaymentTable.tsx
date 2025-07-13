@@ -66,11 +66,13 @@ export const InvoicePaymentTable = ({ data, loading }: InvoiceTableProps) => {
             overflow: "hidden",
           },
         }}
-        muiTableBodyCellProps={{
+        muiTableBodyCellProps={({ row }) => ({
           sx: {
             padding: "0px 10px",
+            backgroundColor: row.original.is_deleted ? "#ffebee" : "inherit", // Light red background for deleted rows
+            color: row.original.is_deleted ? "#d32f2f" : "inherit", // Darker red text for deleted rows
           },
-        }}
+        })}
         renderEmptyRowsFallback={() => (
           <Box
             sx={{

@@ -10,4 +10,6 @@ export interface InvoicePaymentReport {
   total_online_payment: number;
   total_payment: number;
   balance: number;
+  is_deleted: boolean;
+  is_refund: boolean;
 }
