@@ -42,7 +42,7 @@ export default function useUpcomingSchedules(): UseUpcomingSchedulesResult {
       const res = await axiosClient.get(`doctor-schedule/${doctor}/upcoming/`, {
         params: {
           ...paramsNullCleaner({ status: status }),
-          branch_id: getUserCurentBranch()?.id,
+          branch: getUserCurentBranch()?.id,
         },
         signal: abortController.signal,
       });

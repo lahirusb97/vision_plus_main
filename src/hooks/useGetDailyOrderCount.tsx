@@ -37,7 +37,7 @@ const useGetDailyOrderCount = () => {
           signal: controller.signal,
         }
       );
-
+      console.log({ ...paramsNullCleaner(params) });
       setData(response.data);
       toast.success("Maching Invoice found ");
 
