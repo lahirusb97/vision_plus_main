@@ -10,7 +10,7 @@ import {
 // Patient Model
 
 export interface Patient {
-  refraction_id: number;
+  refraction_id: number | null | undefined;
   date_of_birth: string | null;
   name: string;
   phone_number: string | null;
@@ -19,13 +19,13 @@ export interface Patient {
 }
 // Order Model
 export interface Order {
-  refraction: number;
+  refraction: number | null | undefined;
   status: Omit<TypeOrderStatus, "pending" | "completed">;
   sub_total: number;
   discount: number;
   total_price: number;
   order_remark: string | null;
-  sales_staff_code?: number;
+  sales_staff_code?: number | null | undefined;
   pd?: string | null;
   height?: string | null;
   right_height?: string | null;
@@ -34,7 +34,7 @@ export interface Order {
   right_pd?: string | null;
   fitting_on_collection: boolean;
   on_hold: boolean;
-  branch_id: number;
+  branch_id: number | null | undefined;
   user_date: string | null;
   bus_title: number | null;
   progress_status: ProgressStatus;
@@ -48,11 +48,6 @@ export interface ExternalLens {
     brand: number;
     price: number;
   };
-  powers: {
-    power: number;
-    value: number;
-    side: TypeLensSide;
-  }[];
 }
 
 // Order Item Model (Lens, Frame, External Lens)

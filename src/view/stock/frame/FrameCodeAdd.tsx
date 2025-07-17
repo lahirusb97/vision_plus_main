@@ -66,7 +66,6 @@ const FrameCodeAdd = () => {
             onChange={handleChange}
             margin="normal"
             required
-            autoFocus
           />
 
           <Box>

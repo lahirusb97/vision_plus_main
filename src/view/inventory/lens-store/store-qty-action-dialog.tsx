@@ -1,16 +1,13 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
   Button,
-  TextField,
   Typography,
   Box,
-  Divider,
   Stack,
-  Chip,
 } from "@mui/material";
 import AutocompleteInputField from "../../../components/inputui/DropdownInput";
 import useGetBranches from "../../../hooks/useGetBranches";
@@ -19,7 +16,6 @@ import toast from "react-hot-toast";
 import { useAxiosPost } from "../../../hooks/useAxiosPost";
 import { extractErrorMessage } from "../../../utils/extractErrorMessage";
 import { LenseModelWithQuantity } from "./inventory-LenseStore";
-import { Divide } from "lucide-react";
 import InfoChip from "../../../components/common/InfoChip";
 import returnPlusSymbol from "../../../utils/returnPlusSymbol";
 
@@ -42,7 +38,7 @@ const StoreQtyActionDialog = ({
 }: StoreQtyActionDialogProps) => {
   const { branches, branchesLoading } = useGetBranches();
   const [branchId, setBranchId] = useState<number | null>(null);
-  const { postHandler, postHandlerError, postHandlerloading } = useAxiosPost();
+  const { postHandler, postHandlerloading } = useAxiosPost();
 
   const handleSubmit = async () => {
     if (actionType === "transfer" && !branchId) {
@@ -54,7 +50,7 @@ const StoreQtyActionDialog = ({
         const data = quantities.map((item: LenseModelWithQuantity) => ({
           action: "transfer",
           lens_id: item.id,
-          from_branch_id: parseInt(getUserCurentBranch()?.id),
+          from_branch_id: getUserCurentBranch()?.id,
           to_branch_id: branchId,
           quantity: parseInt(item.selectedQuantity),
         }));
@@ -66,7 +62,7 @@ const StoreQtyActionDialog = ({
         const data = quantities.map((item: LenseModelWithQuantity) => ({
           action: "add",
           lens_id: item.id,
-          to_branch_id: parseInt(getUserCurentBranch()?.id),
+          to_branch_id: getUserCurentBranch()?.id,
           quantity: parseInt(item.selectedQuantity),
         }));
         await postHandler("lenses/transfer/", { operations: data });
@@ -77,7 +73,7 @@ const StoreQtyActionDialog = ({
         const data = quantities.map((item: LenseModelWithQuantity) => ({
           action: "remove",
           lens_id: item.id,
-          from_branch_id: parseInt(getUserCurentBranch()?.id),
+          from_branch_id: getUserCurentBranch()?.id,
           quantity: parseInt(item.selectedQuantity),
         }));
         await postHandler("lenses/transfer/", { operations: data });
@@ -133,7 +129,7 @@ const StoreQtyActionDialog = ({
           />
         )}
         {/*display lens details */}
-        {quantities.map((item: LenseModelWithQuantity, index) => (
+        {quantities.map((item: LenseModelWithQuantity) => (
           <Box
             key={item.id}
             sx={{

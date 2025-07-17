@@ -57,7 +57,7 @@ export default function HighlightedDatePicker({
   );
   useEffect(() => {
     if (doctorId) {
-      getDoctorShedule(doctorId, sheduleStatus);
+      getDoctorShedule(doctorId, "DOCTOR");
     }
   }, [doctorId, sheduleStatus]);
   const renderLoadingDay = () => (

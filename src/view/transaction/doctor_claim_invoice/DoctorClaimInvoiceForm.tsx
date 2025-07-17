@@ -11,12 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { openStockDrawer } from "../../../features/invoice/stockDrawerSlice";
 
 import { RootState } from "../../../store/store";
-import { useValidationState } from "../../../hooks/validations/useValidationState";
-import VarificationDialog from "../../../components/VarificationDialog";
-import {
-  DoctorClaimPayload,
-  setDoctorClaim,
-} from "../../../features/invoice/doctorClaimSlice";
+import { setDoctorClaim } from "../../../features/invoice/doctorClaimSlice";
 import DoctorClainmInvoiceTable from "../../../components/inputui/DoctorClainmInvoiceTable";
 import CashInput from "../../../components/inputui/CashInput";
 import { useNavigate } from "react-router";
@@ -25,17 +20,18 @@ import { clearLenses } from "../../../features/invoice/lenseFilterSlice";
 import { clearexternalLense } from "../../../features/invoice/externalLenseSlice";
 import dayjs from "dayjs";
 import { getBranchName } from "../../../utils/branchName";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAxiosPost } from "../../../hooks/useAxiosPost";
 import SubmitCustomBtn from "../../../components/common/SubmiteCustomBtn";
 import { extractErrorMessage } from "../../../utils/extractErrorMessage";
 import { getUserCurentBranch } from "../../../utils/authDataConver";
+import AuthDialog from "../../../components/common/AuthDialog";
 export default function DoctorClaimInvoiceForm() {
   const { postHandler, postHandlerError, postHandlerloading } = useAxiosPost();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { prepareValidation, resetValidation, validationState } =
-    useValidationState();
+  const [authDialogOpen, setAuthDialogOpen] = useState(false);
+  const [pendingPostData, setPendingPostData] = useState<any | null>(null);
   // const externalLenseInvoiceList = useSelector(
   //   (state: RootState) => state.invoice_external_lense.externalLenseList
   // );
@@ -130,27 +126,28 @@ export default function DoctorClaimInvoiceForm() {
       order_payments: payment,
     };
     console.log(payload);
-
-    prepareValidation("create", async (verifiedUserId: number) => {
-      await sendDataToNextPage(payload as DoctorClaimPayload, verifiedUserId);
-    });
+    setPendingPostData(payload);
   };
 
-  const sendDataToNextPage = async (
-    payload: DoctorClaimPayload,
-    sales_staff_code: number
-  ) => {
+  const sendDataToDb = async (authData: {
+    admin_id: number | null;
+    user_id: number | null;
+  }) => {
     try {
       const postData = {
-        ...payload,
-        sales_staff_code: sales_staff_code,
+        ...pendingPostData,
+        sales_staff_code: authData.user_id
+          ? authData.user_id
+          : authData.admin_id,
       };
       await postHandler("doctor-claims-invoices/", {
         branch: getUserCurentBranch()?.id,
-        invoice_number: payload.invoice_number,
+        invoice_number: pendingPostData.invoice_number,
       });
       await dispatch(setDoctorClaim(postData));
-      navigate(`/transaction/doctor_claim_invoice/${payload.invoice_number}`);
+      navigate(
+        `/transaction/doctor_claim_invoice/${pendingPostData.invoice_number}`
+      );
     } catch (error) {
       extractErrorMessage(error);
     }
@@ -256,15 +253,12 @@ export default function DoctorClaimInvoiceForm() {
           </form>
         </Box>
       </FormProvider>
-      <VarificationDialog
-        open={validationState.openValidationDialog}
-        operationType={validationState.validationType}
-        onVerified={async (verifiedUserId) => {
-          if (validationState.apiCallFunction) {
-            await validationState.apiCallFunction(verifiedUserId);
-          }
-        }}
-        onClose={resetValidation}
+
+      <AuthDialog
+        open={authDialogOpen}
+        operationType="admin"
+        onVerified={sendDataToDb}
+        onClose={() => setAuthDialogOpen(false)}
       />
     </Paper>
   );

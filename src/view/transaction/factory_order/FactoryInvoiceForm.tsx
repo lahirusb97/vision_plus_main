@@ -42,19 +42,17 @@ import SugarCataractText from "../../../components/common/SugarCataractText";
 import PdAndHeightInputs from "../factory_layouts/PdAndHeightInputs";
 import PaymentMethodsLayout from "../factory_layouts/PaymentMethodsLayout";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FactoryOrderInputModel } from "../../../model/InvoiceInputModel";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import useGetBusTitles from "../../../hooks/useGetBusTitles";
 import { BUSID } from "../../../data/staticVariables";
 import AuthDialog from "../../../components/common/AuthDialog";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 
 export default function FactoryInvoiceForm() {
   const { refraction_id } = useParams();
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
-  const [pendingPostData, setPendingPostData] =
-    useState<FactoryOrderInputModel | null>(null);
+  const [pendingPostData, setPendingPostData] = useState<any | null>(null);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();

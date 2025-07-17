@@ -17,10 +17,8 @@ import {
   Stack,
   Typography,
   Paper,
-  IconButton,
 } from "@mui/material";
 import {
-  FactoryInvoiceFormModel,
   schemaFactoryInvoice,
 } from "../../../validations/factoryInvoiceSchema";
 
@@ -49,15 +47,12 @@ import { extractErrorMessage } from "../../../utils/extractErrorMessage";
 import HidenNoteDialog from "../../../components/HidenNoteDialog";
 import StockDrawerBtn from "../../../components/StockDrawerBtn";
 import { useFactoryOrderUpdateContext } from "../../../context/FactoryOrderUpdateContext";
-import { useValidationState } from "../../../hooks/validations/useValidationState";
-import VarificationDialog from "../../../components/VarificationDialog";
 import { zodResolver } from "@hookform/resolvers/zod";
 import SugarCataractText from "../../../components/common/SugarCataractText";
 import PdAndHeightInputs from "../factory_layouts/PdAndHeightInputs";
 import PaymentMethodsLayout from "../factory_layouts/PaymentMethodsLayout";
 import { formatUserPayments } from "../../../utils/formatUserPayments";
 import EditInvoiceTable from "../../../components/inputui/EditInvoiceTable";
-import { FactoryOrderInputModel } from "../../../model/InvoiceInputModel";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
@@ -85,8 +80,7 @@ export default function OrderEditFrom() {
   const staticTitleParam = useMemo(() => ({ is_active: true }), []);
   const { busTitlesList, busTitlesLoading } = useGetBusTitles(staticTitleParam);
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
-  const [pendingPostData, setPendingPostData] =
-    useState<FactoryOrderInputModel | null>(null);
+  const [pendingPostData, setPendingPostData] = useState<any | null>(null);
   const [orderImageDialog, setOrderImageDialog] = useState<{
     open: boolean;
     orderId: number | null;
@@ -154,10 +148,10 @@ export default function OrderEditFrom() {
 
   const subtotal = frameTotal + lenseTotal + ExtraTotal;
   const grandTotal = subtotal - discount;
-  const paymentTotalData =
-    methods.watch("credit_card") +
-    methods.watch("cash") +
-    methods.watch("online_transfer");
+  // const paymentTotalData =
+  //   methods.watch("credit_card") +
+  //   methods.watch("cash") +
+  //   methods.watch("online_transfer");
   useEffect(() => {
     return () => {
       dispatch(clearFrame());
@@ -375,6 +369,7 @@ export default function OrderEditFrom() {
             quantity: item.buyQty,
             price_per_unit: item.price_per_unit,
             subtotal: item.subtotal,
+            is_non_stock: false,
           })),
 
           ...Object.values(FrameInvoiceList).map((item) => ({
@@ -383,6 +378,7 @@ export default function OrderEditFrom() {
             quantity: item.buyQty,
             price_per_unit: item.price_per_unit,
             subtotal: item.subtotal,
+            is_non_stock: false,
           })),
 
           ...Object.values(externalLenseInvoiceList).map((item) => ({
@@ -404,8 +400,6 @@ export default function OrderEditFrom() {
         Object.keys(LenseInvoiceList).length > 0 ||
         Object.keys(FrameInvoiceList).length > 0
       ) {
-        console.log(postData);
-
         setAuthDialogOpen(true);
         setPendingPostData(postData);
       } else {

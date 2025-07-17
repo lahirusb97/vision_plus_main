@@ -2,8 +2,6 @@ import { useEffect, useState } from "react";
 import {
   FormControl,
   FormControlLabel,
-  FormHelperText,
-  Input,
   InputLabel,
   MenuItem,
   Paper,
@@ -29,7 +27,6 @@ import {
   frameSpeciesMetal,
   frameSpeciesMetalPlastic,
   frameSpeciesPlastic,
-  MAIN_STORE_ID,
 } from "../../data/staticVariables";
 import { FrameFormModel, schemaFrame } from "../../validations/schemaFrame";
 import { getUserCurentBranch } from "../../utils/authDataConver";
@@ -50,7 +47,6 @@ const AddFrames = () => {
     formState: { errors },
     reset,
     watch,
-    setValue,
   } = useForm<FrameFormModel>({
     resolver: zodResolver(schemaFrame),
     defaultValues: {

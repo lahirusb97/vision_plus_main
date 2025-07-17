@@ -1,25 +1,30 @@
-import { Button, Box, CircularProgress } from "@mui/material";
-import CameraIcon from "@mui/icons-material/CameraAlt";
+import { Button, CircularProgress, Box, Typography } from "@mui/material";
+import CameraIcon from "@mui/icons-material/PhotoCamera";
 import PhotoLibraryIcon from "@mui/icons-material/PhotoLibrary";
-import { useRef } from "react";
+import ErrorIcon from "@mui/icons-material/Error";
+import { useRef, ChangeEvent } from "react";
 
-function ImageUploard({
+export default function ImageUploard({
   onFileSelect,
   isUploading,
   isMobile,
+  postHandlerError,
 }: {
   onFileSelect: (file: File) => void;
   isUploading: boolean;
   isMobile: boolean;
+  postHandlerError: boolean;
 }) {
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const galleryInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (file) {
       onFileSelect(file);
-      event.target.value = "";
+      // Reset input value to allow selecting the same file again
+      if (cameraInputRef.current) cameraInputRef.current.value = "";
+      if (galleryInputRef.current) galleryInputRef.current.value = "";
     }
   };
 
@@ -27,18 +32,16 @@ function ImageUploard({
     <Box
       sx={{
         display: "flex",
-        flexDirection: { xs: "column", sm: "row" },
         gap: 2,
-        mb: 2,
-        alignItems: { xs: "stretch", sm: "center" },
+        flexDirection: isMobile ? "column" : "row",
       }}
     >
       <input
         type="file"
         accept="image/*"
         capture="environment"
-        style={{ display: "none" }}
         ref={cameraInputRef}
+        style={{ display: "none" }}
         onChange={handleFileChange}
         disabled={isUploading}
         aria-hidden="true"
@@ -46,8 +49,8 @@ function ImageUploard({
       <input
         type="file"
         accept="image/*"
-        style={{ display: "none" }}
         ref={galleryInputRef}
+        style={{ display: "none" }}
         onChange={handleFileChange}
         disabled={isUploading}
         aria-hidden="true"
@@ -55,28 +58,62 @@ function ImageUploard({
       <Button
         variant="contained"
         startIcon={
-          isUploading ? <CircularProgress size={20} /> : <CameraIcon />
+          isUploading ? (
+            <CircularProgress size={20} />
+          ) : postHandlerError ? (
+            <ErrorIcon color="error" />
+          ) : (
+            <CameraIcon />
+          )
         }
+        color={postHandlerError ? "error" : "primary"}
         onClick={() => cameraInputRef.current?.click()}
         disabled={isUploading}
-        sx={{ flex: isMobile ? 1 : "initial" }}
+        sx={{
+          flex: isMobile ? 1 : "initial",
+          border: postHandlerError ? "1px solid #f44336" : "none",
+        }}
         aria-label="Take photo with camera"
       >
-        {isUploading ? "Uploading..." : "Take Photo"}
+        {isUploading
+          ? "Uploading..."
+          : postHandlerError
+          ? "Retry Take Photo"
+          : "Take Photo"}
       </Button>
       <Button
-        variant="outlined"
+        variant={postHandlerError ? "contained" : "outlined"}
+        color={postHandlerError ? "error" : "primary"}
         startIcon={
-          isUploading ? <CircularProgress size={20} /> : <PhotoLibraryIcon />
+          isUploading ? (
+            <CircularProgress size={20} />
+          ) : postHandlerError ? (
+            <ErrorIcon color="error" />
+          ) : (
+            <PhotoLibraryIcon />
+          )
         }
         onClick={() => galleryInputRef.current?.click()}
         disabled={isUploading}
-        sx={{ flex: isMobile ? 1 : "initial" }}
+        sx={{
+          flex: isMobile ? 1 : "initial",
+          border: postHandlerError
+            ? "1px solid #f44336"
+            : "1px solid rgba(0, 0, 0, 0.12)",
+        }}
         aria-label="Choose image from gallery"
       >
-        Choose from Gallery
+        {postHandlerError ? "Retry from Gallery" : "Choose from Gallery"}
       </Button>
+      {postHandlerError && (
+        <Typography
+          color="error"
+          variant="caption"
+          sx={{ mt: 1, display: "block" }}
+        >
+          Failed to upload. Please try again.
+        </Typography>
+      )}
     </Box>
   );
 }
-export default ImageUploard;

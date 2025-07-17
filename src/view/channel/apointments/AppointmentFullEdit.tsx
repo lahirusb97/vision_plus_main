@@ -226,7 +226,7 @@ const AppointmentFullEdit = () => {
                         ? dayjs(field.value).format("YYYY-MM-DD")
                         : null
                     }
-                    sheduleStatus="Available"
+                    sheduleStatus="DOCTOR"
                     onDateChange={(newValue) => {
                       field.onChange(newValue); // Pass selected date to react-hook-form
                       if (newValue && watch("doctor_id")) {

@@ -1,7 +1,7 @@
 import { Box, Typography, Button, Divider, Paper } from "@mui/material";
 import { getUserAuth, saveUserCurentBranch } from "../utils/authDataConver";
 import { useNavigate } from "react-router";
-import { Bus, Hospital, ShoppingCart } from "lucide-react";
+import { Bus, Hospital } from "lucide-react";
 
 export default function SelectBrancheIndex() {
   const userAuth = getUserAuth();

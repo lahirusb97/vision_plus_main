@@ -3,12 +3,12 @@ import {
   CardContent,
   CardMedia,
   IconButton,
-  Grid,
   Box,
   Typography,
   useMediaQuery,
   useTheme,
   CardActionArea,
+  CircularProgress,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useState } from "react";
@@ -17,9 +17,7 @@ import { useAxiosPost } from "../../hooks/useAxiosPost";
 import { extractErrorMessage } from "../../utils/extractErrorMessage";
 import ImageUploard from "../../components/common/ImageUploard";
 import { useParams } from "react-router";
-import axiosClient from "../../axiosClient";
 import { useDeleteDialog } from "../../context/DeleteDialogContext";
-import DialogImageFullScreen from "../../components/common/DialogOrderImage";
 import { Fullscreen } from "lucide-react";
 import { PhotoProvider, PhotoView } from "react-photo-view";
 import "react-photo-view/dist/react-photo-view.css";
@@ -30,16 +28,16 @@ export default function EnhancedUploadView() {
     useGetOrderImages({ order_id: Number(order_id) });
   const { postHandler, postHandlerloading, postHandlerError } = useAxiosPost();
 
-  const [open, setOpen] = useState({
+  const [_open, setOpen] = useState({
     open: false,
     image: "",
   });
-  const [isUploading, setIsUploading] = useState(false);
-  const [snackbar, setSnackbar] = useState<{
-    open: boolean;
-    message: string;
-    severity: "success" | "error";
-  }>({ open: false, message: "", severity: "success" });
+
+  // const [snackbar, setSnackbar] = useState<{
+  //   open: boolean;
+  //   message: string;
+  //   severity: "success" | "error";
+  // }>({ open: false, message: "", severity: "success" });
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -49,26 +47,24 @@ export default function EnhancedUploadView() {
     const formData = new FormData();
     formData.append("image", file);
     try {
-      setIsUploading(true);
       await postHandler(`orders/${order_id}/images/`, formData);
       orderImageListRefresh();
     } catch (error) {
       extractErrorMessage(error);
     } finally {
-      setIsUploading(false);
     }
   };
 
-  const handleDeleteImage = async (imageId: number) => {
-    if (!order_id) return;
+  // const handleDeleteImage = async (imageId: number) => {
+  //   if (!order_id) return;
 
-    try {
-      await axiosClient.delete(`orders/${order_id}/images/${imageId}/`);
-      orderImageListRefresh();
-    } catch (error) {
-      extractErrorMessage(error);
-    }
-  };
+  //   try {
+  //     await axiosClient.delete(`orders/${order_id}/images/${imageId}/`);
+  //     orderImageListRefresh();
+  //   } catch (error) {
+  //     extractErrorMessage(error);
+  //   }
+  // };
 
   return (
     <Box sx={{ p: { xs: 2, sm: 3 }, maxWidth: "100vw", mx: "auto" }}>
@@ -78,11 +74,12 @@ export default function EnhancedUploadView() {
 
       <ImageUploard
         onFileSelect={handleFileSelect}
-        isUploading={isUploading}
+        isUploading={postHandlerloading}
         isMobile={isMobile}
+        postHandlerError={postHandlerError}
       />
-
-      {orderImageList.length === 0 && !isUploading && (
+      {orderImageListLoading && <CircularProgress />}
+      {orderImageList.length === 0 && !postHandlerloading && (
         <Typography align="center" color="text.secondary" sx={{ my: 2 }}>
           No images uploaded yet
         </Typography>

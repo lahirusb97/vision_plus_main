@@ -7,7 +7,6 @@ import {
   TableRow,
   TableCell,
   TableBody,
-  Typography,
 } from "@mui/material";
 import { useLocation } from "react-router";
 import { useRef } from "react";

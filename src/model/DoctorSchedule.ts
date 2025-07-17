@@ -1,4 +1,8 @@
-export type DoctorScheduleStatus = "Available" | "Unavailable" | "Booked";
+export type DoctorScheduleStatus =
+  | "Available"
+  | "Unavailable"
+  | "Booked"
+  | "DOCTOR";
 
 export interface DoctorSchedule {
   id: number;
@@ -9,6 +13,6 @@ export interface DoctorSchedule {
   date: string; // Format: YYYY-MM-DD
   start_time: string; // Format: hh:mm A
   status: DoctorScheduleStatus; // You can refine enum based on real values
-  created_at: string; // 
-  updated_at: string; // 
+  created_at: string; //
+  updated_at: string; //
 }

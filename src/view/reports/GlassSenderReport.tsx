@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useOutletContext } from "react-router";
 import { EmployerReportContext } from "./layout/EmployerSalesReportLayout";
 import useGetGlassSenderReport from "../../hooks/report/useGetGlassSenderReport";

@@ -461,7 +461,7 @@ const InventoryLenseStore = () => {
       <TitleText title="  Lenses Store" />
       <MaterialReactTable
         enableTopToolbar
-        renderTopToolbarCustomActions={({ table }) => {
+        renderTopToolbarCustomActions={() => {
           const hasSelection = selectedRows.length > 0;
 
           return (

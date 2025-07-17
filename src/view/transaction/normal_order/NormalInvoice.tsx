@@ -6,7 +6,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, useForm } from "react-hook-form";
 import InvoiceOtherItems from "../../../components/InvoiceOtherItems";
 import NormalPatientDetail from "./NormalPatientDetail";
-import { NormalOrderInputModel } from "../../../model/NormalOrderInputModel";
 import {
   NormalInvoiceFormModel,
   schemaNormalInvoiceFormModel,
@@ -29,8 +28,7 @@ import AuthDialog from "../../../components/common/AuthDialog";
 
 const NormalInvoice = () => {
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
-  const [pendingPostData, setPendingPostData] =
-    useState<NormalOrderInputModel | null>(null);
+  const [pendingPostData, setPendingPostData] = useState<any | null>(null);
 
   const methods = useForm<NormalInvoiceFormModel>({
     resolver: zodResolver(schemaNormalInvoiceFormModel),

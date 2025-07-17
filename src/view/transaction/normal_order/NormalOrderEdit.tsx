@@ -1,10 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Box, Button, TextField } from "@mui/material";
-
 import { useLocation, useNavigate } from "react-router";
 import { schemaNormalInvoiceFormModel } from "../../../validations/schemaNormalInvoice";
 import { FormProvider, useForm } from "react-hook-form";
-import { NormalInvoiceFormModel } from "../../../validations/schemaNormalInvoice";
 import { getUserCurentBranch } from "../../../utils/authDataConver";
 import {
   InvoiceItemsState,
@@ -17,12 +15,9 @@ import NormalPatientDetail from "./NormalPatientDetail";
 import InvoiceOtherItems from "../../../components/InvoiceOtherItems";
 import PaymentMethodsLayout from "../factory_layouts/PaymentMethodsLayout";
 import SaveButton from "../../../components/SaveButton";
-import VarificationDialog from "../../../components/VarificationDialog";
 import axiosClient from "../../../axiosClient";
 import toast from "react-hot-toast";
-import { useValidationState } from "../../../hooks/validations/useValidationState";
 import { formatUserPayments } from "../../../utils/formatUserPayments";
-import { NormalOrderInputModel } from "../../../model/NormalOrderInputModel";
 import { extractErrorMessage } from "../../../utils/extractErrorMessage";
 import useGetSingleInvoice from "../../../hooks/useGetSingleInvoice";
 import DataLoadingError from "../../../components/common/DataLoadingError";
@@ -54,8 +49,7 @@ export default function NormalOrderEdit() {
     user_id: z.number().optional(),
   });
 
-  const [pendingPostData, setPendingPostData] =
-    useState<NormalOrderInputModel | null>(null);
+  const [pendingPostData, setPendingPostData] = useState<any | null>(null);
   const [loadState, setLoadState] = useState(false);
 
   const initialState: InvoiceItemsState = {

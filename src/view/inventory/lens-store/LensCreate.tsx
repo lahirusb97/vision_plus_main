@@ -21,7 +21,6 @@ import {
   bifocalID,
   cylID,
   LENS_AND_FRAME_STORE_ID,
-  MAIN_STORE_ID,
   progresiveID,
   singleVisionID,
   sphID,

@@ -7,24 +7,14 @@ import {
   Typography,
   Grid,
   Paper,
-  TextField,
   Button,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  Select,
   SelectChangeEvent,
 } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import {
-  MaterialReactTable,
-  type MRT_ColumnDef,
-  useMaterialReactTable,
-} from "material-react-table";
+import { MaterialReactTable, type MRT_ColumnDef } from "material-react-table";
 import { useGetBranch } from "../../../hooks/useGetBranch";
-import useGetFrameSalesHistory from "../../../hooks/report/useGetFrameSalesHistory";
 import dayjs, { Dayjs } from "dayjs";
 import { useTheme, useMediaQuery } from "@mui/material";
 import useGetLensSalesHistory from "../../../hooks/report/useGetLensSalesHistory";
@@ -142,7 +132,9 @@ const FrameInventoryReport = () => {
     });
   }, [lensSalesHistoryList]);
 
-  const branchGroupedColumns = useMemo<MRT_ColumnDef<LensSalesHistory>[]>(() => {
+  const branchGroupedColumns = useMemo<
+    MRT_ColumnDef<LensSalesHistory>[]
+  >(() => {
     if (!lensSalesHistoryList?.length) return [];
 
     // Get all unique branches across all items
@@ -183,7 +175,7 @@ const FrameInventoryReport = () => {
               },
             },
             aggregationFn: "sum",
-            AggregatedCell: ({ cell, row }) => (
+            AggregatedCell: ({ cell }) => (
               <Box sx={{ fontWeight: "bold" }}>
                 {cell.getValue<number>()?.toLocaleString()}
               </Box>
@@ -373,14 +365,13 @@ const FrameInventoryReport = () => {
                     label="Start Date"
                     value={startDate}
                     onChange={(newValue) => setStartDate(newValue)}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        fullWidth
-                        size="small"
-                        sx={{ "& .MuiInputBase-root": { height: "40px" } }}
-                      />
-                    )}
+                    slotProps={{
+                      textField: {
+                        fullWidth: true,
+                        size: "small",
+                        sx: { "& .MuiInputBase-root": { height: "40px" } },
+                      },
+                    }}
                   />
                 </Grid>
 
@@ -389,14 +380,13 @@ const FrameInventoryReport = () => {
                     label="End Date"
                     value={endDate}
                     onChange={(newValue) => setEndDate(newValue)}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        fullWidth
-                        size="small"
-                        sx={{ "& .MuiInputBase-root": { height: "40px" } }}
-                      />
-                    )}
+                    slotProps={{
+                      textField: {
+                        fullWidth: true,
+                        size: "small",
+                        sx: { "& .MuiInputBase-root": { height: "40px" } },
+                      },
+                    }}
                   />
                 </Grid>
 

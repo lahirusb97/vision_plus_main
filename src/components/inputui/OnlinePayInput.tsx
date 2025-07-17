@@ -10,7 +10,6 @@ const OnlinePayInput: React.FC = () => {
     formState: { errors },
   } = useFormContext();
   const onlineTransferError = errors?.online_transfer;
-
   return (
     <Box display="flex" alignItems="center" gap={2}>
       <Box display="flex" alignItems="center" gap={1}>

@@ -38,6 +38,8 @@ const OtherItemStore = () => {
     openDialog(
       `/other-items/${row.item.id}/`,
       row.item.name,
+      "Other Item",
+      "Permanantly Delete",
       OtherItemDataRefresh
     );
   };

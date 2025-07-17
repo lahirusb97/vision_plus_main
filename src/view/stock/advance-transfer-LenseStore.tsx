@@ -27,7 +27,6 @@ import TitleText from "../../components/TitleText";
 import { Edit, PriceChange } from "@mui/icons-material";
 import returnPlusSymbol from "../../utils/returnPlusSymbol";
 import { numberWithCommas } from "../../utils/numberWithCommas";
-import { getUserCurentBranch } from "../../utils/authDataConver";
 import StoreQtyActionDialog from "../inventory/lens-store/store-qty-action-dialog";
 
 export type LenseModelWithQuantity = LenseModel & {
@@ -461,7 +460,7 @@ const AdvanceTransferLenseStore = () => {
       <TitleText title="  Lenses Store" />
       <MaterialReactTable
         enableTopToolbar
-        renderTopToolbarCustomActions={({ table }) => {
+        renderTopToolbarCustomActions={() => {
           const hasSelection = selectedRows.length > 0;
 
           return (

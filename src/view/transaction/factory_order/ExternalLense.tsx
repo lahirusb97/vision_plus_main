@@ -39,6 +39,7 @@ export default function ExternalLense() {
         const selectedExternalLense = externaLenseList?.results[0];
         dispatch(
           setexternalLense({
+            id: null,
             buyQty: parseInt(externalLensQty),
             external_lens_id: selectedExternalLense.id,
             subtotal: parseInt(externalLensQty) * parseInt(price),

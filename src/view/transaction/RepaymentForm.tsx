@@ -8,9 +8,6 @@ import {
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router";
 import { FormProvider, useForm } from "react-hook-form";
-import CardInput from "../../components/inputui/CardInput";
-import CashInput from "../../components/inputui/CashInput";
-import OnlinePayInput from "../../components/inputui/OnlinePayInput";
 import {
   orderpaymentTotal,
   safeParseFloat,

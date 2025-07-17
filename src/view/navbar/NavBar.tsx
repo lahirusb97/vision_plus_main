@@ -3,21 +3,8 @@ import React from "react";
 import { useLocation, useNavigate } from "react-router";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import {
-  Paper,
-  Box,
-  Button,
-  Typography,
-  Fade,
-  IconButton,
-  Switch,
-} from "@mui/material";
-import {
-  BuildTwoTone,
-  LogoutOutlined,
-  NavigateBefore,
-  UploadRounded,
-} from "@mui/icons-material";
+import { Paper, Box, Button, Typography, Fade } from "@mui/material";
+import { LogoutOutlined, UploadRounded } from "@mui/icons-material";
 
 // Import your nav components for submenus
 import RefractionNav from "../refraction/RefractionNav";
@@ -51,8 +38,6 @@ import {
   Calculator,
   FileSearch2,
   Frame,
-  FrameIcon,
-  Glasses,
   NotebookIcon,
   PackageOpen,
   ReceiptText,
@@ -66,7 +51,6 @@ import {
   getUserAuth,
   getUserCurentBranch,
 } from "../../utils/authDataConver";
-import { setNavbarState } from "./navstate";
 import FrameStoreNav from "../inventory/frame-store/FrameStoreNav";
 import LensStoreNav from "../inventory/lens-store/LensStoreNav";
 import { LENS_AND_FRAME_STORE_ID } from "../../data/staticVariables";

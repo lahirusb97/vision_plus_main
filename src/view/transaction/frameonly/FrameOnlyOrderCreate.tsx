@@ -13,12 +13,9 @@ import { RootState } from "../../../store/store";
 import InvoiceTable from "../../../components/inputui/InvoiceTable";
 import { useAxiosPost } from "../../../hooks/useAxiosPost";
 import { formatUserPayments } from "../../../utils/formatUserPayments";
-import { FrameOnlyOrderInputModel } from "../../../model/FrameOnlyOrderInputModel";
 import toast from "react-hot-toast";
 import { extractErrorMessage } from "../../../utils/extractErrorMessage";
 import { useNavigate } from "react-router";
-import VarificationDialog from "../../../components/VarificationDialog";
-import { useValidationState } from "../../../hooks/validations/useValidationState";
 import TitleText from "../../../components/TitleText";
 import SubmitCustomBtn from "../../../components/common/SubmiteCustomBtn";
 import { openStockDrawer } from "../../../features/invoice/stockDrawerSlice";
@@ -28,8 +25,7 @@ export default function FrameOnlyOrderCreate() {
   const dispatch = useDispatch();
 
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
-  const [pendingPostData, setPendingPostData] =
-    useState<FrameOnlyOrderInputModel | null>(null);
+  const [pendingPostData, setPendingPostData] = useState<any | null>(null);
 
   const { postHandler, postHandlerloading, postHandlerError } = useAxiosPost();
   const navigate = useNavigate();
