@@ -7,6 +7,7 @@ import axiosClient from "../../../axiosClient";
 import { extractErrorMessage } from "../../../utils/extractErrorMessage";
 import { paramsNullCleaner } from "../../../utils/paramsNullCleaner";
 import { getUserCurentBranch } from "../../../utils/authDataConver";
+import dayjs from "dayjs";
 interface FilterParams {
   start_date: string | null;
   end_date: string | null;
@@ -25,15 +26,29 @@ interface NormalInvoiceReportData {
   balance: number;
   bill: number;
 }
+interface NormalInvoiceSummary {
+  total_balance: number;
+  total_invoice_amount: number;
+  total_invoice_count: number;
+  total_paid_amount: number;
+}
+
 const useGetNormalInvoiceReports = () => {
   //use null or [] base on scenario
   const [Data, setData] = useState<NormalInvoiceReportData[]>([]);
+  const [Summary, setSummary] = useState<NormalInvoiceSummary>({
+    total_balance: 0,
+    total_invoice_amount: 0,
+    total_invoice_count: 0,
+    total_paid_amount: 0,
+  });
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<boolean>(false);
   const [params, setParams] = useState<FilterParams>({
-    start_date: null,
-    end_date: null,
+    start_date: dayjs().format("YYYY-MM-DD"),
+    end_date: dayjs().format("YYYY-MM-DD"),
   });
+
   const abortControllerRef = useRef<AbortController | null>(null);
 
   const loadData = useCallback(async () => {
@@ -45,7 +60,7 @@ const useGetNormalInvoiceReports = () => {
     setLoading(true);
     try {
       //TODO ASS MODEL
-      const response = await axiosClient.get(`report/normal-orders/`, {
+      const response = await axiosClient.get(`reports/normal-orders/`, {
         params: {
           ...paramsNullCleaner(params),
           branch_id: getUserCurentBranch()?.id,
@@ -54,7 +69,8 @@ const useGetNormalInvoiceReports = () => {
       });
       // Only update state if this request wasn't aborted
       if (!controller.signal.aborted) {
-        setData(response.data);
+        setData(response.data.data.orders);
+        setSummary(response.data.data.summary);
         toast.success("Normal Invoice found ");
       }
 
@@ -67,6 +83,12 @@ const useGetNormalInvoiceReports = () => {
       // Only update error state if this request wasn't aborted
       if (!controller.signal.aborted) {
         setData([]);
+        setSummary({
+          total_balance: 0,
+          total_invoice_amount: 0,
+          total_invoice_count: 0,
+          total_paid_amount: 0,
+        });
         extractErrorMessage(err);
         setError(true);
       }
@@ -98,6 +120,7 @@ const useGetNormalInvoiceReports = () => {
 
   return {
     normalInvoiceReportData: Data,
+    normalInvoiceReportSummary: Summary,
     normalInvoiceReportLoading: loading,
     normalInvoiceReportListRefres: loadData,
     normalInvoiceReportError: error,

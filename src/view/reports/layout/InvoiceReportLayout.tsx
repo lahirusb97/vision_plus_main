@@ -19,19 +19,19 @@ export default function InvoiceReportLayout() {
 
   const reportTabs = [
     {
-      label: "Factory Invoice Report",
-      path: "/reports/invoice/factory",
+      label: "Factory Invoice",
+      path: "/reports/invoice/",
     },
     {
-      label: "Normal Invoice Report",
+      label: "Normal Invoice",
       path: "/reports/invoice/normal",
     },
     {
-      label: "Soldering Invoice Report",
+      label: "Soldering Invoice",
       path: "/reports/invoice/soldering",
     },
     {
-      label: "Channel Invoice Report",
+      label: "Channel Invoice",
       path: "/reports/invoice/channel",
     },
   ];
