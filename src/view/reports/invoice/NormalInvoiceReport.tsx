@@ -4,13 +4,14 @@ import { Box, CircularProgress, Alert } from "@mui/material";
 import { useOutletContext } from "react-router";
 import useGetNormalInvoiceReports from "../../../hooks/report/invoice/useGetNormalInvoiceReports";
 import { InvoiceReportContext } from "../layout/InvoiceReportLayout";
+import InvoiceSummaryCard from "./InvoiceSummaryCard";
 
 export default function NormalInvoiceReport() {
   const { end_date, start_date } = useOutletContext<InvoiceReportContext>();
 
   const {
     normalInvoiceReportData,
-    
+    normalInvoiceReportSummary,
     normalInvoiceReportLoading,
     normalInvoiceReportError,
     setNormalInvoiceReportParamsData,
@@ -26,7 +27,7 @@ export default function NormalInvoiceReport() {
   // Define columns for the table
   const columns = useMemo(
     () => [
-      { header: "Refraction No", accessorKey: "refraction_number", size: 130 },
+      //   { header: "Refraction No", accessorKey: "refraction_number", size: 130 },
       { header: "Invoice No", accessorKey: "invoice_number", size: 120 },
       { header: "Date", accessorKey: "date", size: 100 },
       { header: "Time", accessorKey: "time", size: 100 },
@@ -43,7 +44,11 @@ export default function NormalInvoiceReport() {
   );
 
   return (
-    <Box sx={{ padding: 2, maxWidth: "1200px" }}>
+    <Box sx={{ padding: 1, maxWidth: "1200px" }}>
+      {/* Summary Section */}
+      <InvoiceSummaryCard data={normalInvoiceReportSummary} />
+
+      {/* Table Section */}
       {normalInvoiceReportLoading ? (
         <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
           <CircularProgress />
