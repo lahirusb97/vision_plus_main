@@ -14,6 +14,11 @@ import GlassSenderReport from "../../view/reports/GlassSenderReport";
 import EmployerSalesHistory from "../../view/reports/EmployerSalesHistory";
 import EmployerSalesReportLayout from "../../view/reports/layout/EmployerSalesReportLayout";
 import MntReport from "../../view/reports/MntReport";
+import NormalInvoiceReport from "../../view/reports/invoice/NormalInvoiceReport";
+import FactorylInvoiceReport from "../../view/reports/invoice/FactorylInvoiceReport";
+import SolderingInvoiceReport from "../../view/reports/invoice/SolderingInvoiceReport";
+import ChannelInvoiceReport from "../../view/reports/invoice/ChannelInvoiceReport";
+import InvoiceReportLayout from "../../view/reports/layout/InvoiceReportLayout";
 
 export const reportRoutes: RouteObject[] = [
   {
@@ -115,6 +120,29 @@ export const reportRoutes: RouteObject[] = [
       {
         index: true,
         element: <MntReport />,
+      },
+    ],
+  },
+  {
+    path: "invoice",
+    element: <InvoiceReportLayout />,
+    children: [
+      {
+        index: true,
+        element: <FactorylInvoiceReport />,
+      },
+      {
+        path: "normal",
+        element: <NormalInvoiceReport />,
+      },
+
+      {
+        path: "soldering",
+        element: <SolderingInvoiceReport />,
+      },
+      {
+        path: "channel",
+        element: <ChannelInvoiceReport />,
       },
     ],
   },
