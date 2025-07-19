@@ -3,7 +3,7 @@ import ProtectedChildRoute from "../ProtectedChildRoute";
 import InvoiceReport from "../../view/reports/InvoiceReport";
 import FrameReport from "../../view/reports/FrameReport";
 import LensReport from "../../view/reports/LensReport";
-import BestCustomer from "../../view/reports/BestCustomer";
+
 import CustomerLocation from "../../view/reports/CustomerLocation";
 import InvoiceSummary from "../../view/reports/InvoiceSummary";
 import DoctorClaimReportIndex from "../../view/reports/doctor_claim/DoctorClaimReportIndex";
@@ -19,6 +19,7 @@ import FactorylInvoiceReport from "../../view/reports/invoice/FactorylInvoiceRep
 import SolderingInvoiceReport from "../../view/reports/invoice/SolderingInvoiceReport";
 import ChannelInvoiceReport from "../../view/reports/invoice/ChannelInvoiceReport";
 import InvoiceReportLayout from "../../view/reports/layout/InvoiceReportLayout";
+import BestCustomer from "../../view/reports/bestcustomer/BestCustomer";
 
 export const reportRoutes: RouteObject[] = [
   {
@@ -112,6 +113,10 @@ export const reportRoutes: RouteObject[] = [
         element: <GlassSenderReport />,
       },
     ],
+  },
+  {
+    path: "best-customer",
+    element: <BestCustomer />,
   },
   {
     path: "mnt-report",
