@@ -38,7 +38,7 @@ export default function NormalInvoiceReport() {
       { header: "Total Amount", accessorKey: "total_amount", size: 120 },
       { header: "Paid Amount", accessorKey: "paid_amount", size: 120 },
       { header: "Balance", accessorKey: "balance", size: 120 },
-      { header: "Bill", accessorKey: "bill", size: 120 },
+      // { header: "Bill", accessorKey: "bill", size: 120 },
     ],
     []
   );
