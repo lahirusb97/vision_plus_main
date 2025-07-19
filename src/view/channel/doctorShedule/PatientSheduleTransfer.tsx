@@ -108,7 +108,7 @@ export default function PatientSheduleTransfer() {
           control={control}
           render={({ field }) => (
             <HighlightedDatePicker
-              sheduleStatus={"Available"}
+              sheduleStatus={"DOCTOR"}
               selectedDate={
                 field.value ? dayjs(field.value).format("YYYY-MM-DD") : null
               }
