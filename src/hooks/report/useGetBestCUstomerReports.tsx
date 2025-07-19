@@ -6,49 +6,99 @@ import { extractErrorMessage } from "../../utils/extractErrorMessage";
 import { paramsNullCleaner } from "../../utils/paramsNullCleaner";
 import { getUserCurentBranch } from "../../utils/authDataConver";
 import dayjs from "dayjs";
-import { ProgressStatusModel } from "../../model/progressStatusModel";
 
 interface FilterParams {
   start_date: string | null;
   end_date: string | null;
+  min_budget?: number;
+  include_invoices?: boolean;
+  include_summary?: boolean;
 }
 
-export interface FactoryInvoiceReportData {
+export interface CustomerInvoiceData {
   order_id: number;
   invoice_number: string;
-  date: string;
-  time: string;
-  customer_name: string;
-  address: string;
-  mobile_number: string;
-  total_amount: number;
-  paid_amount: number;
-  balance: number;
-  bill: number;
+  invoice_type: string;
+  order_date: string;
+  total_price: number;
+  sub_total: number;
+  discount: number;
   status: string;
-  progress_status: ProgressStatusModel;
 }
 
-interface FactoryInvoiceSummary {
-  total_invoice_count: number;
-  total_invoice_amount: number;
-  total_paid_amount: number;
-  total_balance: number;
+export interface BestCustomerData {
+  customer_id: number;
+  customer_name: string;
+  nic: string;
+  address: string;
+  mobile_number: string;
+  total_factory_order_amount: number;
+  number_of_orders: number;
+  total_factory_order_count: number;
+  invoices: CustomerInvoiceData[];
+  invoice_count: number;
+}
+
+interface BestCustomerCriteria {
+  start_date: string;
+  end_date: string;
+  min_budget: number;
+  include_invoices: boolean;
+}
+
+interface BestCustomerSummary {
+  date_range: {
+    start: string;
+    end: string;
+  };
+  criteria: {
+    min_budget: number;
+  };
+  statistics: {
+    total_customers: number;
+    qualifying_customers: number;
+    total_factory_orders: number;
+    total_revenue: number;
+    qualifying_revenue: number;
+    percentage_qualifying: number;
+  };
+}
+
+interface BestCustomerReportResponse {
+  customers: BestCustomerData[];
+  criteria: BestCustomerCriteria;
+  count: number;
+  generated_at: string;
+  summary: BestCustomerSummary;
 }
 
 const useGetBestCUstomerReports = () => {
-  const [Data, setData] = useState<FactoryInvoiceReportData[]>([]);
-  const [Summary, setSummary] = useState<FactoryInvoiceSummary>({
-    total_invoice_count: 0,
-    total_invoice_amount: 0,
-    total_paid_amount: 0,
-    total_balance: 0,
+  const [Data, setData] = useState<BestCustomerData[]>([]);
+  const [Summary, setSummary] = useState<BestCustomerSummary>({
+    date_range: {
+      start: "",
+      end: "",
+    },
+    criteria: {
+      min_budget: 0,
+    },
+    statistics: {
+      total_customers: 0,
+      qualifying_customers: 0,
+      total_factory_orders: 0,
+      total_revenue: 0,
+      qualifying_revenue: 0,
+      percentage_qualifying: 0,
+    },
   });
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<boolean>(false);
   const [params, setParams] = useState<FilterParams>({
     start_date: dayjs().format("YYYY-MM-DD"),
     end_date: dayjs().format("YYYY-MM-DD"),
+    min_budget: 0,
+    include_invoices: true,
+    include_summary: true,
   });
 
   const abortControllerRef = useRef<AbortController | null>(null);
@@ -61,7 +111,7 @@ const useGetBestCUstomerReports = () => {
     abortControllerRef.current = controller;
     setLoading(true);
     try {
-      const response = await axiosClient.get(`reports/soldering-orders/`, {
+      const response = await axiosClient.get(`reports/best-customers/`, {
         params: {
           ...paramsNullCleaner(params),
           branch_id: getUserCurentBranch()?.id,
@@ -69,10 +119,11 @@ const useGetBestCUstomerReports = () => {
         signal: controller.signal,
       });
       if (!controller.signal.aborted) {
-        setData(response.data.data.orders);
-        setSummary(response.data.data.summary);
+        const responseData: BestCustomerReportResponse = response.data.data;
+        setData(responseData.customers);
+        setSummary(responseData.summary);
         console.log(response.data);
-        toast.success("Soldering Invoice found ");
+        toast.success("Best Customer Report found");
       }
     } catch (err) {
       if (axios.isCancel(err)) {
@@ -81,10 +132,21 @@ const useGetBestCUstomerReports = () => {
       if (!controller.signal.aborted) {
         setData([]);
         setSummary({
-          total_invoice_count: 0,
-          total_invoice_amount: 0,
-          total_paid_amount: 0,
-          total_balance: 0,
+          date_range: {
+            start: "",
+            end: "",
+          },
+          criteria: {
+            min_budget: 0,
+          },
+          statistics: {
+            total_customers: 0,
+            qualifying_customers: 0,
+            total_factory_orders: 0,
+            total_revenue: 0,
+            qualifying_revenue: 0,
+            percentage_qualifying: 0,
+          },
         });
         extractErrorMessage(err);
         setError(true);
@@ -111,12 +173,12 @@ const useGetBestCUstomerReports = () => {
   }, [loadData]);
 
   return {
-    solderingInvoiceReportData: Data,
-    solderingInvoiceReportSummary: Summary,
-    solderingInvoiceReportLoading: loading,
-    solderingInvoiceReportListRefres: loadData,
-    solderingInvoiceReportError: error,
-    setSolderingInvoiceReportParamsData: setParamsData,
+    bestCustomerReportData: Data,
+    bestCustomerReportSummary: Summary,
+    bestCustomerReportLoading: loading,
+    bestCustomerReportListRefresh: loadData,
+    bestCustomerReportError: error,
+    setBestCustomerReportParamsData: setParamsData,
   };
 };
 
