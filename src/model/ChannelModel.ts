@@ -31,4 +31,5 @@ export interface ChannelFullDetailModel {
   invoice_number: number;
   payments: ChannelPaymentModel[];
   note: string | null;
+  created_at: string;
 }

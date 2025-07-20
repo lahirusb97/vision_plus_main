@@ -9,4 +9,6 @@ export interface ChannelPaymentReport {
   balance: number;
   appointment_id: number;
   invoice_number: string;
+  is_deleted: boolean;
+  is_refund: boolean;
 }

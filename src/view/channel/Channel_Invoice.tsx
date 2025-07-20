@@ -9,6 +9,8 @@ import LoadingAnimation from "../../components/LoadingAnimation";
 import DataLoadingError from "../../components/common/DataLoadingError";
 import BranchMobileNum from "../../components/common/BranchMobileNum";
 import BranchAddress from "../../components/common/BranchAddress";
+import { convertTimeTo12Hour } from "../../utils/convertTo12Hour";
+import { formatDateTimeByType } from "../../utils/formatDateTimeByType";
 
 const ChannelInvoice = () => {
   const componentRef = useRef(null);
@@ -75,6 +77,16 @@ const ChannelInvoice = () => {
             justifyContent="space-between"
             alignItems={"center"}
           >
+            <Typography variant="body2">Date </Typography>
+            <Typography data-testid="channel_no">
+              {formatDateTimeByType(singleAppointment?.created_at, "both")}
+            </Typography>
+          </Box>
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems={"center"}
+          >
             <Typography variant="body2">Channele No</Typography>
             <Typography
               data-testid="channel_no"
@@ -98,7 +110,7 @@ const ChannelInvoice = () => {
             >
               {singleAppointment?.date}
               {` - `}
-              {singleAppointment?.time}
+              {convertTimeTo12Hour(singleAppointment?.time || "")}
             </Typography>
           </Box>
           {/* <Box display="flex" justifyContent="space-between" sx={{ mt: 2 }}>
