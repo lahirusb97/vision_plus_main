@@ -141,7 +141,7 @@ const AppointmentFullEdit = () => {
       methods.setValue("channel_date", singleAppointment.date);
       methods.setValue(
         "channel_time",
-        dayjs(singleAppointment.time, "HH:mm:ss").subtract(5, "minute")
+        dayjs(singleAppointment.time, "HH:mm:ss")
       );
       methods.setValue("note", singleAppointment.note);
       methods.setValue(
