@@ -155,6 +155,9 @@ function ChannelDetails() {
               </TableCell>
 
               <TableCell sx={tableStyles} align="center">
+                Invoice No
+              </TableCell>
+              <TableCell sx={tableStyles} align="center">
                 Channel No
               </TableCell>
               <TableCell sx={tableStyles} align="left">
@@ -256,6 +259,9 @@ function ChannelDetails() {
                   {dayjs(`${row.date} ${row.time}`).format("hh:mm A")}
                 </TableCell>
 
+                <TableCell sx={tableStyles} align="center">
+                  {row.invoice_number}
+                </TableCell>
                 <TableCell sx={tableStyles} align="center">
                   {row.channel_no}
                 </TableCell>
