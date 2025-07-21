@@ -7,6 +7,7 @@ import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { TextField } from "@mui/material";
 import { LENS_AND_FRAME_STORE_ID } from "../../../data/staticVariables";
+import EmployeeHistoryReportTable from "./EmployeeHistoryReportTable";
 export default function EmployeeHistoryReportView() {
   const {
     empHistoryReportData,
@@ -69,6 +70,7 @@ export default function EmployeeHistoryReportView() {
         size="small"
         sx={{ minWidth: 120 }}
       />
+      <EmployeeHistoryReportTable data={empHistoryReportData} />
     </div>
   );
 }
