@@ -10,8 +10,6 @@ export default function EmployeeHistoryReportTable({
   // Define columns
   const columns = useMemo<MRT_ColumnDef<EmpHistoryData>[]>(
     () => [
-      { header: "Employee ID", accessorKey: "employee_id" },
-      { header: "User Code", accessorKey: "user_code" },
       { header: "Username", accessorKey: "username" },
       { header: "Full Name", accessorKey: "full_name" },
       {
@@ -28,16 +26,6 @@ export default function EmployeeHistoryReportTable({
       { header: "Total Count", accessorKey: "total_count" },
       { header: "Total Sales Amount", accessorKey: "total_sales_amount" },
       { header: "Total Orders", accessorKey: "total_orders" },
-      {
-        header: "Branch",
-        accessorKey: "branch.branch_name",
-        Cell: ({ row }) => row.original.branch?.branch_name || "",
-      },
-      {
-        header: "Branch Location",
-        accessorKey: "branch.location",
-        Cell: ({ row }) => row.original.branch?.location || "",
-      },
     ],
     []
   );

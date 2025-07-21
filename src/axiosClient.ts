@@ -9,8 +9,8 @@ import { getUserAuth } from "./utils/authDataConver";
 // Create an Axios instance with a base URL
 const axiosClient: AxiosInstance = axios.create({
   // baseURL: import.meta.env.VITE_BASE_URL,
-  // baseURL: "https://www.lahiru.store/api/",
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL: "https://www.lahiru.store/api/",
+  // baseURL: import.meta.env.VITE_API_BASE_URL,
   withCredentials: false,
 });
 
