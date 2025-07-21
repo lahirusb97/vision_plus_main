@@ -20,6 +20,7 @@ import SolderingInvoiceReport from "../../view/reports/invoice/SolderingInvoiceR
 import ChannelInvoiceReport from "../../view/reports/invoice/ChannelInvoiceReport";
 import InvoiceReportLayout from "../../view/reports/layout/InvoiceReportLayout";
 import BestCustomer from "../../view/reports/bestcustomer/BestCustomer";
+import EmployeeHistoryReportView from "../../view/reports/employee-history/EmployeeHistoryReportView";
 
 export const reportRoutes: RouteObject[] = [
   {
@@ -117,6 +118,10 @@ export const reportRoutes: RouteObject[] = [
   {
     path: "best-customer",
     element: <BestCustomer />,
+  },
+  {
+    path: "employee-history",
+    element: <EmployeeHistoryReportView />,
   },
   {
     path: "mnt-report",

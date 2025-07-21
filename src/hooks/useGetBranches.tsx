@@ -4,7 +4,7 @@ import { extractErrorMessage } from "../utils/extractErrorMessage";
 import axiosClient from "../axiosClient";
 
 export default function useGetBranches() {
-  const [branches, setBranches] = useState<BranchModel[] | null>(null);
+  const [branches, setBranches] = useState<BranchModel[]>([]);
   const [branchesLoading, setBranchesLoading] = useState<boolean>(false);
   const [paramList, setParamList] = useState<object>({});
 
@@ -21,6 +21,7 @@ export default function useGetBranches() {
       setBranches(response.data);
     } catch (error) {
       extractErrorMessage(error);
+      setBranches([]);
     } finally {
       setBranchesLoading(false);
     }

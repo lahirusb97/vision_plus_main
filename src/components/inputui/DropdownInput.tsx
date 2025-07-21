@@ -8,7 +8,7 @@ import {
 
 // Define the option type
 export interface Option {
-  id: number;
+  id: number | null;
   name: string;
 }
 
