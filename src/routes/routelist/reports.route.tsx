@@ -21,6 +21,7 @@ import ChannelInvoiceReport from "../../view/reports/invoice/ChannelInvoiceRepor
 import InvoiceReportLayout from "../../view/reports/layout/InvoiceReportLayout";
 import BestCustomer from "../../view/reports/bestcustomer/BestCustomer";
 import EmployeeHistoryReportView from "../../view/reports/employee-history/EmployeeHistoryReportView";
+import BankingReportView from "../../view/reports/banking-report/BankingReportView";
 
 export const reportRoutes: RouteObject[] = [
   {
@@ -122,6 +123,10 @@ export const reportRoutes: RouteObject[] = [
   {
     path: "employee-history",
     element: <EmployeeHistoryReportView />,
+  },
+  {
+    path: "banking-report",
+    element: <BankingReportView />,
   },
   {
     path: "mnt-report",

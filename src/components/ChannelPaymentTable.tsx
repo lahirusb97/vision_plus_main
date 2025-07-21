@@ -12,8 +12,13 @@ export const ChannelPaymentTable = ({ data, loading }: ChannelTableProps) => {
     () => [
       {
         accessorKey: "invoice_number",
-        header: "Invoice Number",
+        header: "Invoice No",
         size: 50,
+      },
+      {
+        accessorKey: "channel_no",
+        header: "channel No",
+        size: 100,
       },
       {
         accessorKey: "amount_cash",

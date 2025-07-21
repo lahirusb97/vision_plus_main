@@ -17,6 +17,7 @@ export const InvoicePaymentTable = ({ data, loading }: InvoiceTableProps) => {
         header: "Invoice Number",
         size: 100,
       },
+
       {
         accessorKey: "total_cash_payment",
         header: "Cash",
