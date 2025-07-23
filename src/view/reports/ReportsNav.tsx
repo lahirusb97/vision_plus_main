@@ -18,6 +18,7 @@ export default function ReportsNav() {
       <NavButton name="Best Customer" path={"/reports/best-customer"} />
       <NavButton name="Employee History" path={"/reports/employee-history"} />
       <NavButton name="Banking Report" path={"/reports/banking-report"} />
+      <NavButton name="Payment Method" path={"/reports/payment-method"} />
       {/* add button & conect paths from  reports.route.tsfile as you need for the UI  */}
     </>
   );
