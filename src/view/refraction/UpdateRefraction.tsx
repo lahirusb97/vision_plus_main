@@ -132,11 +132,7 @@ export default function UpdateRefraction() {
             label="Phone Number"
             variant="outlined"
             margin="normal"
-            type="tel"
-            inputProps={{
-              pattern: "[0-9]{10}",
-              title: "Please enter a valid 10-digit phone number",
-            }}
+            type="text"
             error={!!errors.customer_mobile}
             helperText={errors.customer_mobile?.message}
             InputLabelProps={{

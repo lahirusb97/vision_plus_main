@@ -106,7 +106,7 @@ export default function RefractionNumber() {
             label="Phone Number"
             variant="outlined"
             margin="normal"
-            type="number"
+            type="text"
             error={!!errors.customer_mobile}
             helperText={errors.customer_mobile?.message}
             size="small"
