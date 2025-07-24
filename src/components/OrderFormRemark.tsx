@@ -52,16 +52,17 @@ export default function OrderFormRemark({ invoiceDetail }: InvoiceProps) {
       <Typography variant="body2">
         {invoiceDetail.order_details?.pd &&
           `PD: ${invoiceDetail.order_details?.pd} / `}
-        {invoiceDetail.order_details?.left_pd &&
-          `Left-PD: ${invoiceDetail.order_details?.left_pd} / `}
         {invoiceDetail.order_details?.right_pd &&
           `Right-PD: ${invoiceDetail.order_details?.right_pd} / `}
+        {invoiceDetail.order_details?.left_pd &&
+          `Left-PD: ${invoiceDetail.order_details?.left_pd} / `}
+
         {invoiceDetail.order_details?.height &&
           `Height: ${invoiceDetail.order_details?.height} / `}
-        {invoiceDetail.order_details?.left_height &&
-          `Left-H: ${invoiceDetail.order_details?.left_height} / `}
         {invoiceDetail.order_details?.right_height &&
           `Right-H: ${invoiceDetail.order_details?.right_height} `}
+        {invoiceDetail.order_details?.left_height &&
+          `Left-H: ${invoiceDetail.order_details?.left_height} / `}
       </Typography>
       <Typography sx={{ textWrap: "break-word" }} variant="body2">
         <strong>Order Remark</strong>

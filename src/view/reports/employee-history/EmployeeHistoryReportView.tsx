@@ -22,11 +22,9 @@ import EmployeeHistoryReportTable from "./EmployeeHistoryReportTable";
 export default function EmployeeHistoryReportView() {
   const {
     empHistoryReportData,
-    empHistoryReportSummary,
     empHistoryReportLoading,
     empHistoryReportError,
     setEmpHistoryReportParamsData,
-    empHistoryReportListRefresh,
   } = useGetEmpHistoryReports();
   const { branches, branchesLoading } = useGetBranches();
 

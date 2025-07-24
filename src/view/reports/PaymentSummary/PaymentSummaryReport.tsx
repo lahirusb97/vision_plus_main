@@ -1,16 +1,11 @@
-import React from "react";
 import useGetPaymentMethodReport from "../../../hooks/report/useGetPaymentMethodReport";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { Stack, Button, CircularProgress, Typography } from "@mui/material";
 import { numberWithCommas } from "../../../utils/numberWithCommas";
-import dayjs from "dayjs";
 import { BarChart } from "@mui/x-charts/BarChart";
+import { useOutletContext } from "react-router";
+import { DateRangeInputModel } from "../../../model/DateRangeInputModel";
 export default function PaymentSummaryReport() {
-  const [startDate, setStartDate] = React.useState<dayjs.Dayjs | null>(
-    dayjs().subtract(30, "day")
-  );
-  const [endDate, setEndDate] = React.useState<dayjs.Dayjs | null>(dayjs());
+  const { end_date, start_date } = useOutletContext<DateRangeInputModel>();
 
   const {
     paymentMethodReportData,
@@ -21,8 +16,8 @@ export default function PaymentSummaryReport() {
 
   const handleSearch = () => {
     setPaymentMethodReportParamsData({
-      start_date: startDate?.format("YYYY-MM-DD") || "",
-      end_date: endDate?.format("YYYY-MM-DD") || "",
+      start_date: start_date?.format("YYYY-MM-DD") || "",
+      end_date: end_date?.format("YYYY-MM-DD") || "",
     });
   };
   const cashData = paymentMethodReportData.map((item) => item.total_cash);
@@ -30,11 +25,7 @@ export default function PaymentSummaryReport() {
   const onlineData = paymentMethodReportData.map(
     (item) => item.total_online_transfer
   );
-  console.log(cashData);
-  console.log(cardData);
-  console.log(onlineData);
-  const uData = [4000, 3000, 2000, 2780, 1890, 2390, 3490];
-  const pData = [2400, 1398, 9800, 3908, 4800, 3800, 4300];
+
   const xLabels = paymentMethodReportData.map((item) => item.branch_name);
   return (
     <div>
@@ -44,27 +35,6 @@ export default function PaymentSummaryReport() {
         alignItems="center"
         mb={3}
       >
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <DatePicker
-            label="From Date"
-            format="YYYY-MM-DD"
-            value={startDate}
-            onChange={setStartDate}
-            slotProps={{
-              textField: { size: "small", sx: { minWidth: 150 } },
-            }}
-          />
-          <DatePicker
-            label="To Date"
-            format="YYYY-MM-DD"
-            value={endDate}
-            onChange={setEndDate}
-            slotProps={{
-              textField: { size: "small", sx: { minWidth: 150 } },
-            }}
-          />
-        </LocalizationProvider>
-
         <Button
           variant="contained"
           color="primary"
@@ -79,7 +49,7 @@ export default function PaymentSummaryReport() {
           )}
         </Button>
       </Stack>
-      
+
       <Typography variant="h6">
         Grand Total Payments: {numberWithCommas(paymentMethodReportSummary)}
       </Typography>

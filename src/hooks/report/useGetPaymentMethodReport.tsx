@@ -20,13 +20,24 @@ interface PaymentMethodReportData {
   total_online_transfer: number;
 }
 
+export interface PaymentMethodTransaction {
+  date: string;
+  online_transfer: number;
+  cash: number;
+  card: number;
+}
+
 interface PaymentMethodReport {
   sub_total_payments: number;
   payments: PaymentMethodReportData[];
+  transaction: PaymentMethodTransaction[];
 }
 
 const useGetPaymentMethodReport = () => {
   const [Data, setData] = useState<PaymentMethodReportData[]>([]);
+  const [Transactions, setTransactions] = useState<PaymentMethodTransaction[]>(
+    []
+  );
   const [Summary, setSummary] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<boolean>(false);
@@ -58,7 +69,7 @@ const useGetPaymentMethodReport = () => {
       if (!controller.signal.aborted) {
         setData(response.data.payments);
         setSummary(response.data.sub_total_payments);
-
+        setTransactions(response.data.transaction);
         toast.success("Banking Report found ");
       }
     } catch (err) {
@@ -68,6 +79,7 @@ const useGetPaymentMethodReport = () => {
       if (!controller.signal.aborted) {
         setData([]);
         setSummary(0);
+        setTransactions([]);
         extractErrorMessage(err);
         setError(true);
       }
@@ -94,6 +106,7 @@ const useGetPaymentMethodReport = () => {
 
   return {
     paymentMethodReportData: Data,
+    paymentMethodReportTransactions: Transactions,
     paymentMethodReportSummary: Summary,
     paymentMethodReportLoading: loading,
     paymentMethodReportListRefres: loadData,

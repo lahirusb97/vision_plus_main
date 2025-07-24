@@ -26,6 +26,7 @@ export interface ChannelSearchModel {
   amount: number;
   is_deleted: boolean;
   is_refund: boolean;
+  created_at: string;
 }
 
 type ChannelSearchParams = {

@@ -23,6 +23,7 @@ import HighlightedDatePicker from "../../components/HighlightedDatePicker";
 import CustomerPagination from "../../components/CustomPagination";
 import { numberWithCommas } from "../../utils/numberWithCommas";
 import dayjs from "dayjs";
+import { formatDateTimeByType } from "../../utils/formatDateTimeByType";
 
 function ChannelDetails() {
   const { data: doctorList, loading: loadingDoctors } = useGetDoctors();
@@ -151,12 +152,16 @@ function ChannelDetails() {
               {/* <TableCell sx={tableStyles}>Invoice No. </TableCell> */}
 
               <TableCell sx={tableStyles} align="center">
-                Date & Time
+                Invoice Date
               </TableCell>
-
               <TableCell sx={tableStyles} align="center">
                 Invoice No
               </TableCell>
+
+              <TableCell sx={tableStyles} align="center">
+                Channel Date
+              </TableCell>
+
               <TableCell sx={tableStyles} align="center">
                 Channel No
               </TableCell>
@@ -255,12 +260,15 @@ function ChannelDetails() {
                   {row.invoice_number}
                 </TableCell> */}
                 <TableCell sx={tableStyles} align="center">
-                  {row.date}-{" "}
-                  {dayjs(`${row.date} ${row.time}`).format("hh:mm A")}
+                  {formatDateTimeByType(row.created_at, "both")}
+                </TableCell>
+                <TableCell sx={tableStyles} align="center">
+                  {row.invoice_number}
                 </TableCell>
 
                 <TableCell sx={tableStyles} align="center">
-                  {row.invoice_number}
+                  {row.date}-{" "}
+                  {dayjs(`${row.date} ${row.time}`).format("hh:mm A")}
                 </TableCell>
                 <TableCell sx={tableStyles} align="center">
                   {row.channel_no}

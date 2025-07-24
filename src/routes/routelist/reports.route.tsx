@@ -23,6 +23,8 @@ import BestCustomer from "../../view/reports/bestcustomer/BestCustomer";
 import EmployeeHistoryReportView from "../../view/reports/employee-history/EmployeeHistoryReportView";
 import BankingReportView from "../../view/reports/banking-report/BankingReportView";
 import PaymentSummaryReport from "../../view/reports/PaymentSummary/PaymentSummaryReport";
+import PaymentMethodReportLayout from "../../view/reports/layout/PaymentMethodReportLayout";
+import PaymentMethodTable from "../../view/reports/PaymentSummary/PaymentMethodTable";
 
 export const reportRoutes: RouteObject[] = [
   {
@@ -123,7 +125,17 @@ export const reportRoutes: RouteObject[] = [
   },
   {
     path: "payment-method",
-    element: <PaymentSummaryReport />,
+    element: <PaymentMethodReportLayout />,
+    children: [
+      {
+        index: true,
+        element: <PaymentMethodTable />,
+      },
+      {
+        path: "chart",
+        element: <PaymentSummaryReport />,
+      },
+    ],
   },
   {
     path: "employee-history",
