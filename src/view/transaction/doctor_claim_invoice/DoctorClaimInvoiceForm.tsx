@@ -127,6 +127,7 @@ export default function DoctorClaimInvoiceForm() {
     };
     console.log(payload);
     setPendingPostData(payload);
+    setAuthDialogOpen(true);
   };
 
   const sendDataToDb = async (authData: {
