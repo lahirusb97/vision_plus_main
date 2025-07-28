@@ -48,11 +48,14 @@ import useGetBusTitles from "../../../hooks/useGetBusTitles";
 import { BUSID } from "../../../data/staticVariables";
 import AuthDialog from "../../../components/common/AuthDialog";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { FactoryOrderInputModel } from "../../../model/InvoiceInputModel";
+import { TypeWhatappMSG } from "../../../model/StaticTypeModels";
 
 export default function FactoryInvoiceForm() {
   const { refraction_id } = useParams();
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
-  const [pendingPostData, setPendingPostData] = useState<any | null>(null);
+  const [pendingPostData, setPendingPostData] =
+    useState<FactoryOrderInputModel | null>(null);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -198,8 +201,7 @@ export default function FactoryInvoiceForm() {
               subtotal: item.subtotal,
               note: item.note,
               is_non_stock: true,
-              whatsapp_sent: "not_sent",
-              //!Note here
+              whatsapp_sent: "not_sent" as TypeWhatappMSG,
             })),
           ],
           order_payments: formatUserPayments(userPayments),

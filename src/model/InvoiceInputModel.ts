@@ -2,7 +2,6 @@ import {
   PaymentMethodTypes,
   ProgressStatus,
   TransactionStatusTypes,
-  TypeLensSide,
   TypeOrderStatus,
   TypeWhatappMSG,
 } from "./StaticTypeModels";
@@ -70,7 +69,7 @@ export interface OrderItemFrameInput {
 }
 
 export interface OrderItemExternalLensInput {
-  external_lens_data: ExternalLens;
+  external_lens: number; // Just the ID, not external_lens_data
   quantity: number;
   price_per_unit: number;
   subtotal: number;

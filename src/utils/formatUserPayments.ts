@@ -1,3 +1,8 @@
+import {
+  PaymentMethodTypes,
+  TransactionStatusTypes,
+} from "../model/StaticTypeModels";
+
 interface UserPayments {
   credit_card: number;
   cash: number;
@@ -11,7 +16,7 @@ export function formatUserPayments(userPayments: UserPayments) {
     ) // Remove zero amounts
     .map((paymentMethod) => ({
       amount: userPayments[paymentMethod as keyof UserPayments],
-      payment_method: paymentMethod,
-      transaction_status: "success", // Assuming success by default
+      payment_method: paymentMethod as PaymentMethodTypes,
+      transaction_status: "success" as TransactionStatusTypes,
     }));
 }

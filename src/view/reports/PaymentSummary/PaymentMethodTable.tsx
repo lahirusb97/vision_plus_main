@@ -18,6 +18,7 @@ export default function PaymentMethodTable() {
     paymentMethodReportTransactions,
     paymentMethodReportLoading,
     setPaymentMethodReportParamsData,
+    paymentMethodReportData,
   } = useGetPaymentMethodReport();
   const handleSearch = () => {
     setPaymentMethodReportParamsData({
@@ -76,6 +77,16 @@ export default function PaymentMethodTable() {
             "Search"
           )}
         </Button>
+      </div>
+      <div style={{ display: "flex", gap: 10 }}>
+        {paymentMethodReportData?.map((item) => (
+          <div key={item.branch_id}>
+            <p>{item.branch_name}</p>
+            <p>{item.total_cash}</p>
+            <p>{item.total_card}</p>
+            <p>{item.total_online_transfer}</p>
+          </div>
+        ))}
       </div>
       <MaterialReactTable
         columns={columns}
