@@ -7,11 +7,10 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Button,
   IconButton,
   CircularProgress,
 } from "@mui/material";
-import { Check, History, X } from "lucide-react";
+import { FileClock, History } from "lucide-react";
 import CustomerPagination from "../../components/CustomPagination";
 import useGetDailyOrderAudit from "../../hooks/report/useGetDailyOrderAudit";
 import TitleText from "../../components/TitleText";
@@ -59,7 +58,7 @@ export default function OrderAudits() {
               <TableCell align="center">Order Item</TableCell>
               <TableCell align="center">Order Payment</TableCell>
               <TableCell align="center">Refraction Details</TableCell>
-              <TableCell align="center">History</TableCell>
+              <TableCell align="center">View History</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -75,32 +74,16 @@ export default function OrderAudits() {
                 <TableCell align="center">{audit.invoice_number}</TableCell>
 
                 <TableCell align="center">
-                  {audit.order_details ? (
-                    <Check color="green" />
-                  ) : (
-                    <X color="red" />
-                  )}
+                  {audit.order_details ? <FileClock /> : "_"}
                 </TableCell>
                 <TableCell align="center">
-                  {audit.order_item ? (
-                    <Check color="green" />
-                  ) : (
-                    <X color="red" />
-                  )}
+                  {audit.order_item ? <FileClock /> : "_"}
                 </TableCell>
                 <TableCell align="center">
-                  {audit.order_payment ? (
-                    <Check color="green" />
-                  ) : (
-                    <X color="red" />
-                  )}
+                  {audit.order_payment ? <FileClock /> : "_"}
                 </TableCell>
                 <TableCell align="center">
-                  {audit.refraction_details ? (
-                    <Check color="green" />
-                  ) : (
-                    <X color="red" />
-                  )}
+                  {audit.refraction_details ? <FileClock /> : "_"}
                 </TableCell>
                 <TableCell align="center">
                   <IconButton
