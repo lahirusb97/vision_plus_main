@@ -9,3 +9,10 @@ export const doctorSchema = z.object({
 });
 
 export type DoctorFormModel = z.infer<typeof doctorSchema>;
+
+export const doctorBranchFeesSchema = z.object({
+  doctor_fees: z.number(),
+  branch_fees: z.number(),
+});
+
+export type DoctorBranchFeesFormModel = z.infer<typeof doctorBranchFeesSchema>;

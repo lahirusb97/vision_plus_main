@@ -15,11 +15,12 @@ import {
   IconButton,
   Tooltip,
 } from "@mui/material";
-import { Edit as EditIcon, Delete as DeleteIcon } from "@mui/icons-material";
+import { Edit as EditIcon, Delete as DeleteIcon, Payment } from "@mui/icons-material";
 import { useNavigate } from "react-router";
 
 import useGetDoctors from "../../../hooks/useGetDoctors";
 import { useDeleteDialog } from "../../../context/DeleteDialogContext";
+import { EyeIcon } from "lucide-react";
 
 const statusColors = {
   available: "success",
@@ -33,6 +34,9 @@ const DoctorTable: React.FC = () => {
   const { openDialog } = useDeleteDialog();
   const handleUpdate = (doctor_id: number) => {
     navigate(`${doctor_id}/update`);
+  };
+  const handleFeesUpdate = (doctor_id: number) => {
+    navigate(`${doctor_id}/fees`);
   };
 
   if (loading) {
@@ -96,6 +100,15 @@ const DoctorTable: React.FC = () => {
                       size="small"
                     >
                       <EditIcon />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="Edit doctor">
+                    <IconButton
+                      onClick={() => handleFeesUpdate(doctor.id)}
+                      color="primary"
+                      size="small"
+                    >
+                      <EyeIcon />
                     </IconButton>
                   </Tooltip>
                   <Tooltip title="Delete doctor">

@@ -13,7 +13,9 @@ export const ChannelAppointmentSchema = z.object({
       message: "Invalid channel time",
     }
   ),
-  channeling_fee: z.number().min(0, "Channeling Fee is required"),
+  doctor_fees: z.number().min(0, "Doctor Fees is required"),
+  branch_fees: z.number().min(0, "Branch Fees is required"),
+  // channeling_fee: z.number().min(0, "Channeling Fee is required"),
   branch_id: z.number({ invalid_type_error: "Branch is required" }),
   note: z.string().optional().nullable(),
   cash: z.number().min(0, "Cash Amount is required"),

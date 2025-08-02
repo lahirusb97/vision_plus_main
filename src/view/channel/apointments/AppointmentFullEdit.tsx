@@ -39,10 +39,14 @@ import LoadingAnimation from "../../../components/LoadingAnimation";
 import DataLoadingError from "../../../components/common/DataLoadingError";
 import { useReminderDialog } from "../../../context/ReminderDialogContext";
 import ChannelDeleteRefund from "../../../components/common/channel-delete-refund-dialog/ChannelDeleteRefund";
+import useGetSingleDoctorFees from "../../../hooks/useGetSingleDoctorFees";
+import { numberWithCommas } from "../../../utils/numberWithCommas";
 
 const AppointmentFullEdit = () => {
   const { appointment_id } = useParams();
   const { showReminder } = useReminderDialog();
+  const { singleDoctorFees, singleDoctorFeesLoading, singleUserDataRefresh } =
+    useGetSingleDoctorFees();
   useEffect(() => {
     showReminder();
   }, []);
@@ -94,7 +98,9 @@ const AppointmentFullEdit = () => {
       channel_date: channelDate,
       time: data.channel_time.format("HH:mm:ss"),
       note: data.note,
-      channeling_fee: data.channeling_fee,
+      channeling_fee: data.branch_fees + data.doctor_fees,
+      doctor_fees: data.doctor_fees,
+      branch_fees: data.branch_fees,
       payments: [...formatUserPayments(userPayments), ...data.payments],
     };
 
@@ -109,7 +115,8 @@ const AppointmentFullEdit = () => {
       extractErrorMessage(error);
     }
   };
-  const channelingFee = Number(methods.watch("channeling_fee") || 0);
+  const doctorFees = Number(methods.watch("doctor_fees") || 0);
+  const branchFees = Number(methods.watch("branch_fees") || 0);
   const cashAmount = Number(methods.watch("cash") || 0);
   const cardAmount = Number(methods.watch("credit_card") || 0);
   const onlineAmount = Number(methods.watch("online_transfer") || 0);
@@ -132,7 +139,11 @@ const AppointmentFullEdit = () => {
       //   methods.setValue("channel_date", singleAppointment.channel_date);
       //   methods.setValue("channel_time", singleAppointment.time);
       methods.setValue(
-        "channeling_fee",
+        "doctor_fees",
+        stringToIntConver(singleAppointment.amount)
+      );
+      methods.setValue(
+        "branch_fees",
         stringToIntConver(singleAppointment.amount)
       );
       //add doctor
@@ -156,7 +167,22 @@ const AppointmentFullEdit = () => {
       );
     }
   }, [singleAppointment]);
-
+  useEffect(() => {
+    if (singleDoctorFees) {
+      methods.setValue("doctor_fees", Number(singleDoctorFees.doctor_fees));
+      methods.setValue("branch_fees", Number(singleDoctorFees.branch_fees));
+     
+    }
+  }, [singleDoctorFees]);
+  useEffect(() => {
+    if (watch("doctor_id")) {
+      singleUserDataRefresh({
+        doctor_id: watch("doctor_id"),
+        branch_id: Number(getUserCurentBranch()?.id),
+      });
+      reloadAppointmentSlots();
+    }
+  }, [watch("doctor_id")]);
   if (singleAppointmentLoading) {
     return <LoadingAnimation loadingMsg="Loading Appointment" />;
   }
@@ -301,8 +327,38 @@ const AppointmentFullEdit = () => {
               )}
             </Box>
           </Paper>
+          <Box sx={flexBoxStyle}>
+            <Typography
+              variant="body2"
+              sx={{
+                gap: 1,
+                display: "flex",
+                justifyContent: "space-between",
+              }}
+            >
+              Billed Consultant Fee
+            </Typography>
+            <Typography variant="body2">
+              {numberWithCommas(singleAppointment?.doctor_fees || 0)}
+            </Typography>
+          </Box>
+          <Box sx={flexBoxStyle}>
+            <Typography
+              variant="body2"
+              sx={{
+                gap: 1,
+                display: "flex",
+                justifyContent: "space-between",
+              }}
+            >
+              Billed Establishment Fee
+            </Typography>
+            <Typography variant="body2">
+              {numberWithCommas(singleAppointment?.branch_fees || 0)}
+            </Typography>
+          </Box>
 
-          <Paper sx={flexBoxStyle}>
+          <Box sx={flexBoxStyle}>
             <Typography
               variant="body2"
               sx={{
@@ -314,19 +370,40 @@ const AppointmentFullEdit = () => {
                 px: 1,
               }}
             >
-              Channeling Fee
+              Consultant Fee
             </Typography>
 
             <Input
               type="number"
               sx={{ gap: 1 }}
-              {...methods.register("channeling_fee", { valueAsNumber: true })}
+              {...methods.register("doctor_fees", { valueAsNumber: true })}
             />
-          </Paper>
+          </Box>
+          <Box sx={flexBoxStyle}>
+            <Typography
+              variant="body2"
+              sx={{
+                mt: 1,
+                gap: 2,
+                display: "flex",
+                justifyContent: "space-between",
+                py: 0.5,
+                px: 1,
+              }}
+            >
+              Establishment Fee
+            </Typography>
+
+            <Input
+              type="number"
+              sx={{ gap: 1 }}
+              {...methods.register("branch_fees", { valueAsNumber: true })}
+            />
+          </Box>
 
           {/* Total Payment */}
 
-          <Paper sx={flexBoxStyle}>
+          <Box sx={flexBoxStyle}>
             <Typography
               variant="body2"
               sx={{
@@ -340,9 +417,10 @@ const AppointmentFullEdit = () => {
             <Typography variant="body2">
               {channelPaymentsTotal(singleAppointment?.payments || [])}
             </Typography>
-          </Paper>
+          </Box>
+
           {/* CUrrent Payment */}
-          <Paper sx={flexBoxStyle}>
+          <Box sx={flexBoxStyle}>
             <Typography
               variant="body2"
               sx={{
@@ -356,10 +434,10 @@ const AppointmentFullEdit = () => {
             <Typography variant="body2">
               {cashAmount + cardAmount + onlineAmount}
             </Typography>
-          </Paper>
+          </Box>
           {/* Balance */}
 
-          <Paper sx={flexBoxStyle}>
+          <Box sx={flexBoxStyle}>
             <Typography
               variant="body2"
               sx={{
@@ -372,7 +450,8 @@ const AppointmentFullEdit = () => {
             </Typography>
 
             <Typography variant="body2">
-              {channelingFee -
+              {doctorFees +
+                branchFees -
                 (cashAmount +
                   cardAmount +
                   onlineAmount +
@@ -382,7 +461,7 @@ const AppointmentFullEdit = () => {
                     })) || []
                   ))}
             </Typography>
-          </Paper>
+          </Box>
           {/* Channel Refund */}
 
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
@@ -394,9 +473,9 @@ const AppointmentFullEdit = () => {
 
           {/* Payment Method */}
           <PaymentsForm />
-          <Paper sx={flexBoxStyle}>
+          <Box sx={flexBoxStyle}>
             <PaymentMethodsLayout />
-          </Paper>
+          </Box>
           <TextField
             sx={{ display: "none" }}
             inputProps={{
@@ -429,5 +508,4 @@ const flexBoxStyle = {
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
-  p: 0.5,
 };

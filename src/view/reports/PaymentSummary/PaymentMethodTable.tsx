@@ -26,7 +26,6 @@ export default function PaymentMethodTable() {
       end_date: end_date?.format("YYYY-MM-DD") || "",
     });
   };
-  console.log(paymentMethodReportTransactions);
 
   const columns = useMemo<MRT_ColumnDef<PaymentMethodTransaction>[]>(
     () => [

@@ -31,6 +31,9 @@ import useGetAppointmentSlots from "../../hooks/useGetAppointmentSlots";
 import { TimePicker } from "@mui/x-date-pickers";
 import BookedTimeSlotsDropdown from "../../components/common/BookedTimeSlotsDropdown";
 import PaymentMethodsLayout from "../transaction/factory_layouts/PaymentMethodsLayout";
+import useGetSingleDoctorFees from "../../hooks/useGetSingleDoctorFees";
+import { useEffect } from "react";
+import { numberWithCommas } from "../../utils/numberWithCommas";
 const Channel = () => {
   const { data: doctorList, loading } = useGetDoctors();
   const {
@@ -39,7 +42,8 @@ const Channel = () => {
     appointmentSlotsError,
     getAppointmentSlots,
   } = useGetAppointmentSlots();
-
+  const { singleDoctorFees, singleDoctorFeesLoading, singleUserDataRefresh } =
+    useGetSingleDoctorFees();
   const navigate = useNavigate();
   const methods = useForm<ChannelAppointmentForm>({
     resolver: zodResolver(ChannelAppointmentSchema),
@@ -69,7 +73,9 @@ const Channel = () => {
       channel_date: channelDate,
       time: data.channel_time.format("HH:mm:ss"),
       note: data.note,
-      channeling_fee: data.channeling_fee,
+      doctor_fees: data.doctor_fees,
+      branch_fees: data.branch_fees,
+      channeling_fee: data.doctor_fees + data.branch_fees,
       payments: formatUserPayments(userPayments),
     };
 
@@ -82,7 +88,8 @@ const Channel = () => {
       console.log(error);
     }
   };
-  const channelingFee = Number(methods.watch("channeling_fee") || 0);
+  const doctorFees = Number(methods.watch("doctor_fees") || 0);
+  const branchFees = Number(methods.watch("branch_fees") || 0);
   const cashAmount = Number(methods.watch("cash") || 0);
   const cardAmount = Number(methods.watch("credit_card") || 0);
   const onlineAmount = Number(methods.watch("online_transfer") || 0);
@@ -95,7 +102,20 @@ const Channel = () => {
       );
     }
   };
-
+  useEffect(() => {
+    if (singleDoctorFees) {
+      methods.setValue("doctor_fees", Number(singleDoctorFees.doctor_fees));
+      methods.setValue("branch_fees", Number(singleDoctorFees.branch_fees));
+    }
+  }, [singleDoctorFees]);
+  useEffect(() => {
+    if (watch("doctor_id")) {
+      singleUserDataRefresh({
+        doctor_id: watch("doctor_id"),
+        branch_id: Number(getUserCurentBranch()?.id),
+      });
+    }
+  }, [watch("doctor_id")]);
   return (
     <FormProvider {...methods}>
       <Box
@@ -235,7 +255,7 @@ const Channel = () => {
             </Box>
           </Paper>
 
-          <Paper sx={flexBoxStyle}>
+          <Box sx={flexBoxStyle}>
             <Typography
               variant="body2"
               sx={{
@@ -247,19 +267,40 @@ const Channel = () => {
                 px: 1,
               }}
             >
-              Channeling Fee
+              Consultant Fees
             </Typography>
 
             <Input
               type="number"
               sx={{ gap: 1 }}
-              {...methods.register("channeling_fee", { valueAsNumber: true })}
+              {...methods.register("doctor_fees", { valueAsNumber: true })}
             />
-          </Paper>
+          </Box>
+          <Box sx={flexBoxStyle}>
+            <Typography
+              variant="body2"
+              sx={{
+                mt: 1,
+                gap: 1,
+                display: "flex",
+                justifyContent: "space-between",
+                py: 0.5,
+                px: 1,
+              }}
+            >
+              Establishment Fees
+            </Typography>
+
+            <Input
+              type="number"
+              sx={{ gap: 1 }}
+              {...methods.register("branch_fees", { valueAsNumber: true })}
+            />
+          </Box>
 
           {/* First Payment */}
 
-          <Paper sx={flexBoxStyle}>
+          <Box sx={flexBoxStyle}>
             <Typography
               variant="body2"
               sx={{
@@ -270,15 +311,32 @@ const Channel = () => {
                 px: 1,
               }}
             >
-              Payment
+              Total Fees
             </Typography>
             <Typography variant="body2">
-              {cashAmount + cardAmount + onlineAmount}
+              {numberWithCommas(doctorFees + branchFees)}
             </Typography>
-          </Paper>
+          </Box>
+          <Box sx={flexBoxStyle}>
+            <Typography
+              variant="body2"
+              sx={{
+                gap: 1,
+                display: "flex",
+                justifyContent: "space-between",
+                py: 0.5,
+                px: 1,
+              }}
+            >
+              Total Payment
+            </Typography>
+            <Typography variant="body2">
+              {numberWithCommas(cashAmount + cardAmount + onlineAmount)}
+            </Typography>
+          </Box>
           {/* Balance */}
 
-          <Paper sx={flexBoxStyle}>
+          <Box sx={flexBoxStyle}>
             <Typography
               variant="body2"
               sx={{
@@ -293,15 +351,19 @@ const Channel = () => {
             </Typography>
 
             <Typography variant="body2">
-              {channelingFee - (cashAmount + cardAmount + onlineAmount)}
+              {numberWithCommas(
+                doctorFees +
+                  branchFees -
+                  (cashAmount + cardAmount + onlineAmount)
+              )}
             </Typography>
-          </Paper>
+          </Box>
 
           {/* Payment Method */}
 
-          <Paper sx={flexBoxStyle}>
+          <Box sx={flexBoxStyle}>
             <PaymentMethodsLayout />
-          </Paper>
+          </Box>
           <TextField
             sx={{ display: "none" }}
             inputProps={{
@@ -338,5 +400,4 @@ const flexBoxStyle = {
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
-  p: 1,
 };

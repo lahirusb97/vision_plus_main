@@ -32,4 +32,6 @@ export interface ChannelFullDetailModel {
   payments: ChannelPaymentModel[];
   note: string | null;
   created_at: string;
+  doctor_fees: string;
+  branch_fees: string;
 }

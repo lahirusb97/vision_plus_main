@@ -77,8 +77,19 @@ const ChannelInvoice = () => {
             justifyContent="space-between"
             alignItems={"center"}
           >
-            <Typography variant="body2">Date </Typography>
-            <Typography data-testid="channel_no">
+            <Typography
+              variant="body2"
+              align="center"
+              sx={{ fontSize: "12px", mt: 1 }}
+            >
+              Date{" "}
+            </Typography>
+            <Typography
+              variant="body2"
+              align="center"
+              sx={{ fontSize: "12px", mt: 1 }}
+              data-testid="channel_no"
+            >
               {formatDateTimeByType(singleAppointment?.created_at, "both")}
             </Typography>
           </Box>
@@ -130,15 +141,27 @@ const ChannelInvoice = () => {
           <Divider sx={{ my: 1 }} />
 
           <Box display="flex" justifyContent="space-between">
-            <Typography variant="body2">Name of Doctor:</Typography>
+            <Typography variant="body2">Name of Doctor</Typography>
             <Typography data-testid="doctor_name" variant="body2">
               {singleAppointment?.doctor_name}
             </Typography>
           </Box>
 
           <Box display="flex" justifyContent="space-between">
-            <Typography variant="body2">Consultant Fee:</Typography>
+            <Typography variant="body2">Consultant Fee</Typography>
             <Typography data-testid="consultant_fee" variant="body2">
+              Rs.{numberWithCommas(singleAppointment?.doctor_fees)}
+            </Typography>{" "}
+          </Box>
+          <Box display="flex" justifyContent="space-between">
+            <Typography variant="body2">Establishment Fee</Typography>
+            <Typography data-testid="establishment_fee" variant="body2">
+              Rs.{numberWithCommas(singleAppointment?.branch_fees)}
+            </Typography>{" "}
+          </Box>
+          <Box display="flex" justifyContent="space-between">
+            <Typography variant="body2">Total</Typography>
+            <Typography data-testid="establishment_fee" variant="body2">
               Rs.{numberWithCommas(singleAppointment?.amount)}
             </Typography>{" "}
           </Box>
