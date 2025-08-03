@@ -1,19 +1,11 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Box,
-  Button,
-  TextField,
-  Typography,
-  Paper,
-  CircularProgress,
-} from "@mui/material";
+import { Box, TextField, Typography, Paper } from "@mui/material";
 import { useParams, useNavigate } from "react-router";
 import {
   DoctorBranchFeesFormModel,
   doctorBranchFeesSchema,
-  DoctorFormModel,
 } from "../../../validations/schemaDoctor";
 import { extractErrorMessage } from "../../../utils/extractErrorMessage";
 import { useAxiosPatch } from "../../../hooks/useAxiosPatch";
@@ -98,7 +90,7 @@ const DoctorBranchChannelFees = () => {
     <Paper elevation={3} sx={{ p: 4, maxWidth: 600, mx: "auto" }}>
       <BackButton />
       <Typography variant="h5" component="h2" gutterBottom>
-        Update Doctor Fees
+        Channel Fees Management
       </Typography>
 
       <Box
@@ -109,7 +101,7 @@ const DoctorBranchChannelFees = () => {
         <TextField
           fullWidth
           margin="normal"
-          label="Doctor Fees"
+          label="Consultant Fees"
           autoFocus
           {...register("doctor_fees", {
             valueAsNumber: true,
@@ -125,7 +117,7 @@ const DoctorBranchChannelFees = () => {
         <TextField
           fullWidth
           margin="normal"
-          label="Branch Fees"
+          label="Establishment Fees"
           type="number"
           {...register("branch_fees", {
             valueAsNumber: true,
@@ -142,13 +134,13 @@ const DoctorBranchChannelFees = () => {
         >
           {singleDoctorFees ? (
             <SubmitCustomBtn
-              btnText="Update Doctor Fees"
+              btnText="Update Fees"
               isError={patchHandlerError}
               loading={patchHandlerloading}
             />
           ) : (
             <SubmitCustomBtn
-              btnText={"Create Doctor Fees"}
+              btnText={"Add New Fees"}
               isError={postHandlerError}
               loading={postHandlerloading}
             />

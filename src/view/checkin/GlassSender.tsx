@@ -33,7 +33,7 @@ export default function GlassSender() {
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
     reset,
   } = useForm<OrderFormType>({
     resolver: zodResolver(OrderFormSchema),
@@ -45,7 +45,6 @@ export default function GlassSender() {
       user_code: data.usercode,
       password: data.password,
     };
-    console.log(postData);
     try {
       await postHandler("/orders/mark-delivered/", postData);
       reset();
@@ -79,7 +78,9 @@ export default function GlassSender() {
           fullWidth
           InputProps={{
             startAdornment: (
-              <InputAdornment position="start">MAT</InputAdornment>
+              <InputAdornment position="start">
+                {getBranchName()}
+              </InputAdornment>
             ),
           }}
         />

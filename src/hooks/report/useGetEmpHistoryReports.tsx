@@ -21,6 +21,13 @@ export interface EmpHistoryData {
   total_sales_amount: number;
   total_orders: number;
   branch: BranchModel;
+  feedback_ratings: {
+    rating_1: number;
+    rating_2: number;
+    rating_3: number;
+    rating_4: number;
+    total_feedback: number;
+  };
 }
 
 interface EmpHistoryCriteria {

@@ -22,6 +22,7 @@ import { masterRoutes } from "./routelist/master.route";
 import { frameAndLensStoreRoutes } from "./routelist/frame-and-lens-store.route";
 import { LensStoreRoutes } from "./routelist/lens-store.route";
 import { imageUploadRoutes } from "./routelist/image-uploard.route";
+import { orderFeedbackRoutes } from "./routelist/order-feedback.route";
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -105,6 +106,11 @@ export const router = createBrowserRouter([
         path: "image-upload",
         element: <ProtectedChildRoute />,
         children: imageUploadRoutes,
+      },
+      {
+        path: "order-feedback",
+        element: <ProtectedChildRoute />,
+        children: orderFeedbackRoutes,
       },
     ],
   },

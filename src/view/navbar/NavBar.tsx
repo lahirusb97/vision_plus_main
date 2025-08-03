@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from "react-router";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import { Paper, Box, Button, Typography, Fade } from "@mui/material";
-import { LogoutOutlined, UploadRounded } from "@mui/icons-material";
+import { Feedback, LogoutOutlined, UploadRounded } from "@mui/icons-material";
 
 // Import your nav components for submenus
 import RefractionNav from "../refraction/RefractionNav";
@@ -55,6 +55,7 @@ import FrameStoreNav from "../inventory/frame-store/FrameStoreNav";
 import LensStoreNav from "../inventory/lens-store/LensStoreNav";
 import { LENS_AND_FRAME_STORE_ID } from "../../data/staticVariables";
 import ImageUploardNav from "../uploard/ImageUploardNav";
+import FeedbackNav from "../feedback/FeedbackNav";
 
 // Tab panel utility (hidden by default)
 // function TabPanel({
@@ -168,6 +169,14 @@ export default function NavBar() {
       path: "image-upload",
       icon: <UploadRounded />,
       nav: ImageUploardNav,
+      inventory: false,
+    },
+    {
+      key: "order-feedback",
+      label: "Feedback",
+      path: "order-feedback",
+      icon: <Feedback />,
+      nav: FeedbackNav,
       inventory: false,
     },
     //add store routes
