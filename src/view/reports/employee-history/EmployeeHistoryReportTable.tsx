@@ -1,13 +1,22 @@
-import React, { useMemo } from "react";
-import { MaterialReactTable, type MRT_ColumnDef } from "material-react-table";
+import { useMemo, useState } from "react";
+import {
+  MaterialReactTable,
+  type MRT_ColumnDef,
+  MRT_ExpandedState,
+} from "material-react-table";
 import { EmpHistoryData } from "../../../hooks/report/useGetEmpHistoryReports";
-import { Typography, Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { numberWithCommas } from "../../../utils/numberWithCommas";
+import UserFeedbackSubTable from "./UserFeedbackSubTable";
 
 export default function EmployeeHistoryReportTable({
   data,
+  startDate,
+  endDate,
 }: {
   data: EmpHistoryData[];
+  startDate: string;
+  endDate: string;
 }) {
   // Define columns
   const columns = useMemo<MRT_ColumnDef<EmpHistoryData>[]>(
@@ -60,7 +69,7 @@ export default function EmployeeHistoryReportTable({
         header: "Ratings",
         columns: [
           {
-            header: "1",
+            header: "Poor",
             accessorKey: "feedback_ratings.rating_1",
             size: 40,
             Cell: ({ cell }) => (
@@ -70,7 +79,7 @@ export default function EmployeeHistoryReportTable({
             ),
           },
           {
-            header: "2",
+            header: "Average",
             accessorKey: "feedback_ratings.rating_2",
             size: 40,
             Cell: ({ cell }) => (
@@ -80,7 +89,7 @@ export default function EmployeeHistoryReportTable({
             ),
           },
           {
-            header: "3",
+            header: "Good",
             accessorKey: "feedback_ratings.rating_3",
             size: 40,
             Cell: ({ cell }) => (
@@ -90,7 +99,7 @@ export default function EmployeeHistoryReportTable({
             ),
           },
           {
-            header: "4",
+            header: "Excellent",
             accessorKey: "feedback_ratings.rating_4",
             size: 40,
             Cell: ({ cell }) => (
@@ -149,6 +158,20 @@ export default function EmployeeHistoryReportTable({
           },
         },
       }}
+      renderDetailPanel={({ row }) => (
+        <div>
+          <Box>
+            <Typography variant="subtitle1">
+              {row.original.full_name}
+            </Typography>
+            <UserFeedbackSubTable
+              endDate={endDate}
+              startDate={startDate}
+              userId={row.original.employee_id}
+            />
+          </Box>
+        </div>
+      )}
       initialState={{
         columnPinning: {
           left: ["username", "full_name"],

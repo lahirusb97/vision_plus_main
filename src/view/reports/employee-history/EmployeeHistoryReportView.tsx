@@ -143,7 +143,11 @@ export default function EmployeeHistoryReportView() {
               </Typography>
             </Stack>
           ) : (
-            <EmployeeHistoryReportTable data={empHistoryReportData} />
+            <EmployeeHistoryReportTable
+              startDate={startDate?.format("YYYY-MM-DD") || ""}
+              endDate={endDate?.format("YYYY-MM-DD") || ""}
+              data={empHistoryReportData}
+            />
           )}
         </div>
       </CardContent>

@@ -4,6 +4,7 @@ export interface FeedbackModel {
   user: number;
   comment: string;
   rating: number;
+  invoice_number: string;
   created_at: string;
   updated_at: string;
 }
