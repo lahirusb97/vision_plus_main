@@ -16,6 +16,7 @@ import { getBirthdateFromNIC } from "../utils/NictoBirthday";
 
 import { SearchSharp } from "@mui/icons-material";
 import { birthdayToAge } from "../utils/BirthdayToAge";
+import { useParams } from "react-router";
 interface PationtDetailsProps {
   prescription: string;
   refractionNumber: string | null | undefined;
@@ -24,6 +25,7 @@ export default function PationtDetails({
   prescription,
   refractionNumber,
 }: PationtDetailsProps) {
+  const { invoice_number } = useParams();
   const [openSearchDialog, setOpenSearchDialog] = useState({
     open: false,
     searchType: "",
@@ -65,6 +67,7 @@ export default function PationtDetails({
             justifyContent: "space-between",
           }}
         >
+          <Typography fontWeight={"bolder"}>{invoice_number}</Typography>
           <Typography fontWeight={"bolder"}>
             R.N0: {refractionNumber ? refractionNumber : ""}
           </Typography>

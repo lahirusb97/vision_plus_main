@@ -32,6 +32,8 @@ const NumericInput: React.FC<NumericInputProps> = ({
   const safeValue = value ?? "";
   return (
     <TextField
+    variant="outlined"
+    label={inputLabel}
       {...rest}
       slotProps={{
         htmlInput: {
@@ -41,7 +43,7 @@ const NumericInput: React.FC<NumericInputProps> = ({
           ...(slotProps.htmlInput ?? {}),
         },
         inputLabel: {
-          shrink: true,
+          // shrink: true,
           ...(slotProps.inputLabel ?? {}),
         },
         ...slotProps, // spread any other slotProps you passed in
