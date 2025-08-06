@@ -7,7 +7,14 @@ import { useOutletContext } from "react-router";
 import AutocompleteInputField from "../../../components/inputui/DropdownInput";
 import { LENS_AND_FRAME_STORE_ID } from "../../../data/staticVariables";
 import useGetBranches from "../../../hooks/useGetBranches";
-import { Button, CircularProgress } from "@mui/material";
+import {
+  Button,
+  Card,
+  CardContent,
+  CircularProgress,
+  Grid2,
+  Typography,
+} from "@mui/material";
 import { MaterialReactTable, MRT_ColumnDef } from "material-react-table";
 export default function PaymentMethodTable() {
   const { end_date, start_date } = useOutletContext<DateRangeInputModel>();
@@ -77,16 +84,48 @@ export default function PaymentMethodTable() {
           )}
         </Button>
       </div>
-      <div style={{ display: "flex", gap: 10 }}>
+      <Grid2 container spacing={1} sx={{ mt: 1 }}>
         {paymentMethodReportData?.map((item) => (
-          <div key={item.branch_id}>
-            <p>{item.branch_name}</p>
-            <p>{item.total_cash}</p>
-            <p>{item.total_card}</p>
-            <p>{item.total_online_transfer}</p>
-          </div>
+          <Grid2 key={item.branch_id}>
+            <Card
+              variant="outlined"
+              sx={{
+                borderRadius: 1.5,
+                boxShadow: 1,
+              }}
+            >
+              <CardContent sx={{ p: 1.5, "&:last-child": { pb: 1.5 } }}>
+                <Typography variant="subtitle1" fontWeight={600} gutterBottom>
+                  {item.branch_name}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  lineHeight={1.5}
+                >
+                  Cash: <strong>{item.total_cash.toLocaleString()}</strong>
+                </Typography>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  lineHeight={1.5}
+                >
+                  Card: <strong>{item.total_card.toLocaleString()}</strong>
+                </Typography>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  lineHeight={1.5}
+                >
+                  Online Transfer:{" "}
+                  <strong>{item.total_online_transfer.toLocaleString()}</strong>
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid2>
         ))}
-      </div>
+      </Grid2>
+
       <MaterialReactTable
         columns={columns}
         data={paymentMethodReportTransactions || []}
