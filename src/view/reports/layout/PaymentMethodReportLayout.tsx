@@ -10,7 +10,7 @@ import { DateRangeInputModel } from "../../../model/DateRangeInputModel";
 export default function PaymentMethodReportLayout() {
   const [dateRange, setDateRange] = useState<DateRangeInputModel>({
     start_date: dayjs(), // or null
-    end_date: dayjs().add(1, "M"),
+    end_date: dayjs(),
   });
 
   const reportTabs = [

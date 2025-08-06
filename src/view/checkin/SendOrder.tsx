@@ -35,8 +35,8 @@ export default function JobProgress() {
 
   const [orderProgress, setOrderProgress] = useState("not_sent");
   const [dateRange, setDateRange] = useState<DateRangePickerManualState>({
-    start_date: dayjs(), // or null
-    end_date: dayjs().add(1, "M"),
+    start_date: dayjs().subtract(1, "M"), // or null
+    end_date: dayjs(),
   });
   const handleChange = (event: SelectChangeEvent) => {
     setOrderProgress(event.target.value as string);

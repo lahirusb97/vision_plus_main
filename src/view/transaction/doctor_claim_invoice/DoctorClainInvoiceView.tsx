@@ -20,6 +20,7 @@ import InvoiceFooter from "../../../components/Invoice/InvoiceFooter";
 import { clearDoctorClaim } from "../../../features/invoice/doctorClaimSlice";
 import BackButton from "../../../components/BackButton";
 import { useNavigate } from "react-router";
+import InvoiceFooterDoctorClaim from "../../../components/Invoice/InvoiceFooterDoctorClaim";
 export default function DoctorClainInvoiceView() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -53,11 +54,10 @@ export default function DoctorClainInvoiceView() {
               invoiceDate={doctorClaimInvoice.date}
               hideDate={true}
             />
-
-            <DoctorClaimInvoiceAddress invoiceDetail={doctorClaimInvoice} />
             <Typography variant="body2" align="center">
               Invoice Date: {doctorClaimInvoice.invoice_date}
             </Typography>
+            <DoctorClaimInvoiceAddress invoiceDetail={doctorClaimInvoice} />
 
             <Table sx={{ border: "2px solid #000" }}>
               <TableHead>
@@ -73,7 +73,7 @@ export default function DoctorClainInvoiceView() {
                 <DoctorClaimTotalSummery invoiceDetail={doctorClaimInvoice} />
               </TableBody>
             </Table>
-            <InvoiceFooter />
+            <InvoiceFooterDoctorClaim />
           </Box>
           <Button
             variant="contained"

@@ -257,7 +257,7 @@ export default function DoctorClaimInvoiceForm() {
 
       <AuthDialog
         open={authDialogOpen}
-        operationType="admin"
+        operationType="user"
         onVerified={sendDataToDb}
         onClose={() => setAuthDialogOpen(false)}
       />

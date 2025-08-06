@@ -27,13 +27,36 @@ import PaymentMethodReportLayout from "../../view/reports/layout/PaymentMethodRe
 import PaymentMethodTable from "../../view/reports/PaymentSummary/PaymentMethodTable";
 
 export const reportRoutes: RouteObject[] = [
+  // {
+  //   path: "",
+  //   element: <ProtectedChildRoute />,
+  //   children: [
+  //     {
+  //       index: true,
+  //       element: <></>,
+  //     },
+  //   ],
+  // },
   {
     path: "",
-    element: <ProtectedChildRoute />,
+    element: <InvoiceReportLayout />,
     children: [
       {
         index: true,
-        element: <InvoiceReport />,
+        element: <FactorylInvoiceReport />,
+      },
+      {
+        path: "normal",
+        element: <NormalInvoiceReport />,
+      },
+
+      {
+        path: "soldering",
+        element: <SolderingInvoiceReport />,
+      },
+      {
+        path: "channel",
+        element: <ChannelInvoiceReport />,
       },
     ],
   },
@@ -155,29 +178,7 @@ export const reportRoutes: RouteObject[] = [
       },
     ],
   },
-  {
-    path: "invoice",
-    element: <InvoiceReportLayout />,
-    children: [
-      {
-        index: true,
-        element: <FactorylInvoiceReport />,
-      },
-      {
-        path: "normal",
-        element: <NormalInvoiceReport />,
-      },
 
-      {
-        path: "soldering",
-        element: <SolderingInvoiceReport />,
-      },
-      {
-        path: "channel",
-        element: <ChannelInvoiceReport />,
-      },
-    ],
-  },
   // {
   //   path: "report1/", // you can add paths al you need for the UI
   //   element: <AccountIndex />, // create UI inside view/account folder then import to here

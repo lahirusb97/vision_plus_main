@@ -34,8 +34,8 @@ export default function LenseArrival() {
     "received" | "not_received"
   >("not_received");
   const [dateRange, setDateRange] = useState<DateRangePickerManualState>({
-    start_date: dayjs(), // or null
-    end_date: dayjs().add(1, "M"),
+      start_date: dayjs().subtract(1, "M"), // or null
+      end_date: dayjs(),
   });
   const handleChange = (event: SelectChangeEvent) => {
     setArrivalStatus(event.target.value as "received" | "not_received");

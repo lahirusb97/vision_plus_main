@@ -13,26 +13,26 @@ export default function InvoiceReportLayout() {
   // const { users, usersLoading } = useGetUsers();
   const [filterParams, setFilterParams] = useState<InvoiceReportContext>({
     start_date: dayjs(), // or null
-    end_date: dayjs().add(1, "M"),
+    end_date: dayjs(),
     user_id: null,
   });
 
   const reportTabs = [
     {
       label: "Factory Invoice",
-      path: "/reports/invoice/",
+      path: "/reports/",
     },
     {
       label: "Normal Invoice",
-      path: "/reports/invoice/normal",
+      path: "/reports/normal",
     },
     {
       label: "Soldering Invoice",
-      path: "/reports/invoice/soldering",
+      path: "/reports/soldering",
     },
     {
       label: "Channel Invoice",
-      path: "/reports/invoice/channel",
+      path: "/reports/channel",
     },
   ];
 

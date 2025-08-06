@@ -14,7 +14,7 @@ export default function ReportsNav() {
       <NavButton name="Fitting Lab " path={"/reports/report-fitting-lab"} />
       {/* <NavButton name="Employer Sales " path={"/reports/employer-history"} /> */}
       <NavButton name="Mnt Report" path={"/reports/mnt-report"} />
-      <NavButton name="Invoice Report" path={"/reports/invoice"} />
+      <NavButton name="Invoice Report" path={"/reports"} />
       <NavButton name="Best Customer" path={"/reports/best-customer"} />
       <NavButton name="Employee History" path={"/reports/employee-history"} />
       <NavButton name="Banking Report" path={"/reports/banking-report"} />
