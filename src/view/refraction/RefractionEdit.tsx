@@ -50,6 +50,7 @@ export default function RefractionEdit() {
     useGetSingleRefractionNumber(refraction_id);
   const { refractionDetail, refractionDetailLoading, refractionDetailExist } =
     useGetRefractionDetails(refraction_id);
+
   const { postHandler, postHandlerError, postHandlerloading } = useAxiosPost();
   const { putHandler, putHandlerError, putHandlerloading } = useAxiosPut();
   const methods = useForm<RefractionDetailsFormModel>({
@@ -367,7 +368,7 @@ export default function RefractionEdit() {
 
       <AuthDialog
         open={authDialogOpen}
-        operationType="admin"
+        operationType={refractionDetail ? "admin" : "user"}
         onVerified={
           dataSendingType === "update"
             ? handleRefractionDetailUpdate
