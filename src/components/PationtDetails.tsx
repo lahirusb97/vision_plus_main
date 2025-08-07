@@ -67,7 +67,9 @@ export default function PationtDetails({
             justifyContent: "space-between",
           }}
         >
-          <Typography fontWeight={"bolder"}>{invoice_number}</Typography>
+          {invoice_number && (
+            <Typography fontWeight={"bolder"}>{invoice_number}</Typography>
+          )}
           <Typography fontWeight={"bolder"}>
             R.N0: {refractionNumber ? refractionNumber : ""}
           </Typography>

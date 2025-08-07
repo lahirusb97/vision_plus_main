@@ -28,6 +28,7 @@ import { Edit, PriceChange } from "@mui/icons-material";
 import returnPlusSymbol from "../../utils/returnPlusSymbol";
 import { numberWithCommas } from "../../utils/numberWithCommas";
 import StoreQtyActionDialog from "../inventory/lens-store/store-qty-action-dialog";
+import { HistoryIcon } from "lucide-react";
 
 export type LenseModelWithQuantity = LenseModel & {
   selectedQuantity: string;
@@ -150,6 +151,17 @@ const AdvanceTransferLenseStore = () => {
                 onClick={() => handleUpdate(row.original.id)}
               >
                 <LoopIcon sx={{ fontSize: "1.4rem" }} />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Lense History">
+              <IconButton
+                size="small"
+                color="primary"
+                onClick={() =>
+                  navigate(`lense-action-history/${row.original.id}`)
+                }
+              >
+                <HistoryIcon  />
               </IconButton>
             </Tooltip>
             <Box>

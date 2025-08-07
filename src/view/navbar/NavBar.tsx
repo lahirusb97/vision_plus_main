@@ -182,7 +182,7 @@ export default function NavBar() {
     //add store routes
     {
       key: "inventory-frame",
-      label: "Inventory",
+      label: "Frame Store",
       path: "inventory-frame",
       icon: <Blend />,
       nav: FrameStoreNav,

@@ -11,6 +11,7 @@ import LensStoreReport from "../../view/inventory/lens-store/LensStoreReport";
 import LensInventoryUpdate from "../../view/inventory/lens-store/LensInventoryUpdate";
 import InventoryLenseStore from "../../view/inventory/lens-store/inventory-LenseStore";
 import InventoryLensSalesReport from "../../view/inventory/lens-store/inventory-lens-sales-report";
+import LensActionHistory from "../../components/common/lens-store/LensActionHistory";
 export const LensStoreRoutes: RouteObject[] = [
   {
     path: "",
@@ -47,6 +48,10 @@ export const LensStoreRoutes: RouteObject[] = [
       {
         path: "lens-transfer/:id",
         element: <FrameInventoryTransfer />,
+      },
+      {
+        path: "lense-action-history/:id",
+        element: <LensActionHistory />,
       },
     ],
   },

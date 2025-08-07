@@ -40,6 +40,7 @@ import LenseFullEdit from "../../view/stock/lense/LenseFullEdit";
 import FrameActionHistory from "../../components/common/frame-store/FrameActionHistory";
 import FrameInventoryTransfer from "../../view/inventory/frame-store/FrameInventoryTransfer";
 import AdvanceTransferLenseStore from "../../view/stock/advance-transfer-LenseStore";
+import LensActionHistory from "../../components/common/lens-store/LensActionHistory";
 export const stockRoutes: RouteObject[] = [
   {
     path: "add_frames",
@@ -113,6 +114,10 @@ export const stockRoutes: RouteObject[] = [
       {
         path: "history/:id",
         element: <LenseHistory />,
+      },
+      {
+        path: "lense-action-history/:id",
+        element: <LensActionHistory />,
       },
     ],
   },

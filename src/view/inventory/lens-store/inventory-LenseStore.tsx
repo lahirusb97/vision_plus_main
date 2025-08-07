@@ -29,6 +29,7 @@ import returnPlusSymbol from "../../../utils/returnPlusSymbol";
 import { numberWithCommas } from "../../../utils/numberWithCommas";
 import { getUserCurentBranch } from "../../../utils/authDataConver";
 import StoreQtyActionDialog from "./store-qty-action-dialog";
+import { HistoryIcon } from "lucide-react";
 
 export type LenseModelWithQuantity = LenseModel & {
   selectedQuantity: string;
@@ -127,14 +128,17 @@ const InventoryLenseStore = () => {
                 <Edit sx={{ fontSize: "1.4rem" }} />
               </IconButton>
             </Tooltip>
-            {/* <IconButton
-              size="small"
-              color="info"
-              title="History"
-              onClick={() => handleHistory(row.original.id)}
-            >
-              <HistoryIcon sx={{ fontSize: "1.4rem" }} />
-            </IconButton> */}
+            <Tooltip title="Lense History">
+              <IconButton
+                size="small"
+                color="primary"
+                onClick={() =>
+                  navigate(`lense-action-history/${row.original.id}`)
+                }
+              >
+                <HistoryIcon />
+              </IconButton>
+            </Tooltip>
             <Tooltip title="Update Lense Price">
               <IconButton
                 size="small"
