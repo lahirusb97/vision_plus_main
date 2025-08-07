@@ -22,6 +22,7 @@ import {
   RemoveCircleOutlineOutlined,
 } from "@mui/icons-material";
 import useGetSingleLense from "../../../hooks/lense/useGetSingleLense";
+import { numberWithCommas } from "../../../utils/numberWithCommas";
 
 interface Props {
   records: LensStockHistorySerializer[];
@@ -97,9 +98,7 @@ export default function LensHistoryActionItem({ records }: Props) {
                     { label: "Brand", value: singleLense?.brand_name },
                     { label: "Type", value: singleLense?.type_name },
                     { label: "Coating", value: singleLense?.coating_name },
-                    { label: "Price", value: singleLense?.price },
-                    
-                   
+                    { label: "Price", value:numberWithCommas( singleLense?.price )},
                   ].map((item) => (
                     <div key={item.label}>
                       <InfoChip label={item.label} value={item.value} />

@@ -90,6 +90,12 @@ const FrameCreate = () => {
     formData.append("branch", LENS_AND_FRAME_STORE_ID);
     formData.append("species", frameData.species.toString());
     formData.append("brand_type", frameData.brand_type);
+    if (getUserCurentBranch()?.id === parseInt(LENS_AND_FRAME_STORE_ID)) {
+      formData.append(
+        "initial_branch",
+        getUserCurentBranch()?.id?.toString() || ""
+      );
+    }
     if (frameData.image) {
       formData.append("image_file", frameData.image);
     }

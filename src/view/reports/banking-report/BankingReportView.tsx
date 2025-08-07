@@ -25,7 +25,6 @@ export default function BankingReportView() {
     bankingReportLoading,
     bankingReportError,
     setBankingReportParamsData,
-    bankingReportListRefresh,
   } = useGetBankingReports();
 
   // Local state for filters

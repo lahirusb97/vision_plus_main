@@ -6,8 +6,6 @@ import LenseEdit from "../../view/stock/lense/LenseEdit";
 import LenseFullEdit from "../../view/stock/lense/LenseFullEdit";
 import LenseHistory from "../../view/stock/lense/LenseHistory";
 import FrameInventoryTransfer from "../../view/inventory/frame-store/FrameInventoryTransfer";
-import FrameInventoryReport from "../../components/common/frame-store/FrameInventoryReport";
-import LensStoreReport from "../../view/inventory/lens-store/LensStoreReport";
 import LensInventoryUpdate from "../../view/inventory/lens-store/LensInventoryUpdate";
 import InventoryLenseStore from "../../view/inventory/lens-store/inventory-LenseStore";
 import InventoryLensSalesReport from "../../view/inventory/lens-store/inventory-lens-sales-report";

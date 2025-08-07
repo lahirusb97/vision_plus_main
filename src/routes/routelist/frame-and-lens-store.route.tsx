@@ -23,6 +23,7 @@ import FrameCodeAdd from "../../view/stock/frame/FrameCodeAdd";
 import FrameCodeEdit from "../../view/stock/frame/FrameCodeEdit";
 import FrameActionHistory from "../../components/common/frame-store/FrameActionHistory";
 import FrameInventoryReport from "../../components/common/frame-store/FrameInventoryReport";
+import FrameBrandReport from "../../components/common/frame-store/FrameBrandReport";
 
 export const frameAndLensStoreRoutes: RouteObject[] = [
   {
@@ -66,6 +67,10 @@ export const frameAndLensStoreRoutes: RouteObject[] = [
   {
     path: "frame-report",
     element: <FrameInventoryReport />,
+  },
+  {
+    path: "frame-brand-report",
+    element: <FrameBrandReport />,
   },
   {
     path: "frame-stock-update",

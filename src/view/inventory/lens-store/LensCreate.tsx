@@ -123,6 +123,10 @@ const LensCreate = () => {
           price: price,
           brand: brand,
           store: LENS_AND_FRAME_STORE_ID,
+          initial_branch:
+            getUserCurentBranch()?.id === parseInt(LENS_AND_FRAME_STORE_ID)
+              ? getUserCurentBranch()?.id
+              : null,
         },
         stock: [
           { initial_count: qty, qty: qty, branch_id: branch_id, limit: limit },

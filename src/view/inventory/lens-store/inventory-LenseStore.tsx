@@ -133,7 +133,7 @@ const InventoryLenseStore = () => {
                 size="small"
                 color="primary"
                 onClick={() =>
-                  navigate(`lense-action-history/${row.original.id}`)
+                  navigate(`lens-store/lense-action-history/${row.original.id}`)
                 }
               >
                 <HistoryIcon />

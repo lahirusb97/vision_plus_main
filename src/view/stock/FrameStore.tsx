@@ -11,7 +11,7 @@ import { FrameModel } from "../../model/FrameModel";
 import TitleText from "../../components/TitleText";
 import { numberWithCommas } from "../../utils/numberWithCommas";
 import { Edit, PriceChange } from "@mui/icons-material";
-import { Truck } from "lucide-react";
+import { History, Truck } from "lucide-react";
 
 const FrameStore = () => {
   const { frames, framesLoading, refresh } = useGetFrames({
@@ -87,7 +87,7 @@ const FrameStore = () => {
                 color="warning"
                 onClick={() => handleActionHistory(row.original.id)}
               >
-                <LoopIcon sx={{ fontSize: "1.4rem" }} />
+                <History style={{ fontSize: "1.4rem" }} />
               </IconButton>
             </Tooltip>
           </Box>

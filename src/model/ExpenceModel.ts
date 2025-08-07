@@ -26,4 +26,8 @@ export interface ExpenseItem {
 export interface ExpenseReport {
   total_expense: number;
   expenses: ExpenseItem[];
+  cash_expense_total: number;
+  safe_expense_total: number;
+  bank_expense_total: number;
+  subtotal_expense: number;
 }

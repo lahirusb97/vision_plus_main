@@ -14,6 +14,7 @@ interface ExpenseReportParams {
   sub_category?: number;
 }
 
+
 const useGetExpenseReport = () => {
   const [reportParams, setReportParams] = useState<ExpenseReportParams>({
     start_date: new Date().toISOString().split("T")[0], // Today's date as default
@@ -22,6 +23,13 @@ const useGetExpenseReport = () => {
   });
   const [expenseList, setExpenseList] = useState<ExpenseItem[]>([]);
   const [totalExpense, setTotalExpense] = useState<number>(0);
+  const [expenseSummary, setExpenseSummary] = useState({
+    total_expense: 0,
+    cash_expense_total: 0,
+    safe_expense_total: 0,
+    bank_expense_total: 0,
+    subtotal_expense: 0,
+  });
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<boolean | null>(null);
   const controllerRef = useRef<AbortController | null>(null);
@@ -46,7 +54,13 @@ const useGetExpenseReport = () => {
 
       setExpenseList(response.data.expenses);
       setTotalExpense(response.data.total_expense);
-
+      setExpenseSummary({
+        total_expense: response.data.total_expense,
+        cash_expense_total: response.data.cash_expense_total,
+        safe_expense_total: response.data.safe_expense_total,
+        bank_expense_total: response.data.bank_expense_total,
+        subtotal_expense: response.data.subtotal_expense,
+      });
       if (response.data.expenses.length === 0) {
         toast.error("No expenses found for selected criteria");
       } else {
@@ -60,6 +74,13 @@ const useGetExpenseReport = () => {
         setError(true);
         setExpenseList([]);
         setTotalExpense(0);
+        setExpenseSummary({
+          total_expense: 0,
+          cash_expense_total: 0,
+          safe_expense_total: 0,
+          bank_expense_total: 0,
+          subtotal_expense: 0,
+        });
         extractErrorMessage(err);
       }
     } finally {
@@ -105,6 +126,7 @@ const useGetExpenseReport = () => {
 
   return {
     expenseList,
+    expenseSummary,
     totalExpense,
     loading,
     error,

@@ -25,6 +25,7 @@ import BankingReportView from "../../view/reports/banking-report/BankingReportVi
 import PaymentSummaryReport from "../../view/reports/PaymentSummary/PaymentSummaryReport";
 import PaymentMethodReportLayout from "../../view/reports/layout/PaymentMethodReportLayout";
 import PaymentMethodTable from "../../view/reports/PaymentSummary/PaymentMethodTable";
+import ExpenceReportView from "../../view/reports/expence-report/ExpenceReportView";
 
 export const reportRoutes: RouteObject[] = [
   // {
@@ -167,6 +168,10 @@ export const reportRoutes: RouteObject[] = [
   {
     path: "banking-report",
     element: <BankingReportView />,
+  },
+  {
+    path: "expence-report",
+    element: <ExpenceReportView />,
   },
   {
     path: "mnt-report",
