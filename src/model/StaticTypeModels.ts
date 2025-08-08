@@ -6,7 +6,7 @@ export type ProgressStatus =
   | "issue_to_customer";
 
 export type LensArrivalStatus = "received" | "not_received" | null;
-export type InvoiceType = "factory" | "normal";
+export type InvoiceType = "factory" | "normal" | "hearing";
 export type PaymentMethodTypes = "credit_card" | "cash" | "online_transfer";
 export type TransactionStatusTypes = "success" | "failed" | "pending";
 export type TypeLensSide = "left" | "right" | null;

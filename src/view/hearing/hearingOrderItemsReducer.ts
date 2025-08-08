@@ -1,0 +1,125 @@
+// Action type definition
+type HearingOrderItemsAction =
+  | { type: "ADD_ITEM"; payload: HearingOrderItem }
+  | { type: "REMOVE_ITEM"; payload: number }
+  | { type: "UPDATE_ITEM"; payload: HearingOrderItem };
+
+export function hearingOrderItemsReducer(
+  state: HearingOrderItemsState,
+  action: HearingOrderItemsAction
+): HearingOrderItemsState {
+  switch (action.type) {
+    case "ADD_ITEM": {
+      const newItem = action.payload;
+      // Check if the item already exists in the list
+      const existingItemIndex = state.items.findIndex(
+        (item) => item.hearing_item === newItem.hearing_item
+      );
+
+      // If the item exists, update its quantity (but don't add)
+      if (existingItemIndex !== -1) {
+        const updatedItems = state.items.map((item, index) => {
+          if (index === existingItemIndex) {
+            // Only update the price and subtotal, don't add to quantity
+            const updatedPrice = newItem.price_per_unit;
+            const updatedSubtotal = item.quantity * updatedPrice;
+
+            return {
+              ...item,
+              price_per_unit: updatedPrice,
+              subtotal: updatedSubtotal,
+            };
+          }
+          return item;
+        });
+
+        const updatedTotal = updatedItems.reduce(
+          (total, item) => total + item.subtotal,
+          0
+        );
+        return {
+          ...state,
+          items: updatedItems,
+          total: updatedTotal,
+        };
+      } else {
+        // If the item doesn't exist, add it to the list
+        const updatedItems = [...state.items, newItem];
+
+        const updatedTotal = updatedItems.reduce(
+          (total, item) => total + item.subtotal,
+          0
+        );
+        return {
+          ...state,
+          items: updatedItems,
+          total: updatedTotal,
+        };
+      }
+    }
+    case "UPDATE_ITEM": {
+      const updatedItem = action.payload;
+      const existingItemIndex = state.items.findIndex(
+        (item) => item.hearing_item === updatedItem.hearing_item
+      );
+
+      if (existingItemIndex === -1) {
+        return state; // Item not found, return current state
+      }
+
+      const updatedItems = state.items.map((item, index) => {
+        if (index === existingItemIndex) {
+          return {
+            ...item,
+            ...updatedItem,
+          };
+        }
+        return item;
+      });
+
+      const updatedTotal = updatedItems.reduce(
+        (total, item) => total + item.subtotal,
+        0
+      );
+      return {
+        ...state,
+        items: updatedItems,
+        total: updatedTotal,
+      };
+    }
+    case "REMOVE_ITEM": {
+      const itemId = action.payload; // The id of the item to remove
+      const updatedItems = state.items.filter(
+        (item) => item.hearing_item !== itemId
+      );
+
+      const updatedTotal = updatedItems.reduce(
+        (total, item) => total + item.subtotal,
+        0
+      );
+
+      return {
+        ...state,
+        items: updatedItems,
+        total: updatedTotal,
+      };
+    }
+    default:
+      return state;
+  }
+}
+
+export type HearingOrderItemsState = {
+  items: HearingOrderItem[];
+  total: number;
+};
+
+interface HearingOrderItem {
+  hearing_item: number;
+  name: string;
+  quantity: number;
+  price_per_unit: number;
+  subtotal: number;
+  serial_no: string;
+  battery: string;
+}

@@ -1,4 +1,4 @@
-type Item = {
+export type HearingItemModel = {
   id: number;
   name: string;
   price: string;
@@ -14,6 +14,6 @@ type Stock = {
   limit: number;
 };
 export type HearingItemStockSerializer = {
-  item: Item;
+  item: HearingItemModel;
   stock: Stock[];
 };

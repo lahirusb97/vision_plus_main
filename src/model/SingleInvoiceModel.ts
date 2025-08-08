@@ -1,4 +1,5 @@
 import { SizeType, SpeciesType } from "./FrameModel";
+import { HearingItemModel } from "./HearingtemStockSerializer";
 import { Power } from "./LenseModel";
 import { MntOrderModel } from "./MTNOrderModel";
 import { PatientModel } from "./Patient";
@@ -26,6 +27,7 @@ interface LensDetail {
 
 // Types for Frame Details
 interface FrameDetail {
+
   id: number;
   brand: number;
   brand_name: string;
@@ -48,6 +50,10 @@ interface OtherItemDetail {
 }
 
 export interface FrameOrderItem {
+  hearing_item_detail: null;
+  hearing_item: null;
+  serial_no: null;
+  battery: null;
   frame: number;
   frame_detail: FrameDetail;
   lens: null;
@@ -73,6 +79,10 @@ export interface FrameOrderItem {
   deleted_at?: string;
 }
 export interface NormalOrderItem {
+  hearing_item_detail: null;
+  hearing_item: null;
+  serial_no: null;
+  battery: null;
   frame: null;
   frame_detail: null;
   lens: null;
@@ -97,7 +107,39 @@ export interface NormalOrderItem {
   admin_username?: string;
   deleted_at?: string;
 }
+export interface HearingOrderItem {
+  hearing_item_detail: HearingItemModel;
+  hearing_item: number;
+  serial_no: string;
+  battery: string;
+  frame: null;
+  frame_detail: null;
+  lens: null;
+  other_item: null;
+  lens_powers: [];
+  lens_detail: null;
+  external_lens: null;
+  external_lens_name: null;
+  external_lens_powers: [];
+  other_item_detail: OtherItemDetail;
+  note: string | null;
+  // Other shared fields
+  id: number;
+  order: number;
+  quantity: number;
+  price_per_unit: string;
+  subtotal: string;
+
+  user: number | null;
+  admin: number | null;
+  user_username?: string;
+  admin_username?: string;
+  deleted_at?: string;
+}
 export interface LensOrderItem {
+  hearing_item: null;
+  serial_no: null;
+  battery: null;
   lens: number;
   lens_detail: LensDetail;
   lens_powers: Power[];
@@ -124,6 +166,9 @@ export interface LensOrderItem {
 }
 
 export interface ExternalLensOrderItem {
+  hearing_item: null;
+  serial_no: null;
+  battery: null;
   external_lens: number;
   type_name: string;
   coating_name: string;
@@ -153,11 +198,14 @@ export interface ExternalLensOrderItem {
   deleted_at?: string;
 }
 
+
 type OrderItem =
   | FrameOrderItem
   | LensOrderItem
   | ExternalLensOrderItem
-  | NormalOrderItem;
+  | NormalOrderItem
+  | HearingOrderItem;
+
 
 interface OrderDetails {
   id: number;
