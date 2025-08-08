@@ -1,36 +1,39 @@
+import React from "react";
 import { Box, Chip, TextField, Typography, Paper } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router";
 import toast from "react-hot-toast";
-import {
-  OtherItemFormModel,
-  schemaOtherItem,
-} from "../../../validations/schemaOtherItem";
 import { zodResolver } from "@hookform/resolvers/zod";
-import useGetSingleOtherItem from "../../../hooks/useGetSingleOtherItem";
-import { extractErrorMessage } from "../../../utils/extractErrorMessage";
-import LoadingAnimation from "../../../components/LoadingAnimation";
-import { useAxiosPatch } from "../../../hooks/useAxiosPatch";
-import { getUserCurentBranch } from "../../../utils/authDataConver";
-import SubmitCustomBtn from "../../../components/common/SubmiteCustomBtn";
+import useGetSingleHearingItem from "../../hooks/useGetSingleHearingItem";
+import { extractErrorMessage } from "../../utils/extractErrorMessage";
+import LoadingAnimation from "../../components/LoadingAnimation";
+import { useAxiosPatch } from "../../hooks/useAxiosPatch";
+import { getUserCurentBranch } from "../../utils/authDataConver";
+import SubmitCustomBtn from "../../components/common/SubmiteCustomBtn";
+import {
+  HearingItemFormModel,
+  schemaHearingItem,
+} from "../../validations/schemaHearingItem";
 
-const HearingItemEdit = () => {
+const HearingItemQtyUpdate = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const { singleotherItem, singleotherItemLoading } = useGetSingleOtherItem(id);
+  const { singleHearingItem, singleHearingItemLoading } =
+    useGetSingleHearingItem(id);
   const { patchHandler, patchHandlerloading, patchHandlerError } =
     useAxiosPatch();
+
   const {
     handleSubmit,
     formState: { errors },
     register,
     reset,
   } = useForm<
-    Pick<OtherItemFormModel, "qty" | "initial_count" | "branch_id" | "limit">
+    Pick<HearingItemFormModel, "qty" | "initial_count" | "branch_id" | "limit">
   >({
     resolver: zodResolver(
-      schemaOtherItem.pick({
+      schemaHearingItem.pick({
         qty: true,
         initial_count: true,
         branch_id: true,
@@ -45,33 +48,30 @@ const HearingItemEdit = () => {
     },
   });
 
-  //TODO alert levels Upgrade
-  const submiteData = async (
+  const submitData = async (
     data: Pick<
-      OtherItemFormModel,
+      HearingItemFormModel,
       "qty" | "initial_count" | "branch_id" | "limit"
     >
   ) => {
-    if (singleotherItem && !singleotherItemLoading) {
-      const postDAta = {
+    if (singleHearingItem && !singleHearingItemLoading) {
+      const postData = {
         stock: [
           {
-            other_item_id: singleotherItem.item.id,
-            qty: (singleotherItem.stock[0]?.qty || 0) + data.qty,
-            initial_count: (singleotherItem.stock[0]?.qty || 0) + data.qty,
+            hearing_item_id: singleHearingItem.item.id,
+            qty: (singleHearingItem.stock[0]?.qty || 0) + (data.qty || 0),
+            initial_count:
+              (singleHearingItem.stock[0]?.qty || 0) + (data.qty || 0),
             branch_id: data.branch_id,
             limit: data.limit,
           },
-        ],
+        ]
       };
-      console.log(postDAta);
 
       try {
-        const responce = await patchHandler(`/other-items/${id}/`, postDAta);
-        console.log(responce);
-
+        await patchHandler(`/hearing-items/${id}/`, postData);
         toast.success(
-          `${singleotherItem?.item.name} Quantity Updated Successfully`
+          `${singleHearingItem?.item.name} quantity updated successfully`
         );
         reset();
         navigate(-1);
@@ -80,9 +80,11 @@ const HearingItemEdit = () => {
       }
     }
   };
-  if (singleotherItemLoading) {
-    return <LoadingAnimation loadingMsg="Loading Other Item" />;
+
+  if (singleHearingItemLoading) {
+    return <LoadingAnimation loadingMsg="Loading hearing item" />;
   }
+
   return (
     <Box
       sx={{
@@ -94,22 +96,24 @@ const HearingItemEdit = () => {
     >
       <Paper
         component={"form"}
-        onSubmit={handleSubmit(submiteData)}
+        onSubmit={handleSubmit(submitData)}
         sx={{ padding: 4, width: 400, textAlign: "Left" }}
         elevation={3}
       >
         <Typography variant="h6" fontWeight="bold" paddingLeft="9px">
-          Other Item Quantity Update
+          Hearing Item Quantity Update
         </Typography>
 
         <Box sx={{ marginY: 2 }}>
           <Chip
-            label={`Name - ${singleotherItem?.item.name}`}
+            label={`Name - ${singleHearingItem?.item.name}`}
             color="primary"
             sx={{ marginX: 0.5, backgroundColor: "#237ADE", color: "white" }}
           />
           <Chip
-            label={`Avilabal Quantity - ${singleotherItem?.stock[0]?.qty || 0}`}
+            label={`Available Quantity - ${
+              singleHearingItem?.stock[0]?.qty || 0
+            }`}
             color="primary"
             sx={{ marginX: 0.5, backgroundColor: "#237ADE", color: "white" }}
           />
@@ -124,13 +128,14 @@ const HearingItemEdit = () => {
           error={!!errors.qty}
           helperText={errors.qty?.message}
           sx={{ marginBottom: 2 }}
+          inputProps={{ min: 0 }}
         />
         <TextField
           fullWidth
-          label="Enter Alert  Amount"
+          label="Enter Alert Amount"
           variant="outlined"
-          inputProps={{ min: 0 }}
           type="number"
+          inputProps={{ min: 0 }}
           {...register("limit", {
             setValueAs: (value) => (value === "" ? undefined : Number(value)),
           })}
@@ -140,9 +145,7 @@ const HearingItemEdit = () => {
         />
         <TextField
           sx={{ display: "none" }}
-          inputProps={{
-            min: 0,
-          }}
+          inputProps={{ min: 0 }}
           {...register("branch_id", {
             valueAsNumber: true,
           })}
@@ -156,7 +159,7 @@ const HearingItemEdit = () => {
           defaultValue={getUserCurentBranch()?.id}
         />
         <SubmitCustomBtn
-          btnText="Update Other Item Quantity"
+          btnText="Update Hearing Item Quantity"
           isError={patchHandlerError}
           loading={patchHandlerloading}
         />
@@ -165,4 +168,4 @@ const HearingItemEdit = () => {
   );
 };
 
-export default HearingItemEdit;
+export default HearingItemQtyUpdate;

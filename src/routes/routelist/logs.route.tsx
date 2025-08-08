@@ -9,10 +9,15 @@ import FactoryOrderRefundLog from "../../view/audit_logs/factory-order-refund-de
 import FactoryOrderLogsLayout from "../../view/audit_logs/layout/FactoryOrderLogsLayout";
 import OrderAuditLayout from "../../view/audit_logs/layout/OrderAuditLayout";
 import OrderAudits from "../../view/audit_logs/OrderAudits";
+import HearingLog from "../../view/audit_logs/HearingLog";
 export const logsRoutes: RouteObject[] = [
   {
     path: "",
     element: <FrameLog />,
+  },
+  {
+    path: "hearing",
+    element: <HearingLog />,
   },
 
   {

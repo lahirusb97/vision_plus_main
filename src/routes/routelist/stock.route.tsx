@@ -2,7 +2,6 @@ import { RouteObject } from "react-router";
 import AddFrames from "../../view/stock/AddFrames";
 import FrameStore from "../../view/stock/FrameStore";
 import AddLense from "../../view/stock/AddLense";
-import LenseStore from "../../view/stock/LenseStore";
 import AddVariation from "../../view/stock/AddVariation";
 import OtherItemStore from "../../view/stock/otherItem/OtherItemStore";
 import ProtectedChildRoute from "../ProtectedChildRoute";

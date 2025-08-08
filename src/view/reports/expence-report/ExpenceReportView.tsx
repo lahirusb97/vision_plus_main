@@ -19,7 +19,7 @@ import {
 } from "@mui/material";
 export default function ExpenceReportView() {
   const [startDate, setStartDate] = React.useState<dayjs.Dayjs | null>(
-    dayjs().subtract(30, "day")
+    dayjs()
   );
   const [endDate, setEndDate] = React.useState<dayjs.Dayjs | null>(dayjs());
   const [pending, setPending] = React.useState(false);

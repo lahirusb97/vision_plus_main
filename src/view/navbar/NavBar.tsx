@@ -4,7 +4,12 @@ import { useLocation, useNavigate } from "react-router";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import { Paper, Box, Button, Typography, Fade } from "@mui/material";
-import { Feedback, LogoutOutlined, UploadRounded } from "@mui/icons-material";
+import {
+  Feedback,
+  Hearing,
+  LogoutOutlined,
+  UploadRounded,
+} from "@mui/icons-material";
 
 // Import your nav components for submenus
 import RefractionNav from "../refraction/RefractionNav";
@@ -56,6 +61,7 @@ import LensStoreNav from "../inventory/lens-store/LensStoreNav";
 import { LENS_AND_FRAME_STORE_ID } from "../../data/staticVariables";
 import ImageUploardNav from "../uploard/ImageUploardNav";
 import FeedbackNav from "../feedback/FeedbackNav";
+import HearingNav from "../inventory/frame-store/HearingNav";
 
 // Tab panel utility (hidden by default)
 // function TabPanel({
@@ -89,6 +95,14 @@ export default function NavBar() {
       path: "transaction/factory_order",
       icon: <ArrowLeftRight />,
       nav: TransactionNav,
+      inventory: false,
+    },
+    {
+      key: "hearing",
+      label: "Hearing",
+      path: "hearing",
+      icon: <Hearing />,
+      nav: HearingNav,
       inventory: false,
     },
     {
@@ -179,6 +193,7 @@ export default function NavBar() {
       nav: FeedbackNav,
       inventory: false,
     },
+
     //add store routes
     {
       key: "inventory-frame",
@@ -188,6 +203,7 @@ export default function NavBar() {
       nav: FrameStoreNav,
       inventory: true,
     },
+
     {
       key: "inventory-lens",
       label: "Lens Store",

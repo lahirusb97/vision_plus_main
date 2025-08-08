@@ -22,6 +22,8 @@ import MasterNav from "../master/MasterNav";
 import UserNav from "../user/UserNav";
 import LogsNav from "../user/LogsNav";
 import CheckInNav from "../checkin/CheckInNav";
+import HearingNav from "../inventory/frame-store/HearingNav";
+import { Hearing } from "@mui/icons-material";
 
 export const navBarArray = [
   {
@@ -100,5 +102,13 @@ export const navBarArray = [
     path: "logs",
     icon: <NotebookIcon style={{ width: "1rem" }} />,
     nav: LogsNav,
+  },
+  {
+    key: "hearing-order",
+    label: "Hearing Order",
+    path: "hearing-order",
+    icon: <Hearing />,
+    nav: HearingNav,
+    inventory: true,
   },
 ];

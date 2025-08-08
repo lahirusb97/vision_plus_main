@@ -23,6 +23,7 @@ import { frameAndLensStoreRoutes } from "./routelist/frame-and-lens-store.route"
 import { LensStoreRoutes } from "./routelist/lens-store.route";
 import { imageUploadRoutes } from "./routelist/image-uploard.route";
 import { orderFeedbackRoutes } from "./routelist/order-feedback.route";
+import { hearingRoutes } from "./routelist/hearing.route";
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -38,6 +39,11 @@ export const router = createBrowserRouter([
         path: "transaction",
         element: <ProtectedChildRoute />,
         children: transactionRoutes,
+      },
+      {
+        path: "hearing",
+        element: <ProtectedChildRoute />,
+        children: hearingRoutes,
       },
       {
         path: "search",

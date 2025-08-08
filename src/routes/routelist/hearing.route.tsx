@@ -1,0 +1,47 @@
+import { RouteObject } from "react-router";
+import ProtectedChildRoute from "../ProtectedChildRoute";
+import HearingStore from "../../view/hearing/HearingStore";
+import HearingOrderCreate from "../../view/hearing/HearingOrderCreate";
+import HearingItemCreate from "../../view/hearing/HearingItemCreate";
+import HearingItemEdit from "../../view/hearing/HearingItemEdit";
+import HearingItemQtyUpdate from "../../view/hearing/HearingItemQtyUpdate";
+
+export const hearingRoutes: RouteObject[] = [
+  {
+    path: "",
+    element: <ProtectedChildRoute />,
+    children: [
+      {
+        index: true,
+        element: <HearingOrderCreate />,
+      },
+      {
+        path: "create/",
+        element: <HearingItemCreate />,
+      },
+
+      {
+        path: "hearing_item_stock",
+        element: <ProtectedChildRoute />,
+        children: [
+          {
+            index: true,
+            element: <HearingStore />,
+          },
+          {
+            path: "edit/:id",
+            element: <HearingItemEdit />,
+          },
+          {
+            path: "update/:id",
+            element: <HearingItemQtyUpdate />,
+          },
+          // {
+          //   path: "history/:id",
+          //   element: <OtherItemHistory />,
+          // },
+        ],
+      },
+    ],
+  },
+];

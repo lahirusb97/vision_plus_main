@@ -21,7 +21,7 @@ export const ExpencePaymentTable = ({ data, loading }: ChannelTableProps) => {
         size: 50,
         Cell: ({ row }) => {
           const value = row.original.created_at;
-          return value ? formatDateTimeByType(value, "time") : "";
+          return value ? formatDateTimeByType(value, "both") : "";
         },
       },
       {
