@@ -45,7 +45,7 @@ const HearingItemEdit = () => {
   const submitData = async (data: Pick<HearingItemFormModel, "price">) => {
     if (singleHearingItem) {
       const postData = {
-        price: data.price,
+        item: { price: data.price },
       };
       try {
         await patchHandler(`/hearing-items/${id}/`, postData);

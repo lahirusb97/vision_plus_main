@@ -13,12 +13,13 @@ import {
   Skeleton,
   TextField,
 } from "@mui/material";
-import { Delete, Edit, Loop } from "@mui/icons-material";
+import { Delete, Edit, Loop, PriceChange } from "@mui/icons-material";
 import { useNavigate } from "react-router";
 import { useDeleteDialog } from "../../context/DeleteDialogContext";
 import useGetHearingItem from "../../hooks/useGetHearingItem";
 import { HearingItemStockSerializer } from "../../model/HearingtemStockSerializer";
 import { numberWithCommas } from "../../utils/numberWithCommas";
+import { Edit2, Edit3Icon, Pencil } from "lucide-react";
 
 const HearingStore = () => {
   const [searchQuery, setSearchQuery] = React.useState("");
@@ -48,6 +49,9 @@ const HearingStore = () => {
 
   const handleEdit = (id: number) => {
     navigate(`edit/${id}`);
+  };
+  const handlefullEdit = (id: number) => {
+    navigate(`full-edit/${id}`);
   };
 
   const handleUpdate = (id: number) => {
@@ -172,6 +176,13 @@ const HearingStore = () => {
                     color="warning"
                     title="Edit"
                     onClick={() => handleEdit(row.item.id)}
+                  >
+                    <PriceChange />
+                  </IconButton>
+                  <IconButton
+                    color="warning"
+                    title="Edit"
+                    onClick={() => handlefullEdit(row.item.id)}
                   >
                     <Edit />
                   </IconButton>

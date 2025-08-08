@@ -5,6 +5,7 @@ import HearingOrderCreate from "../../view/hearing/HearingOrderCreate";
 import HearingItemCreate from "../../view/hearing/HearingItemCreate";
 import HearingItemEdit from "../../view/hearing/HearingItemEdit";
 import HearingItemQtyUpdate from "../../view/hearing/HearingItemQtyUpdate";
+import HearingItemFullEdit from "../../view/hearing/HearingItemFullEdit";
 
 export const hearingRoutes: RouteObject[] = [
   {
@@ -31,6 +32,10 @@ export const hearingRoutes: RouteObject[] = [
           {
             path: "edit/:id",
             element: <HearingItemEdit />,
+          },
+          {
+            path: "full-edit/:id",
+            element: <HearingItemFullEdit />,
           },
           {
             path: "update/:id",
