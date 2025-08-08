@@ -133,6 +133,7 @@ const HearingItemCreate = () => {
           {...register("limit", { valueAsNumber: true })}
           label="Low Stock Alert Level"
           type="number"
+          defaultValue={0}
           fullWidth
           variant="outlined"
           error={!!errors.limit}

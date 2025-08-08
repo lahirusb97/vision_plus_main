@@ -9,7 +9,10 @@ export const schemaHearingItem = z.object({
   qty: z.number().min(0, "Quantity must be a positive number"),
   limit: z.number().min(0, "Limit must be a positive number"),
   branch_id: z.number().min(1, "Branch ID is required"),
-  initial_count: z.number().min(0, "Initial count must be a positive number").optional(),
+  initial_count: z
+    .number()
+    .min(0, "Initial count must be a positive number")
+    .optional(),
 });
 
 export type HearingItemFormModel = z.infer<typeof schemaHearingItem>;
