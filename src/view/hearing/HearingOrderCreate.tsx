@@ -86,12 +86,10 @@ export default function HearingOrderCreate() {
       });
       toast.success("Order saved successfully");
       const url = `?invoice_number=${encodeURIComponent(
-        responce.data.invoice_number
+        responce.data?.invoice?.invoice_number
       )}`;
       // //send to invoice view
-      navigate(
-        `/hearing/${responce.data.invoice_number}${url}/`
-      );
+      navigate(`/hearing/${responce.data?.invoice?.invoice_number}${url}/`);
     } catch (error) {
       extractErrorMessage(error);
     }
