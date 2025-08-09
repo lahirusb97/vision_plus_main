@@ -2,6 +2,10 @@ import z from "zod";
 
 export const schemaHearingOrderForm = z.object({
   name: z.string().min(1, "Name is required"),
+  extra_phone_number: z
+    .string()
+    .nullable()
+    .transform((val) => (val === "" ? null : val)),
   dob: z
     .string()
     .nullable()

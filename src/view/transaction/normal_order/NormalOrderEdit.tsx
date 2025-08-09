@@ -69,7 +69,7 @@ export default function NormalOrderEdit() {
     normalOrderItemsReducer,
     initialState
   );
-  console.log(stateItems);
+ 
 
   const methods = useForm<z.infer<typeof normalOrderEditForm>>({
     resolver: zodResolver(normalOrderEditForm.omit({ branch_id: true })),

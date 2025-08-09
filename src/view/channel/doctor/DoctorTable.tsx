@@ -118,8 +118,8 @@ const DoctorTable: React.FC = () => {
                         openDialog(
                           `/doctors/${doctor.id}/`,
                           "doctor",
-                          "This will delete all the data related to this doctor including Appointments ",
-                          "Permanantly Delete",
+                          "This will Deactivate this doctor and all the data related to this doctor including Appointments",
+                          "Deactivate",
                           refresh
                         );
                       }}

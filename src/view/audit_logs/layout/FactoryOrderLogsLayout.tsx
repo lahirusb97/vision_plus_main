@@ -17,12 +17,12 @@ export default function FactoryOrderLogsLayout() {
 
   const reportTabs = [
     {
-      label: "Factory Order Refund",
-      path: "/logs/factory-order/refund",
+      label: "Order Refund",
+      path: "/logs/orders/refund",
     },
     {
-      label: "Factory Order Deactivate",
-      path: "/logs/factory-order",
+      label: "Order Deactivate",
+      path: "/logs/orders",
     },
   ];
 

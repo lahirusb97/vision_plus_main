@@ -39,7 +39,7 @@ export const logsRoutes: RouteObject[] = [
     ],
   },
   {
-    path: "factory-order/",
+    path: "orders/",
     element: <FactoryOrderLogsLayout />,
     children: [
       {

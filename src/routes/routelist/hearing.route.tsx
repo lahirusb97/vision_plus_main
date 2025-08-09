@@ -7,6 +7,8 @@ import HearingItemEdit from "../../view/hearing/HearingItemEdit";
 import HearingItemQtyUpdate from "../../view/hearing/HearingItemQtyUpdate";
 import HearingItemFullEdit from "../../view/hearing/HearingItemFullEdit";
 import HearingInvoiceView from "../../view/hearing/HearingInvoiceView";
+import HearingOrderEditIndex from "../../view/hearing/HearingOrderEditIndex";
+import HearingOrderEdit from "../../view/hearing/HearingOrderEdit";
 
 export const hearingRoutes: RouteObject[] = [
   {
@@ -24,6 +26,14 @@ export const hearingRoutes: RouteObject[] = [
       {
         path: ":invoice_number/",
         element: <HearingInvoiceView />,
+      },
+      {
+        path: "order/",
+        element: <HearingOrderEditIndex />,
+      },
+      {
+        path: "order/:invoice_number/",
+        element: <HearingOrderEdit />,
       },
 
       {

@@ -140,9 +140,9 @@ const AuthDialog: React.FC<VerificationDialogProps> = ({
               fullWidth
               margin="normal"
               {...mainForm.register("user_code")}
+              autoFocus
               error={!!mainForm.formState.errors.user_code}
               helperText={mainForm.formState.errors.user_code?.message}
-              autoFocus
             />
             <TextField
               label={step === "admin" ? "Admin Password" : "Password"}

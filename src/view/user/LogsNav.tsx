@@ -10,7 +10,7 @@ export default function UserNav() {
       {/* //channel deativate refind 
       //  */}
       <NavButton name="Channel Logs" path={"/logs/channel"} />
-      <NavButton name="Factory Order Logs" path={"/logs/factory-order"} />
+      <NavButton name="Order Logs" path={"/logs/orders"} />
       <NavButton name="Order Audit" path={"/logs/order-audit"} />
     </>
   );

@@ -13,7 +13,7 @@ import FilterPatient from "../../../components/FilterPatient";
 import DateInput from "../../../components/inputui/DateInput";
 import { birthdayToAge } from "../../../utils/BirthdayToAge";
 
-export default function NormalPatientDetail() {
+export default function NormalPatientDetail({extra_phone_number = false}) {
   const [openSearchDialog, setOpenSearchDialog] = useState({
     open: false,
     searchType: "",
@@ -111,6 +111,34 @@ export default function NormalPatientDetail() {
             shrink: Boolean(watch("phone_number")),
           }}
         />
+        {extra_phone_number && (
+          <TextField
+            {...register("extra_phone_number")}
+            error={!!errors.extra_phone_number}
+            sx={{ flexGrow: 1 }}
+            size="small"
+            label="Extra Phone Number"
+            // InputProps={{
+            //   endAdornment: (
+            //     <InputAdornment position="end">
+            //       <IconButton
+            //         onClick={() =>
+            //           setOpenSearchDialog({
+            //             open: true,
+            //             searchType: "extra_phone_number",
+            //           })
+            //         }
+            //       >
+            //         <SearchSharp />
+            //       </IconButton>
+            //     </InputAdornment>
+            //   ),
+            // }}
+            InputLabelProps={{
+              shrink: Boolean(watch("extra_phone_number")),
+            }}
+          />
+        )}
         <TextField
           {...register("nic")}
           error={!!errors.nic}

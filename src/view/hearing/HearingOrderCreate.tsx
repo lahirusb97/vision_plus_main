@@ -113,6 +113,7 @@ export default function HearingOrderCreate() {
         address: data.address,
         nic: data.nic,
         date_of_birth: data.dob,
+        extra_phone_number: data.extra_phone_number,
       },
       order: {
         invoice_type: "hearing",
@@ -133,7 +134,7 @@ export default function HearingOrderCreate() {
     <div style={{ width: "1000px" }}>
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(hearingOrderSubmite)}>
-          <NormalPatientDetail />
+          <NormalPatientDetail extra_phone_number={true} />
 
           <InvoiceHearingItems onAddItem={handleAddItem} />
           <InvoiceHearingItemsTable

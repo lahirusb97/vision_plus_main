@@ -22,7 +22,6 @@ export const formatDateTimeByType = (
   if (!date.isValid()) {
     return fallback[type];
   }
-
   const formattedDate = date.format("YYYY/MM/DD");
   const formattedTime = date.format("hh.mm A");
 
