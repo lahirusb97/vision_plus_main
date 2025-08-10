@@ -122,4 +122,5 @@ interface HearingOrderItem {
   subtotal: number;
   serial_no: string;
   battery: string;
+  next_service_date: string | null;
 }

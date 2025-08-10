@@ -17,6 +17,9 @@ import { numberWithCommas } from "../utils/numberWithCommas";
 import { parseInt } from "lodash";
 import { HearingItemStockSerializer } from "../model/HearingtemStockSerializer";
 import useGetHearingItem from "../hooks/useGetHearingItem";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { Dayjs } from "dayjs";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 interface InvoiceOtherItemsProps {
   onAddItem: (
@@ -24,7 +27,8 @@ interface InvoiceOtherItemsProps {
     qty: number,
     price: number,
     serialNo: string,
-    battery: string
+    battery: string,
+    nextServiceDate: string | null,
   ) => void;
 }
 
@@ -37,6 +41,7 @@ export default function InvoiceHearingItems({
   const [price, setPrice] = useState<string>("");
   const [serialNo, setSerialNo] = useState<string>("");
   const [battery, setBattery] = useState<string>("");
+  const [nextServiceDate, setNextServiceDate] = useState<Dayjs | null>(null);
 
   const { hearingItem, hearingItemLoading, searchHearingItem } =
     useGetHearingItem();
@@ -45,12 +50,13 @@ export default function InvoiceHearingItems({
     if (!selectedItem) return;
 
     // Dispatch action to add item to parent reducer
-    onAddItem(selectedItem, Number(1), Number(price || 0), serialNo, battery);
+    onAddItem(selectedItem, Number(1), Number(price || 0), serialNo, battery, nextServiceDate?.format("YYYY-MM-DD") || null);
     setSelectedItem(null);
     // setQty("1");
     setPrice("");
     setSerialNo("");
     setBattery("");
+    setNextServiceDate(null);
   };
 
   return (
@@ -173,6 +179,17 @@ export default function InvoiceHearingItems({
                 color="primary"
               />
             </Grid>
+            <Grid item xs={4}>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  label="Next Service Date"
+                  value={nextServiceDate}
+                  onChange={(newValue) => setNextServiceDate(newValue)}
+                  format="YYYY-MM-DD"
+                />
+              </LocalizationProvider>
+            </Grid>
+
             {/* <Grid item xs={4}>
               <Typography>
                 Subtotal : Rs. {numberWithCommas(Number(qty) * Number(price))}

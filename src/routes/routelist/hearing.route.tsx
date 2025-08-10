@@ -9,6 +9,10 @@ import HearingItemFullEdit from "../../view/hearing/HearingItemFullEdit";
 import HearingInvoiceView from "../../view/hearing/HearingInvoiceView";
 import HearingOrderEditIndex from "../../view/hearing/HearingOrderEditIndex";
 import HearingOrderEdit from "../../view/hearing/HearingOrderEdit";
+import HearingInvoiceReport from "../../view/hearing/hearing-invoice/HearingInvoiceReport";
+import HearingReminder from "../../view/hearing/hearing-reminder/HearingReminder";
+import HearingReplayment from "../../view/hearing/HearingReplayment";
+import HearingRepaymentForm from "../../view/hearing/HearingRepaymentForm";
 
 export const hearingRoutes: RouteObject[] = [
   {
@@ -28,8 +32,20 @@ export const hearingRoutes: RouteObject[] = [
         element: <HearingInvoiceView />,
       },
       {
+        path: ":invoice_number/repayment",
+        element: <HearingRepaymentForm />,
+      },
+      {
         path: "order/",
         element: <HearingOrderEditIndex />,
+      },
+      {
+        path: "invoice/",
+        element: <HearingInvoiceReport />,
+      },
+      {
+        path: "reminder/",
+        element: <HearingReminder />,
       },
       {
         path: "order/:invoice_number/",

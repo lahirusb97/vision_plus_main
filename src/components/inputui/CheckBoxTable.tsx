@@ -25,13 +25,12 @@ import CircleIcon from "@mui/icons-material/Circle";
 import { progressStatus } from "../../utils/progressState";
 import { customerPaymentTotal } from "../../utils/customerPaymentTotal";
 import { numberWithCommas } from "../../utils/numberWithCommas";
-import { Close, History, HistoryRounded } from "@mui/icons-material";
+import { Close,  HistoryRounded } from "@mui/icons-material";
 import { formatDateTimeByType } from "../../utils/formatDateTimeByType";
 import { toast } from "react-hot-toast";
 import { extractErrorMessage } from "../../utils/extractErrorMessage";
 import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
 import { useAxiosPost } from "../../hooks/useAxiosPost";
-import useGetProgressStatusList from "../../hooks/useGetProgressStatusList";
 import { ProgressHistoryPopover } from "../ProgressHistoryPopover";
 
 interface CheckBoxTableProps {
@@ -48,12 +47,7 @@ export default function CheckBoxTable({
   loading,
   invoiceListRefres,
 }: CheckBoxTableProps) {
-  const {
-    progressStatusList,
-    progressStatusListLoading,
-    progressStatusListError,
-    fetchProgressStatus,
-  } = useGetProgressStatusList();
+
   const [popoverAnchor, setPopoverAnchor] = useState<null | HTMLElement>(null);
   const [popoverOrder, setPopoverOrder] = useState<number | null>(null);
 

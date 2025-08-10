@@ -6,7 +6,7 @@ import {
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import NormalPatientDetail from "../transaction/normal_order/NormalPatientDetail";
-import { Box, TextField } from "@mui/material";
+import { Box, Paper, TextField, Typography } from "@mui/material";
 import { getUserCurentBranch } from "../../utils/authDataConver";
 import AuthDialog from "../../components/common/AuthDialog";
 import { useAxiosPost } from "../../hooks/useAxiosPost";
@@ -24,6 +24,9 @@ import { HearingItemStockSerializer } from "../../model/HearingtemStockSerialize
 import InvoiceHearingItems from "../../components/InvoiceHearingItems";
 import InvoiceHearingItemsTable from "./InvoiceHearingItemsTable";
 import { formatUserPayments } from "../../utils/formatUserPayments";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
 
 const initialState: HearingOrderItemsState = {
   items: [],
@@ -53,7 +56,8 @@ export default function HearingOrderCreate() {
     qty: number,
     price: number,
     serialNo: string,
-    battery: string
+    battery: string,
+    nextServiceDate: string | null
   ) => {
     const newItem = {
       hearing_item: item.item.id, // Assuming 'item' has 'id' and 'name'
@@ -63,6 +67,7 @@ export default function HearingOrderCreate() {
       subtotal: qty * price,
       serial_no: serialNo,
       battery: battery,
+      next_service_date: nextServiceDate,
     };
 
     dispatchItems({
@@ -137,6 +142,66 @@ export default function HearingOrderCreate() {
           <NormalPatientDetail extra_phone_number={true} />
 
           <InvoiceHearingItems onAddItem={handleAddItem} />
+          <Paper
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 1
+            }}
+          >
+            {stateItems.items.map((item) => (
+              <Box >
+                <Typography>{item.name}</Typography>
+                <TextField
+                  size="small"
+                  onChange={(e) =>
+                    dispatchItems({
+                      type: "UPDATE_ITEM",
+                      payload: { ...item, serial_no: e.target.value },
+                    })
+                  }
+                  label="Serial No"
+                  type="text"
+                  value={item.serial_no}
+                />
+                <TextField
+                  sx={{ mx: 1 }}
+                  size="small"
+                  onChange={(e) =>
+                    dispatchItems({
+                      type: "UPDATE_ITEM",
+                      payload: { ...item, battery: e.target.value },
+                    })
+                  }
+                  label="Battery"
+                  type="text"
+                  value={item.battery}
+                />
+
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DatePicker
+                    label="Next Service Date"
+                    value={
+                      item.next_service_date
+                        ? dayjs(item.next_service_date)
+                        : null
+                    }
+                    onChange={(newValue) =>
+                      dispatchItems({
+                        type: "UPDATE_ITEM",
+                        payload: {
+                          ...item,
+                          next_service_date:
+                            newValue?.format("YYYY-MM-DD") || null,
+                        },
+                      })
+                    }
+                    format="YYYY-MM-DD"
+                  />
+                </LocalizationProvider>
+              </Box>
+            ))}
+          </Paper>
           <InvoiceHearingItemsTable
             items={stateItems.items}
             total={stateItems.total}

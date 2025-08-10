@@ -106,6 +106,8 @@ export interface NormalOrderItem {
   user_username?: string;
   admin_username?: string;
   deleted_at?: string;
+  last_reminder_at: null;
+  
 }
 export interface HearingOrderItem {
   hearing_item_detail: HearingItemModel;
@@ -122,6 +124,7 @@ export interface HearingOrderItem {
   external_lens_name: null;
   external_lens_powers: [];
   other_item_detail: OtherItemDetail;
+  next_service_date: string | null;
   note: string | null;
   // Other shared fields
   id: number;
@@ -135,6 +138,7 @@ export interface HearingOrderItem {
   user_username?: string;
   admin_username?: string;
   deleted_at?: string;
+  last_reminder_at: null | string;
 }
 export interface LensOrderItem {
   hearing_item: null;
@@ -151,6 +155,7 @@ export interface LensOrderItem {
   external_lens_powers: [];
   note: string | null;
   other_item_detail: null;
+  next_service_date: string | null;
   // Other shared fields
   id: number;
   order: number;
@@ -163,6 +168,7 @@ export interface LensOrderItem {
   user_username?: string;
   admin_username?: string;
   deleted_at?: string;
+  last_reminder_at: null | string;
 }
 
 export interface ExternalLensOrderItem {
@@ -180,6 +186,7 @@ export interface ExternalLensOrderItem {
   is_non_stock: boolean;
   note: string | null;
   other_item_detail: null;
+  next_service_date: string | null;
   // Other shared fields
   frame: null;
   frame_detail: null;
@@ -196,6 +203,7 @@ export interface ExternalLensOrderItem {
   user_username?: string;
   admin_username?: string;
   deleted_at?: string;
+  last_reminder_at: null | string;
 }
 
 

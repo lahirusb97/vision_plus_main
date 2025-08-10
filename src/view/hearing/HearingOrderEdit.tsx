@@ -1,15 +1,11 @@
 import { useEffect, useState } from "react";
-import {
-  HearingOrderForm,
-  schemaHearingOrderForm,
-} from "../../validations/schemaHearingOrder";
+import { schemaHearingOrderForm } from "../../validations/schemaHearingOrder";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import NormalPatientDetail from "../transaction/normal_order/NormalPatientDetail";
 import { Box, Button, Paper, TextField, Typography } from "@mui/material";
 import { getUserCurentBranch } from "../../utils/authDataConver";
 import AuthDialog from "../../components/common/AuthDialog";
-import { useAxiosPost } from "../../hooks/useAxiosPost";
 import { extractErrorMessage } from "../../utils/extractErrorMessage";
 import { toast } from "react-hot-toast";
 import { useNavigate, useParams } from "react-router";
@@ -35,6 +31,9 @@ import { useAxiosPut } from "../../hooks/useAxiosPut";
 import OrderDeleteRefund from "../../components/common/order-delete-refund-dialog/OrderDeleteRefund";
 import OrderAuditDialog from "../../components/OrderAuditDialog";
 import { History } from "lucide-react";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
 
 const initialState: HearingOrderItemsState = {
   items: [],
@@ -97,6 +96,7 @@ export default function HearingOrderEdit() {
       subtotal: qty * price,
       serial_no: serialNo,
       battery: battery,
+      next_service_date: null,
     };
 
     dispatchItems({
@@ -195,6 +195,7 @@ export default function HearingOrderEdit() {
             subtotal: parseInt(item.subtotal),
             serial_no: item.serial_no,
             battery: item.battery,
+            next_service_date: item.next_service_date,
           };
 
           dispatchItems({
@@ -221,9 +222,8 @@ export default function HearingOrderEdit() {
           <Paper
             sx={{
               display: "flex",
+              flexDirection: "column",
               gap: 1,
-              my: 2,
-              p: 1,
             }}
           >
             {stateItems.items.map((item) => (
@@ -242,7 +242,7 @@ export default function HearingOrderEdit() {
                   value={item.serial_no}
                 />
                 <TextField
-                sx={{mx:1}}
+                  sx={{ mx: 1 }}
                   size="small"
                   onChange={(e) =>
                     dispatchItems({
@@ -254,6 +254,28 @@ export default function HearingOrderEdit() {
                   type="text"
                   value={item.battery}
                 />
+
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DatePicker
+                    label="Next Service Date"
+                    value={
+                      item.next_service_date
+                        ? dayjs(item.next_service_date)
+                        : null
+                    }
+                    onChange={(newValue) =>
+                      dispatchItems({
+                        type: "UPDATE_ITEM",
+                        payload: {
+                          ...item,
+                          next_service_date:
+                            newValue?.format("YYYY-MM-DD") || null,
+                        },
+                      })
+                    }
+                    format="YYYY-MM-DD"
+                  />
+                </LocalizationProvider>
               </Box>
             ))}
           </Paper>
