@@ -20,10 +20,16 @@ import HearingInvoiceSearch from "../../../hooks/HearingInvoiceSearch";
 import { numberWithCommas } from "../../../utils/numberWithCommas";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
-import { Call, CallMade, CallReceived } from "@mui/icons-material";
+import {
+  Call,
+  CallMade,
+  CallReceived,
+  MedicalServices,
+} from "@mui/icons-material";
 import ConfirmDialog from "../../../components/ConfirmDialog";
 import axiosClient from "../../../axiosClient";
 import { formatDateTimeByType } from "../../../utils/formatDateTimeByType";
+import HearingServiceDialog from "../HearingServiceDialog";
 
 export default function HearingInvoiceReport() {
   const {
@@ -38,6 +44,7 @@ export default function HearingInvoiceReport() {
     hearingInvoiceListRefres,
   } = useGetHearingInvoiceList();
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
+  const [openServiceDialog, setOpenServiceDialog] = useState(false);
   const [selectedItem, setSelectedItem] = useState<HearingOrderReport | null>(
     null
   );
@@ -106,7 +113,7 @@ export default function HearingInvoiceReport() {
                     <TableCell>{invoice?.items?.[0]?.serial_no}</TableCell>
                     <TableCell>{invoice.order_remark}</TableCell>
                     <TableCell>
-                      {invoice?.items?.[0]?.last_service_date || "NA"}
+                      {invoice?.items?.[0]?.last_service?.last_service_date || "NA"}
                     </TableCell>
                     <TableCell>
                       {invoice?.items?.[0]?.next_service_date}
@@ -161,6 +168,19 @@ export default function HearingInvoiceReport() {
                           <Call color="primary" fontSize="small" />
                         </IconButton>
                       </Tooltip>
+                      <Tooltip title="Service">
+                        <IconButton
+                          onClick={() => {
+                            setSelectedItem(invoice);
+                            setOpenServiceDialog(true);
+                          }}
+                          size="small"
+                          sx={{ p: 0 }}
+                          color="inherit"
+                        >
+                          <MedicalServices color="primary" fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
                     </TableCell>
                   </TableRow>
                 ))
@@ -185,6 +205,17 @@ export default function HearingInvoiceReport() {
           open={openConfirmDialog}
           closeDialog={() => {
             setOpenConfirmDialog(false);
+            setSelectedItem(null);
+          }}
+          onSuccess={() => {
+            hearingInvoiceListRefres();
+          }}
+        />
+        <HearingServiceDialog
+          orderData={selectedItem}
+          open={openServiceDialog}
+          closeDialog={() => {
+            setOpenServiceDialog(false);
             setSelectedItem(null);
           }}
           onSuccess={() => {

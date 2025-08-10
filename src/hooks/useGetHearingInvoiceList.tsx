@@ -31,6 +31,11 @@ export interface HearingOrderItem {
   serial_no: string | null;
   battery: string | null;
   note: string;
+  last_service: {
+    last_service_date: string;
+    scheduled_service_date: string;
+    price: number;
+  };
 }
 
 export interface HearingOrderReport {
