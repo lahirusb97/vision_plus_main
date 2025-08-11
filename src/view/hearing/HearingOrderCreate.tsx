@@ -146,11 +146,11 @@ export default function HearingOrderCreate() {
             sx={{
               display: "flex",
               flexDirection: "column",
-              gap: 1
+              gap: 1,
             }}
           >
             {stateItems.items.map((item) => (
-              <Box >
+              <Box>
                 <Typography>{item.name}</Typography>
                 <TextField
                   size="small"
@@ -235,7 +235,7 @@ export default function HearingOrderCreate() {
             defaultValue={getUserCurentBranch()?.id}
           />
           <SubmitCustomBtn
-            btnText="Create Frame Only Order "
+            btnText="Create Hearing Order "
             isError={postHandlerError}
             loading={postHandlerloading}
           />

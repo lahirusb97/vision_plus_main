@@ -20,18 +20,27 @@ import HearingInvoiceSearch from "../../../hooks/HearingInvoiceSearch";
 import { numberWithCommas } from "../../../utils/numberWithCommas";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
-import {
-  Call,
-  CallMade,
-  CallReceived,
-  MedicalServices,
-} from "@mui/icons-material";
+import { Call, HistoryRounded, MedicalServices } from "@mui/icons-material";
 import ConfirmDialog from "../../../components/ConfirmDialog";
 import axiosClient from "../../../axiosClient";
 import { formatDateTimeByType } from "../../../utils/formatDateTimeByType";
 import HearingServiceDialog from "../HearingServiceDialog";
-
+import { HearingServiceHistoryPopover } from "../../../components/HearingServiceHistoryPopover";
+import { SelectChangeEvent } from "@mui/material";
 export default function HearingInvoiceReport() {
+  const [popoverAnchor, setPopoverAnchor] = useState<null | HTMLElement>(null);
+  const [popoverOrder, setPopoverOrder] = useState<number | null>(null);
+  const handleShowHistory = (
+    event: React.MouseEvent<HTMLElement>,
+    orderId: number
+  ) => {
+    setPopoverAnchor(event.currentTarget);
+    setPopoverOrder(orderId);
+  };
+  const handleClosePopover = () => {
+    setPopoverAnchor(null);
+    setPopoverOrder(null);
+  };
   const {
     hearingInvoiceList,
     hearingInvoiceListChangePageSize,
@@ -113,7 +122,8 @@ export default function HearingInvoiceReport() {
                     <TableCell>{invoice?.items?.[0]?.serial_no}</TableCell>
                     <TableCell>{invoice.order_remark}</TableCell>
                     <TableCell>
-                      {invoice?.items?.[0]?.last_service?.last_service_date || "NA"}
+                      {invoice?.items?.[0]?.last_service?.last_service_date ||
+                        "NA"}
                     </TableCell>
                     <TableCell>
                       {invoice?.items?.[0]?.next_service_date}
@@ -181,6 +191,17 @@ export default function HearingInvoiceReport() {
                           <MedicalServices color="primary" fontSize="small" />
                         </IconButton>
                       </Tooltip>
+                      <Tooltip title="Progress History">
+                        <IconButton
+                          size="small"
+                          sx={{ p: 0 }}
+                          onClick={(e) =>
+                            handleShowHistory(e, invoice.order_id)
+                          }
+                        >
+                          <HistoryRounded fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
                     </TableCell>
                   </TableRow>
                 ))
@@ -223,6 +244,12 @@ export default function HearingInvoiceReport() {
           }}
         />
       </TableContainer>
+      <HearingServiceHistoryPopover
+        open={Boolean(popoverAnchor)}
+        anchorEl={popoverAnchor}
+        onClose={handleClosePopover}
+        orderId={popoverOrder}
+      />
     </Box>
   );
 }
