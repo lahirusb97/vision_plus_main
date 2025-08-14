@@ -24,6 +24,11 @@ import { LensStoreRoutes } from "./routelist/lens-store.route";
 import { imageUploadRoutes } from "./routelist/image-uploard.route";
 import { orderFeedbackRoutes } from "./routelist/order-feedback.route";
 import { hearingRoutes } from "./routelist/hearing.route";
+import PasswordReset from "../view/auth/PasswordReset";
+import { RouteObject } from "react-router";
+import EnterUserCode from "../view/auth/EnterUserCode";
+import NewPassword from "../view/auth/NewPassword";
+
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -141,14 +146,35 @@ export const router = createBrowserRouter([
           </Suspense>
         ),
       },
+      // {
+      //   path: "register",
+      //   index: true,
+      //   element: (
+      //     <Suspense fallback={<div>Loading...</div>}>
+      //       <RegisterUser />
+      //     </Suspense>
+      //   ),
+      // },
       {
-        path: "register",
-        index: true,
-        element: (
-          <Suspense fallback={<div>Loading...</div>}>
-            <RegisterUser />
-          </Suspense>
-        ),
+        path: "password-reset",
+        children: [
+          {
+            index: true,
+            element: (
+              <Suspense fallback={<div>Loading...</div>}>
+                <EnterUserCode />
+              </Suspense>
+            ),
+          },
+          {
+            path: ":token/new-password",
+            element: (
+              <Suspense fallback={<div>Loading...</div>}>
+                <NewPassword />
+              </Suspense>
+            ),
+          },
+        ],
       },
     ],
   },
