@@ -77,62 +77,102 @@ export default function NewPassword() {
   }
 
   return (
-    <Container component="main" maxWidth="xs">
-      <Paper elevation={3} sx={{ p: 4, mt: 8 }}>
-        <Typography component="h1" variant="h5" align="center" gutterBottom>
-          Reset Your Password
-        </Typography>
-        <Typography
-          variant="body2"
-          color="textSecondary"
-          align="center"
-          sx={{ mb: 3 }}
-        >
-          {passwordResetToken.email}
-        </Typography>
-
-        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-       
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            name="newPassword"
-            label="New Password"
-            type="password"
-            id="newPassword"
-            autoComplete="new-password"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            error={!!errors.newPassword}
-            helperText={errors.newPassword}
-          />
-
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            name="confirmPassword"
-            label="Confirm Password"
-            type="password"
-            id="confirmPassword"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            error={!!errors.confirmPassword}
-            helperText={errors.confirmPassword}
-          />
-
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            sx={{ mt: 3, mb: 2 }}
-            disabled={isUpdating}
+    <Box
+      sx={{
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        background: "url('login.webp') center/cover no-repeat",
+        position: "relative",
+        "&::before": {
+          content: '""',
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: "rgba(0, 0, 0, 0.6)",
+          zIndex: 1,
+        },
+      }}
+    >
+      <Container
+        component="main"
+        maxWidth="xs"
+        sx={{ position: "relative", zIndex: 2 }}
+      >
+        <Paper elevation={3} sx={{ p: 4, mt: 2, mb: 2 }}>
+          <Typography component="h1" variant="h5" align="center" gutterBottom>
+            Reset Your Password
+          </Typography>
+          <Typography
+            variant="body2"
+            color="textSecondary"
+            align="center"
+            sx={{ mb: 3 }}
           >
-            {isUpdating ? "Updating..." : "Update Password"}
-          </Button>
-        </Box>
-      </Paper>
-    </Container>
+            {passwordResetToken.email}
+          </Typography>
+
+          <Box
+            component="form"
+            onSubmit={handleSubmit}
+            noValidate
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 2,
+            }}
+          >
+            <TextField
+              required
+              fullWidth
+              name="newPassword"
+              label="New Password"
+              type="password"
+              id="newPassword"
+              autoComplete="new-password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              error={!!errors.newPassword}
+              helperText={errors.newPassword}
+            />
+
+            <TextField
+              required
+              fullWidth
+              name="confirmPassword"
+              label="Confirm Password"
+              type="password"
+              id="confirmPassword"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              error={!!errors.confirmPassword}
+              helperText={errors.confirmPassword}
+            />
+
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              disabled={isUpdating}
+            >
+              {isUpdating ? "Updating..." : "Update Password"}
+            </Button>
+            <Button
+
+              fullWidth
+              variant="outlined"
+              disabled={isUpdating}
+              onClick={() => navigate("/login")}
+            >
+              { "Cancel"}
+            </Button>
+          </Box>
+        </Paper>
+      </Container>
+    </Box>
   );
 }

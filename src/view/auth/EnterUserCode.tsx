@@ -45,16 +45,35 @@ export default function EnterUserCode() {
   return (
     <Box
       sx={{
+        minHeight: "100vh",
         display: "flex",
+        flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
-        minHeight: "100vh",
-        width: "100%",
-        flexDirection: "column",
         background: "url('login.webp') center/cover no-repeat",
+        position: "relative",
+        "&::before": {
+          content: '""',
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: "rgba(0, 0, 0, 0.6)",
+          zIndex: 1,
+        },
       }}
     >
-      <Paper elevation={3} sx={{ p: 4, maxWidth: 400, width: "100%" }}>
+      <Paper
+        elevation={3}
+        sx={{
+          p: 4,
+          maxWidth: 400,
+          width: "100%",
+          position: "relative",
+          zIndex: 2,
+        }}
+      >
         <Typography variant="h5" component="h1" gutterBottom align="center">
           Reset Your Password
         </Typography>
