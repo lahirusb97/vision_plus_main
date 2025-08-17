@@ -11,38 +11,35 @@ import AssignmentIcon from "@mui/icons-material/Assignment";
 
 import DateRangeIcon from "@mui/icons-material/DateRange";
 import useGetCheckinInvoiceListManual from "../../hooks/useGetCheckinInvoiceListManual";
+import useGetPatientRefractionOrderList from "../../hooks/useGetPatientRefractionOrderList";
+import { numberWithCommas } from "../../utils/numberWithCommas";
+import { formatDateTimeByType } from "../../utils/formatDateTimeByType";
+import BtnViewOrderForm from "../common/BtnViewOrderForm";
 interface HearingServiceHistoryPopoverProps {
   open: boolean;
   anchorEl: HTMLElement | null;
   onClose: () => void;
-  nic: string | null;
-  mobile: string | null;
+  patient_id: number | null;
 }
 
 export const InvoiceHistoryPopover: React.FC<
   HearingServiceHistoryPopoverProps
-> = ({ open, anchorEl, onClose, nic, mobile }) => {
+> = ({ open, anchorEl, onClose, patient_id }) => {
   const {
-    invoiceManualList,
-    invoiceManualListLoading,
-    invoiceManualListError,
-    invoiceManualListSearch,
-  } = useGetCheckinInvoiceListManual();
+    refractionInvoiceList,
+    refractionInvoiceListLoading,
+    refractionInvoiceListTotalCount,
+    refractionInvoiceListSearch,
+    refractionInvoiceListError,
+  } = useGetPatientRefractionOrderList();
 
   useEffect(() => {
-    if ((open && mobile !== null) || nic !== null) {
-      invoiceManualListSearch({
-        mobile: mobile,
-        nic: nic,
-        invoice_number: null,
-        page_size: 1000,
-        page: 1,
-        search: null,
-        progress_status: null,
-        patient_id: null,
+    if (open && patient_id) {
+      refractionInvoiceListSearch({
+        patient_id: patient_id,
       });
     }
-  }, [open, mobile, nic]);
+  }, [open, patient_id]);
 
   return (
     <Popover
@@ -80,13 +77,13 @@ export const InvoiceHistoryPopover: React.FC<
         variant="subtitle2"
         sx={{ mb: 1, pr: 3 /* space for close btn */ }}
       >
-        Invoice History
+       Available {refractionInvoiceListTotalCount} Invoices
       </Typography>
-      {invoiceManualListLoading ? (
+      {refractionInvoiceListLoading ? (
         <CircularProgress size={24} />
-      ) : invoiceManualListError ? (
+      ) : refractionInvoiceListError ? (
         <Typography color="error">Failed to load history.</Typography>
-      ) : invoiceManualList?.length === 0 ? (
+      ) : refractionInvoiceList?.length === 0 ? (
         <Typography color="text.secondary" sx={{ fontSize: 14 }}>
           No invoice history found.
         </Typography>
@@ -98,95 +95,125 @@ export const InvoiceHistoryPopover: React.FC<
             gap: 1, // reduced vertical gap between invoices
           }}
         >
-          {invoiceManualList?.map((invoice, index) => (
+          {refractionInvoiceList?.map((invoice, index) => (
             <Box
               key={invoice.id}
               sx={{
                 display: "flex",
                 flexDirection: "column",
-                gap: 0.5,
-                p: 1, // reduced padding
-                borderRadius: 1,
+                gap: 1.5,
+                p: 2,
+                borderRadius: 2,
                 bgcolor: index % 2 === 0 ? "grey.50" : "background.paper",
                 border: "1px solid",
                 borderColor: "grey.200",
+                boxShadow: 1,
               }}
             >
+              {/* Invoice Header */}
               <Box
                 sx={{
                   display: "flex",
-                  flexDirection: "column",
-                  gap: 0.75, // tighter grouping
+                  justifyContent: "space-between",
+                  alignItems: "center",
                 }}
               >
-                {/* Customer Name */}
-                <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
-                  <Typography variant="body2" fontWeight={600} noWrap>
-                    {invoice.customer}
+                <Typography
+                  variant="subtitle2"
+                  fontWeight={700}
+                  color="primary"
+                >
+                  Invoice Details
+                </Typography>
+                <BtnViewOrderForm invoiceNumber={invoice.invoice_number} />
+              </Box>
+
+              {/* Invoice Meta */}
+              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                  <DateRangeIcon fontSize="small" color="primary" />
+                  <Typography variant="body2">
+                    {formatDateTimeByType(invoice.order_date, "both")}
                   </Typography>
                 </Box>
 
-                {/* Invoice Meta */}
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexWrap: "wrap",
-                    gap: 1.5, // reduced spacing between fields
-                    alignItems: "center",
-                  }}
-                >
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                    <Typography variant="body2" fontWeight={500}>
-                      #:
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {invoice.invoice_number}
-                    </Typography>
-                  </Box>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                  <Typography variant="body2" fontWeight={600}>
+                    Invoice #:
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {invoice.invoice_number}
+                  </Typography>
+                </Box>
 
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                    <DateRangeIcon fontSize="small" color="primary" />
-                    <Typography variant="body2">
-                      {new Date(invoice.invoice_date).toLocaleDateString()}
-                    </Typography>
-                  </Box>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                  <Typography variant="body2" fontWeight={600}>
+                    Total:
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    color={
+                      invoice.total_paid >= invoice.total_price
+                        ? "success.main"
+                        : "warning.main"
+                    }
+                    fontWeight={700}
+                  >
+                    {numberWithCommas(invoice.total_price)}
+                  </Typography>
+                </Box>
 
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                    <Typography variant="body2" fontWeight={500}>
-                      Total:
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {parseFloat(invoice.total_price).toFixed(2)}
-                    </Typography>
-                  </Box>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                  <Typography variant="body2" fontWeight={600}>
+                    Paid:
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {numberWithCommas(invoice.total_paid)}
+                  </Typography>
+                </Box>
+              </Box>
 
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                    <Typography variant="body2" fontWeight={500}>
-                      Paid:
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {invoice.payments
-                        ?.reduce(
-                          (sum, payment) =>
-                            sum + parseFloat(payment.amount || "0"),
-                          0
-                        )
-                        .toFixed(2)}
-                    </Typography>
-                  </Box>
+              {/* Divider */}
+              <Box
+                sx={{
+                  borderBottom: "1px solid",
+                  borderColor: "grey.300",
+                  my: 1,
+                }}
+              />
 
-                  <Box sx={{ ml: "auto" }}>
-                    <a
-                      href={`/transaction/invoice/view/${invoice.invoice_number}/?invoice_number=${invoice.invoice_number}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{ textDecoration: "none" }}
-                    >
-                      <IconButton size="small" color="primary">
-                        <AssignmentIcon fontSize="small" />
-                      </IconButton>
-                    </a>
-                  </Box>
+              {/* Refraction Section */}
+              <Typography variant="subtitle2" fontWeight={700} color="primary">
+                Refraction Details
+              </Typography>
+
+              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                  <DateRangeIcon fontSize="small" color="primary" />
+                  <Typography variant="body2">
+                    {formatDateTimeByType(
+                      invoice.refraction.created_at,
+                      "both"
+                    )}
+                  </Typography>
+                </Box>
+
+                <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                  <Typography variant="body2" fontWeight={600}>
+                    Refraction #:
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {invoice.refraction.refraction_number}
+                  </Typography>
+                </Box>
+
+                <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                  <Typography variant="body2" fontWeight={600}>
+                    Branch:
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {invoice.refraction.branch_name}
+                  </Typography>
                 </Box>
               </Box>
             </Box>

@@ -36,11 +36,14 @@ import toast from "react-hot-toast";
 import { getUserCurentBranch } from "../../utils/authDataConver";
 import ConfirmDialog from "../../components/ConfirmDialog";
 import { extractErrorMessage } from "../../utils/extractErrorMessage";
+import RefractionNumberDialog from "./RefractionNumberDialog";
+import { RefractionNumberModel } from "../../model/RefractionModel";
+
 export default function ExistingCustomerRefractionNumber() {
   const theme = useTheme();
   const navigate = useNavigate();
   // const { openDialog } = useDeleteDialog();
-
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchByNic, setSearchByNic] = useState("");
   const [searchByMobile, setSearchByMobile] = useState("");
@@ -54,17 +57,15 @@ export default function ExistingCustomerRefractionNumber() {
   } | null>(null);
   //POPOver
   const [popoverAnchor, setPopoverAnchor] = useState<null | HTMLElement>(null);
-  const [popoverSearchData, setPopoverSearchData] = useState<{
-    nic: string | null;
-    mobile: string | null;
-  } | null>(null);
+  const [popoverSearchData, setPopoverSearchData] = useState<number | null>(
+    null
+  );
   const handleShowHistory = (
     event: React.MouseEvent<HTMLElement>,
-    nic: string | null,
-    mobile: string | null
+    patient_id: number
   ) => {
     setPopoverAnchor(event.currentTarget);
-    setPopoverSearchData({ nic, mobile });
+    setPopoverSearchData(patient_id);
   };
   const handleClosePopover = () => {
     setPopoverAnchor(null);
@@ -108,7 +109,9 @@ export default function ExistingCustomerRefractionNumber() {
       branch_id: getUserCurentBranch()?.id,
     };
     try {
-      await postHandler("refractions/create/", payload);
+      const responseData: { data: { data: RefractionNumberModel } } =
+        await postHandler("refractions/create/", payload);
+      navigate(`${responseData.data.data.id}/success/`);
       toast.success("Refraction Number Generated Successfully");
     } catch (error) {
       extractErrorMessage(error);
@@ -314,9 +317,7 @@ export default function ExistingCustomerRefractionNumber() {
                       <IconButton
                         size="small"
                         sx={{ p: 0 }}
-                        onClick={(e) =>
-                          handleShowHistory(e, row.nic, row.phone_number)
-                        }
+                        onClick={(e) => handleShowHistory(e, row.id)}
                       >
                         <HistoryRounded fontSize="small" />
                       </IconButton>
@@ -368,19 +369,17 @@ export default function ExistingCustomerRefractionNumber() {
       >
         <Button
           size="small"
-          disabled={!selectedRow}
-          onClick={handleInternalOrder}
+          onClick={() => setIsDialogOpen(true)}
           variant="contained"
         >
-          Select Details
+          Create New Refraction Number
         </Button>
       </Box>
       <InvoiceHistoryPopover
         open={Boolean(popoverAnchor)}
         anchorEl={popoverAnchor}
         onClose={handleClosePopover}
-        nic={popoverSearchData?.nic || null}
-        mobile={popoverSearchData?.mobile || null}
+        patient_id={popoverSearchData || null}
       />
       <ConfirmDialog
         open={confirmDialogOpen}
@@ -390,6 +389,13 @@ export default function ExistingCustomerRefractionNumber() {
           // Refresh or update the UI as needed
         }}
         message={`Are you sure you want to generate refraction number for ${selectedPatient?.name}?`}
+      />
+      <RefractionNumberDialog
+        open={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+        name={searchQuery}
+        nic={searchByNic}
+        mobile={searchByMobile}
       />
     </Box>
   );

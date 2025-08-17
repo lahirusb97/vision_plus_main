@@ -10,4 +10,5 @@ export interface PatientRefractionDetailOrderSerializer {
   total_price: number;
   order_date: string;
   refraction: RefractionNumberModel;
+  total_paid: number;
 }

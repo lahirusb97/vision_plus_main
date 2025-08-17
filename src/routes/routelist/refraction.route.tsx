@@ -5,7 +5,7 @@ import ProtectedChildRoute from "../ProtectedChildRoute";
 import RefractionGenarated from "../../view/refraction/RefractionGenarated";
 import UpdateRefraction from "../../view/refraction/UpdateRefraction";
 import RefractionEdit from "../../view/refraction/RefractionEdit";
-import RefractionNumberTab from "../../view/refraction/RefractionNumberTab";
+import ExistingCustomerRefractionNumber from "../../view/refraction/ExistingCustomerRefractionNumber";
 
 export const refractionRoutes: RouteObject[] = [
   {
@@ -14,7 +14,7 @@ export const refractionRoutes: RouteObject[] = [
     children: [
       {
         index: true,
-        element: <RefractionNumberTab />,
+        element: <ExistingCustomerRefractionNumber />,
       },
       {
         path: ":refraction_id/success/",

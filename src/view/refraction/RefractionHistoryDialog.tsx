@@ -16,6 +16,8 @@ import { PatientRefractionDetailOrderSerializer } from "../../model/PatientRefra
 import useGetPatientRefractionOrderList from "../../hooks/useGetPatientRefractionOrderList";
 import { formatDateTimeByType } from "../../utils/formatDateTimeByType";
 import BtnViewOrderForm from "../../components/common/BtnViewOrderForm";
+import { DateRangeIcon } from "@mui/x-date-pickers";
+import { numberWithCommas } from "../../utils/numberWithCommas";
 
 interface RefractionHistoryDialogProps {
   open: boolean;
@@ -75,45 +77,132 @@ const RefractionHistoryDialog: React.FC<RefractionHistoryDialogProps> = ({
           <Typography>No previous refractions found.</Typography>
         ) : (
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-            {refractionInvoiceList.map((item, index) => (
-              <Paper variant="outlined" sx={{ p: 2 }} key={item.id}>
-                <Box>
-                  <Typography variant="subtitle1">
-                    <strong> Order </strong>{" "}
-                    <BtnViewOrderForm invoiceNumber={item.invoice_number} />
+            {refractionInvoiceList?.map((invoice, index) => (
+              <Box
+                key={invoice.id}
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 1.5,
+                  p: 2,
+                  borderRadius: 2,
+                  bgcolor: index % 2 === 0 ? "grey.50" : "background.paper",
+                  border: "1px solid",
+                  borderColor: "grey.200",
+                  boxShadow: 1,
+                }}
+              >
+                {/* Invoice Header */}
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <Typography
+                    variant="subtitle2"
+                    fontWeight={700}
+                    color="primary"
+                  >
+                    Invoice Details
                   </Typography>
-                  <Typography variant="body2">
-                    Invoice:{item.invoice_number || "N/A"}
-                  </Typography>
-                  <Typography variant="body2">
-                    total price {item.total_price || "N/A"}
-                  </Typography>
-                  <Typography variant="body2">
-                    Date:{" "}
-                    {formatDateTimeByType(item.order_date, "both") || "N/A"}
-                  </Typography>
+                  <BtnViewOrderForm invoiceNumber={invoice.invoice_number} />
                 </Box>
-                <Divider />
-                <Box>
-                  <Typography variant="subtitle1">
-                    <strong> Refraction </strong>
-                  </Typography>
-                  <Typography variant="body2">
-                    Number: {item.refraction.refraction_number || "N/A"}
-                  </Typography>
-                  <Typography variant="body2">
-                    Date:{" "}
-                    {formatDateTimeByType(
-                      item.refraction_details.created_at,
-                      "both"
-                    ) || "N/A"}
-                  </Typography>
-                  <Typography variant="body2">
-                    Prescription Type:{" "}
-                    {item.refraction_details.prescription_type_display || "N/A"}
-                  </Typography>
+
+                {/* Invoice Meta */}
+                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                    <DateRangeIcon fontSize="small" color="primary" />
+                    <Typography variant="body2">
+                      {formatDateTimeByType(invoice.order_date, "both")}
+                    </Typography>
+                  </Box>
+
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                    <Typography variant="body2" fontWeight={600}>
+                      Invoice #:
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {invoice.invoice_number}
+                    </Typography>
+                  </Box>
+
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                    <Typography variant="body2" fontWeight={600}>
+                      Total:
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      color={
+                        invoice.total_paid >= invoice.total_price
+                          ? "success.main"
+                          : "warning.main"
+                      }
+                      fontWeight={700}
+                    >
+                      {numberWithCommas(invoice.total_price)}
+                    </Typography>
+                  </Box>
+
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                    <Typography variant="body2" fontWeight={600}>
+                      Paid:
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {numberWithCommas(invoice.total_paid)}
+                    </Typography>
+                  </Box>
                 </Box>
-              </Paper>
+
+                {/* Divider */}
+                <Box
+                  sx={{
+                    borderBottom: "1px solid",
+                    borderColor: "grey.300",
+                    my: 1,
+                  }}
+                />
+
+                {/* Refraction Section */}
+                <Typography
+                  variant="subtitle2"
+                  fontWeight={700}
+                  color="primary"
+                >
+                  Refraction Details
+                </Typography>
+
+                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                    <DateRangeIcon fontSize="small" color="primary" />
+                    <Typography variant="body2">
+                      {formatDateTimeByType(
+                        invoice.refraction.created_at,
+                        "both"
+                      )}
+                    </Typography>
+                  </Box>
+
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                    <Typography variant="body2" fontWeight={600}>
+                      Refraction #:
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {invoice.refraction.refraction_number}
+                    </Typography>
+                  </Box>
+
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                    <Typography variant="body2" fontWeight={600}>
+                      Branch:
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {invoice.refraction.branch_name}
+                    </Typography>
+                  </Box>
+                </Box>
+              </Box>
             ))}
           </Box>
         )}

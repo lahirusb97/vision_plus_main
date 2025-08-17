@@ -36,7 +36,6 @@ import SubmitCustomBtn from "../../components/common/SubmiteCustomBtn";
 import AuthDialog, { DialogAuthData } from "../../components/common/AuthDialog";
 import { History } from "@mui/icons-material";
 import CustomIconButton from "../../custom-mui/CustomIconButton";
-import useGetPatientRefractionOrderList from "../../hooks/useGetPatientRefractionOrderList";
 import RefractionHistoryDialog from "./RefractionHistoryDialog";
 
 export default function RefractionEdit() {

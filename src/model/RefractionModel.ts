@@ -7,6 +7,7 @@ interface RefractionNumberModel {
   branch_id: number;
   created_at: string;
   patient_id: number | null;
+  branch_name: string;
 }
 
 export type { RefractionNumberModel };
