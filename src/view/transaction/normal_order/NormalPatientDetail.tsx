@@ -56,8 +56,8 @@ export default function NormalPatientDetail({extra_phone_number = false}) {
             sx={{ flexGrow: 1 }}
             size="small"
             label="name"
-            InputProps={{
-              endAdornment: (
+            slotProps={{
+              input:{endAdornment: (
                 <InputAdornment position="end">
                   <IconButton
                     onClick={() =>
@@ -67,11 +67,10 @@ export default function NormalPatientDetail({extra_phone_number = false}) {
                     <SearchSharp />
                   </IconButton>
                 </InputAdornment>
-              ),
+              ),},
+              inputLabel:{shrink: Boolean(watch("name"))}
             }}
-            InputLabelProps={{
-              shrink: Boolean(watch("name")),
-            }}
+            
           />
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
             <DateInput />
@@ -91,8 +90,8 @@ export default function NormalPatientDetail({extra_phone_number = false}) {
           sx={{ flexGrow: 1 }}
           size="small"
           label="Mobile Number"
-          InputProps={{
-            endAdornment: (
+          slotProps={{
+            input:{endAdornment: (
               <InputAdornment position="end">
                 <IconButton
                   onClick={() =>
@@ -105,11 +104,10 @@ export default function NormalPatientDetail({extra_phone_number = false}) {
                   <SearchSharp />
                 </IconButton>
               </InputAdornment>
-            ),
+            ),},
+            inputLabel:{shrink: Boolean(watch("phone_number"))}
           }}
-          InputLabelProps={{
-            shrink: Boolean(watch("phone_number")),
-          }}
+          
         />
         {extra_phone_number && (
           <TextField
@@ -145,11 +143,8 @@ export default function NormalPatientDetail({extra_phone_number = false}) {
           sx={{ flexGrow: 1 }}
           size="small"
           label="NIC"
-          InputLabelProps={{
-            shrink: Boolean(watch("nic")),
-          }}
-          InputProps={{
-            endAdornment: (
+          slotProps={{
+            input:{endAdornment: (
               <InputAdornment position="end">
                 <IconButton
                   onClick={() =>
@@ -160,6 +155,8 @@ export default function NormalPatientDetail({extra_phone_number = false}) {
                 </IconButton>
               </InputAdornment>
             ),
+          },
+          inputLabel:{shrink: Boolean(watch("nic"))}
           }}
         />
       </Box>
@@ -168,8 +165,8 @@ export default function NormalPatientDetail({extra_phone_number = false}) {
         error={!!errors.address}
         size="small"
         label="Address"
-        InputLabelProps={{
-          shrink: Boolean(watch("address")),
+        slotProps={{
+          inputLabel:{shrink: Boolean(watch("address"))}
         }}
       />
     </Box>

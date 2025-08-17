@@ -11,7 +11,6 @@ import HearingOrderEditIndex from "../../view/hearing/HearingOrderEditIndex";
 import HearingOrderEdit from "../../view/hearing/HearingOrderEdit";
 import HearingInvoiceReport from "../../view/hearing/hearing-invoice/HearingInvoiceReport";
 import HearingReminder from "../../view/hearing/hearing-reminder/HearingReminder";
-import HearingReplayment from "../../view/hearing/HearingReplayment";
 import HearingRepaymentForm from "../../view/hearing/HearingRepaymentForm";
 
 export const hearingRoutes: RouteObject[] = [

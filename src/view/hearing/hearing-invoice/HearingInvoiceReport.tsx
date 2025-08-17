@@ -191,7 +191,7 @@ export default function HearingInvoiceReport() {
                           <MedicalServices color="primary" fontSize="small" />
                         </IconButton>
                       </Tooltip>
-                      <Tooltip title="Progress History">
+                      <Tooltip title="Service History">
                         <IconButton
                           size="small"
                           sx={{ p: 0 }}

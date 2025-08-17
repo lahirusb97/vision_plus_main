@@ -15,7 +15,8 @@ const ConfirmDialog: React.FC<{
   open: boolean;
   closeDialog: () => void;
   onSuccess: () => void;
-}> = ({ apiCall, open, closeDialog, onSuccess }) => {
+  message?: string;
+}> = ({ apiCall, open, closeDialog, onSuccess, message }) => {
   const handleAction = async () => {
     try {
       await apiCall();
@@ -31,7 +32,9 @@ const ConfirmDialog: React.FC<{
     <Dialog open={open} onClose={closeDialog} maxWidth="xs" fullWidth>
       <DialogTitle>Confirm Action</DialogTitle>
       <DialogContent>
-        <Typography>Are you sure you want to Proceed?</Typography>
+        <Typography>
+          {message || "Are you sure you want to Proceed?"}
+        </Typography>
       </DialogContent>
       <DialogActions>
         <Button onClick={closeDialog} color="error" variant="outlined">

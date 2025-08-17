@@ -9,6 +9,7 @@ import { getUserCurentBranch } from "../utils/authDataConver";
 import { CheckinInvoiceModel } from "../model/CheckinInvoiceModel";
 import { PaginatedResponse } from "../model/PaginatedResponse";
 import { paramsNullCleaner } from "../utils/paramsNullCleaner";
+
 export interface CheckinInvoiceListParams {
   page_size: number;
   page: number;
@@ -17,52 +18,62 @@ export interface CheckinInvoiceListParams {
   mobile: string | null;
   nic: string | null;
   progress_status: ProgressStatus | null;
+  patient_id: number | null;
 }
-const useGetCheckinInvoiceList = () => {
+
+const useGetCheckinInvoiceListManual = () => {
   //use null or [] base on scenario
   const [dataList, SetDataList] = useState<CheckinInvoiceModel[] | []>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+  const [initialLoad, setInitialLoad] = useState(true);
   const [params, setParams] = useState<CheckinInvoiceListParams>({
     page_size: 10,
     page: 1,
     search: null,
-    invoice_number: null,
     mobile: null,
+    invoice_number: null,
     nic: null,
     progress_status: null,
+    patient_id: null,
   });
   const abortControllerRef = useRef<AbortController | null>(null);
 
   const loadData = useCallback(async () => {
+    // Don't fetch on initial load
+    if (initialLoad) {
+      setInitialLoad(false);
+      return;
+    }
+
+    // Cancel any existing request
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
     }
+
     const controller = new AbortController();
     abortControllerRef.current = controller;
     setLoading(true);
+
     try {
       const response: { data: PaginatedResponse<CheckinInvoiceModel> } =
         await axiosClient.get(`factory-invoices/search/`, {
-          params: {
-            ...paramsNullCleaner(params),
-            branch_id: getUserCurentBranch()?.id,
-          },
+          params: paramsNullCleaner(params),
           signal: controller.signal,
         });
+
       // Only update state if this request wasn't aborted
       if (!controller.signal.aborted) {
-        SetDataList(response.data?.results);
-        setTotalCount(response.data?.count);
+        SetDataList(response.data?.results || []);
+        setTotalCount(response.data?.count || 0);
         if (response.data?.count > 0) {
-          toast.success("Maching Invoice found ");
+          toast.success("Matching Invoice found ");
         } else {
           toast.error("No matching invoice found");
         }
+        setError(false);
       }
-
-      // setTotalCount(response.data.count);
     } catch (err) {
       // Check if the error is a cancellation
       if (axios.isCancel(err)) {
@@ -71,37 +82,45 @@ const useGetCheckinInvoiceList = () => {
       // Only update error state if this request wasn't aborted
       if (!controller.signal.aborted) {
         SetDataList([]);
+        setTotalCount(0);
         extractErrorMessage(err);
         setError(true);
       }
     } finally {
-    
+      setLoading(false);
     }
-  }, [params]);
+  }, [params, initialLoad]);
 
-  const setParamsData = (newParams: CheckinInvoiceListParams) => {
-    // use null to remove params
+  const setParamsData = useCallback((newParams: CheckinInvoiceListParams) => {
     setParams((prev) => ({
       ...prev,
       ...newParams,
     }));
-  };
+  }, []);
+
   useEffect(() => {
-    // Call loadData directly - it will handle its own cleanup
     loadData();
-    // Return cleanup function for component unmount
+    // Cleanup function for component unmount
     return () => {
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
       }
     };
   }, [loadData]);
+
+  // Manual trigger function
+  const triggerFetch = useCallback(() => {
+    setInitialLoad(true);
+    loadData();
+  }, [loadData]);
+
   const handlePageNavigation = useCallback((page: number) => {
     setParams((prev) => ({
       ...prev,
       page,
     }));
   }, []);
+
   const changePageSize = useCallback((pageSize: number) => {
     setParams((prev) => ({
       ...prev,
@@ -109,17 +128,18 @@ const useGetCheckinInvoiceList = () => {
     }));
     ///* if you use functional prev state you do not need to add params to callback depandancy array
   }, []);
+
   return {
-    invoiceLimit: params.page_size,
-    invoiceList: dataList,
-    invoiceListLoading: loading,
-    invoiceListError: error,
-    invoiceListTotalCount: totalCount,
-    invoiceListPageNavigation: handlePageNavigation,
-    invoiceListSearch: setParamsData,
-    invoiceListRefres: loadData,
-    invoiceListChangePageSize: changePageSize,
+    invoiceManualLimit: params.page_size,
+    invoiceManualList: dataList,
+    invoiceManualListLoading: loading,
+    invoiceManualListError: error,
+    invoiceManualListTotalCount: totalCount,
+    invoiceManualListPageNavigation: handlePageNavigation,
+    invoiceManualListSearch: setParamsData,
+    invoiceManualListRefres: triggerFetch,
+    invoiceManualListChangePageSize: changePageSize,
   };
 };
 
-export default useGetCheckinInvoiceList;
+export default useGetCheckinInvoiceListManual;

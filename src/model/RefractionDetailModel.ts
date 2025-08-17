@@ -36,4 +36,5 @@ export interface RefractionDetailModel {
   blepharitis: boolean;
   user: number;
   username: string;
+  created_at: string;
 }

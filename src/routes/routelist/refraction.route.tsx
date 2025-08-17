@@ -1,12 +1,11 @@
 import RefractionTable from "../../view/refraction/RefractionTable";
 import { RouteObject } from "react-router";
-import RefractionNumber from "../../view/refraction/RefractionNumber";
-
 import { Suspense } from "react";
 import ProtectedChildRoute from "../ProtectedChildRoute";
 import RefractionGenarated from "../../view/refraction/RefractionGenarated";
 import UpdateRefraction from "../../view/refraction/UpdateRefraction";
 import RefractionEdit from "../../view/refraction/RefractionEdit";
+import RefractionNumberTab from "../../view/refraction/RefractionNumberTab";
 
 export const refractionRoutes: RouteObject[] = [
   {
@@ -15,7 +14,7 @@ export const refractionRoutes: RouteObject[] = [
     children: [
       {
         index: true,
-        element: <RefractionNumber />,
+        element: <RefractionNumberTab />,
       },
       {
         path: ":refraction_id/success/",

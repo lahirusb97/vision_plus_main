@@ -5,6 +5,7 @@ import {
   Checkbox,
   FormControl,
   FormControlLabel,
+  IconButton,
   InputLabel,
   MenuItem,
   Paper,
@@ -33,10 +34,15 @@ import LoadingAnimation from "../../components/LoadingAnimation";
 import { formatDateTimeByType } from "../../utils/formatDateTimeByType";
 import SubmitCustomBtn from "../../components/common/SubmiteCustomBtn";
 import AuthDialog, { DialogAuthData } from "../../components/common/AuthDialog";
+import { History } from "@mui/icons-material";
+import CustomIconButton from "../../custom-mui/CustomIconButton";
+import useGetPatientRefractionOrderList from "../../hooks/useGetPatientRefractionOrderList";
+import RefractionHistoryDialog from "./RefractionHistoryDialog";
 
 export default function RefractionEdit() {
   //USER VALIDATION HOOKS
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
+  const [historyDialogOpen, setHistoryDialogOpen] = useState(false);
   const [dataSendingType, setDataSendingType] = useState<
     "create" | "update" | null
   >("create");
@@ -185,6 +191,15 @@ export default function RefractionEdit() {
     );
   }
 
+
+  const handleOpenHistoryDialog = () => {
+    setHistoryDialogOpen(true);
+  };
+
+  const handleCloseHistoryDialog = () => {
+    setHistoryDialogOpen(false);
+  };
+
   return (
     <>
       <FormProvider {...methods}>
@@ -200,60 +215,70 @@ export default function RefractionEdit() {
                 borderRadius: 2,
               }}
             >
-              {[
-                {
-                  label: "Name",
-                  value: singlerefractionNumber?.customer_full_name,
-                },
-                { label: "NIC", value: singlerefractionNumber?.nic },
-                {
-                  label: "Refraction No.",
-                  value: singlerefractionNumber?.refraction_number,
-                },
-                {
-                  label: "Mobile",
-                  value: singlerefractionNumber?.customer_mobile,
-                },
-                {
-                  label: "Date",
-                  value: formatDateTimeByType(
-                    singlerefractionNumber?.created_at,
-                    "date"
-                  ),
-                },
-              ].map((item, index) => (
-                <Box
-                  key={index}
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 1,
-                    minWidth: "20%",
-                  }}
-                >
-                  <Typography
-                    variant="body1"
+              <Box sx={{ display: "flex", gap: 1, flex: 1 }}>
+                {[
+                  {
+                    label: "Name",
+                    value: singlerefractionNumber?.customer_full_name,
+                  },
+                  { label: "NIC", value: singlerefractionNumber?.nic },
+                  {
+                    label: "Refraction No.",
+                    value: singlerefractionNumber?.refraction_number,
+                  },
+                  {
+                    label: "Mobile",
+                    value: singlerefractionNumber?.customer_mobile,
+                  },
+                  {
+                    label: "Date",
+                    value: formatDateTimeByType(
+                      singlerefractionNumber?.created_at,
+                      "date"
+                    ),
+                  },
+                ].map((item, index) => (
+                  <Box
+                    key={index}
                     sx={{
-                      bgcolor: grey[700],
-                      color: "white",
-                      p: "2px 5px",
-                      borderRadius: 1,
-                      minWidth: "40px",
-                      textAlign: "center",
-                      fontSize: "0.8rem",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1,
+                      minWidth: "20%",
                     }}
                   >
-                    {item.label}
-                  </Typography>
-                  <Typography
-                    variant="body1"
-                    fontWeight={500}
-                    color="textSecondary"
-                  >
-                    {item.value}
-                  </Typography>
-                </Box>
-              ))}
+                    <Typography
+                      variant="body1"
+                      sx={{
+                        bgcolor: grey[700],
+                        color: "white",
+                        p: "2px 5px",
+                        borderRadius: 1,
+                        minWidth: "40px",
+                        textAlign: "center",
+                        fontSize: "0.8rem",
+                      }}
+                    >
+                      {item.label}
+                    </Typography>
+                    <Typography
+                      variant="body1"
+                      fontWeight={500}
+                      color="textSecondary"
+                    >
+                      {item.value}
+                    </Typography>
+                  </Box>
+                ))}
+              </Box>
+              <CustomIconButton
+                onClick={handleOpenHistoryDialog}
+                disabled={!singlerefractionNumber?.patient_id}
+                variant="filled"
+                title="View Refraction History"
+              >
+                <History />
+              </CustomIconButton>
             </Paper>
 
             <Box
@@ -375,6 +400,11 @@ export default function RefractionEdit() {
             : handleRefractionDetailCreate
         }
         onClose={() => setAuthDialogOpen(false)}
+      />
+      <RefractionHistoryDialog
+        open={historyDialogOpen}
+        onClose={handleCloseHistoryDialog}
+        patientId={singlerefractionNumber?.patient_id || null}
       />
     </>
   );

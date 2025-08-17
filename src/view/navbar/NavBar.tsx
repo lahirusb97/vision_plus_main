@@ -3,7 +3,17 @@ import React from "react";
 import { useLocation, useNavigate } from "react-router";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import { Paper, Box, Button, Typography, Fade } from "@mui/material";
+import {
+  Paper,
+  Box,
+  Button,
+  Typography,
+  Fade,
+  Stack,
+  Tooltip,
+  Avatar,
+  Badge,
+} from "@mui/material";
 import {
   Feedback,
   Hearing,
@@ -298,9 +308,7 @@ export default function NavBar() {
                 }}
               />
             ))}
-          <Button onClick={deleteCookie}>
-            <LogoutOutlined />
-          </Button>
+        
           <Box
             sx={{
               mx: { xs: 0, sm: 1 },
@@ -311,46 +319,64 @@ export default function NavBar() {
               justifyContent: "space-between",
             }}
           >
-            <Box>
+            <Stack direction="row" spacing={1} alignItems="center">
+              <Tooltip
+                title={`Branch: ${
+                  getUserCurentBranch()?.branch_name || "Branch"
+                } • Role: ${getUserAuth()?.is_superuser ? "Admin" : "User"}`}
+              >
+                <Badge
+                  overlap="rectangular"
+                  anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                  badgeContent={
+                    <Box
+                      sx={{
+                        bgcolor: getUserAuth()?.is_superuser
+                          ? "primary.main"
+                          : "grey.500",
+                        color: "white",
+                        px: 0.8,
+                        py: 0.2,
+                        borderRadius: 0.5, // square-ish
+                        fontSize: 10,
+                        fontWeight: 500,
+                        boxShadow: 1,
+                      }}
+                    >
+                      {getUserAuth()?.is_superuser ? "Admin" : "User"}
+                    </Box>
+                  }
+                >
+                  <Avatar
+                    sx={{
+                      bgcolor: "grey.200",
+                      width: 32,
+                      height: 32,
+                    }}
+                  >
+                    <Building2Icon size={16} />
+                  </Avatar>
+                </Badge>
+              </Tooltip>
+
               <Typography
+                variant="body2"
                 sx={{
-                  display: "flex",
-                  alignItems: "center",
                   maxWidth: 120,
                   overflow: "hidden",
                   textOverflow: "ellipsis",
                   whiteSpace: "nowrap",
                   fontSize: { xs: 13, md: 15 },
-                  color: "text.primary",
+                  fontWeight: 500,
                 }}
-                textTransform="capitalize"
-                variant="body2"
-                component="div"
               >
-                <Building2Icon style={{ width: "16px" }} />
-
-                <span>{getUserCurentBranch()?.branch_name || "Branch"}</span>
+                {getUserCurentBranch()?.branch_name || "Branch"}
               </Typography>
-            </Box>
-
-            <Box>
-              <Typography
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-
-                  fontSize: { xs: 13, md: 15 },
-                  color: "text.secondary",
-                }}
-                variant="body2"
-                component="div"
-              >
-                <User2 style={{ width: "16px" }} />
-
-                {getUserAuth()?.is_superuser ? "Admin" : "User"}
-              </Typography>
-            </Box>
+            </Stack>
           </Box>
+          <Button onClick={deleteCookie}>
+            <LogoutOutlined />
+          </Button>
           {/* <IconButton onClick={setNavbarState}>
             <BuildTwoTone />
           </IconButton> */}
