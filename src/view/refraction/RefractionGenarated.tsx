@@ -8,7 +8,7 @@ export default function RefractionGenerated() {
   const { refraction_id } = useParams();
   const { singlerefractionNumber, singlerefractionNumberLoading } =
     useGetSingleRefractionNumber(refraction_id);
-
+console.log(singlerefractionNumber);
   // Parse query parameters
   if (singlerefractionNumberLoading) {
     return <LoadingAnimation loadingMsg="Refraction Number Details Loading" />;
