@@ -24,14 +24,10 @@ import OnTypeSearchInput from "../../components/inputui/OnTypeSearchInput";
 import LocalPhoneIcon from "@mui/icons-material/LocalPhone";
 // import { useDeleteDialog } from "../../context/DeleteDialogContext";
 import BadgeIcon from "@mui/icons-material/Badge";
-import { useAxiosPost } from "../../hooks/useAxiosPost";
-import toast from "react-hot-toast";
-import { getUserCurentBranch } from "../../utils/authDataConver";
-import { extractErrorMessage } from "../../utils/extractErrorMessage";
-import { RefractionNumberModel } from "../../model/RefractionModel";
 import DataLoadingError from "../../components/common/DataLoadingError";
 import { PatientModel } from "../../model/Patient";
-
+import { Edit } from "lucide-react";
+import EditIcon from "@mui/icons-material/Edit";
 interface PatientTableProps {
   onRawSelect: (row: PatientModel) => void;
   existingPatinetBtnLable: string;
@@ -45,17 +41,16 @@ interface PatientTableProps {
     searchNic: string;
     searchMobile: string;
   }) => void;
+  onEditPatientClick: (row: PatientModel) => void;
 }
 export default function PatientTable({
   onRawSelect,
   existingPatinetBtnLable,
   createPatientBtnLable,
   onCreatePatientClick,
+  onEditPatientClick,
 }: PatientTableProps) {
   const theme = useTheme();
-  const navigate = useNavigate();
-  // const { openDialog } = useDeleteDialog();
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [searchName, setSearchName] = useState("");
   const [searchNic, setSearchNic] = useState("");
   const [searchMobile, setSearchMobile] = useState("");
@@ -273,6 +268,14 @@ export default function PatientTable({
                     >
                       <Add fontSize="small" />
                     </IconButton> */}
+                    <IconButton
+                      size="small"
+                      color="warning"
+                      title="Generate Refraction"
+                      onClick={() => onEditPatientClick(row)}
+                    >
+                      <EditIcon fontSize="small" />
+                    </IconButton>
                     <Tooltip title="Generate Refraction">
                       <IconButton
                         size="small"
@@ -338,7 +341,7 @@ export default function PatientTable({
           disabled={!selectedRow}
         >
           {existingPatinetBtnLable}
-          {selectedRow && ` for -`}
+          {selectedRow && ` - `}
           <span style={{ fontWeight: "bold", marginLeft: "1em" }}>
             {selectedRow?.name} {selectedRow?.phone_number}
           </span>

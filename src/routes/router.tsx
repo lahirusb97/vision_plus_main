@@ -28,6 +28,7 @@ import PasswordReset from "../view/auth/PasswordReset";
 import { RouteObject } from "react-router";
 import EnterUserCode from "../view/auth/EnterUserCode";
 import NewPassword from "../view/auth/NewPassword";
+import { frameonlyRoutes } from "./routelist/frameonly.route";
 
 export const router = createBrowserRouter([
   {
@@ -44,6 +45,11 @@ export const router = createBrowserRouter([
         path: "transaction",
         element: <ProtectedChildRoute />,
         children: transactionRoutes,
+      },
+      {
+        path: "frame-only",
+        element: <ProtectedChildRoute />,
+        children: frameonlyRoutes,
       },
       {
         path: "hearing",

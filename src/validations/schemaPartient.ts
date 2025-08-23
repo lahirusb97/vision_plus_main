@@ -9,7 +9,10 @@ export const schemaPatientFormModel = z.object({
   phone_number: z
     .string()
     .nullable()
-    .transform((val) => (val === "" ? null : val)),
+    .transform((val) => {
+      if (!val || val === "") return null;
+      return val.replace(/[\s+]/g, "").toUpperCase();
+    }),
   address: z
     .string()
     .nullable()
@@ -17,7 +20,10 @@ export const schemaPatientFormModel = z.object({
   nic: z
     .string()
     .nullable()
-    .transform((val) => (val === "" ? null : val)),
+    .transform((val) => {
+      if (!val || val === "") return null;
+      return val.replace(/\s/g, "").toUpperCase();
+    }),
   patient_note: z
     .string()
     .nullable()

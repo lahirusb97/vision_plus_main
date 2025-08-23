@@ -73,6 +73,7 @@ import { LENS_AND_FRAME_STORE_ID } from "../../data/staticVariables";
 import ImageUploardNav from "../uploard/ImageUploardNav";
 import FeedbackNav from "../feedback/FeedbackNav";
 import HearingNav from "../inventory/frame-store/HearingNav";
+import FrameOnlyNav from "../transaction/FrameOnlyNav";
 
 // Tab panel utility (hidden by default)
 // function TabPanel({
@@ -109,11 +110,11 @@ export default function NavBar() {
       inventory: false,
     },
     {
-      key: "transaction",
+      key: "frame-only",
       label: "Frame Only",
-      path: "transaction/factory_order",
+      path: "frame-only",
       icon: <Glasses />,
-      nav: TransactionNav,
+      nav: FrameOnlyNav,
       inventory: false,
     },
     {

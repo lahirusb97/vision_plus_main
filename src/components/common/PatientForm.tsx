@@ -7,25 +7,28 @@ import {
 } from "../../validations/schemaPartient";
 import SubmitCustomBtn from "../../components/common/SubmiteCustomBtn";
 import { useEffect, useState } from "react";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { getBirthdateFromNIC } from "../../utils/NictoBirthday";
 import CustomDateInput from "../inputui/CustomDateInput";
+import { useAxiosPost } from "../../hooks/useAxiosPost";
+import { useAxiosPatch } from "../../hooks/useAxiosPatch";
+import toast from "react-hot-toast";
+import { PatientModel } from "../../model/Patient";
 
 interface PatientFormProps {
-  dataOnSubmit: (data: PatientFormModel) => void;
-  isLoading: boolean;
-  isError: boolean;
+  dataOnSubmit: (data: PatientModel) => void;
   initialData?: Partial<PatientFormModel>;
+  patientId: number | null;
 }
 
 export default function PatientForm({
   dataOnSubmit,
-  isLoading,
-  isError,
   initialData = {},
+  patientId,
 }: PatientFormProps) {
   const [isQuickForm, setIsQuickForm] = useState(true);
+  const { postHandler, postHandlerloading, postHandlerError } = useAxiosPost();
+  const { patchHandler, patchHandlerloading, patchHandlerError } =
+    useAxiosPatch();
 
   const methods = useForm<PatientFormModel>({
     resolver: zodResolver(schemaPatientFormModel),
@@ -64,7 +67,23 @@ export default function PatientForm({
   }, [initialData]);
 
   const handleSubmitForm = async (data: PatientFormModel) => {
-    dataOnSubmit(data);
+    if (patientId) {
+      const response: { data: PatientModel } = await patchHandler(
+        `patients/${patientId}/`,
+        data
+      );
+
+      toast.success("Patient Updated Successfully");
+      dataOnSubmit(response.data);
+    } else {
+      const response: { data: PatientModel } = await postHandler(
+        "patients/create/",
+        data
+      );
+
+      toast.success("Patient Created Successfully");
+      dataOnSubmit(response.data);
+    }
   };
 
   useEffect(() => {
@@ -76,129 +95,123 @@ export default function PatientForm({
   }, [watch("nic")]);
 
   return (
-    <LocalizationProvider dateAdapter={AdapterDateFns}>
-      <FormProvider {...methods}>
-        <form onSubmit={handleSubmit(handleSubmitForm)}>
-          <Box display="flex" justifyContent="flex-end" mb={2}>
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={!isQuickForm}
-                  onChange={(e) => setIsQuickForm(!e.target.checked)}
-                  color="primary"
-                />
-              }
-              label={isQuickForm ? "Quick Form" : "Full Form"}
-              labelPlacement="start"
-            />
-          </Box>
-
-          <TextField
-            {...register("name")}
-            fullWidth
-            label="Full Name"
-            variant="outlined"
-            margin="normal"
-            required
-            error={!!errors.name}
-            helperText={errors.name?.message}
-            size="small"
-            InputLabelProps={{
-              shrink: Boolean(watch("name")),
-            }}
-          />
-
-          <TextField
-            {...register("nic")}
-            fullWidth
-            label="NIC"
-            variant="outlined"
-            margin="normal"
-            error={!!errors.nic}
-            helperText={errors.nic?.message}
-            size="small"
-            InputLabelProps={{
-              shrink: Boolean(watch("nic")),
-            }}
-          />
-
-          <TextField
-            {...register("phone_number")}
-            fullWidth
-            label="Phone Number"
-            variant="outlined"
-            margin="normal"
-            error={!!errors.phone_number}
-            helperText={errors.phone_number?.message}
-            size="small"
-            InputLabelProps={{
-              shrink: Boolean(watch("phone_number")),
-            }}
-          />
-
-          <TextField
-            {...register("extra_phone_number")}
-            fullWidth
-            label="Alternate Phone Number"
-            variant="outlined"
-            margin="normal"
-            error={!!errors.extra_phone_number}
-            helperText={errors.extra_phone_number?.message}
-            size="small"
-            InputLabelProps={{
-              shrink: Boolean(watch("extra_phone_number")),
-            }}
-          />
-
-          {!isQuickForm && (
-            <>
-              <CustomDateInput
-                label="Date of Birth"
-                name="date_of_birth"
-                disabledInput={false}
-              />
-
-              <TextField
-                {...register("address")}
-                fullWidth
-                label="Address"
-                variant="outlined"
-                margin="normal"
-                multiline
-                rows={3}
-                error={!!errors.address}
-                helperText={errors.address?.message}
+    <FormProvider {...methods}>
+      <form
+        style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
+        onSubmit={handleSubmit(handleSubmitForm)}
+      >
+        <Box display="flex" justifyContent="flex-end" mb={2}>
+          <FormControlLabel
+            control={
+              <Switch
                 size="small"
-                InputLabelProps={{
-                  shrink: Boolean(watch("address")),
-                }}
+                checked={!isQuickForm}
+                onChange={(e) => setIsQuickForm(!e.target.checked)}
+                color="primary"
               />
-
-              <TextField
-                {...register("patient_note")}
-                fullWidth
-                label="Patient Notes"
-                variant="outlined"
-                margin="normal"
-                multiline
-                rows={3}
-                error={!!errors.patient_note}
-                helperText={errors.patient_note?.message}
-                size="small"
-                InputLabelProps={{
-                  shrink: Boolean(watch("patient_note")),
-                }}
-              />
-            </>
-          )}
-
-          <SubmitCustomBtn
-            btnText="Save Patient"
-            loading={isLoading}
-            isError={isError}
+            }
+            label={isQuickForm ? "Show All" : "hide All"}
+            labelPlacement="start"
           />
-        </form>
-      </FormProvider>
-    </LocalizationProvider>
+        </Box>
+
+        <TextField
+          {...register("name")}
+          fullWidth
+          label="Full Name"
+          variant="outlined"
+          required
+          error={!!errors.name}
+          helperText={errors.name?.message}
+          size="small"
+          InputLabelProps={{
+            shrink: Boolean(watch("name")),
+          }}
+        />
+
+        <TextField
+          {...register("nic")}
+          fullWidth
+          label="NIC"
+          variant="outlined"
+          error={!!errors.nic}
+          helperText={errors.nic?.message}
+          size="small"
+          InputLabelProps={{
+            shrink: Boolean(watch("nic")),
+          }}
+        />
+
+        <TextField
+          {...register("phone_number")}
+          fullWidth
+          label="Phone Number"
+          variant="outlined"
+          error={!!errors.phone_number}
+          helperText={errors.phone_number?.message}
+          size="small"
+          InputLabelProps={{
+            shrink: Boolean(watch("phone_number")),
+          }}
+        />
+
+        <TextField
+          {...register("extra_phone_number")}
+          fullWidth
+          label="Extra Phone Number"
+          variant="outlined"
+          error={!!errors.extra_phone_number}
+          helperText={errors.extra_phone_number?.message}
+          size="small"
+          InputLabelProps={{
+            shrink: Boolean(watch("extra_phone_number")),
+          }}
+        />
+
+        <Box sx={{ display: isQuickForm ? "none" : "flex", gap: "1rem",flexDirection: "column" }}>
+          <CustomDateInput
+            label="Date of Birth"
+            name="date_of_birth"
+            disabledInput={false}
+          />
+
+          <TextField
+            {...register("address")}
+            fullWidth
+            label="Address"
+            variant="outlined"
+            multiline
+            rows={3}
+            error={!!errors.address}
+            helperText={errors.address?.message}
+            size="small"
+            InputLabelProps={{
+              shrink: Boolean(watch("address")),
+            }}
+          />
+
+          <TextField
+            {...register("patient_note")}
+            fullWidth
+            label="Patient Notes"
+            variant="outlined"
+            multiline
+            rows={3}
+            error={!!errors.patient_note}
+            helperText={errors.patient_note?.message}
+            size="small"
+            InputLabelProps={{
+              shrink: Boolean(watch("patient_note")),
+            }}
+          />
+        </Box>
+
+        <SubmitCustomBtn
+          btnText="Save Patient"
+          loading={postHandlerloading || patchHandlerloading}
+          isError={postHandlerError || patchHandlerError}
+        />
+      </form>
+    </FormProvider>
   );
 }
