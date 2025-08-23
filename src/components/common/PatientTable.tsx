@@ -1,4 +1,3 @@
-
 import React, { ChangeEvent, useState } from "react";
 import {
   Box,
@@ -37,23 +36,30 @@ interface PatientTableProps {
   onRawSelect: (row: PatientModel) => void;
   existingPatinetBtnLable: string;
   createPatientBtnLable: string;
+  onCreatePatientClick: ({
+    searchName,
+    searchNic,
+    searchMobile,
+  }: {
+    searchName: string;
+    searchNic: string;
+    searchMobile: string;
+  }) => void;
 }
-export default function PatientTable({ onRawSelect, existingPatinetBtnLable, createPatientBtnLable }: PatientTableProps) {
+export default function PatientTable({
+  onRawSelect,
+  existingPatinetBtnLable,
+  createPatientBtnLable,
+  onCreatePatientClick,
+}: PatientTableProps) {
   const theme = useTheme();
   const navigate = useNavigate();
   // const { openDialog } = useDeleteDialog();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [searchByNic, setSearchByNic] = useState("");
-  const [searchByMobile, setSearchByMobile] = useState("");
+  const [searchName, setSearchName] = useState("");
+  const [searchNic, setSearchNic] = useState("");
+  const [searchMobile, setSearchMobile] = useState("");
   const [selectedRow, setSelectedRow] = useState<PatientModel | null>(null);
-  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
-  const [selectedPatient, setSelectedPatient] = useState<{
-    name: string;
-    nic: string | null;
-    mobile: string | null;
-    patient_id: number;
-  } | null>(null);
   //POPOver
   const [popoverAnchor, setPopoverAnchor] = useState<null | HTMLElement>(null);
   const [popoverSearchData, setPopoverSearchData] = useState<number | null>(
@@ -82,57 +88,11 @@ export default function PatientTable({ onRawSelect, existingPatinetBtnLable, cre
     PatientListSearch,
     PatientListTotalCount,
   } = useGetPatientList();
-  // Safely access data and meta-information
-  const { postHandler, postHandlerloading, postHandlerError } = useAxiosPost();
 
   if (!PatientListLoading && PatientListError) {
     return <DataLoadingError />;
   }
-  const generateRefractionNumber = async () => {
-    if (!selectedPatient || !selectedPatient.patient_id) {
-      toast.error("Patient ID is missing");
-      return;
-    }
-    const payload = {
-      customer_full_name: selectedPatient.name,
-      customer_mobile: selectedPatient?.mobile,
-      nic: selectedPatient?.nic,
-      patient_id: selectedPatient.patient_id,
-      branch_id: getUserCurentBranch()?.id,
-    };
-    try {
-      const responseData: { data: { data: RefractionNumberModel } } =
-        await postHandler("refractions/create/", payload);
-      navigate(`${responseData.data.data.id}/success/`);
-      toast.success("Refraction Number Generated Successfully");
-    } catch (error) {
-      extractErrorMessage(error);
-    } finally {
-      setConfirmDialogOpen(false);
-      setSelectedPatient(null);
-    }
-  };
-  const handleGenerateRefraction = (patient: {
-    name: string;
-    nic: string | null;
-    mobile: string | null;
-    patient_id: number;
-  }) => {
-    setSelectedPatient(patient);
-    setConfirmDialogOpen(true);
-  }
 
-  const handleConfirmGenerate = async () => {
-    if (!selectedPatient) return;
-
-    try {
-      await generateRefractionNumber();
-      setConfirmDialogOpen(false);
-      setSelectedPatient(null);
-    } catch (error) {
-      console.error("Error generating refraction number:", error);
-    }
-  };
   return (
     <Box>
       <form
@@ -153,9 +113,9 @@ export default function PatientTable({ onRawSelect, existingPatinetBtnLable, cre
               name: searchTerm,
             });
           }}
-          onChange={setSearchQuery}
+          onChange={setSearchName}
           label="Name"
-          value={searchQuery}
+          value={searchName}
           required
           startIcon={<Person />}
         />
@@ -169,9 +129,9 @@ export default function PatientTable({ onRawSelect, existingPatinetBtnLable, cre
               name: null,
             });
           }}
-          onChange={setSearchByNic}
+          onChange={setSearchNic}
           label="NIC"
-          value={searchByNic}
+          value={searchNic}
           required
           startIcon={<BadgeIcon />}
         />
@@ -185,9 +145,9 @@ export default function PatientTable({ onRawSelect, existingPatinetBtnLable, cre
               name: null,
             });
           }}
-          onChange={setSearchByMobile}
+          onChange={setSearchMobile}
           label="Mobile Number"
-          value={searchByMobile}
+          value={searchMobile}
           required
           startIcon={<LocalPhoneIcon />}
         />
@@ -205,9 +165,9 @@ export default function PatientTable({ onRawSelect, existingPatinetBtnLable, cre
               phone_number: null,
               name: null,
             });
-            setSearchQuery("");
-            setSearchByNic("");
-            setSearchByMobile("");
+            setSearchName("");
+            setSearchNic("");
+            setSearchMobile("");
             setSelectedRow(null);
           }}
         >
@@ -225,7 +185,9 @@ export default function PatientTable({ onRawSelect, existingPatinetBtnLable, cre
       >
         <Button
           size="small"
-          onClick={() => setIsDialogOpen(true)}
+          onClick={() => {
+            onCreatePatientClick({ searchName, searchNic, searchMobile });
+          }}
           variant="outlined"
         >
           {createPatientBtnLable}
@@ -370,14 +332,14 @@ export default function PatientTable({ onRawSelect, existingPatinetBtnLable, cre
           color="primary"
           onClick={() => {
             if (!selectedRow) return;
-          onRawSelect(selectedRow);
+            onRawSelect(selectedRow);
           }}
           variant="contained"
           disabled={!selectedRow}
         >
-        {existingPatinetBtnLable}
+          {existingPatinetBtnLable}
           {selectedRow && ` for -`}
-          <span style={{ fontWeight: "bold",marginLeft: "1em" }}>
+          <span style={{ fontWeight: "bold", marginLeft: "1em" }}>
             {selectedRow?.name} {selectedRow?.phone_number}
           </span>
         </Button>

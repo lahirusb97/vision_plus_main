@@ -1,29 +1,5 @@
-import React, { ChangeEvent, useState } from "react";
-import {
-  Box,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  useTheme,
-  IconButton,
-  Button,
-  Pagination,
-  Skeleton,
-  Tooltip,
-} from "@mui/material";
+import { useState } from "react";
 import { useNavigate } from "react-router";
-import { teal } from "@mui/material/colors";
-import { InvoiceHistoryPopover } from "../../components/refreaction/InvoiceHistoryPopover";
-import { Add, HistoryRounded, Person } from "@mui/icons-material";
-import useGetPatientList from "../../hooks/useGetPatientList";
-import OnTypeSearchInput from "../../components/inputui/OnTypeSearchInput";
-import LocalPhoneIcon from "@mui/icons-material/LocalPhone";
-// import { useDeleteDialog } from "../../context/DeleteDialogContext";
-import BadgeIcon from "@mui/icons-material/Badge";
 import { useAxiosPost } from "../../hooks/useAxiosPost";
 import toast from "react-hot-toast";
 import { getUserCurentBranch } from "../../utils/authDataConver";
@@ -31,18 +7,18 @@ import ConfirmDialog from "../../components/ConfirmDialog";
 import { extractErrorMessage } from "../../utils/extractErrorMessage";
 import RefractionNumberDialog from "./RefractionNumberDialog";
 import { RefractionNumberModel } from "../../model/RefractionModel";
-import DataLoadingError from "../../components/common/DataLoadingError";
-import { PatientModel } from "../../model/Patient";
+import PatientTable from "../../components/common/PatientTable";
+import { Box } from "@mui/material";
 
 export default function ExistingCustomerRefractionNumber() {
-  const theme = useTheme();
   const navigate = useNavigate();
-  // const { openDialog } = useDeleteDialog();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [searchByNic, setSearchByNic] = useState("");
-  const [searchByMobile, setSearchByMobile] = useState("");
-  const [selectedRow, setSelectedRow] = useState<PatientModel | null>(null);
+  const [createPatient, setCreatePatient] = useState({
+    searchName: "",
+    searchNic: "",
+    searchMobile: "",
+  });
+
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState<{
     name: string;
@@ -50,40 +26,7 @@ export default function ExistingCustomerRefractionNumber() {
     mobile: string | null;
     patient_id: number;
   } | null>(null);
-  //POPOver
-  const [popoverAnchor, setPopoverAnchor] = useState<null | HTMLElement>(null);
-  const [popoverSearchData, setPopoverSearchData] = useState<number | null>(
-    null
-  );
-  const handleShowHistory = (
-    event: React.MouseEvent<HTMLElement>,
-    patient_id: number
-  ) => {
-    setPopoverAnchor(event.currentTarget);
-    setPopoverSearchData(patient_id);
-  };
-  const handleClosePopover = () => {
-    setPopoverAnchor(null);
-    setPopoverSearchData(null);
-  };
-  //POPOver
-  const {
-    PatientList,
-    PatientListChangePageSize,
-    PatientListError,
-    PatientListLimit,
-    PatientListLoading,
-    PatientListPageNavigation,
-    PatientListRefres,
-    PatientListSearch,
-    PatientListTotalCount,
-  } = useGetPatientList();
-  // Safely access data and meta-information
   const { postHandler, postHandlerloading, postHandlerError } = useAxiosPost();
-
-  if (!PatientListLoading && PatientListError) {
-    return <DataLoadingError />;
-  }
   const generateRefractionNumber = async () => {
     if (!selectedPatient || !selectedPatient.patient_id) {
       toast.error("Patient ID is missing");
@@ -108,6 +51,7 @@ export default function ExistingCustomerRefractionNumber() {
       setSelectedPatient(null);
     }
   };
+
   const handleGenerateRefraction = (patient: {
     name: string;
     nic: string | null;
@@ -129,270 +73,24 @@ export default function ExistingCustomerRefractionNumber() {
       console.error("Error generating refraction number:", error);
     }
   };
+
   return (
     <Box>
-      {/* <TitleText title=" Select a Refraction Number to Add Refraction Details" /> */}
-      {/* Search Bar */}
-      <form
-        style={{
-          display: "flex",
-          gap: "10px",
-          marginBlock: 1,
-          alignItems: "baseline",
+      <PatientTable
+        createPatientBtnLable="Create New Patient"
+        existingPatinetBtnLable="Select Patient"
+        onCreatePatientClick={(data) => {
+          setCreatePatient(data);
+          setIsDialogOpen(true);
         }}
-      >
-        <OnTypeSearchInput
-          onSearch={(searchTerm) => {
-            PatientListSearch({
-              page_size: 10,
-              page: 1,
-              nic: null,
-              phone_number: null,
-              name: searchTerm,
-            });
-          }}
-          onChange={setSearchQuery}
-          label="Name"
-          value={searchQuery}
-          required
-          startIcon={<Person />}
-        />
-        <OnTypeSearchInput
-          onSearch={(searchTerm) => {
-            PatientListSearch({
-              page_size: 10,
-              page: 1,
-              nic: searchTerm,
-              phone_number: null,
-              name: null,
-            });
-          }}
-          onChange={setSearchByNic}
-          label="NIC"
-          value={searchByNic}
-          required
-          startIcon={<BadgeIcon />}
-        />
-        <OnTypeSearchInput
-          onSearch={(searchTerm) => {
-            PatientListSearch({
-              page_size: 10,
-              page: 1,
-              nic: null,
-              phone_number: searchTerm,
-              name: null,
-            });
-          }}
-          onChange={setSearchByMobile}
-          label="Mobile Number"
-          value={searchByMobile}
-          required
-          startIcon={<LocalPhoneIcon />}
-        />
-        {/* <Button size="small" type="submit" variant="contained">
-          Search
-        </Button> */}
-        <Button
-          size="small"
-          variant="outlined"
-          onClick={() => {
-            PatientListSearch({
-              page_size: 10,
-              page: 1,
-              nic: null,
-              phone_number: null,
-              name: null,
-            });
-            setSearchQuery("");
-            setSearchByNic("");
-            setSearchByMobile("");
-            setSelectedRow(null);
-          }}
-        >
-          Reset
-        </Button>
-      </form>
-
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-          gap: 1,
+        onRawSelect={(row) => {
+          handleGenerateRefraction({
+            name: row.name,
+            nic: row.nic,
+            mobile: row.phone_number,
+            patient_id: row.id,
+          });
         }}
-      >
-        <Button
-          size="small"
-          onClick={() => setIsDialogOpen(true)}
-          variant="outlined"
-        >
-          Add New Patient & Generate Refraction Number
-        </Button>
-      </Box>
-      {/* Table Container */}
-      <TableContainer
-        component={Paper}
-        sx={{
-          boxShadow: 3,
-          borderRadius: 2,
-          overflowX: "auto",
-          mt: 1,
-        }}
-      >
-        <Table
-          size="small"
-          sx={{ minWidth: 650 }}
-          aria-label="Refraction Details Table"
-        >
-          <TableHead>
-            <TableRow
-              sx={{
-                backgroundColor: theme.palette.grey[200],
-              }}
-            >
-              <TableCell sx={{ fontWeight: "bold" }}>Actions</TableCell>
-              <TableCell sx={{ fontWeight: "bold" }}>Name</TableCell>
-              <TableCell sx={{ fontWeight: "bold" }}>NIC</TableCell>
-              <TableCell sx={{ fontWeight: "bold" }}>Mobile Number</TableCell>
-              <TableCell sx={{ fontWeight: "bold" }}>Birth Day</TableCell>
-              <TableCell sx={{ fontWeight: "bold" }}>Address</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {PatientListLoading ? (
-              [...Array(10)].map((_, index) => (
-                <TableRow key={index}>
-                  <TableCell>
-                    <Skeleton variant="text" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton variant="text" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton variant="text" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton variant="text" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton variant="text" />
-                  </TableCell>
-                </TableRow>
-              ))
-            ) : PatientList.length > 0 ? (
-              PatientList.map((row) => (
-                <TableRow
-                  onClick={() => setSelectedRow(row)}
-                  sx={{
-                    cursor: "pointer",
-                    backgroundColor:
-                      selectedRow?.id === row.id ? teal[100] : "inherit",
-                    "&:hover": {
-                      backgroundColor: theme.palette.grey[300],
-                    },
-                  }}
-                  key={row.id}
-                >
-                  <TableCell sx={{ fontWeight: "bold" }}>
-                    {/* <IconButton
-                      size="small"
-                      color="warning"
-                      title="Generate Refraction"
-                      onClick={() =>
-                        handleGenerateRefraction({
-                          name: row.name,
-                          nic: row.nic,
-                          mobile: row.phone_number,
-                          patient_id: row.id,
-                        })
-                      }
-                    >
-                      <Add fontSize="small" />
-                    </IconButton> */}
-                    <Tooltip title="Generate Refraction">
-                      <IconButton
-                        size="small"
-                        sx={{ p: 0 }}
-                        onClick={(e) => handleShowHistory(e, row.id)}
-                      >
-                        <HistoryRounded fontSize="small" />
-                      </IconButton>
-                    </Tooltip>
-                  </TableCell>
-
-                  <TableCell>{row.name}</TableCell>
-                  <TableCell>{row.nic}</TableCell>
-                  <TableCell>{row.phone_number}</TableCell>
-                  <TableCell>{row.date_of_birth}</TableCell>
-                  <TableCell>{row.address}</TableCell>
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={3} align="center">
-                  No matching records found
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
-
-      {/* Pagination */}
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <Pagination
-          sx={{ my: ".2em" }}
-          size="small"
-          count={Math.ceil(PatientListTotalCount / PatientListLimit)}
-          onChange={(_e: ChangeEvent<unknown>, value: number) => {
-            PatientListPageNavigation(value);
-          }}
-        ></Pagination>
-      </Box>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-          gap: 1,
-        }}
-      >
-        <Button
-          size="small"
-          color="primary"
-          onClick={() => {
-            if (!selectedRow) return;
-            handleGenerateRefraction({
-              name: selectedRow?.name,
-              nic: selectedRow?.nic,
-              mobile: selectedRow?.phone_number,
-              patient_id: selectedRow?.id,
-            });
-          }}
-          variant="contained"
-          disabled={!selectedRow}
-        >
-        Generate Refraction Number
-      
-          
-          {selectedRow && ` for -`}
-        
-          <span style={{ fontWeight: "bold",marginLeft: "1em" }}>
-            {selectedRow?.name} {selectedRow?.phone_number}
-          </span>
-        </Button>
-      </Box>
-      <InvoiceHistoryPopover
-        open={Boolean(popoverAnchor)}
-        anchorEl={popoverAnchor}
-        onClose={handleClosePopover}
-        patient_id={popoverSearchData || null}
       />
       <ConfirmDialog
         open={confirmDialogOpen}
@@ -406,9 +104,9 @@ export default function ExistingCustomerRefractionNumber() {
       <RefractionNumberDialog
         open={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}
-        name={searchQuery}
-        nic={searchByNic}
-        mobile={searchByMobile}
+        name={createPatient.searchName}
+        nic={createPatient.searchNic}
+        mobile={createPatient.searchMobile}
       />
     </Box>
   );

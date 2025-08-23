@@ -53,6 +53,7 @@ import {
   Calculator,
   FileSearch2,
   Frame,
+  Glasses,
   NotebookIcon,
   PackageOpen,
   ReceiptText,
@@ -101,9 +102,17 @@ export default function NavBar() {
     },
     {
       key: "transaction",
-      label: "Transaction",
+      label: "Factory",
       path: "transaction/factory_order",
       icon: <ArrowLeftRight />,
+      nav: TransactionNav,
+      inventory: false,
+    },
+    {
+      key: "transaction",
+      label: "Frame Only",
+      path: "transaction/factory_order",
+      icon: <Glasses />,
       nav: TransactionNav,
       inventory: false,
     },
@@ -308,7 +317,7 @@ export default function NavBar() {
                 }}
               />
             ))}
-        
+
           <Box
             sx={{
               mx: { xs: 0, sm: 1 },
