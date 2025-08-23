@@ -87,6 +87,7 @@ export default function PationtDetails({
         <TextField
           {...register("name")}
           error={!!errors.name}
+          disabled
           sx={{ flexGrow: 1 }}
           size="small"
           label="name"
@@ -117,6 +118,7 @@ export default function PationtDetails({
       </Box>
       <Box sx={{ display: "flex", gap: 1 }}>
         <TextField
+          disabled
           {...register("phone_number")}
           error={!!errors.phone_number}
           sx={{ flexGrow: 1 }}
@@ -148,6 +150,7 @@ export default function PationtDetails({
           }
         />
         <TextField
+          disabled
           {...register("nic")}
           error={watch("nic") === ""}
           sx={{ flexGrow: 1 }}

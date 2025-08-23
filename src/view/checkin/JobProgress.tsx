@@ -26,7 +26,7 @@ export default function JobProgress() {
     invoiceListTotalCount,
     invoiceListRefres,
   } = useGetCheckinInvoiceList();
-
+console.log(invoiceListLoading);
   const [orderProgress, setOrderProgress] = useState("");
 
   const handleChange = (event: SelectChangeEvent) => {
@@ -39,6 +39,8 @@ export default function JobProgress() {
       nic: null,
       page_size: 10,
       page: 1,
+      patient_name: null,
+      patient_id: null,
     });
   };
  

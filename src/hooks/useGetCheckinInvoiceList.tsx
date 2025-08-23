@@ -17,6 +17,8 @@ export interface CheckinInvoiceListParams {
   mobile: string | null;
   nic: string | null;
   progress_status: ProgressStatus | null;
+  patient_name: string | null;
+  patient_id: string | null;
 }
 const useGetCheckinInvoiceList = () => {
   //use null or [] base on scenario
@@ -32,6 +34,8 @@ const useGetCheckinInvoiceList = () => {
     mobile: null,
     nic: null,
     progress_status: null,
+    patient_name: null,
+    patient_id: null,
   });
   const abortControllerRef = useRef<AbortController | null>(null);
 
@@ -75,7 +79,7 @@ const useGetCheckinInvoiceList = () => {
         setError(true);
       }
     } finally {
-    
+      setLoading(false);
     }
   }, [params]);
 

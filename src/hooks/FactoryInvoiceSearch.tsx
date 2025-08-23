@@ -14,7 +14,7 @@ import { CheckinInvoiceListParams } from "./useGetCheckinInvoiceList";
 // Define Zod schema for form validation
 const searchSchema = z.object({
   searchTerm: z.string().min(1, "Search term is required"),
-  searchOption: z.enum(["invoice_number", "mobile", "nic"]),
+  searchOption: z.enum(["invoice_number", "mobile", "nic", "patient_name"]),
 });
 
 type SearchFormData = z.infer<typeof searchSchema>;
@@ -51,6 +51,8 @@ export default function FactoryInvoiceSearch({
       mobile: null,
       nic: null,
       progress_status: null,
+      patient_id: null,
+      patient_name: null,
       [data.searchOption]: data.searchTerm, // dynamically assign value
     };
     invoiceListSearch(filterParams);
@@ -133,6 +135,11 @@ export default function FactoryInvoiceSearch({
                   value="nic"
                   control={<Radio size="small" />}
                   label="NIC"
+                />
+                <FormControlLabel
+                  value="patient_name"
+                  control={<Radio size="small" />}
+                  label="Name"
                 />
               </RadioGroup>
             )}

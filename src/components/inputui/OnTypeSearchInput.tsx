@@ -1,5 +1,5 @@
 import { TextField, InputAdornment } from "@mui/material";
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useRef, useEffect } from "react";
 import debounce from "lodash/debounce";
 
 interface CustomerSearchProps {
@@ -19,25 +19,28 @@ const OnTypeSearchInput = ({
   required = false,
   startIcon,
 }: CustomerSearchProps) => {
-
-
-  // Create debounced function only once
-  const debouncedSearch = useMemo(
-    () =>
-      debounce((val: string) => {
-        onSearch(val);
-      }, 500), // wait 500ms after typing stops
-    [onSearch]
+  const debouncedSearchRef = useRef(
+    debounce((val: string) => {
+      onSearch(val);
+    }, 1000)
   );
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      debouncedSearchRef.current.cancel();
+    };
+  }, []);
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const value = e.target.value;
-      debouncedSearch(value);
       onChange(value);
+      debouncedSearchRef.current(value);
     },
-    [debouncedSearch]
+    [onChange]
   );
+
   return (
     <TextField
       fullWidth
@@ -48,12 +51,10 @@ const OnTypeSearchInput = ({
       size="small"
       value={value}
       onChange={handleChange}
-      slotProps={{
-        input: {
-          startAdornment: (
-            <InputAdornment position="start">{startIcon}</InputAdornment>
-          ),
-        },
+      InputProps={{
+        startAdornment: startIcon && (
+          <InputAdornment position="start">{startIcon}</InputAdornment>
+        ),
       }}
       InputLabelProps={{
         shrink: true,

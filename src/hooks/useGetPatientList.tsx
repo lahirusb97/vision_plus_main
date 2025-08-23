@@ -10,9 +10,10 @@ import axios from "axios";
 export interface PatientListParams {
   page_size: number;
   page: number;
-  search: string | null;
+  // search: string | null;
   nic: string | null;
   phone_number: string | null;
+  name: string | null;
 }
 
 const useGetPatientList = () => {
@@ -24,9 +25,9 @@ const useGetPatientList = () => {
   const [params, setParams] = useState<PatientListParams>({
     page_size: 10,
     page: 1,
-    search: null,
     nic: null,
     phone_number: null,
+    name: null,
   });
   const abortControllerRef = useRef<AbortController | null>(null);
   //Prevent initial RUN

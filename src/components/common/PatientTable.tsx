@@ -1,3 +1,4 @@
+
 import React, { ChangeEvent, useState } from "react";
 import {
   Box,
@@ -27,14 +28,17 @@ import BadgeIcon from "@mui/icons-material/Badge";
 import { useAxiosPost } from "../../hooks/useAxiosPost";
 import toast from "react-hot-toast";
 import { getUserCurentBranch } from "../../utils/authDataConver";
-import ConfirmDialog from "../../components/ConfirmDialog";
 import { extractErrorMessage } from "../../utils/extractErrorMessage";
-import RefractionNumberDialog from "./RefractionNumberDialog";
 import { RefractionNumberModel } from "../../model/RefractionModel";
 import DataLoadingError from "../../components/common/DataLoadingError";
 import { PatientModel } from "../../model/Patient";
 
-export default function ExistingCustomerRefractionNumber() {
+interface PatientTableProps {
+  onRawSelect: (row: PatientModel) => void;
+  existingPatinetBtnLable: string;
+  createPatientBtnLable: string;
+}
+export default function PatientTable({ onRawSelect, existingPatinetBtnLable, createPatientBtnLable }: PatientTableProps) {
   const theme = useTheme();
   const navigate = useNavigate();
   // const { openDialog } = useDeleteDialog();
@@ -116,7 +120,7 @@ export default function ExistingCustomerRefractionNumber() {
   }) => {
     setSelectedPatient(patient);
     setConfirmDialogOpen(true);
-  };
+  }
 
   const handleConfirmGenerate = async () => {
     if (!selectedPatient) return;
@@ -131,8 +135,6 @@ export default function ExistingCustomerRefractionNumber() {
   };
   return (
     <Box>
-      {/* <TitleText title=" Select a Refraction Number to Add Refraction Details" /> */}
-      {/* Search Bar */}
       <form
         style={{
           display: "flex",
@@ -226,7 +228,7 @@ export default function ExistingCustomerRefractionNumber() {
           onClick={() => setIsDialogOpen(true)}
           variant="outlined"
         >
-          Add New Patient & Generate Refraction Number
+          {createPatientBtnLable}
         </Button>
       </Box>
       {/* Table Container */}
@@ -368,21 +370,13 @@ export default function ExistingCustomerRefractionNumber() {
           color="primary"
           onClick={() => {
             if (!selectedRow) return;
-            handleGenerateRefraction({
-              name: selectedRow?.name,
-              nic: selectedRow?.nic,
-              mobile: selectedRow?.phone_number,
-              patient_id: selectedRow?.id,
-            });
+          onRawSelect(selectedRow);
           }}
           variant="contained"
           disabled={!selectedRow}
         >
-        Generate Refraction Number
-      
-          
+        {existingPatinetBtnLable}
           {selectedRow && ` for -`}
-        
           <span style={{ fontWeight: "bold",marginLeft: "1em" }}>
             {selectedRow?.name} {selectedRow?.phone_number}
           </span>
@@ -393,22 +387,6 @@ export default function ExistingCustomerRefractionNumber() {
         anchorEl={popoverAnchor}
         onClose={handleClosePopover}
         patient_id={popoverSearchData || null}
-      />
-      <ConfirmDialog
-        open={confirmDialogOpen}
-        closeDialog={() => setConfirmDialogOpen(false)}
-        apiCall={handleConfirmGenerate}
-        onSuccess={() => {
-          // Refresh or update the UI as needed
-        }}
-        message={`Are you sure you want to generate refraction number for ${selectedPatient?.name}?`}
-      />
-      <RefractionNumberDialog
-        open={isDialogOpen}
-        onClose={() => setIsDialogOpen(false)}
-        name={searchQuery}
-        nic={searchByNic}
-        mobile={searchByMobile}
       />
     </Box>
   );

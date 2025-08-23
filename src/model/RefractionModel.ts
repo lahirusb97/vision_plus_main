@@ -1,3 +1,5 @@
+import { PatientModel } from "./Patient";
+
 interface RefractionNumberModel {
   id: number;
   customer_full_name: string;
@@ -8,6 +10,7 @@ interface RefractionNumberModel {
   created_at: string;
   patient_id: number | null;
   branch_name: string;
+  patient: PatientModel | null;
 }
 
 export type { RefractionNumberModel };
