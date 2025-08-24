@@ -9,26 +9,20 @@ import SubmitCustomBtn from "../../components/common/SubmiteCustomBtn";
 import { useEffect, useState } from "react";
 import { getBirthdateFromNIC } from "../../utils/NictoBirthday";
 import CustomDateInput from "../inputui/CustomDateInput";
-import { useAxiosPost } from "../../hooks/useAxiosPost";
-import { useAxiosPatch } from "../../hooks/useAxiosPatch";
-import toast from "react-hot-toast";
-import { PatientModel } from "../../model/Patient";
-
 interface PatientFormProps {
-  dataOnSubmit: (data: PatientModel) => void;
+  dataOnSubmit: (data: PatientFormModel) => void;
   initialData?: Partial<PatientFormModel>;
-  patientId: number | null;
+  isLoading: boolean;
+  isError: boolean;
 }
 
 export default function PatientForm({
   dataOnSubmit,
   initialData = {},
-  patientId,
+  isLoading,
+  isError,
 }: PatientFormProps) {
   const [isQuickForm, setIsQuickForm] = useState(true);
-  const { postHandler, postHandlerloading, postHandlerError } = useAxiosPost();
-  const { patchHandler, patchHandlerloading, patchHandlerError } =
-    useAxiosPatch();
 
   const methods = useForm<PatientFormModel>({
     resolver: zodResolver(schemaPatientFormModel),
@@ -67,23 +61,7 @@ export default function PatientForm({
   }, [initialData]);
 
   const handleSubmitForm = async (data: PatientFormModel) => {
-    if (patientId) {
-      const response: { data: PatientModel } = await patchHandler(
-        `patients/${patientId}/`,
-        data
-      );
-
-      toast.success("Patient Updated Successfully");
-      dataOnSubmit(response.data);
-    } else {
-      const response: { data: PatientModel } = await postHandler(
-        "patients/create/",
-        data
-      );
-
-      toast.success("Patient Created Successfully");
-      dataOnSubmit(response.data);
-    }
+    dataOnSubmit(data);
   };
 
   useEffect(() => {
@@ -168,7 +146,13 @@ export default function PatientForm({
           }}
         />
 
-        <Box sx={{ display: isQuickForm ? "none" : "flex", gap: "1rem",flexDirection: "column" }}>
+        <Box
+          sx={{
+            display: isQuickForm ? "none" : "flex",
+            gap: "1rem",
+            flexDirection: "column",
+          }}
+        >
           <CustomDateInput
             label="Date of Birth"
             name="date_of_birth"
@@ -208,8 +192,8 @@ export default function PatientForm({
 
         <SubmitCustomBtn
           btnText="Save Patient"
-          loading={postHandlerloading || patchHandlerloading}
-          isError={postHandlerError || patchHandlerError}
+          isError={isError}
+          loading={isLoading}
         />
       </form>
     </FormProvider>

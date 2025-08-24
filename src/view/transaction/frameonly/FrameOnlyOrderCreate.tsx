@@ -15,17 +15,23 @@ import { useAxiosPost } from "../../../hooks/useAxiosPost";
 import { formatUserPayments } from "../../../utils/formatUserPayments";
 import toast from "react-hot-toast";
 import { extractErrorMessage } from "../../../utils/extractErrorMessage";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import TitleText from "../../../components/TitleText";
 import SubmitCustomBtn from "../../../components/common/SubmiteCustomBtn";
 import { openStockDrawer } from "../../../features/invoice/stockDrawerSlice";
 import { useState } from "react";
 import AuthDialog from "../../../components/common/AuthDialog";
+import OrderPatientDetail from "../../../components/common/OrderPatientDetail";
+import useGetSinglePatient from "../../../hooks/useGetSinglePatient";
+import PatientUpdateDialog from "../../../components/common/PatientUpdateDialog";
 export default function FrameOnlyOrderCreate() {
   const dispatch = useDispatch();
-
+  const { patient_id } = useParams();
+  const { singlePatient, singlePatientLoading, singlePatientDataRefresh } =
+    useGetSinglePatient(patient_id);
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
   const [pendingPostData, setPendingPostData] = useState<any | null>(null);
+  const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
 
   const { postHandler, postHandlerloading, postHandlerError } = useAxiosPost();
   const navigate = useNavigate();
@@ -123,7 +129,13 @@ export default function FrameOnlyOrderCreate() {
       <FormProvider {...methods}>
         <TitleText title="Frame Only Order" />
         <form onSubmit={methods.handleSubmit(frameOnlyOrderSubmite)}>
-          <NormalPatientDetail />
+          {/* <NormalPatientDetail /> */}
+          <OrderPatientDetail
+            patientData={singlePatient}
+            onEdit={() => {
+              setIsUpdateDialogOpen(true);
+            }}
+          />
 
           <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
             <Button
@@ -196,6 +208,21 @@ export default function FrameOnlyOrderCreate() {
         onVerified={sendDataToDb}
         onClose={() => setAuthDialogOpen(false)}
       />
+      {singlePatient && (
+        <PatientUpdateDialog
+          open={isUpdateDialogOpen}
+          onClose={() => {
+            setIsUpdateDialogOpen(false);
+            // setEditPatient(null);
+          }}
+          updateSucess={() => {
+            setIsUpdateDialogOpen(false);
+            singlePatientDataRefresh();
+            // setEditPatient(null);
+          }}
+          initialData={singlePatient}
+        />
+      )}
     </>
   );
 }

@@ -2,8 +2,9 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import PatientTable from "../../../components/common/PatientTable";
 import { Box } from "@mui/material";
-import PatientUpdateCreateDialog from "../../../components/common/PatientCreateDialog";
 import { PatientModel } from "../../../model/Patient";
+import PatientCreateDialog from "../../../components/common/PatientCreateDialog";
+import PatientUpdateDialog from "../../../components/common/PatientUpdateDialog";
 
 export default function FrameOnlyOrderIndex() {
   const navigate = useNavigate();
@@ -34,7 +35,7 @@ export default function FrameOnlyOrderIndex() {
         }}
       />
 
-      <PatientUpdateCreateDialog
+      <PatientCreateDialog
         open={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}
         initialData={{
@@ -42,17 +43,20 @@ export default function FrameOnlyOrderIndex() {
           nic: createPatient.searchNic,
           phone_number: createPatient.searchMobile,
         }}
-        patientId={null}
       />
       {editPatient && (
-        <PatientUpdateCreateDialog
+        <PatientUpdateDialog
           open={isUpdateDialogOpen}
           onClose={() => {
             setIsUpdateDialogOpen(false);
             setEditPatient(null);
           }}
           initialData={editPatient}
-          patientId={editPatient?.id}
+          updateSucess={() => {
+            setIsUpdateDialogOpen(false);
+            setEditPatient(null);
+            
+          }}
         />
       )}
     </Box>
