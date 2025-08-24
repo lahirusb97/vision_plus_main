@@ -22,7 +22,7 @@ const OnTypeSearchInput = ({
   const debouncedSearchRef = useRef(
     debounce((val: string) => {
       onSearch(val);
-    }, 1000)
+    }, 500)
   );
 
   // Cleanup on unmount

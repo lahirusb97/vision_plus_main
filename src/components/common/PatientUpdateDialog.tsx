@@ -16,6 +16,7 @@ import { useEffect, useState } from "react";
 import { extractErrorMessage } from "../../utils/extractErrorMessage";
 import { useAxiosPatch } from "../../hooks/useAxiosPatch";
 import { PatientModel } from "../../model/Patient";
+import { ArrowBack } from "@mui/icons-material";
 interface UserData {
   id: number;
   username: string;
@@ -25,7 +26,7 @@ interface PatientCreateDialogProps {
   open: boolean;
   onClose: () => void;
   initialData: PatientModel | null;
-  updateSucess: () => void;
+  updateSucess: (data: PatientModel) => void;
 }
 
 export default function PatientUpdateDialog({
@@ -73,18 +74,17 @@ export default function PatientUpdateDialog({
       const userData: UserData = res.data;
 
       if (userData.id) {
-        const response = await patchHandler(
+        const response: { data: PatientModel } = await patchHandler(
           `patients/${initialData.id}/`,
           patintData
         );
-        navigate(`/frame-only/${response.data.id}/order_create`);
         setIsSubmited(false);
         setUserAuth({
           user_code: "",
           password: "",
         });
 
-        updateSucess();
+        updateSucess(response.data);
         onClose();
       }
     } catch (err) {
@@ -124,6 +124,13 @@ export default function PatientUpdateDialog({
           />
         ) : (
           <Box>
+            <Button
+              size="small"
+              variant="outlined"
+              onClick={() => setIsSubmited(false)}
+            >
+              <ArrowBack />
+            </Button>
             <Typography variant="h6">Verify Before Proceeding</Typography>
             <Typography variant="body2">
               You are responsible for modifying

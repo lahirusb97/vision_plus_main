@@ -9,7 +9,7 @@ import PatientSearchOnType from "../../../components/common/PatientSearchOnType"
 import useGetPatientList from "../../../hooks/useGetPatientList";
 import CustomerPagination from "../../../components/CustomPagination";
 
-export default function FrameOnlyOrderIndex() {
+export default function NormalOrderIndex() {
   const navigate = useNavigate();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
@@ -54,7 +54,7 @@ export default function FrameOnlyOrderIndex() {
         PatientList={PatientList}
         existingPatinetBtnLable="Create Frame Only Order for "
         onRawSelect={(row) => {
-          navigate(`/frame-only/${row.id}/order_create`);
+          navigate(`/normal-order/${row.id}/order_create`);
         }}
         onEditPatientClick={(row) => {
           setEditPatient(row);
@@ -77,7 +77,7 @@ export default function FrameOnlyOrderIndex() {
         }}
         onSuccess={(data) => {
           setIsDialogOpen(false);
-          navigate(`/frame-only/${data.id}/order_create`);
+          navigate(`/normal-order/${data.id}/order_create`);
         }}
       />
       {editPatient && (
@@ -91,7 +91,7 @@ export default function FrameOnlyOrderIndex() {
           updateSucess={(data) => {
             setIsUpdateDialogOpen(false);
             setEditPatient(null);
-            navigate(`/frame-only/${data.id}/order_create`);
+            navigate(`/normal-order/${data.id}/order_create`);
           }}
         />
       )}

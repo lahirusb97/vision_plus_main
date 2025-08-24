@@ -1,15 +1,15 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import PatientTable from "../../../components/common/PatientTable";
+import PatientTable from "../../components/common/PatientTable";
 import { Box } from "@mui/material";
-import { PatientModel } from "../../../model/Patient";
-import PatientCreateDialog from "../../../components/common/PatientCreateDialog";
-import PatientUpdateDialog from "../../../components/common/PatientUpdateDialog";
-import PatientSearchOnType from "../../../components/common/PatientSearchOnType";
-import useGetPatientList from "../../../hooks/useGetPatientList";
-import CustomerPagination from "../../../components/CustomPagination";
+import { PatientModel } from "../../model/Patient";
+import PatientCreateDialog from "../../components/common/PatientCreateDialog";
+import PatientUpdateDialog from "../../components/common/PatientUpdateDialog";
+import PatientSearchOnType from "../../components/common/PatientSearchOnType";
+import useGetPatientList from "../../hooks/useGetPatientList";
+import CustomerPagination from "../../components/CustomPagination";
 
-export default function FrameOnlyOrderIndex() {
+export default function HearingOrderIndex() {
   const navigate = useNavigate();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
@@ -28,6 +28,7 @@ export default function FrameOnlyOrderIndex() {
     PatientListPageNavigation,
     PatientListSearch,
     PatientListTotalCount,
+    PatientListRefres,
   } = useGetPatientList();
   return (
     <Box>
@@ -41,7 +42,7 @@ export default function FrameOnlyOrderIndex() {
             page_size: 10, // Add this line
           });
         }}
-        createPatientBtnLable="Register Patient & Create Frame Only Order"
+        createPatientBtnLable="Register Patient & Create Hearing Order"
         onCreatePatientClick={(data) => {
           setCreatePatient(data);
           setIsDialogOpen(true);
@@ -52,9 +53,9 @@ export default function FrameOnlyOrderIndex() {
         PatientListError={PatientListError}
         PatientListLoading={PatientListLoading}
         PatientList={PatientList}
-        existingPatinetBtnLable="Create Frame Only Order for "
+        existingPatinetBtnLable="Create Hearing Order for "
         onRawSelect={(row) => {
-          navigate(`/frame-only/${row.id}/order_create`);
+          navigate(`/hearing/order/${row.id}/create`);
         }}
         onEditPatientClick={(row) => {
           setEditPatient(row);
@@ -77,7 +78,7 @@ export default function FrameOnlyOrderIndex() {
         }}
         onSuccess={(data) => {
           setIsDialogOpen(false);
-          navigate(`/frame-only/${data.id}/order_create`);
+          navigate(`/hearing/order/${data.id}/create`);
         }}
       />
       {editPatient && (
@@ -91,7 +92,8 @@ export default function FrameOnlyOrderIndex() {
           updateSucess={(data) => {
             setIsUpdateDialogOpen(false);
             setEditPatient(null);
-            navigate(`/frame-only/${data.id}/order_create`);
+            PatientListRefres();
+            // navigate(`/hearing/order/${data.id}/create`);
           }}
         />
       )}

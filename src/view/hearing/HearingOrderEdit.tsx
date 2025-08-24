@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { schemaHearingOrderForm } from "../../validations/schemaHearingOrder";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import NormalPatientDetail from "../transaction/normal_order/NormalPatientDetail";
 import { Box, Button, Paper, TextField, Typography } from "@mui/material";
 import { getUserCurentBranch } from "../../utils/authDataConver";
 import AuthDialog from "../../components/common/AuthDialog";
@@ -34,6 +33,9 @@ import { History } from "lucide-react";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
+import OrderPatientDetail from "../../components/common/OrderPatientDetail";
+import PatientUpdateDialog from "../../components/common/PatientUpdateDialog";
+import useGetSinglePatient from "../../hooks/useGetSinglePatient";
 
 const initialState: HearingOrderItemsState = {
   items: [],
@@ -41,6 +43,8 @@ const initialState: HearingOrderItemsState = {
 };
 export default function HearingOrderEdit() {
   const { invoice_number } = useParams();
+  const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
+
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
   const [loadState, setLoadState] = useState(false);
   const [pendingPostData, setPendingPostData] = useState<any | null>(null);
@@ -49,6 +53,10 @@ export default function HearingOrderEdit() {
     invoiceLoading,
     invoiceError,
   } = useGetSingleInvoice(invoice_number || "", "hearing");
+  const { singlePatient, singlePatientDataRefresh, singlePatientLoading } =
+    useGetSinglePatient(
+      invoiceDetail?.customer_details?.id?.toString() || null
+    );
   const { putHandler, putHandlerloading, putHandlerError } = useAxiosPut();
   const navigate = useNavigate();
   const [stateItems, dispatchItems] = useReducer(
@@ -71,11 +79,6 @@ export default function HearingOrderEdit() {
       credit_card: 0,
       cash: 0,
       online_transfer: 0,
-      name: "",
-      phone_number: "",
-      address: "",
-      nic: "",
-      dob: "",
       discount: 0,
     },
   });
@@ -139,14 +142,6 @@ export default function HearingOrderEdit() {
     };
 
     const postData = {
-      patient: {
-        name: data.name,
-        phone_number: data.phone_number,
-        address: data.address,
-        nic: data.nic,
-        date_of_birth: data.dob,
-        extra_phone_number: data.extra_phone_number,
-      },
       order: {
         invoice_type: "hearing",
         status: totalPaid >= total ? "completed" : "pending",
@@ -167,12 +162,6 @@ export default function HearingOrderEdit() {
   useEffect(() => {
     if (invoiceDetail && !invoiceLoading && !loadState) {
       methods.reset({
-        name: invoiceDetail.customer_details.name,
-        phone_number: invoiceDetail.customer_details.phone_number,
-        extra_phone_number: invoiceDetail.customer_details.extra_phone_number,
-        address: invoiceDetail.customer_details.address || "",
-        nic: invoiceDetail.customer_details.nic || "",
-        dob: invoiceDetail.customer_details.date_of_birth || "",
         discount: parseInt(invoiceDetail.order_details.discount),
         payments: invoiceDetail.order_details.order_payments.map((payment) => ({
           id: payment.id,
@@ -216,8 +205,20 @@ export default function HearingOrderEdit() {
     <div style={{ width: "1000px" }}>
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(hearingOrderSubmite)}>
-          <NormalPatientDetail extra_phone_number={true} />
-
+          {invoiceDetail?.customer_details &&
+            !singlePatientLoading &&
+            singlePatient && (
+              <OrderPatientDetail
+                patientData={singlePatient}
+                onEdit={() => {
+                  setIsUpdateDialogOpen(true);
+                }}
+                refractionNumber={invoiceDetail?.refraction_number}
+                prescription={
+                  invoiceDetail?.refraction_details?.prescription_type_display
+                }
+              />
+            )}
           <InvoiceHearingItems onAddItem={handleAddItem} />
           <Paper
             sx={{
@@ -351,6 +352,21 @@ export default function HearingOrderEdit() {
         onVerified={sendDataToDb}
         onClose={() => setAuthDialogOpen(false)}
       />
+      {invoiceDetail?.customer_details && (
+        <PatientUpdateDialog
+          open={isUpdateDialogOpen}
+          onClose={() => {
+            setIsUpdateDialogOpen(false);
+          }}
+          updateSucess={() => {
+            setIsUpdateDialogOpen(false);
+            singlePatientDataRefresh();
+          }}
+          initialData={{
+            ...invoiceDetail?.customer_details,
+          }}
+        />
+      )}
     </div>
   );
 }

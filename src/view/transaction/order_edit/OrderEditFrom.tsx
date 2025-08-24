@@ -18,9 +18,7 @@ import {
   Typography,
   Paper,
 } from "@mui/material";
-import {
-  schemaFactoryInvoice,
-} from "../../../validations/factoryInvoiceSchema";
+import { schemaFactoryInvoice } from "../../../validations/factoryInvoiceSchema";
 
 import LeftEyeTable from "../../../components/LeftEyeTable";
 import RightEyeTable from "../../../components/RightEyeTable";
@@ -71,6 +69,9 @@ import NumberInput from "../../../components/inputui/NumberInput";
 import { History } from "lucide-react";
 import { PhotoSharp } from "@mui/icons-material";
 import DialogOrderImage from "../../../components/common/DialogOrderImage";
+import OrderPatientDetail from "../../../components/common/OrderPatientDetail";
+import PatientUpdateDialog from "../../../components/common/PatientUpdateDialog";
+import useGetSinglePatient from "../../../hooks/useGetSinglePatient";
 
 export default function OrderEditFrom() {
   const navigate = useNavigate();
@@ -97,6 +98,7 @@ export default function OrderEditFrom() {
   });
 
   const currentBranch = getUserCurentBranch()?.id;
+  const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
 
   const {
     invoiceDetail,
@@ -105,6 +107,10 @@ export default function OrderEditFrom() {
     refractionDetailLoading,
     invoiceDetailError,
   } = useFactoryOrderUpdateContext();
+  const { singlePatient, singlePatientDataRefresh, singlePatientLoading } =
+    useGetSinglePatient(
+      invoiceDetail?.customer_details?.id?.toString() || null
+    );
   const FrameInvoiceList = useSelector(
     (state: RootState) => state.invoice_frame_filer.selectedFrameList
   );
@@ -163,15 +169,6 @@ export default function OrderEditFrom() {
   const [loadState, setLoadState] = useState(0);
   useEffect(() => {
     if (!invoiceDetailLoading && invoiceDetail) {
-      console.log(invoiceDetail);
-      methods.setValue("name", invoiceDetail?.customer_details.name);
-      methods.setValue("nic", invoiceDetail?.customer_details.nic);
-      methods.setValue("address", invoiceDetail?.customer_details?.address);
-      methods.setValue(
-        "phone_number",
-        invoiceDetail?.customer_details.phone_number
-      );
-      methods.setValue("dob", invoiceDetail?.customer_details?.date_of_birth);
       methods.setValue(
         "discount",
         parseInt(invoiceDetail.order_details.discount)
@@ -317,6 +314,10 @@ export default function OrderEditFrom() {
   }
 
   const submiteFromData = async (data: z.infer<typeof orderEditForm>) => {
+    if (!invoiceDetail?.refraction_details?.refraction) {
+      toast.error("Invalid Refraction Data");
+      return;
+    }
     const lastPayment = parseInt(invoiceDetail?.order_details.sub_total || "0");
     const orderState =
       grandTotal <=
@@ -332,16 +333,9 @@ export default function OrderEditFrom() {
     //payment exesed or not the total
     if (true) {
       const postData = {
-        patient: {
-          refraction_id: invoiceDetail?.customer_details.refraction_id,
-          name: data.name,
-          nic: data.nic,
-          address: data.address,
-          phone_number: data.phone_number,
-          date_of_birth: data.dob,
-        },
+        // patient_id: invoiceDetail?.customer_details?.patient,
         order: {
-          refraction: invoiceDetail?.customer_details.refraction_id,
+          refraction: invoiceDetail?.refraction_details?.refraction,
           status: orderState,
           sub_total: subtotal,
           discount: discount,
@@ -414,6 +408,10 @@ export default function OrderEditFrom() {
     admin_id: number | null;
     user_id: number | null;
   }) => {
+    if (!invoiceDetail?.refraction_details?.refraction) {
+      toast.error("Invalid Refraction Data");
+      return;
+    }
     try {
       // No refraction Data but have Refraction Number
       const responce = await axiosClient.put(
@@ -429,7 +427,7 @@ export default function OrderEditFrom() {
         responce.data.invoice_number
       )}`;
       navigate(
-        `/transaction/factory_order/create/${invoiceDetail?.customer_details.refraction_id}/view/${url}`
+        `/transaction/factory_order/create/${invoiceDetail?.refraction_details.refraction}/view/${url}`
       );
     } catch (err) {
       extractErrorMessage(err);
@@ -476,18 +474,22 @@ export default function OrderEditFrom() {
                   <RightEyeTable refractionDetail={refractionDetail} />
                   <LeftEyeTable refractionDetail={refractionDetail} />
                 </Box>
-                {!refractionDetailLoading && (
-                  <PationtDetails
-                    prescription={
-                      refractionDetail?.prescription_type_display ||
-                      "Prescription Not Found"
-                    }
-                    refractionNumber={
-                      invoiceDetail?.customer_details?.refraction_number ||
-                      "Refraction Number Not Found"
-                    }
-                  />
-                )}
+                {!refractionDetailLoading &&
+                  !singlePatientLoading &&
+                  singlePatient &&
+                  invoiceDetail?.customer_details && (
+                    <OrderPatientDetail
+                      patientData={singlePatient}
+                      onEdit={() => {
+                        setIsUpdateDialogOpen(true);
+                      }}
+                      refractionNumber={invoiceDetail?.refraction_number}
+                      prescription={
+                        invoiceDetail?.refraction_details
+                          ?.prescription_type_display
+                      }
+                    />
+                  )}
               </Box>
               <Box sx={{ display: "flex", alignItems: "center" }}>
                 {refractionDetail && (
@@ -828,6 +830,21 @@ export default function OrderEditFrom() {
           </Box>
         </Box>
       </FormProvider>
+      {invoiceDetail?.customer_details && (
+        <PatientUpdateDialog
+          open={isUpdateDialogOpen}
+          onClose={() => {
+            setIsUpdateDialogOpen(false);
+          }}
+          updateSucess={() => {
+            setIsUpdateDialogOpen(false);
+            singlePatientDataRefresh();
+          }}
+          initialData={{
+            ...invoiceDetail?.customer_details,
+          }}
+        />
+      )}
       <DialogOrderImage
         open={orderImageDialog.open}
         order_id={orderImageDialog.orderId}

@@ -6,8 +6,6 @@ interface PatientModel {
   phone_number: string;
   extra_phone_number: string | null;
   address: string | null;
-  refraction_id: number | null;
-  refraction_number: string | null;
   patient_note: string | null;
 }
 export type { PatientModel };

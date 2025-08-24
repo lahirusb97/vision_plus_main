@@ -27,7 +27,6 @@ interface LensDetail {
 
 // Types for Frame Details
 interface FrameDetail {
-
   id: number;
   brand: number;
   brand_name: string;
@@ -107,7 +106,6 @@ export interface NormalOrderItem {
   admin_username?: string;
   deleted_at?: string;
   last_reminder_at: null;
-  
 }
 export interface HearingOrderItem {
   hearing_item_detail: HearingItemModel;
@@ -206,14 +204,12 @@ export interface ExternalLensOrderItem {
   last_reminder_at: null | string;
 }
 
-
 type OrderItem =
   | FrameOrderItem
   | LensOrderItem
   | ExternalLensOrderItem
   | NormalOrderItem
   | HearingOrderItem;
-
 
 interface OrderDetails {
   id: number;
@@ -264,6 +260,7 @@ interface Invoice {
   order_items: OrderItem[];
   lens_arrival_status: LensArrivalStatus;
   whatsapp_sent: boolean;
+  refraction_number?: string;
 }
 
 export type { Invoice, OrderItem };

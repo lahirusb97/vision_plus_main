@@ -50,18 +50,24 @@ import AuthDialog from "../../../components/common/AuthDialog";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { FactoryOrderInputModel } from "../../../model/InvoiceInputModel";
 import { TypeWhatappMSG } from "../../../model/StaticTypeModels";
+import useGetSinglePatient from "../../../hooks/useGetSinglePatient";
+import OrderPatientDetail from "../../../components/common/OrderPatientDetail";
+import PatientUpdateDialog from "../../../components/common/PatientUpdateDialog";
 
 export default function FactoryInvoiceForm() {
   const { refraction_id } = useParams();
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
   const [pendingPostData, setPendingPostData] =
     useState<FactoryOrderInputModel | null>(null);
+  const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
   //HOOKS
   const { singlerefractionNumber, refractionDetail, refractionDetailLoading } =
     useFactoryOrderContext();
+  const { singlePatient, singlePatientDataRefresh, singlePatientLoading } =
+    useGetSinglePatient(singlerefractionNumber?.patient_id?.toString() || null);
   const staticTitleParam = useMemo(() => ({ is_active: true }), []);
   const { busTitlesList, busTitlesLoading } = useGetBusTitles(staticTitleParam);
   const currentBranch = getUserCurentBranch()?.id;
@@ -103,16 +109,6 @@ export default function FactoryInvoiceForm() {
       methods.setValue("bus_title", busTitlesList[0].id);
     }
   }, [busTitlesList]);
-
-  //Store Data
-  useEffect(() => {
-    if (singlerefractionNumber) {
-      methods.setValue("name", singlerefractionNumber.customer_full_name);
-      methods.setValue("phone_number", singlerefractionNumber.customer_mobile);
-      methods.setValue("nic", singlerefractionNumber.nic);
-    }
-  }, [singlerefractionNumber]);
-
   //calculate total send
 
   const subtotal = frameTotal + lenseTotal + ExtraTotal;
@@ -129,6 +125,10 @@ export default function FactoryInvoiceForm() {
   }, []);
 
   const submiteFromData = async (data: FactoryInvoiceFormModel) => {
+    if (!singlePatient) {
+      toast.error("Patient Not Found");
+      return;
+    }
     if (refraction_id) {
       if (
         grandTotal >=
@@ -147,14 +147,7 @@ export default function FactoryInvoiceForm() {
           online_transfer: data.online_transfer,
         };
         const postData = {
-          patient: {
-            refraction_id: parseInt(refraction_id),
-            name: data.name,
-            nic: data.nic,
-            address: data.address,
-            phone_number: data.phone_number,
-            date_of_birth: data.dob,
-          },
+          patient_id: singlePatient?.id,
           order: {
             invoice_type: "factory",
             refraction: parseInt(refraction_id),
@@ -312,12 +305,19 @@ export default function FactoryInvoiceForm() {
 
               {/* Passing The Note DAta to show in tthe dialog */}
 
-              {!refractionDetailLoading && refractionDetail && (
-                <PationtDetails
-                  prescription={refractionDetail?.prescription_type_display}
-                  refractionNumber={singlerefractionNumber?.refraction_number}
-                />
-              )}
+              {!refractionDetailLoading &&
+                !singlePatientLoading &&
+                singlePatient &&
+                refractionDetail && (
+                  <OrderPatientDetail
+                    patientData={singlePatient}
+                    onEdit={() => {
+                      setIsUpdateDialogOpen(true);
+                    }}
+                    refractionNumber={singlerefractionNumber?.refraction_number}
+                    prescription={refractionDetail?.prescription_type_display}
+                  />
+                )}
             </Box>
             <Box
               sx={{
@@ -517,6 +517,21 @@ export default function FactoryInvoiceForm() {
         onVerified={sendDataToDb}
         onClose={() => setAuthDialogOpen(false)}
       />
+      {singlePatient && (
+        <PatientUpdateDialog
+          open={isUpdateDialogOpen}
+          onClose={() => {
+            setIsUpdateDialogOpen(false);
+          }}
+          updateSucess={() => {
+            setIsUpdateDialogOpen(false);
+            singlePatientDataRefresh();
+          }}
+          initialData={{
+            ...singlePatient,
+          }}
+        />
+      )}
     </>
   );
 }

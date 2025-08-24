@@ -58,6 +58,7 @@ import {
   PackageOpen,
   ReceiptText,
   ScanEye,
+  ShoppingCart,
   Stethoscope,
   User2,
   UserRoundCog,
@@ -74,6 +75,7 @@ import ImageUploardNav from "../uploard/ImageUploardNav";
 import FeedbackNav from "../feedback/FeedbackNav";
 import HearingNav from "../inventory/frame-store/HearingNav";
 import FrameOnlyNav from "../transaction/FrameOnlyNav";
+import NormalOrderNav from "../transaction/NormalOrderNav";
 
 // Tab panel utility (hidden by default)
 // function TabPanel({
@@ -123,6 +125,14 @@ export default function NavBar() {
       path: "hearing",
       icon: <Hearing />,
       nav: HearingNav,
+      inventory: false,
+    },
+    {
+      key: "normal-order",
+      label: "Normal Order",
+      path: "normal-order",
+      icon: <ShoppingCart />,
+      nav: NormalOrderNav,
       inventory: false,
     },
     {

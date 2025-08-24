@@ -9,9 +9,22 @@ import RefractionNumberDialog from "./RefractionNumberDialog";
 import { RefractionNumberModel } from "../../model/RefractionModel";
 import PatientTable from "../../components/common/PatientTable";
 import { Box } from "@mui/material";
+import useGetPatientList from "../../hooks/useGetPatientList";
+import PatientSearchOnType from "../../components/common/PatientSearchOnType";
+import { PatientModel } from "../../model/Patient";
 
 export default function ExistingCustomerRefractionNumber() {
   const navigate = useNavigate();
+  const {
+    PatientList,
+    PatientListChangePageSize,
+    PatientListError,
+    PatientListLimit,
+    PatientListLoading,
+    PatientListPageNavigation,
+    PatientListSearch,
+    PatientListTotalCount,
+  } = useGetPatientList();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [createPatient, setCreatePatient] = useState({
     searchName: "",
@@ -27,11 +40,15 @@ export default function ExistingCustomerRefractionNumber() {
     patient_id: number;
   } | null>(null);
   const { postHandler, postHandlerloading, postHandlerError } = useAxiosPost();
+  const [editPatient, setEditPatient] = useState<PatientModel | null>(null);
+  const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
+
   const generateRefractionNumber = async () => {
     if (!selectedPatient || !selectedPatient.patient_id) {
       toast.error("Patient ID is missing");
       return;
     }
+
     const payload = {
       customer_full_name: selectedPatient.name,
       customer_mobile: selectedPatient?.mobile,
@@ -76,13 +93,27 @@ export default function ExistingCustomerRefractionNumber() {
 
   return (
     <Box>
-      <PatientTable
-        createPatientBtnLable="Create New Patient"
-        existingPatinetBtnLable="Select Patient"
+      <PatientSearchOnType
+        onSearch={(data) => {
+          PatientListSearch({
+            name: data.name,
+            nic: data.nic,
+            phone_number: data.mobile,
+            page: 1,
+            page_size: 10, // Add this line
+          });
+        }}
+        createPatientBtnLable="Register Patient & Generate Refraction Number"
         onCreatePatientClick={(data) => {
           setCreatePatient(data);
           setIsDialogOpen(true);
         }}
+      />
+      <PatientTable
+        PatientListError={PatientListError}
+        PatientListLoading={PatientListLoading}
+        PatientList={PatientList}
+        existingPatinetBtnLable="Generate Refraction Number For"
         onRawSelect={(row) => {
           handleGenerateRefraction({
             name: row.name,
@@ -90,6 +121,10 @@ export default function ExistingCustomerRefractionNumber() {
             mobile: row.phone_number,
             patient_id: row.id,
           });
+        }}
+        onEditPatientClick={(row) => {
+          setEditPatient(row);
+          setIsUpdateDialogOpen(true);
         }}
       />
       <ConfirmDialog

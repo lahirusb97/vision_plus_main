@@ -11,17 +11,20 @@ import { PatientFormModel } from "../../validations/schemaPartient";
 import { useAxiosPost } from "../../hooks/useAxiosPost";
 import { useEffect, useState } from "react";
 import { extractErrorMessage } from "../../utils/extractErrorMessage";
+import { PatientModel } from "../../model/Patient";
 
 interface PatientCreateDialogProps {
   open: boolean;
   onClose: () => void;
   initialData?: Partial<PatientFormModel>;
+  onSuccess: (data: PatientModel) => void;
 }
 
 export default function PatientCreateDialog({
   open,
   onClose,
   initialData,
+  onSuccess,
 }: PatientCreateDialogProps) {
   const [patintData, setPatientData] = useState<PatientFormModel>({
     name: "",
@@ -56,7 +59,10 @@ export default function PatientCreateDialog({
         <PatientForm
           dataOnSubmit={async (data) => {
             try {
-              const response = await postHandler("patients/create/", data);
+              const response: { data: PatientModel } = await postHandler(
+                "patients/create/",
+                data
+              );
               setPatientData({
                 name: "",
                 date_of_birth: null,
@@ -66,8 +72,7 @@ export default function PatientCreateDialog({
                 patient_note: "",
                 extra_phone_number: "",
               });
-              navigate(`/frame-only/${response.data.id}/order_create`);
-              onClose();
+              onSuccess(response.data);
             } catch (error) {
               extractErrorMessage(error);
             }

@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from "react";
+import React, { useState } from "react";
 import {
   Box,
   Paper,
@@ -11,49 +11,33 @@ import {
   useTheme,
   IconButton,
   Button,
-  Pagination,
   Skeleton,
   Tooltip,
 } from "@mui/material";
-import { useNavigate } from "react-router";
 import { teal } from "@mui/material/colors";
 import { InvoiceHistoryPopover } from "../../components/refreaction/InvoiceHistoryPopover";
-import { Add, HistoryRounded, Person } from "@mui/icons-material";
-import useGetPatientList from "../../hooks/useGetPatientList";
-import OnTypeSearchInput from "../../components/inputui/OnTypeSearchInput";
-import LocalPhoneIcon from "@mui/icons-material/LocalPhone";
-// import { useDeleteDialog } from "../../context/DeleteDialogContext";
-import BadgeIcon from "@mui/icons-material/Badge";
+import { HistoryRounded } from "@mui/icons-material";
+
 import DataLoadingError from "../../components/common/DataLoadingError";
 import { PatientModel } from "../../model/Patient";
-import { Edit } from "lucide-react";
 import EditIcon from "@mui/icons-material/Edit";
 interface PatientTableProps {
+  PatientList: PatientModel[];
   onRawSelect: (row: PatientModel) => void;
   existingPatinetBtnLable: string;
-  createPatientBtnLable: string;
-  onCreatePatientClick: ({
-    searchName,
-    searchNic,
-    searchMobile,
-  }: {
-    searchName: string;
-    searchNic: string;
-    searchMobile: string;
-  }) => void;
   onEditPatientClick: (row: PatientModel) => void;
+  PatientListLoading: boolean;
+  PatientListError: boolean;
 }
 export default function PatientTable({
+  PatientListError,
+  PatientListLoading,
+  PatientList,
   onRawSelect,
   existingPatinetBtnLable,
-  createPatientBtnLable,
-  onCreatePatientClick,
   onEditPatientClick,
 }: PatientTableProps) {
   const theme = useTheme();
-  const [searchName, setSearchName] = useState("");
-  const [searchNic, setSearchNic] = useState("");
-  const [searchMobile, setSearchMobile] = useState("");
   const [selectedRow, setSelectedRow] = useState<PatientModel | null>(null);
   //POPOver
   const [popoverAnchor, setPopoverAnchor] = useState<null | HTMLElement>(null);
@@ -71,105 +55,12 @@ export default function PatientTable({
     setPopoverAnchor(null);
     setPopoverSearchData(null);
   };
-  //POPOver
-  const {
-    PatientList,
-    PatientListChangePageSize,
-    PatientListError,
-    PatientListLimit,
-    PatientListLoading,
-    PatientListPageNavigation,
-    PatientListRefres,
-    PatientListSearch,
-    PatientListTotalCount,
-  } = useGetPatientList();
-
   if (!PatientListLoading && PatientListError) {
     return <DataLoadingError />;
   }
 
   return (
     <Box>
-      <form
-        style={{
-          display: "flex",
-          gap: "10px",
-          marginBlock: 1,
-          alignItems: "baseline",
-        }}
-      >
-        <OnTypeSearchInput
-          onSearch={(searchTerm) => {
-            PatientListSearch({
-              page_size: 10,
-              page: 1,
-              nic: null,
-              phone_number: null,
-              name: searchTerm,
-            });
-          }}
-          onChange={setSearchName}
-          label="Name"
-          value={searchName}
-          required
-          startIcon={<Person />}
-        />
-        <OnTypeSearchInput
-          onSearch={(searchTerm) => {
-            PatientListSearch({
-              page_size: 10,
-              page: 1,
-              nic: searchTerm,
-              phone_number: null,
-              name: null,
-            });
-          }}
-          onChange={setSearchNic}
-          label="NIC"
-          value={searchNic}
-          required
-          startIcon={<BadgeIcon />}
-        />
-        <OnTypeSearchInput
-          onSearch={(searchTerm) => {
-            PatientListSearch({
-              page_size: 10,
-              page: 1,
-              nic: null,
-              phone_number: searchTerm,
-              name: null,
-            });
-          }}
-          onChange={setSearchMobile}
-          label="Mobile Number"
-          value={searchMobile}
-          required
-          startIcon={<LocalPhoneIcon />}
-        />
-        {/* <Button size="small" type="submit" variant="contained">
-          Search
-        </Button> */}
-        <Button
-          size="small"
-          variant="outlined"
-          onClick={() => {
-            PatientListSearch({
-              page_size: 10,
-              page: 1,
-              nic: null,
-              phone_number: null,
-              name: null,
-            });
-            setSearchName("");
-            setSearchNic("");
-            setSearchMobile("");
-            setSelectedRow(null);
-          }}
-        >
-          Reset
-        </Button>
-      </form>
-
       <Box
         sx={{
           display: "flex",
@@ -177,17 +68,7 @@ export default function PatientTable({
           justifyContent: "space-between",
           gap: 1,
         }}
-      >
-        <Button
-          size="small"
-          onClick={() => {
-            onCreatePatientClick({ searchName, searchNic, searchMobile });
-          }}
-          variant="outlined"
-        >
-          {createPatientBtnLable}
-        </Button>
-      </Box>
+      ></Box>
       {/* Table Container */}
       <TableContainer
         component={Paper}
@@ -238,7 +119,7 @@ export default function PatientTable({
                   </TableCell>
                 </TableRow>
               ))
-            ) : PatientList.length > 0 ? (
+            ) : PatientList?.length > 0 ? (
               PatientList.map((row) => (
                 <TableRow
                   onClick={() => setSelectedRow(row)}
@@ -313,14 +194,14 @@ export default function PatientTable({
           alignItems: "center",
         }}
       >
-        <Pagination
+        {/* <Pagination
           sx={{ my: ".2em" }}
           size="small"
           count={Math.ceil(PatientListTotalCount / PatientListLimit)}
           onChange={(_e: ChangeEvent<unknown>, value: number) => {
             PatientListPageNavigation(value);
           }}
-        ></Pagination>
+        ></Pagination> */}
       </Box>
       <Box
         sx={{
@@ -328,6 +209,7 @@ export default function PatientTable({
           flexDirection: "column",
           justifyContent: "space-between",
           gap: 1,
+          my: 2,
         }}
       >
         <Button

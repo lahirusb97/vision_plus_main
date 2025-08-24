@@ -9,6 +9,7 @@ interface FactoryOrderContext {
   invoiceDetailLoading: boolean;
   refractionDetailLoading: boolean;
   invoiceDetailError: boolean;
+  invoiceListRefresh: () => void;
 }
 interface FactoryOrderProviderProps {
   children: ReactNode;
@@ -19,6 +20,7 @@ const FactoryOrderUpdateContext = createContext<FactoryOrderContext>({
   invoiceDetailLoading: false,
   refractionDetailLoading: false,
   invoiceDetailError: false,
+  invoiceListRefresh: () => {},
 });
 
 export function FactoryOrderUpdateProvider({
@@ -31,6 +33,7 @@ export function FactoryOrderUpdateProvider({
     invoiceData: invoiceDetail,
     invoiceLoading: invoiceDetailLoading,
     invoiceError: invoiceDetailError,
+    invoiceListRefresh,
   } = useGetSingleInvoice(queryParams.get("invoice_number") || "", "factory");
 
   const refractionDetail = invoiceDetail?.refraction_details ?? null;
@@ -43,6 +46,7 @@ export function FactoryOrderUpdateProvider({
         invoiceDetailLoading,
         refractionDetailLoading: invoiceDetailLoading,
         invoiceDetailError,
+        invoiceListRefresh,
       }}
     >
       {children}

@@ -44,7 +44,7 @@ const useGetSingleInvoice = (
   return {
     invoiceData: Data,
     invoiceLoading: loading,
-    invoiceListRefres: loadData,
+    invoiceListRefresh: loadData,
     invoiceError: error,
   };
 };

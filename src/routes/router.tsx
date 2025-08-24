@@ -29,6 +29,7 @@ import { RouteObject } from "react-router";
 import EnterUserCode from "../view/auth/EnterUserCode";
 import NewPassword from "../view/auth/NewPassword";
 import { frameonlyRoutes } from "./routelist/frameonly.route";
+import { normalOrderRoutes } from "./routelist/normalorder.route";
 
 export const router = createBrowserRouter([
   {
@@ -50,6 +51,11 @@ export const router = createBrowserRouter([
         path: "frame-only",
         element: <ProtectedChildRoute />,
         children: frameonlyRoutes,
+      },
+      {
+        path: "normal-order",
+        element: <ProtectedChildRoute />,
+        children: normalOrderRoutes,
       },
       {
         path: "hearing",

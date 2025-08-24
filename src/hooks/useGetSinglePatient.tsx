@@ -4,7 +4,7 @@ import axiosClient from "../axiosClient";
 import { PatientModel } from "../model/Patient";
 
 //!BACKEND NOT READY
-export default function useGetSinglePatient(id: string | undefined) {
+export default function useGetSinglePatient(id: string | undefined | null) {
   const [singlePatient, setSinglePatient] = useState<PatientModel | null>(null);
   const [singlePatientLoading, setSinglePatientLoading] =
     useState<boolean>(true);
@@ -24,7 +24,9 @@ export default function useGetSinglePatient(id: string | undefined) {
 
   useEffect(() => {
     const controller = new AbortController();
-    loadData();
+    if (id) {
+      loadData();
+    }
     return () => controller.abort();
   }, [loadData]);
 

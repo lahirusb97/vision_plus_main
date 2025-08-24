@@ -1,5 +1,4 @@
 import { Controller, FormProvider, useForm } from "react-hook-form";
-import NormalPatientDetail from "../normal_order/NormalPatientDetail";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { getUserCurentBranch } from "../../../utils/authDataConver";
 import {
@@ -65,13 +64,7 @@ export default function FrameOnlyOrderCreate() {
             : "pending";
         const firstValue = Object.values(FrameInvoiceList)[0];
         const postData = {
-          patient: {
-            name: data.name,
-            nic: data.nic,
-            address: data.address,
-            phone_number: data.phone_number,
-            date_of_birth: data.dob,
-          },
+          patient_id: singlePatient?.id,
           discount: data.discount,
           status: orderState,
           frame: firstValue.frame_id,

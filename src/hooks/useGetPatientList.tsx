@@ -29,6 +29,7 @@ const useGetPatientList = () => {
     phone_number: null,
     name: null,
   });
+
   const abortControllerRef = useRef<AbortController | null>(null);
   //Prevent initial RUN
   const didMount = useRef(false);
@@ -53,9 +54,9 @@ const useGetPatientList = () => {
         SetDataList(response.data?.results);
         setTotalCount(response.data?.count);
         if (response.data?.count > 0) {
-          toast.success("Maching Invoice found ");
+          toast.success("Maching Patient found ");
         } else {
-          toast.error("No matching invoice found");
+          toast.error("No matching Patient found");
         }
       }
 
@@ -76,7 +77,7 @@ const useGetPatientList = () => {
     }
   }, [params]);
 
-  const setParamsData = (newParams: PatientListParams) => {
+  const setParamsData = (newParams: Partial<PatientListParams>) => {
     // use null to remove params
     setParams((prev) => ({
       ...prev,

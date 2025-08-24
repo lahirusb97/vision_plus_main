@@ -12,6 +12,7 @@ import HearingOrderEdit from "../../view/hearing/HearingOrderEdit";
 import HearingInvoiceReport from "../../view/hearing/hearing-invoice/HearingInvoiceReport";
 import HearingReminder from "../../view/hearing/hearing-reminder/HearingReminder";
 import HearingRepaymentForm from "../../view/hearing/HearingRepaymentForm";
+import HearingOrderIndex from "../../view/hearing/HearingOrderIndex";
 
 export const hearingRoutes: RouteObject[] = [
   {
@@ -20,6 +21,10 @@ export const hearingRoutes: RouteObject[] = [
     children: [
       {
         index: true,
+        element: <HearingOrderIndex />,
+      },
+      {
+        path: "order/:patient_id/create",
         element: <HearingOrderCreate />,
       },
       {

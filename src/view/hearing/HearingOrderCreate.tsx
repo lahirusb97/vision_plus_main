@@ -12,7 +12,7 @@ import AuthDialog from "../../components/common/AuthDialog";
 import { useAxiosPost } from "../../hooks/useAxiosPost";
 import { extractErrorMessage } from "../../utils/extractErrorMessage";
 import { toast } from "react-hot-toast";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import SubmitCustomBtn from "../../components/common/SubmiteCustomBtn";
 import PaymentMethodsLayout from "../transaction/factory_layouts/PaymentMethodsLayout";
 import { useReducer } from "react";
@@ -27,15 +27,23 @@ import { formatUserPayments } from "../../utils/formatUserPayments";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
+import OrderPatientDetail from "../../components/common/OrderPatientDetail";
+import useGetSinglePatient from "../../hooks/useGetSinglePatient";
+import PatientUpdateDialog from "../../components/common/PatientUpdateDialog";
 
 const initialState: HearingOrderItemsState = {
   items: [],
   total: 0,
 };
 export default function HearingOrderCreate() {
+  const { patient_id } = useParams();
+  const { singlePatient, singlePatientLoading, singlePatientDataRefresh } =
+    useGetSinglePatient(patient_id);
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
   const [pendingPostData, setPendingPostData] = useState<any | null>(null);
   const { postHandler, postHandlerloading, postHandlerError } = useAxiosPost();
+  const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
+
   const navigate = useNavigate();
   const [stateItems, dispatchItems] = useReducer(
     hearingOrderItemsReducer,
@@ -100,6 +108,10 @@ export default function HearingOrderCreate() {
     }
   };
   const hearingOrderSubmite = (data: HearingOrderForm) => {
+    if (!singlePatient?.id) {
+      toast.error("Patient Details Missing Refresh the page");
+      return;
+    }
     const totalPaid =
       (data.credit_card || 0) + (data.cash || 0) + (data.online_transfer || 0);
 
@@ -110,16 +122,8 @@ export default function HearingOrderCreate() {
       cash: data.cash,
       online_transfer: data.online_transfer,
     };
-
     const postData = {
-      patient: {
-        name: data.name,
-        phone_number: data.phone_number,
-        address: data.address,
-        nic: data.nic,
-        date_of_birth: data.dob,
-        extra_phone_number: data.extra_phone_number,
-      },
+      patient_id: singlePatient?.id,
       order: {
         invoice_type: "hearing",
         status: totalPaid >= total ? "completed" : "pending",
@@ -139,7 +143,12 @@ export default function HearingOrderCreate() {
     <div style={{ width: "1000px" }}>
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(hearingOrderSubmite)}>
-          <NormalPatientDetail extra_phone_number={true} />
+          <OrderPatientDetail
+            patientData={singlePatient}
+            onEdit={() => {
+              setIsUpdateDialogOpen(true);
+            }}
+          />
 
           <InvoiceHearingItems onAddItem={handleAddItem} />
           <Paper
@@ -247,6 +256,21 @@ export default function HearingOrderCreate() {
         onVerified={sendDataToDb}
         onClose={() => setAuthDialogOpen(false)}
       />
+      {singlePatient && (
+        <PatientUpdateDialog
+          open={isUpdateDialogOpen}
+          onClose={() => {
+            setIsUpdateDialogOpen(false);
+            // setEditPatient(null);
+          }}
+          updateSucess={(data) => {
+            setIsUpdateDialogOpen(false);
+            singlePatientDataRefresh();
+            // setEditPatient(null);
+          }}
+          initialData={singlePatient}
+        />
+      )}
     </div>
   );
 }

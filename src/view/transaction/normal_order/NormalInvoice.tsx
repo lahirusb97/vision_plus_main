@@ -25,8 +25,17 @@ import { extractErrorMessage } from "../../../utils/extractErrorMessage";
 import { OtherItemModel } from "../../../model/OtherItemModel";
 import PaymentMethodsLayout from "../factory_layouts/PaymentMethodsLayout";
 import AuthDialog from "../../../components/common/AuthDialog";
+import { useParams } from "react-router";
+import useGetSinglePatient from "../../../hooks/useGetSinglePatient";
+import OrderPatientDetail from "../../../components/common/OrderPatientDetail";
+import PatientUpdateDialog from "../../../components/common/PatientUpdateDialog";
 
 const NormalInvoice = () => {
+  const { patient_id } = useParams();
+  const { singlePatient, singlePatientLoading, singlePatientDataRefresh } =
+    useGetSinglePatient(patient_id);
+  const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
+
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
   const [pendingPostData, setPendingPostData] = useState<any | null>(null);
 
@@ -79,13 +88,7 @@ const NormalInvoice = () => {
     };
 
     const payload = {
-      patient: {
-        name: data.name,
-        phone_number: data.phone_number,
-        address: data.address,
-        nic: data.nic,
-        date_of_birth: data.dob,
-      },
+      patient_id: singlePatient?.id,
       order: {
         invoice_type: "normal",
         status: totalPaid >= total ? "completed" : "pending",
@@ -122,7 +125,7 @@ const NormalInvoice = () => {
         responce.data.invoice_number
       )}`;
       //send to invoice view
-      navigate(`view/${url}`);
+      navigate(`/normal-order/view/${responce.data.invoice_number}/${url}`);
     } catch (error) {
       extractErrorMessage(error);
     }
@@ -142,7 +145,13 @@ const NormalInvoice = () => {
           component={"form"}
         >
           {/* Row 1: Name, Phone No, Address, Sales Staff Code */}
-          <NormalPatientDetail />
+          {/* <NormalPatientDetail /> */}
+          <OrderPatientDetail
+            patientData={singlePatient}
+            onEdit={() => {
+              setIsUpdateDialogOpen(true);
+            }}
+          />
           <InvoiceOtherItems onAddItem={handleAddItem} />
 
           <InvoiceOtherItemsTable
@@ -181,6 +190,21 @@ const NormalInvoice = () => {
         onVerified={sendDataToDb}
         onClose={() => setAuthDialogOpen(false)}
       />
+      {singlePatient && (
+        <PatientUpdateDialog
+          open={isUpdateDialogOpen}
+          onClose={() => {
+            setIsUpdateDialogOpen(false);
+            // setEditPatient(null);
+          }}
+          updateSucess={() => {
+            setIsUpdateDialogOpen(false);
+            singlePatientDataRefresh();
+            // setEditPatient(null);
+          }}
+          initialData={singlePatient}
+        />
+      )}
     </>
   );
 };

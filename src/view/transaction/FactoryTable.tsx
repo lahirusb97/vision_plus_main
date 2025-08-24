@@ -176,7 +176,7 @@ export default function FactoryTable() {
                   key={row.id}
                 >
                   <TableCell>
-                    <IconButton
+                    {/* <IconButton
                       size="small"
                       color="warning"
                       title="Edit"
@@ -194,7 +194,7 @@ export default function FactoryTable() {
                       }}
                     >
                       <EditIcon fontSize="small" />
-                    </IconButton>
+                    </IconButton> */}
                   </TableCell>
                   <TableCell>{row.customer_full_name}</TableCell>
                   <TableCell>{row.nic}</TableCell>
