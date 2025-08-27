@@ -37,6 +37,7 @@ import AuthDialog, { DialogAuthData } from "../../components/common/AuthDialog";
 import { History } from "@mui/icons-material";
 import CustomIconButton from "../../custom-mui/CustomIconButton";
 import RefractionHistoryDialog from "./RefractionHistoryDialog";
+import useGetPatientOrderCount from "../../hooks/useGetPatientOrderCount";
 
 export default function RefractionEdit() {
   //USER VALIDATION HOOKS
@@ -53,6 +54,9 @@ export default function RefractionEdit() {
   const { refraction_id } = useParams();
   const { singlerefractionNumber, singlerefractionNumberLoading } =
     useGetSingleRefractionNumber(refraction_id);
+  const { orderCount, orderCountLoading } = useGetPatientOrderCount(
+    singlerefractionNumber?.patient_id || null
+  );
   const { refractionDetail, refractionDetailLoading, refractionDetailExist } =
     useGetRefractionDetails(refraction_id);
 
@@ -190,7 +194,6 @@ export default function RefractionEdit() {
     );
   }
 
-
   const handleOpenHistoryDialog = () => {
     setHistoryDialogOpen(true);
   };
@@ -272,11 +275,34 @@ export default function RefractionEdit() {
               </Box>
               <CustomIconButton
                 onClick={handleOpenHistoryDialog}
-                disabled={!singlerefractionNumber?.patient_id}
+                disabled={
+                  !singlerefractionNumber?.patient_id || orderCount === 0
+                }
                 variant="filled"
-                title="View Refraction History"
+                title={`View Refraction History (${orderCount} orders)`}
               >
                 <History />
+                {!orderCountLoading && orderCount > 0 && (
+                  <Box
+                    sx={{
+                      position: "absolute",
+                      top: -8,
+                      right: -8,
+                      bgcolor: "error.main",
+                      color: "white",
+                      borderRadius: "50%",
+                      width: 20,
+                      height: 20,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: "0.75rem",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {orderCount}
+                  </Box>
+                )}
               </CustomIconButton>
             </Paper>
 
@@ -388,6 +414,11 @@ export default function RefractionEdit() {
             </Box>
           </form>
         </Box>
+        <RefractionHistoryDialog
+          open={historyDialogOpen}
+          onClose={handleCloseHistoryDialog}
+          patientId={singlerefractionNumber?.patient_id || null}
+        />
       </FormProvider>
 
       <AuthDialog
@@ -399,11 +430,6 @@ export default function RefractionEdit() {
             : handleRefractionDetailCreate
         }
         onClose={() => setAuthDialogOpen(false)}
-      />
-      <RefractionHistoryDialog
-        open={historyDialogOpen}
-        onClose={handleCloseHistoryDialog}
-        patientId={singlerefractionNumber?.patient_id || null}
       />
     </>
   );

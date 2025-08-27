@@ -76,7 +76,10 @@ export default function PatientUpdateDialog({
       if (userData.id) {
         const response: { data: PatientModel } = await patchHandler(
           `patients/${initialData.id}/`,
-          patintData
+          {
+            ...patintData,
+            user_id: userData.id,
+          }
         );
         setIsSubmited(false);
         setUserAuth({

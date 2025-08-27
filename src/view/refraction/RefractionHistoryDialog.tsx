@@ -7,17 +7,20 @@ import {
   Button,
   Box,
   Typography,
-  Divider,
   CircularProgress,
   IconButton,
-  Paper,
 } from "@mui/material";
-import { PatientRefractionDetailOrderSerializer } from "../../model/PatientRefractionDetailOrderSerializer";
+
 import useGetPatientRefractionOrderList from "../../hooks/useGetPatientRefractionOrderList";
 import { formatDateTimeByType } from "../../utils/formatDateTimeByType";
 import BtnViewOrderForm from "../../components/common/BtnViewOrderForm";
 import { DateRangeIcon } from "@mui/x-date-pickers";
 import { numberWithCommas } from "../../utils/numberWithCommas";
+import BtnViewRefractionDetails from "../../components/common/BtnViewRefractionDetails";
+import { AddBox } from "@mui/icons-material";
+import { useFormContext } from "react-hook-form";
+import { PatientRefractionDetailOrderSerializer } from "../../model/PatientRefractionDetailOrderSerializer";
+import { RefractionDetailModel } from "../../model/RefractionDetailModel";
 
 interface RefractionHistoryDialogProps {
   open: boolean;
@@ -37,22 +40,48 @@ const RefractionHistoryDialog: React.FC<RefractionHistoryDialogProps> = ({
     refractionInvoiceListSearch,
   } = useGetPatientRefractionOrderList();
   console.log("RefractionHistoryDialog", patientId);
-
-  // Format date to a readable format
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
+  const { setValue } = useFormContext();
   useEffect(() => {
     if (open && patientId) {
       refractionInvoiceListSearch({ patient_id: patientId });
     }
   }, [open, patientId]);
+  const addVisionTOHbr = (refractionDetails: RefractionDetailModel) => {
+    const formatEye = ({
+      sph,
+      cyl,
+      axis,
+    }: {
+      sph?: string | null;
+      cyl?: string | null;
+      axis?: string | null;
+    }) => {
+      const parts: string[] = [];
+
+      if (sph) parts.push(sph);
+      if (cyl) parts.push(`/ ${cyl}`);
+      if (axis) parts.push(`* ${axis}`);
+
+      return parts.join(" ");
+    };
+
+    const rightHbRx = formatEye({
+      sph: refractionDetails.right_eye_dist_sph,
+      cyl: refractionDetails.right_eye_dist_cyl,
+      axis: refractionDetails.right_eye_dist_axis,
+    });
+    const leftHbRx = formatEye({
+      sph: refractionDetails.left_eye_dist_sph,
+      cyl: refractionDetails.left_eye_dist_cyl,
+      axis: refractionDetails.left_eye_dist_axis,
+    });
+    //sph /cyl/axis only
+    setValue("hb_rx_right_dist", rightHbRx);
+    setValue("hb_rx_left_dist", leftHbRx);
+    //near
+    setValue("hb_rx_right_near", refractionDetails.right_eye_near_sph);
+    setValue("hb_rx_left_near", refractionDetails.left_eye_near_sph);
+  };
   return (
     <Dialog
       open={open}
@@ -73,7 +102,7 @@ const RefractionHistoryDialog: React.FC<RefractionHistoryDialogProps> = ({
           <Typography color="error">
             Error loading refraction history. Please try again.
           </Typography>
-        ) : refractionInvoiceList.length === 0 ? (
+        ) : refractionInvoiceList?.length === 0 ? (
           <Typography>No previous refractions found.</Typography>
         ) : (
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
@@ -171,36 +200,62 @@ const RefractionHistoryDialog: React.FC<RefractionHistoryDialogProps> = ({
                   color="primary"
                 >
                   Refraction Details
+                  <IconButton
+                    onClick={() => {
+                      addVisionTOHbr(invoice.refraction_details);
+                    }}
+                    color="error"
+                  >
+                    <AddBox fontSize="small" />
+                  </IconButton>
                 </Typography>
 
-                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                    <DateRangeIcon fontSize="small" color="primary" />
-                    <Typography variant="body2">
-                      {formatDateTimeByType(
-                        invoice.refraction.created_at,
-                        "both"
-                      )}
-                    </Typography>
-                  </Box>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    gap: 2,
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Box sx={{ display: "flex", gap: 1 }}>
+                    <Box
+                      sx={{ display: "flex", alignItems: "center", gap: 0.5 }}
+                    >
+                      <DateRangeIcon fontSize="small" color="primary" />
+                      <Typography variant="body2">
+                        {formatDateTimeByType(
+                          invoice.refraction.created_at,
+                          "both"
+                        )}
+                      </Typography>
+                    </Box>
 
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                    <Typography variant="body2" fontWeight={600}>
-                      Refraction #:
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {invoice.refraction.refraction_number}
-                    </Typography>
-                  </Box>
+                    <Box
+                      sx={{ display: "flex", alignItems: "center", gap: 0.5 }}
+                    >
+                      <Typography variant="body2" fontWeight={600}>
+                        Refraction #:
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {invoice.refraction.refraction_number}
+                      </Typography>
+                    </Box>
 
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                    <Typography variant="body2" fontWeight={600}>
-                      Branch:
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {invoice.refraction.branch_name}
-                    </Typography>
+                    <Box
+                      sx={{ display: "flex", alignItems: "center", gap: 0.5 }}
+                    >
+                      <Typography variant="body2" fontWeight={600}>
+                        Branch:
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {invoice.refraction.branch_name}
+                      </Typography>
+                    </Box>
                   </Box>
+                  <BtnViewRefractionDetails
+                    refractionNumber={invoice.refraction_details.refraction}
+                  />
                 </Box>
               </Box>
             ))}

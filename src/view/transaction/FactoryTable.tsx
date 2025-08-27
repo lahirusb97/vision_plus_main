@@ -130,7 +130,7 @@ export default function FactoryTable() {
                 margin: 0,
               }}
             >
-              <TableCell sx={{ fontWeight: "bold" }}>Actions</TableCell>
+              {/* <TableCell sx={{ fontWeight: "bold" }}>Actions</TableCell> */}
               <TableCell sx={{ fontWeight: "bold" }}>Name</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Nic</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Mobile Number</TableCell>
@@ -175,8 +175,8 @@ export default function FactoryTable() {
                   }}
                   key={row.id}
                 >
-                  <TableCell>
-                    {/* <IconButton
+                  {/* <TableCell>
+                    <IconButton
                       size="small"
                       color="warning"
                       title="Edit"
@@ -194,8 +194,8 @@ export default function FactoryTable() {
                       }}
                     >
                       <EditIcon fontSize="small" />
-                    </IconButton> */}
-                  </TableCell>
+                    </IconButton>
+                  </TableCell> */}
                   <TableCell>{row.customer_full_name}</TableCell>
                   <TableCell>{row.nic}</TableCell>
                   <TableCell>{row.customer_mobile}</TableCell>

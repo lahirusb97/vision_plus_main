@@ -7,8 +7,8 @@ import { getUserCurentBranch } from "../utils/authDataConver";
 import axios from "axios";
 
 const useGetRefraction = () => {
-  const limit = 10;
   const [navigatePage, setNavigatePage] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(10);
   const [searchQuary, setSearchQuary] = useState<string>("");
   const [DataList, setDataList] = useState<RefractionNumberModel[]>([]);
   const [totalCount, setTotalCount] = useState<number>(1);
@@ -35,7 +35,7 @@ const useGetRefraction = () => {
           signal: abortController.signal,
           params: {
             page: navigatePage,
-            limit,
+            page_size: pageSize,
             ...(searchQuary ? { search: searchQuary } : {}),
             branch_id: getUserCurentBranch()?.id,
           },
@@ -63,7 +63,7 @@ const useGetRefraction = () => {
     // return () => {
     //   abortController.abort();
     // };//! only need when useEffect des not use
-  }, [navigatePage, searchQuary]);
+  }, [navigatePage, searchQuary, pageSize]);
 
   const handleSearch = (searchKeyWord: string) => {
     setNavigatePage(1);
@@ -85,8 +85,12 @@ const useGetRefraction = () => {
     };
   }, [loadData]);
 
+  const handlePageSizeChange = (size: number) => {
+    setPageSize(size);
+  };
+
   return {
-    refractionLimit: limit,
+    refractionLimit: pageSize,
     refractionsList: DataList,
     refractionLoading: loading,
     totalRefractionCount: totalCount,
@@ -94,6 +98,7 @@ const useGetRefraction = () => {
     handleRefractionSearch: handleSearch,
     refreshRefractionList: loadData,
     refractionsListerror: error,
+    handlePageSizeChange: handlePageSizeChange,
   };
 };
 

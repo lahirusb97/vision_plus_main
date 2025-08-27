@@ -12,6 +12,8 @@ import { Box } from "@mui/material";
 import useGetPatientList from "../../hooks/useGetPatientList";
 import PatientSearchOnType from "../../components/common/PatientSearchOnType";
 import { PatientModel } from "../../model/Patient";
+import CustomerPagination from "../../components/CustomPagination";
+import PatientUpdateDialog from "../../components/common/PatientUpdateDialog";
 
 export default function ExistingCustomerRefractionNumber() {
   const navigate = useNavigate();
@@ -24,6 +26,7 @@ export default function ExistingCustomerRefractionNumber() {
     PatientListPageNavigation,
     PatientListSearch,
     PatientListTotalCount,
+    PatientListRefres,
   } = useGetPatientList();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [createPatient, setCreatePatient] = useState({
@@ -127,6 +130,12 @@ export default function ExistingCustomerRefractionNumber() {
           setIsUpdateDialogOpen(true);
         }}
       />
+      <CustomerPagination
+        totalCount={PatientListTotalCount}
+        handlePageNavigation={PatientListPageNavigation}
+        changePageSize={PatientListChangePageSize}
+        page_size={PatientListLimit}
+      />
       <ConfirmDialog
         open={confirmDialogOpen}
         closeDialog={() => setConfirmDialogOpen(false)}
@@ -143,6 +152,22 @@ export default function ExistingCustomerRefractionNumber() {
         nic={createPatient.searchNic}
         mobile={createPatient.searchMobile}
       />
+      {editPatient && (
+        <PatientUpdateDialog
+          open={isUpdateDialogOpen}
+          onClose={() => {
+            setIsUpdateDialogOpen(false);
+            setEditPatient(null);
+          }}
+          initialData={editPatient}
+          updateSucess={(data) => {
+            setIsUpdateDialogOpen(false);
+            setEditPatient(null);
+            PatientListRefres();
+            // navigate(`/hearing/order/${data.id}/create`);
+          }}
+        />
+      )}
     </Box>
   );
 }

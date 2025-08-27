@@ -10,21 +10,18 @@ import {
   TableRow,
   TextField,
   useTheme,
-  IconButton,
   Button,
   Pagination,
   Skeleton,
-  Tooltip,
 } from "@mui/material";
 import { useNavigate } from "react-router";
 import useGetRefraction from "../../hooks/useGetRefraction";
-import EditIcon from "@mui/icons-material/Edit";
 import { teal } from "@mui/material/colors";
 import TitleText from "../../components/TitleText";
 import { formatDateTimeByType } from "../../utils/formatDateTimeByType";
 import DataLoadingError from "../../components/common/DataLoadingError";
 import { InvoiceHistoryPopover } from "../../components/refreaction/InvoiceHistoryPopover";
-import { HistoryRounded } from "@mui/icons-material";
+import CustomerPagination from "../../components/CustomPagination";
 
 // import { useDeleteDialog } from "../../context/DeleteDialogContext";
 
@@ -62,6 +59,7 @@ export default function RefractionTable() {
     refractionLimit,
     totalRefractionCount,
     refractionsListerror,
+    handlePageSizeChange,
   } = useGetRefraction();
   // Safely access data and meta-information
 
@@ -145,9 +143,10 @@ export default function RefractionTable() {
             <TableRow
               sx={{
                 backgroundColor: theme.palette.grey[200],
+                p: 1,
               }}
             >
-              <TableCell sx={{ fontWeight: "bold" }}>Actions</TableCell>
+              {/* <TableCell sx={{ fontWeight: "bold" }}>Actions</TableCell> */}
               <TableCell sx={{ fontWeight: "bold" }}>Name</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>NIC</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Mobile Number</TableCell>
@@ -192,7 +191,7 @@ export default function RefractionTable() {
                   }}
                   key={row.id}
                 >
-                  <TableCell sx={{ fontWeight: "bold" }}>
+                  {/* <TableCell sx={{ fontWeight: "bold" }}>
                     <IconButton
                       size="small"
                       color="warning"
@@ -214,7 +213,7 @@ export default function RefractionTable() {
                         <HistoryRounded fontSize="small" />
                       </IconButton>
                     </Tooltip>
-                  </TableCell>
+                  </TableCell> */}
 
                   <TableCell>{row.customer_full_name}</TableCell>
                   <TableCell>{row.nic}</TableCell>
@@ -237,22 +236,7 @@ export default function RefractionTable() {
       </TableContainer>
 
       {/* Pagination */}
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <Pagination
-          sx={{ my: ".2em" }}
-          size="small"
-          count={Math.ceil(totalRefractionCount / refractionLimit)}
-          onChange={(_e: ChangeEvent<unknown>, value: number) => {
-            refractionPageNavigation(value);
-          }}
-        ></Pagination>
-      </Box>
+
       <Box
         sx={{
           display: "flex",
@@ -270,6 +254,12 @@ export default function RefractionTable() {
           Select Details
         </Button>
       </Box>
+      <CustomerPagination
+        totalCount={totalRefractionCount}
+        handlePageNavigation={refractionPageNavigation}
+        changePageSize={handlePageSizeChange}
+        page_size={refractionLimit}
+      />
       <InvoiceHistoryPopover
         open={Boolean(popoverAnchor)}
         anchorEl={popoverAnchor}

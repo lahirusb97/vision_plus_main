@@ -1,10 +1,11 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useRef } from "react";
 import axiosClient from "../axiosClient";
 import { extractErrorMessage } from "../utils/extractErrorMessage";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { paramsNullCleaner } from "../utils/paramsNullCleaner";
 import { PatientRefractionDetailOrderSerializer } from "../model/PatientRefractionDetailOrderSerializer";
+import { PaginatedResponse } from "../model/PaginatedResponse";
 
 export interface CheckinInvoiceListParams {
   // page_size: number;
@@ -39,17 +40,18 @@ const useGetPatientRefractionOrderList = () => {
     setLoading(true);
 
     try {
-      const response: { data: PatientRefractionDetailOrderSerializer[] } =
-        await axiosClient.get(`refraction/orders/`, {
-          params: paramsNullCleaner(params),
-          signal: controller.signal,
-        });
+      const response: {
+        data: PaginatedResponse<PatientRefractionDetailOrderSerializer>;
+      } = await axiosClient.get(`refraction/orders/`, {
+        params: paramsNullCleaner(params),
+        signal: controller.signal,
+      });
 
       // Only update state if this request wasn't aborted
       if (!controller.signal.aborted) {
-        SetDataList(response.data || []);
-        setTotalCount(response.data?.length || 0);
-        if (response.data?.length > 0) {
+        SetDataList(response.data.results || []);
+        setTotalCount(response.data?.count || 0);
+        if (response.data?.count > 0) {
           toast.success("Matching Refraction Order found ");
         } else {
           toast.error("No matching Refraction Order found");
