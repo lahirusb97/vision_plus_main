@@ -13,6 +13,7 @@ import DoctorClaimChannelFrom from "../../view/channel/doctor_claim_channel/Doct
 import DoctorClaimChannelInvoiceVIew from "../../view/channel/doctor_claim_channel/DoctorClaimChannelInvoiceVIew";
 import AppointmentFullEdit from "../../view/channel/apointments/AppointmentFullEdit";
 import DoctorBranchChannelFees from "../../view/channel/doctor/DoctorBranchChannelFees";
+import ChannelIndex from "../../view/channel/ChannelIndex";
 
 export const channelRoutes: RouteObject[] = [
   {
@@ -21,6 +22,10 @@ export const channelRoutes: RouteObject[] = [
     children: [
       {
         index: true,
+        element: <ChannelIndex />,
+      },
+      {
+        path: ":patient_id/channel-create",
         element: <Channel />,
       },
     ],

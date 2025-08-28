@@ -16,7 +16,7 @@ import AutocompleteInputField from "../../components/inputui/DropdownInput";
 import dayjs from "dayjs";
 import axiosClient from "../../axiosClient";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   ChannelAppointmentForm,
@@ -32,10 +32,16 @@ import { TimePicker } from "@mui/x-date-pickers";
 import BookedTimeSlotsDropdown from "../../components/common/BookedTimeSlotsDropdown";
 import PaymentMethodsLayout from "../transaction/factory_layouts/PaymentMethodsLayout";
 import useGetSingleDoctorFees from "../../hooks/useGetSingleDoctorFees";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { numberWithCommas } from "../../utils/numberWithCommas";
+import useGetSinglePatient from "../../hooks/useGetSinglePatient";
+import OrderPatientDetail from "../../components/common/OrderPatientDetail";
+import PatientUpdateDialog from "../../components/common/PatientUpdateDialog";
 const Channel = () => {
+  const { patient_id } = useParams();
   const { data: doctorList, loading } = useGetDoctors();
+  const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
+
   const {
     appointmentSlots,
     appointmentSlotsLoading,
@@ -44,6 +50,8 @@ const Channel = () => {
   } = useGetAppointmentSlots();
   const { singleDoctorFees, singleDoctorFeesLoading, singleUserDataRefresh } =
     useGetSingleDoctorFees();
+  const { singlePatient, singlePatientLoading, singlePatientDataRefresh } =
+    useGetSinglePatient(patient_id);
   const navigate = useNavigate();
   const methods = useForm<ChannelAppointmentForm>({
     resolver: zodResolver(ChannelAppointmentSchema),
@@ -141,7 +149,12 @@ const Channel = () => {
         >
           {/* Doctor Name */}
 
-          <ChannelPatientDetail />
+          <OrderPatientDetail
+            patientData={singlePatient}
+            onEdit={() => {
+              setIsUpdateDialogOpen(true);
+            }}
+          />
 
           <Controller
             name="doctor_id" // Field name in the form
@@ -391,6 +404,21 @@ const Channel = () => {
           </Button>
         </form>
       </Box>
+      {singlePatient && (
+        <PatientUpdateDialog
+          open={isUpdateDialogOpen}
+          onClose={() => {
+            setIsUpdateDialogOpen(false);
+            // setEditPatient(null);
+          }}
+          updateSucess={() => {
+            setIsUpdateDialogOpen(false);
+            singlePatientDataRefresh();
+            // setEditPatient(null);
+          }}
+          initialData={singlePatient}
+        />
+      )}
     </FormProvider>
   );
 };
